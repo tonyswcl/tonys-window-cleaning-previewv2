@@ -51,13 +51,13 @@ if (canvas) {
       clearcoat: 1,
       clearcoatRoughness: 0.06,
       envMapIntensity: 1.4,
-      attenuationColor: new THREE.Color(0xbae6fd),
+      attenuationColor: new THREE.Color(0xc0e0f0), // logo sky-blue
       attenuationDistance: 4,
-      color: new THREE.Color(0xeaf7ff),
+      color: new THREE.Color(0xeaf4fb),
     });
 
     const tintMat = glassMat.clone();
-    tintMat.attenuationColor = new THREE.Color(0x7dd3fc);
+    tintMat.attenuationColor = new THREE.Color(0x80b0e0); // logo medium blue
     tintMat.attenuationDistance = 2.5;
 
     const count = window.innerWidth < 760 ? 9 : 16;
