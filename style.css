@@ -283,16 +283,21 @@ body::after{width:460px;height:460px;background:var(--gold-300);bottom:-160px;le
 .ba-handle span::before{content:"⟷";font-size:1.1rem;color:var(--brand-600);font-weight:700}
 .ba-range{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:ew-resize;z-index:4;margin:0}
 
-/* Placeholder gradients (replace with real photos) */
-.ba-1 .ba-before{background:linear-gradient(135deg,#8a8278,#5c574f)}
-.ba-1 .ba-after{background:linear-gradient(135deg,var(--brand-400),var(--sky-200) 60%,#fff)}
-.ba-2 .ba-before{background:linear-gradient(135deg,#7d7a6e,#4f4d44)}
-.ba-2 .ba-after{background:linear-gradient(135deg,var(--brand-300),var(--sky-100) 60%,#fff)}
-.ba-3 .ba-before{background:linear-gradient(135deg,#86807a,#56514b)}
-.ba-3 .ba-after{background:linear-gradient(135deg,var(--brand-400),var(--sky-200) 60%,#fff)}
-.ba-before::after,.ba-after::after{content:"";position:absolute;inset:0}
-.ba-before::after{background:radial-gradient(circle at 30% 30%,rgba(0,0,0,.18),transparent 60%),radial-gradient(circle at 70% 60%,rgba(0,0,0,.15),transparent 55%)}
-.ba-after::after{background:linear-gradient(115deg,transparent 40%,rgba(255,255,255,.55) 50%,transparent 60%)}
+/* Real before/after photos (swap files in /assets/gallery to update) */
+.ba-1 .ba-before{background-image:url('assets/gallery/window-before.jpg')}
+.ba-1 .ba-after{background-image:url('assets/gallery/window-after.jpg')}
+.ba-2 .ba-before{background-image:url('assets/gallery/solar-before.jpg')}
+.ba-2 .ba-after{background-image:url('assets/gallery/solar-after.jpg')}
+.ba-3 .ba-before{background-image:url('assets/gallery/screen-before.jpg')}
+.ba-3 .ba-after{background-image:url('assets/gallery/screen-after.jpg')}
+
+/* Gallery item + caption */
+.ba-item{margin:0}
+.ba-caption{
+  display:flex;align-items:center;justify-content:center;gap:.5rem;
+  margin-top:.9rem;font-family:var(--font-head);font-weight:700;color:var(--navy-800);font-size:1.05rem;
+}
+.ba-caption::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--gold-500)}
 
 /* ===== STATS ===== */
 .stats{background:var(--grad-deep);color:#fff;padding-block:clamp(3rem,6vw,4.5rem);border-block:3px solid var(--gold-500)}
