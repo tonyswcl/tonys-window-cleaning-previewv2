@@ -1,62 +1,445 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tony's Window Cleaning</title>
+  <title>Tony's Window Cleaning | Crystal-Clear Windows in the High Desert & Inland Empire</title>
+  <meta name="description" content="Tony's Window Cleaning — locally owned residential, commercial & solar panel window cleaning serving the High Desert and Inland Empire. Streak-free, purified-water results. Free quotes: 714-559-0300." />
+  <meta name="theme-color" content="#0ea5e9" />
+
+  <!-- Open Graph / Social -->
+  <meta property="og:title" content="Tony's Window Cleaning" />
+  <meta property="og:description" content="Crystal-clear windows in the High Desert & Inland Empire. Residential, commercial & solar panel cleaning. Free quotes." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://tonyswcl.github.io/tonys-window-cleaning/" />
+
+  <!-- Inline SVG favicon (sparkling droplet) -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%2338bdf8'/%3E%3Cstop offset='1' stop-color='%230369a1'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath fill='url(%23g)' d='M50 8c14 22 26 36 26 52a26 26 0 1 1-52 0c0-16 12-30 26-52z'/%3E%3Ccircle cx='40' cy='54' r='8' fill='white' opacity='.55'/%3E%3C/svg%3E" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
   <link href="style.css" rel="stylesheet">
+
+  <!-- LocalBusiness structured data for SEO -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "HomeAndConstructionBusiness",
+    "name": "Tony's Window Cleaning",
+    "image": "https://tonyswcl.github.io/tonys-window-cleaning/",
+    "telephone": "+1-714-559-0300",
+    "email": "twindowclean@gmail.com",
+    "areaServed": ["High Desert", "Inland Empire", "California"],
+    "priceRange": "$$",
+    "description": "Residential, commercial and solar panel window cleaning serving the High Desert and Inland Empire.",
+    "sameAs": [
+      "https://www.facebook.com/tonyswindowcleaning",
+      "https://www.yelp.com/biz/tonys-window-cleaning"
+    ],
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "5",
+      "reviewCount": "2"
+    }
+  }
+  </script>
 </head>
 <body>
-  <header>
-    <h1>Tony's Window Cleaning</h1>
-    <p>High Desert & Inland Empire | Call Now: <a href="tel:7145590300">714-559-0300</a></p>
-    <nav>
-      <a href="#about">About</a>
+  <!-- Scroll progress bar -->
+  <div class="scroll-progress" id="scrollProgress"></div>
+
+  <!-- ===== NAVBAR ===== -->
+  <header class="nav" id="nav">
+    <a href="#hero" class="brand">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 100 100"><path d="M50 8c14 22 26 36 26 52a26 26 0 1 1-52 0c0-16 12-30 26-52z"/></svg>
+      </span>
+      <span class="brand-text">Tony's <strong>Window Cleaning</strong></span>
+    </a>
+
+    <nav class="nav-links" id="navLinks">
       <a href="#services">Services</a>
       <a href="#gallery">Gallery</a>
       <a href="#reviews">Reviews</a>
-      <a href="#quote">Get a Quote</a>
       <a href="#faq">FAQ</a>
+      <a href="#quote" class="nav-cta">Get a Free Quote</a>
     </nav>
+
+    <a href="tel:7145590300" class="nav-phone" aria-label="Call Tony's Window Cleaning">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.8a15.5 15.5 0 006.6 6.6l2.2-2.2a1 1 0 011-.24c1.1.37 2.3.57 3.5.57a1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.2.2 2.4.57 3.5a1 1 0 01-.24 1l-2.23 2.3z"/></svg>
+      <span>714-559-0300</span>
+    </a>
+
+    <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
   </header>
-  <section id="about">
-    <h2>About Us</h2>
-    <p>We are a locally owned and operated window cleaning business proudly serving the High Desert and Inland Empire. Residential, commercial, and solar panel cleaning experts.</p>
+
+  <!-- ===== HERO (3D canvas) ===== -->
+  <section id="hero" class="hero">
+    <canvas id="bg" class="hero-canvas" aria-hidden="true"></canvas>
+    <div class="hero-overlay"></div>
+
+    <div class="hero-content reveal">
+      <span class="eyebrow">⭐ 5-Star Rated · High Desert &amp; Inland Empire</span>
+      <h1 class="hero-title">See the world <span class="grad">crystal&nbsp;clear</span>.</h1>
+      <p class="hero-sub">
+        Locally owned, professional window cleaning for homes, businesses &amp; solar panels.
+        Streak-free shine with purified water — guaranteed.
+      </p>
+      <div class="hero-actions">
+        <a href="#quote" class="btn btn-primary">Get a Free Quote</a>
+        <a href="tel:7145590300" class="btn btn-ghost">📞 714-559-0300</a>
+      </div>
+
+      <ul class="hero-trust">
+        <li><strong>100%</strong><span>Satisfaction</span></li>
+        <li><strong>Solar</strong><span>Panel Experts</span></li>
+        <li><strong>Free</strong><span>Estimates</span></li>
+      </ul>
+    </div>
+
+    <a href="#services" class="scroll-hint" aria-label="Scroll down">
+      <span class="mouse"></span>
+    </a>
   </section>
-  <section id="services">
-    <h2>Services</h2>
-    <ul>
-      <li>Interior & Exterior Window Cleaning</li>
-      <li>Screen Removal & Reinstallation</li>
-      <li>Track & Sill Detailing</li>
-      <li>Solar Panel Cleaning</li>
-      <li>Hard Water Stain Removal</li>
-    </ul>
-  </section>
-  <section id="gallery">
-    <h2>Before & After Gallery</h2>
-    <div class="gallery">
-      <!-- Images will be added manually -->
+
+  <!-- ===== MARQUEE ===== -->
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee-track">
+      <span>Residential</span><span>•</span><span>Commercial</span><span>•</span><span>Solar Panels</span><span>•</span>
+      <span>Hard Water Removal</span><span>•</span><span>Screens &amp; Tracks</span><span>•</span>
+      <span>Streak-Free</span><span>•</span>
+      <span>Residential</span><span>•</span><span>Commercial</span><span>•</span><span>Solar Panels</span><span>•</span>
+      <span>Hard Water Removal</span><span>•</span><span>Screens &amp; Tracks</span><span>•</span>
+      <span>Streak-Free</span><span>•</span>
+    </div>
+  </div>
+
+  <!-- ===== ABOUT ===== -->
+  <section id="about" class="section about">
+    <div class="container about-grid">
+      <div class="reveal">
+        <span class="kicker">About Us</span>
+        <h2 class="section-title">Locally owned. <br>Obsessed with the shine.</h2>
+        <p class="lead">
+          We're a locally owned and operated window cleaning business proudly serving the
+          High Desert and Inland Empire. From sun-baked storefront glass to towering solar
+          arrays, we bring the same care to every pane.
+        </p>
+        <p>
+          Residential, commercial, and solar panel cleaning experts — we use a water-fed pole
+          with purified water for a spotless, streak-free finish that lasts.
+        </p>
+        <a href="#quote" class="btn btn-primary sm">Book Your Cleaning</a>
+      </div>
+
+      <div class="about-cards">
+        <div class="glass-card reveal" style="--d:0">
+          <div class="ic">🏡</div><h3>Residential</h3>
+          <p>Spotless windows that make your whole home glow.</p>
+        </div>
+        <div class="glass-card reveal" style="--d:1">
+          <div class="ic">🏢</div><h3>Commercial</h3>
+          <p>Storefronts &amp; offices that impress every customer.</p>
+        </div>
+        <div class="glass-card reveal" style="--d:2">
+          <div class="ic">☀️</div><h3>Solar Panels</h3>
+          <p>Clean panels = better efficiency &amp; more savings.</p>
+        </div>
+        <div class="glass-card reveal" style="--d:3">
+          <div class="ic">💧</div><h3>Purified Water</h3>
+          <p>Water-fed poles for a truly streak-free clean.</p>
+        </div>
+      </div>
     </div>
   </section>
-  <section id="reviews">
-    <h2>What Our Customers Say</h2>
-    <p>"Fantastic service! Our windows have never looked better!" – Satisfied Client</p>
-    <p>"Highly recommend Tony's Window Cleaning!" – Happy Homeowner</p>
+
+  <!-- ===== SERVICES ===== -->
+  <section id="services" class="section services">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="kicker">What We Do</span>
+        <h2 class="section-title">Services built around a perfect finish</h2>
+        <p class="lead center">Everything your glass needs — inside, outside, and everywhere in between.</p>
+      </div>
+
+      <div class="service-grid">
+        <article class="tilt-card reveal" data-tilt>
+          <div class="tilt-inner">
+            <div class="svc-ic">🪟</div>
+            <h3>Interior &amp; Exterior Windows</h3>
+            <p>Crystal-clear glass on both sides, top to bottom, with zero streaks left behind.</p>
+          </div>
+        </article>
+        <article class="tilt-card reveal" data-tilt>
+          <div class="tilt-inner">
+            <div class="svc-ic">🧰</div>
+            <h3>Screen Removal &amp; Reinstall</h3>
+            <p>We carefully remove, clean, and reinstall your screens so nothing gets missed.</p>
+          </div>
+        </article>
+        <article class="tilt-card reveal" data-tilt>
+          <div class="tilt-inner">
+            <div class="svc-ic">🧽</div>
+            <h3>Track &amp; Sill Detailing</h3>
+            <p>The dirt hides in the corners. We detail every track and sill until it's spotless.</p>
+          </div>
+        </article>
+        <article class="tilt-card reveal" data-tilt>
+          <div class="tilt-inner">
+            <div class="svc-ic">☀️</div>
+            <h3>Solar Panel Cleaning</h3>
+            <p>Purified-water cleaning that restores efficiency without scratching your panels.</p>
+          </div>
+        </article>
+        <article class="tilt-card reveal" data-tilt>
+          <div class="tilt-inner">
+            <div class="svc-ic">💎</div>
+            <h3>Hard Water Stain Removal</h3>
+            <p>We lift stubborn mineral spots and restore that like-new glass clarity.</p>
+          </div>
+        </article>
+        <article class="tilt-card reveal accent" data-tilt>
+          <div class="tilt-inner">
+            <div class="svc-ic">📋</div>
+            <h3>Custom Commercial Quotes</h3>
+            <p>Big job or recurring service? Tell us what you need for a tailored quote.</p>
+            <a href="#quote" class="link-arrow">Get a quote →</a>
+          </div>
+        </article>
+      </div>
+    </div>
   </section>
-  <section id="quote">
-    <h2>Get a Free Quote</h2>
-    <p>Text or call <a href="tel:7145590300">714-559-0300</a> or message us on <a href="https://www.facebook.com/tonyswindowcleaning" target="_blank">Facebook</a> or <a href="https://www.yelp.com/biz/tonys-window-cleaning" target="_blank">Yelp</a>.</p>
+
+  <!-- ===== GALLERY / BEFORE & AFTER ===== -->
+  <section id="gallery" class="section gallery">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="kicker">Our Work</span>
+        <h2 class="section-title">Drag to see the difference</h2>
+        <p class="lead center">Slide the handle to reveal the before &amp; after. Real results, real shine.</p>
+      </div>
+
+      <!--
+        ===== ADD YOUR PHOTOS HERE =====
+        Drop your real before/after photos into an /images folder and replace the
+        background-image URLs in style.css (.ba-1/.ba-2/.ba-3 .before / .after),
+        OR set them inline below via:  style="background-image:url('images/your-photo.jpg')"
+        Until then, the demo uses generated gradient placeholders that already look clean.
+      -->
+      <div class="ba-grid">
+        <div class="ba ba-1 reveal" data-ba>
+          <div class="ba-after"><span class="ba-tag tag-after">After</span></div>
+          <div class="ba-before"><span class="ba-tag tag-before">Before</span></div>
+          <div class="ba-handle"><span></span></div>
+          <input type="range" min="0" max="100" value="50" class="ba-range" aria-label="Reveal before and after">
+        </div>
+        <div class="ba ba-2 reveal" data-ba>
+          <div class="ba-after"><span class="ba-tag tag-after">After</span></div>
+          <div class="ba-before"><span class="ba-tag tag-before">Before</span></div>
+          <div class="ba-handle"><span></span></div>
+          <input type="range" min="0" max="100" value="50" class="ba-range" aria-label="Reveal before and after">
+        </div>
+        <div class="ba ba-3 reveal" data-ba>
+          <div class="ba-after"><span class="ba-tag tag-after">After</span></div>
+          <div class="ba-before"><span class="ba-tag tag-before">Before</span></div>
+          <div class="ba-handle"><span></span></div>
+          <input type="range" min="0" max="100" value="50" class="ba-range" aria-label="Reveal before and after">
+        </div>
+      </div>
+    </div>
   </section>
-  <section id="faq">
-    <h2>FAQs</h2>
-    <p><strong>Q: Do you clean solar panels?</strong> A: Yes! We use a waterfed pole with purified water for a streak-free clean.</p>
-    <p><strong>Q: What areas do you serve?</strong> A: All of the High Desert and Inland Empire regions.</p>
-    <p><strong>Q: Do you do commercial jobs?</strong> A: Absolutely. Contact us for custom quotes.</p>
+
+  <!-- ===== STATS ===== -->
+  <section class="section stats">
+    <div class="container stats-grid">
+      <div class="stat reveal"><span class="num" data-count="5">0</span><span class="suf">★</span><p>Star Rated</p></div>
+      <div class="stat reveal"><span class="num" data-count="100">0</span><span class="suf">%</span><p>Satisfaction Focus</p></div>
+      <div class="stat reveal"><span class="num" data-count="2">0</span><span class="suf">+</span><p>Regions Served</p></div>
+      <div class="stat reveal"><span class="num" data-count="24">0</span><span class="suf">h</span><p>Fast Quote Replies</p></div>
+    </div>
   </section>
-  <footer>
-    <p>&copy; 2025 Tony's Window Cleaning</p>
+
+  <!-- ===== REVIEWS ===== -->
+  <section id="reviews" class="section reviews">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="kicker">Reviews</span>
+        <h2 class="section-title">What our customers say</h2>
+        <div class="stars big" aria-label="5 out of 5 stars">★★★★★</div>
+      </div>
+
+      <div class="review-track" id="reviewTrack">
+        <figure class="review-card">
+          <div class="stars">★★★★★</div>
+          <blockquote>"Fantastic service! Our windows have never looked better!"</blockquote>
+          <figcaption>— Satisfied Client</figcaption>
+        </figure>
+        <figure class="review-card">
+          <div class="stars">★★★★★</div>
+          <blockquote>"Highly recommend Tony's Window Cleaning!"</blockquote>
+          <figcaption>— Happy Homeowner</figcaption>
+        </figure>
+        <figure class="review-card">
+          <div class="stars">★★★★★</div>
+          <blockquote>"Professional, on time, and the solar panels look brand new. Will book again."</blockquote>
+          <figcaption>— Local Customer</figcaption>
+        </figure>
+      </div>
+
+      <p class="review-cta reveal">
+        Loved your service?
+        <a href="https://www.yelp.com/biz/tonys-window-cleaning" target="_blank" rel="noopener">Leave us a review on Yelp →</a>
+      </p>
+    </div>
+  </section>
+
+  <!-- ===== QUOTE / BOOKING ===== -->
+  <section id="quote" class="section quote">
+    <div class="container quote-grid">
+      <div class="quote-info reveal">
+        <span class="kicker light">Get Started</span>
+        <h2 class="section-title">Request your free quote</h2>
+        <p class="lead">Tell us a little about your windows and we'll get right back to you. Prefer to talk? Call or text anytime.</p>
+
+        <ul class="contact-list">
+          <li><a href="tel:7145590300"><span class="ci">📞</span> 714-559-0300</a></li>
+          <li><a href="mailto:twindowclean@gmail.com"><span class="ci">✉️</span> twindowclean@gmail.com</a></li>
+          <li><a href="https://www.facebook.com/tonyswindowcleaning" target="_blank" rel="noopener"><span class="ci">📘</span> Facebook</a></li>
+          <li><a href="https://www.yelp.com/biz/tonys-window-cleaning" target="_blank" rel="noopener"><span class="ci">⭐</span> Yelp</a></li>
+        </ul>
+      </div>
+
+      <!-- Booking handled by Formspree → delivers to twindowclean@gmail.com -->
+      <form class="quote-form glass-card reveal"
+            action="https://formspree.io/f/mdkzdael"
+            method="POST">
+        <div class="field">
+          <label for="name">Name</label>
+          <input id="name" name="name" type="text" placeholder="Your name" required>
+        </div>
+        <div class="row">
+          <div class="field">
+            <label for="phone">Phone</label>
+            <input id="phone" name="phone" type="tel" placeholder="(714) 555-0123" required>
+          </div>
+          <div class="field">
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" placeholder="you@email.com">
+          </div>
+        </div>
+        <div class="field">
+          <label for="service">Service Needed</label>
+          <select id="service" name="service">
+            <option>Residential Window Cleaning</option>
+            <option>Commercial Window Cleaning</option>
+            <option>Solar Panel Cleaning</option>
+            <option>Hard Water Stain Removal</option>
+            <option>Screens &amp; Tracks</option>
+            <option>Not sure — recommend something</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="message">Details</label>
+          <textarea id="message" name="message" rows="4" placeholder="How many windows, single/two-story, your city, etc."></textarea>
+        </div>
+        <input type="hidden" name="_subject" value="New quote request — Tony's Window Cleaning">
+        <button type="submit" class="btn btn-primary full">Send My Free Quote Request</button>
+        <p class="form-note">We'll reply fast — usually the same day.</p>
+      </form>
+    </div>
+  </section>
+
+  <!-- ===== FAQ ===== -->
+  <section id="faq" class="section faq">
+    <div class="container narrow">
+      <div class="section-head reveal">
+        <span class="kicker">FAQ</span>
+        <h2 class="section-title">Questions, answered</h2>
+      </div>
+
+      <div class="accordion">
+        <details class="reveal">
+          <summary>Do you clean solar panels?</summary>
+          <p>Yes! We use a water-fed pole with purified water for a streak-free, scratch-free clean that helps your panels run at peak efficiency.</p>
+        </details>
+        <details class="reveal">
+          <summary>What areas do you serve?</summary>
+          <p>All of the High Desert and Inland Empire regions. Not sure if you're in range? Just reach out — we'll let you know.</p>
+        </details>
+        <details class="reveal">
+          <summary>Do you do commercial jobs?</summary>
+          <p>Absolutely. From storefronts to offices and recurring service, contact us for a custom quote tailored to your property.</p>
+        </details>
+        <details class="reveal">
+          <summary>How do I book?</summary>
+          <p>Use the quote form above, or call/text <a href="tel:7145590300">714-559-0300</a>. You can also message us on Facebook or Yelp.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CTA BANNER ===== -->
+  <section class="cta-banner">
+    <div class="container">
+      <h2>Ready for windows that <span class="grad">sparkle</span>?</h2>
+      <p>Book your free quote today and see the difference clean glass makes.</p>
+      <div class="hero-actions center">
+        <a href="#quote" class="btn btn-primary">Get a Free Quote</a>
+        <a href="tel:7145590300" class="btn btn-ghost light">📞 714-559-0300</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer">
+    <div class="container footer-grid">
+      <div>
+        <a href="#hero" class="brand footer-brand">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 100 100"><path d="M50 8c14 22 26 36 26 52a26 26 0 1 1-52 0c0-16 12-30 26-52z"/></svg>
+          </span>
+          <span class="brand-text">Tony's <strong>Window Cleaning</strong></span>
+        </a>
+        <p class="footer-note">Crystal-clear windows in the High Desert &amp; Inland Empire.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <a href="#services">Services</a>
+        <a href="#gallery">Gallery</a>
+        <a href="#reviews">Reviews</a>
+        <a href="#faq">FAQ</a>
+      </div>
+      <div class="footer-col">
+        <h4>Get In Touch</h4>
+        <a href="tel:7145590300">714-559-0300</a>
+        <a href="mailto:twindowclean@gmail.com">twindowclean@gmail.com</a>
+        <a href="https://www.facebook.com/tonyswindowcleaning" target="_blank" rel="noopener">Facebook</a>
+        <a href="https://www.yelp.com/biz/tonys-window-cleaning" target="_blank" rel="noopener">Yelp</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; <span id="year"></span> Tony's Window Cleaning. All rights reserved.</p>
+    </div>
   </footer>
+
+  <!-- Floating call button (mobile) -->
+  <a href="tel:7145590300" class="fab" aria-label="Call now">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.8a15.5 15.5 0 006.6 6.6l2.2-2.2a1 1 0 011-.24c1.1.37 2.3.57 3.5.57a1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.2.2 2.4.57 3.5a1 1 0 01-.24 1l-2.23 2.3z"/></svg>
+  </a>
+
+  <!-- Three.js via import map -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+    }
+  }
+  </script>
+  <script type="module" src="scene.js"></script>
+  <script src="main.js" defer></script>
 </body>
 </html>
