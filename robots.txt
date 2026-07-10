@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://tonyswcl.github.io/tonys-window-cleaning-previewv2/sitemap.xml
+Sitemap: https://twindowclean.com/sitemap.xml
