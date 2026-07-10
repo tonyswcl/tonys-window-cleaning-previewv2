@@ -263,8 +263,9 @@ body::after{width:460px;height:460px;background:var(--gold-300);bottom:-160px;le
   position:relative;aspect-ratio:4/3;border-radius:var(--radius);overflow:hidden;
   box-shadow:var(--shadow);user-select:none;cursor:ew-resize;border:1px solid var(--sky-100);
 }
-.ba-before,.ba-after{position:absolute;inset:0;background-size:cover;background-position:center}
+.ba-before,.ba-after{position:absolute;inset:0}
 .ba-before{clip-path:inset(0 50% 0 0)}
+.ba-before img,.ba-after img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .ba-tag{
   position:absolute;top:12px;padding:.3rem .7rem;border-radius:999px;font-size:.75rem;font-weight:700;
   letter-spacing:.05em;text-transform:uppercase;backdrop-filter:blur(6px);color:#fff;z-index:2;
@@ -283,13 +284,7 @@ body::after{width:460px;height:460px;background:var(--gold-300);bottom:-160px;le
 .ba-handle span::before{content:"⟷";font-size:1.1rem;color:var(--brand-600);font-weight:700}
 .ba-range{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:ew-resize;z-index:4;margin:0}
 
-/* Real before/after photos (swap files in /assets/gallery to update) */
-.ba-1 .ba-before{background-image:url('assets/gallery/window-before.jpg')}
-.ba-1 .ba-after{background-image:url('assets/gallery/window-after.jpg')}
-.ba-2 .ba-before{background-image:url('assets/gallery/solar-before.jpg')}
-.ba-2 .ba-after{background-image:url('assets/gallery/solar-after.jpg')}
-.ba-3 .ba-before{background-image:url('assets/gallery/screen-before.jpg')}
-.ba-3 .ba-after{background-image:url('assets/gallery/screen-after.jpg')}
+/* Real before/after photos now render as <img> in index.html (see .ba-before/.ba-after img above) */
 
 /* Gallery item + caption */
 .ba-item{margin:0}
