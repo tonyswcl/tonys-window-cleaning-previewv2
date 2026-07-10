@@ -454,6 +454,14 @@ body::after{width:460px;height:460px;background:var(--gold-300);bottom:-160px;le
   .hero-trust li{min-width:100px;padding:.7rem 1rem}
 }
 
+/* ===== AREAS WE SERVE ===== */
+.areas-grid{display:flex;flex-wrap:wrap;gap:.7rem;justify-content:center;margin-top:1.6rem}
+.area-chip{
+  padding:.55rem 1.2rem;border-radius:99px;font-family:var(--font-head);
+  font-weight:600;font-size:.95rem;color:var(--navy-800);
+  background:var(--sky-50);border:1px solid var(--sky-200);
+}
+
 /* ===== ACCESSIBILITY ===== */
 @media (prefers-reduced-motion:reduce){
   *{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
