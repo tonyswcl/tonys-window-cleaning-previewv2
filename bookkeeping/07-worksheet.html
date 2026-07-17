@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<style>
+  @page { size: Letter; margin: 0.5in 0.55in 0.62in; }
+  *{ box-sizing:border-box; }
+  :root{
+    --navy:#0f2f4f; --navy2:#16395e; --blue:#2c6aa8; --blue-soft:#eaf2fb;
+    --gold:#b9791f; --gold-soft:#fbf1dc; --ink:#1a2733; --soft:#4d6072;
+    --line:#cdddec; --line2:#e3edf6; --red:#9a2f2f; --red-soft:#fbe9e9;
+    --green:#1d6b34; --green-soft:#e6f3ea; --zebra:#f6fafd;
+  }
+  html{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  body{
+    font:10.4pt/1.5 -apple-system,"Segoe UI","Liberation Sans",Arial,sans-serif;
+    color:var(--ink); margin:0;
+  }
+  h1,h2,h3{ margin:0; line-height:1.12; }
+  p{ margin:.35em 0 .6em; }
+  .soft{ color:var(--soft); }
+  .num{ font-variant-numeric:tabular-nums; }
+  b{ color:var(--navy); }
+  small{ font-size:8.6pt; }
+
+  /* Cover */
+  .cover{ border:1.5px solid var(--navy); border-radius:10px; padding:16px 18px; }
+  .brandrow{ display:flex; align-items:baseline; gap:10px; border-bottom:1px solid var(--line); padding-bottom:9px; margin-bottom:11px; }
+  .logo{ font-size:8pt; letter-spacing:.16em; text-transform:uppercase; color:var(--blue); font-weight:700; }
+  .cover h1{ font-size:22pt; color:var(--navy); letter-spacing:-.01em; }
+  .cover .sub{ color:var(--soft); font-size:10.5pt; margin-top:3px; }
+  .sun{ height:4px; width:64px; border-radius:9px; background:linear-gradient(90deg,var(--gold),var(--blue)); margin:9px 0 0; }
+
+  .ba{ display:flex; gap:9px; margin:13px 0 4px; }
+  .ba .cell{ flex:1; background:var(--blue-soft); border:1px solid var(--line); border-radius:8px; padding:8px 10px; }
+  .ba .cell .k{ font-size:7.6pt; letter-spacing:.09em; text-transform:uppercase; color:var(--blue); font-weight:700; }
+  .ba .cell .v{ font-size:13pt; font-weight:800; color:var(--navy); margin-top:1px; }
+  .ba .cell .s{ font-size:8.4pt; color:var(--soft); }
+  .ba .arrow{ align-self:center; color:var(--gold); font-weight:800; font-size:14pt; }
+
+  .order{ margin-top:12px; background:var(--gold-soft); border:1px solid #e7cf9c; border-radius:8px; padding:9px 11px; }
+  .order .t{ font-weight:800; color:var(--navy); font-size:9.4pt; letter-spacing:.02em; text-transform:uppercase; margin-bottom:5px; }
+  .order ol{ margin:0; padding-left:17px; columns:2; column-gap:20px; font-size:9.6pt; }
+  .order li{ margin:1.5px 0; break-inside:avoid; }
+
+  /* Section headers */
+  .part{ margin-top:16px; break-inside:avoid; }
+  .ph{ display:flex; align-items:center; gap:9px; border-bottom:2px solid var(--navy); padding-bottom:5px; margin-bottom:8px; }
+  .chip{ flex:0 0 auto; width:23px; height:23px; border-radius:6px; background:var(--navy); color:#fff; font-weight:800; font-size:11pt; display:flex; align-items:center; justify-content:center; }
+  .ph h2{ font-size:13.2pt; color:var(--navy); }
+  .ph .mins{ margin-left:auto; font-size:8.4pt; color:var(--soft); font-weight:700; white-space:nowrap; }
+
+  table{ width:100%; border-collapse:collapse; margin:5px 0 7px; }
+  th{ text-align:left; font-size:7.6pt; letter-spacing:.06em; text-transform:uppercase; color:var(--soft); border-bottom:1px solid var(--line); padding:4px 7px; background:var(--blue-soft); }
+  td{ padding:4px 7px; border-bottom:1px solid var(--line2); vertical-align:top; font-size:9.5pt; }
+  tr:nth-child(even) td{ background:var(--zebra); }
+  td.r,th.r{ text-align:right; }
+  .acct{ font-weight:700; color:var(--blue); white-space:nowrap; font-size:9pt; }
+  .ck{ display:inline-block; width:11px; height:11px; border:1.4px solid var(--blue); border-radius:2.5px; vertical-align:-1px; }
+  .col-ck{ width:16px; }
+  .tag{ color:#7a1f1f; }
+
+  .note{ border-left:3px solid var(--blue); background:var(--blue-soft); border-radius:0 7px 7px 0; padding:7px 10px; margin:7px 0; font-size:9.3pt; }
+  .note.gold{ border-color:var(--gold); background:var(--gold-soft); }
+  .note.red{ border-color:var(--red); background:var(--red-soft); }
+  .note.green{ border-color:var(--green); background:var(--green-soft); }
+  .note b{ display:inline; }
+
+  .rules{ margin:5px 0; }
+  .rule{ break-inside:avoid; padding:5px 0 5px 24px; position:relative; border-bottom:1px solid var(--line2); font-size:9.5pt; }
+  .rule .n{ position:absolute; left:0; top:5px; width:17px; height:17px; border-radius:5px; background:var(--blue-soft); color:var(--blue); font-weight:800; font-size:8.6pt; display:flex; align-items:center; justify-content:center; }
+
+  .tagwrap{ font-size:8.9pt; line-height:1.85; }
+  .tagwrap .grp{ font-weight:800; color:var(--navy); font-size:8.4pt; letter-spacing:.03em; text-transform:uppercase; display:block; margin:6px 0 1px; }
+  .il{ display:inline-block; border:1px solid var(--line); border-radius:4px; padding:0 5px; margin:1.5px 2px 1.5px 0; background:#fff; }
+
+  .foot{ margin-top:15px; border-top:1px solid var(--line); padding-top:7px; font-size:8.4pt; color:var(--soft); }
+  .pagebreak{ break-before:page; }
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <div class="brandrow">
+    <span class="logo">Tony's Window Cleaning</span>
+    <span class="soft" style="font-size:8.4pt; margin-left:auto;">QuickBooks Setup &amp; Cleanup · prepared Jul 17, 2026</span>
+  </div>
+  <h1>Your books, cleaned up<br>in one sitting.</h1>
+  <div class="sun"></div>
+  <p class="sub">A do-it-in-order worksheet. Work top to bottom, tick each box, and when you reach the end your file bills by service, your bulky item list is gone, and the “Sales” catch-all is retired. About 40 minutes, plus the optional invoice cleanup at the back.</p>
+
+  <div class="ba">
+    <div class="cell"><div class="k">Item list today</div><div class="v">70+ items</div><div class="s">duplicates, one-offs, prices in names</div></div>
+    <div class="arrow">→</div>
+    <div class="cell"><div class="k">After this sheet</div><div class="v">23 items</div><div class="s">one clean menu you bill from</div></div>
+    <div class="arrow">→</div>
+    <div class="cell"><div class="k">Income accounts</div><div class="v">9 service lines</div><div class="s">instead of one blurry “Sales”</div></div>
+  </div>
+
+  <div class="order">
+    <div class="t">Do it in this order — each step sets up the next</div>
+    <ol>
+      <li><b>Create</b> the 11 new accounts (Part 1)</li>
+      <li><b>Rename</b> 4 existing accounts (Part 2)</li>
+      <li><b>Rewire</b> every item's income account (Part 4)</li>
+      <li><b>Make inactive</b> the 49 old items (Part 5)</li>
+      <li><b>Retire “Sales”</b> once it reads $0 (Part 6)</li>
+      <li><b>Fix</b> 5 small money items (Part 7)</li>
+    </ol>
+  </div>
+</div>
+
+<!-- PART 1 -->
+<div class="part">
+  <div class="ph"><span class="chip">1</span><h2>Create 11 new accounts</h2><span class="mins">~8 min</span></div>
+  <p class="soft" style="margin-top:2px;">Gear ▸ Chart of accounts ▸ <b>New</b>. For <u>every</u> one of these: <b>Sub-account?</b> No · <b>Description:</b> leave blank (optional) · <b>Lock?</b> No. Only Account type must be exact — detail type is just a label, closest match is fine.</p>
+  <table>
+    <thead><tr><th class="col-ck"></th><th>Account name</th><th>Account type</th><th>Detail type</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ck"></span></td><td>Window Cleaning – Residential</td><td>Income</td><td>Service/Fee Income</td></tr>
+      <tr><td><span class="ck"></span></td><td>Window Cleaning – Commercial</td><td>Income</td><td>Service/Fee Income</td></tr>
+      <tr><td><span class="ck"></span></td><td>Solar Panel Cleaning</td><td>Income</td><td>Service/Fee Income</td></tr>
+      <tr><td><span class="ck"></span></td><td>Screen Repair &amp; Replacement</td><td>Income</td><td>Service/Fee Income</td></tr>
+      <tr><td><span class="ck"></span></td><td>Pigeon Proofing / Bird Exclusion</td><td>Income</td><td>Service/Fee Income</td></tr>
+      <tr><td><span class="ck"></span></td><td>Exterior Cleaning – Other</td><td>Income</td><td>Service/Fee Income</td></tr>
+      <tr><td><span class="ck"></span></td><td>Hard Water Stain Removal</td><td>Income</td><td>Service/Fee Income</td></tr>
+      <tr><td><span class="ck"></span></td><td>Materials &amp; Reimbursements</td><td>Income</td><td>Service/Fee Income</td></tr>
+      <tr><td><span class="ck"></span></td><td>Other Service Income</td><td>Income</td><td>Service/Fee Income</td></tr>
+      <tr><td><span class="ck"></span></td><td>Job Materials &amp; Supplies</td><td>Cost of Goods Sold</td><td>Supplies &amp; Materials – COGS</td></tr>
+      <tr><td><span class="ck"></span></td><td>Owner's Contributions</td><td>Equity</td><td>Owner's Equity</td></tr>
+    </tbody>
+  </table>
+  <div class="note gold"><b>Owner's Contributions</b> is where every Zelle you send <b>into</b> the business lands — that's your “I Zelle myself to fund it” money. It is never income.</div>
+</div>
+
+<!-- PART 2 -->
+<div class="part">
+  <div class="ph"><span class="chip">2</span><h2>Rename 4 accounts you already have</h2><span class="mins">~3 min</span></div>
+  <p class="soft" style="margin-top:2px;">Renaming keeps every past transaction attached — exactly what you want for sorting the year. Chart of accounts ▸ dropdown arrow ▸ Edit. Don't change their type or detail.</p>
+  <table>
+    <thead><tr><th class="col-ck"></th><th>Current name</th><th>New name</th><th>Leave type as</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ck"></span></td><td>Owner's Pay &amp; Personal Expenses</td><td>Owner's Draws</td><td>Equity</td></tr>
+      <tr><td><span class="ck"></span></td><td>Ford Maverick - Auto Fuel</td><td>Vehicle – Fuel</td><td>Expense</td></tr>
+      <tr><td><span class="ck"></span></td><td>QuickBooks Payments Fees</td><td>Merchant Processing Fees</td><td>Expense</td></tr>
+      <tr><td><span class="ck"></span></td><td>Meals - Business Owner</td><td>Meals</td><td>Expense</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- PART 3 -->
+<div class="part">
+  <div class="ph"><span class="chip">3</span><h2>Leave these completely alone</h2><span class="mins">read only</span></div>
+  <p style="margin-top:2px;">Do <b>not</b> edit, rename, or hide any of these — some are system accounts, and hiding a bank/loan account with a balance creates a bigger mess:</p>
+  <p class="soft" style="font-size:9.3pt;">Discounts given · Customer Deposit (Liability) · your BofA business checking (0802) · Accounts Receivable · Undeposited Funds · Opening Balance Equity · Retained Earnings · *W-2 Job Income (Non-Business) · <b>every personal bank, loan, and credit-card account</b> (those come out later, with a CPA).</p>
+</div>
+
+<!-- PART 4 -->
+<div class="part pagebreak">
+  <div class="ph"><span class="chip">4</span><h2>Rewire every item — this empties “Sales”</h2><span class="mins">~12 min</span></div>
+  <p style="margin-top:2px;">This is the step that lets you retire the Sales category. Sales ▸ Products &amp; services ▸ Edit each item ▸ set its <b>Income account</b> ▸ Save. <b class="tag">Every time it asks “Also update this account in historical transactions?” — check YES.</b> That pulls your past 2026 revenue out of “Sales” and into the right service line automatically.</p>
+  <table>
+    <thead><tr><th class="col-ck"></th><th>Item</th><th>Point its income account to →</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ck"></span></td><td>Window Cleaning - 1 Story Exterior Only</td><td class="acct">Window Cleaning – Residential</td></tr>
+      <tr><td><span class="ck"></span></td><td>Window Cleaning - 1 Story Interior Add-on</td><td class="acct">Window Cleaning – Residential</td></tr>
+      <tr><td><span class="ck"></span></td><td>Window Cleaning - 2 Story Exterior Only</td><td class="acct">Window Cleaning – Residential</td></tr>
+      <tr><td><span class="ck"></span></td><td>Window Cleaning - 2 Story Interior Add-on</td><td class="acct">Window Cleaning – Residential</td></tr>
+      <tr><td><span class="ck"></span></td><td>Window Cleaning - Commercial</td><td class="acct">Window Cleaning – Commercial</td></tr>
+      <tr><td><span class="ck"></span></td><td>Solar Panel Cleaning (per panel)</td><td class="acct">Solar Panel Cleaning</td></tr>
+      <tr><td><span class="ck"></span></td><td>Solar Panel Cleaning</td><td class="acct">Solar Panel Cleaning</td></tr>
+      <tr><td><span class="ck"></span></td><td>Screen Repair - Standard Mesh (per screen)</td><td class="acct">Screen Repair &amp; Replacement</td></tr>
+      <tr><td><span class="ck"></span></td><td>Screen Repair - Pet Proof Mesh (per screen)</td><td class="acct">Screen Repair &amp; Replacement</td></tr>
+      <tr><td><span class="ck"></span></td><td>Screen - New Frame &amp; Screen (per screen)</td><td class="acct">Screen Repair &amp; Replacement</td></tr>
+      <tr><td><span class="ck"></span></td><td>Pigeon Proofing - Installation &amp; Sealing</td><td class="acct">Pigeon Proofing / Bird Exclusion</td></tr>
+      <tr><td><span class="ck"></span></td><td>Pigeon Proofing - Cleanout &amp; Debris Removal</td><td class="acct">Pigeon Proofing / Bird Exclusion</td></tr>
+      <tr><td><span class="ck"></span></td><td>Pigeon proofing spinners</td><td class="acct">Pigeon Proofing / Bird Exclusion</td></tr>
+      <tr><td><span class="ck"></span></td><td>Pigeon Proofing - Materials &amp; Supplies</td><td class="acct">Materials &amp; Reimbursements</td></tr>
+      <tr><td><span class="ck"></span></td><td>Materials Reimbursement</td><td class="acct">Materials &amp; Reimbursements</td></tr>
+      <tr><td><span class="ck"></span></td><td>Gutter Cleaning</td><td class="acct">Exterior Cleaning – Other</td></tr>
+      <tr><td><span class="ck"></span></td><td>Exterior Cleaning - Other</td><td class="acct">Exterior Cleaning – Other</td></tr>
+      <tr><td><span class="ck"></span></td><td>Trash Bin Cleaning - First Time</td><td class="acct">Exterior Cleaning – Other</td></tr>
+      <tr><td><span class="ck"></span></td><td>Trash Bin Cleaning - Maintenance</td><td class="acct">Exterior Cleaning – Other</td></tr>
+      <tr><td><span class="ck"></span></td><td>Hard Water Stain Removal</td><td class="acct">Hard Water Stain Removal</td></tr>
+      <tr><td><span class="ck"></span></td><td>Service Call / Trip Fee</td><td class="acct">Other Service Income</td></tr>
+      <tr><td><span class="ck"></span></td><td>Miscellaneous Labor</td><td class="acct">Other Service Income</td></tr>
+      <tr><td><span class="ck"></span></td><td><b>Customer Deposit Received</b></td><td class="acct">Customer Deposit (Liability)</td></tr>
+      <tr><td><span class="ck"></span></td><td>“Sales” <small class="soft">(the old catch-all item — Staci's screen job)</small></td><td class="acct">Screen Repair &amp; Replacement</td></tr>
+    </tbody>
+  </table>
+  <div class="note red"><b>The one exception:</b> “Customer Deposit Received” points at the <b>Customer Deposit (Liability)</b> account — never an income account. A deposit isn't earned until the work is done.</div>
+  <div class="note"><b>Why this order matters:</b> rewiring first (with “update historical” checked) drains the Sales account. Only after that can you retire it in Part 6. Do the 49 deactivations (Part 5) <i>after</i> this, so every item is still easy to find here.</div>
+</div>
+
+<!-- PART 5 -->
+<div class="part pagebreak">
+  <div class="ph"><span class="chip">5</span><h2>Make 49 old items inactive</h2><span class="mins">~5 min</span></div>
+  <p style="margin-top:2px;">Sales ▸ Products &amp; services ▸ tick every item below ▸ <b>Batch actions ▸ Make inactive</b>. Nothing is deleted — “inactive” just hides them from your menus; all past invoices stay intact and any item can be restored later.</p>
+  <div class="tagwrap">
+    <span class="grp">Generic / catch-all</span>
+    <span class="il">Sales</span><span class="il">Custom Amount</span><span class="il">Window Cleaning</span><span class="il">Exterior Wash</span><span class="il">Interior Wash</span>
+    <span class="grp">Old window &amp; bundle</span>
+    <span class="il">Exterior Window Cleaning</span><span class="il">Exterior + Interior Window Cleaning</span><span class="il">Window Cleaning - 1 Story</span><span class="il">Exterior / Interior / + 12 solar panels home bundle $300</span>
+    <span class="grp">Old screen</span>
+    <span class="il">Window Screen Mesh Replacement</span><span class="il">Screen Mesh Repair (Plus)</span><span class="il">Screen Repair - Pet-Proof &amp; Heat-Resistant Mesh (Lifetime Warranty)</span><span class="il">Discounted Sliding Door Mesh Repair</span>
+    <span class="grp">Old solar</span>
+    <span class="il">Solar Panel Cleaning + Bird Mesh Installation</span><span class="il">Solar Panel Wash + Free Maintenance clean in March</span><span class="il">Solar Panel Wash (Complimentary)</span><span class="il">Solar Array Preparation &amp; Inspection - $20.00</span>
+    <span class="grp">Spanish one-offs</span>
+    <span class="il">Materiales</span><span class="il">Limpieza de paneles</span><span class="il">Seguro</span><span class="il">Mano de obra</span><span class="il">Mano de obea</span><span class="il">Depósito de materiales (20%)</span>
+    <span class="grp">Price-in-the-name line items</span>
+    <span class="il">8” Galvanized Steel Mesh, Clips &amp; Fasteners - 95.00</span><span class="il">Pigeon Nest &amp; Debris Removal - $35.00</span><span class="il">Safety Equipment &amp; Roof Protection - $15.00</span><span class="il">Professional Installation Labor - $70.00</span><span class="il">Cleanup &amp; Final Quality Inspection - $25.00</span>
+    <span class="grp">Old pigeon-proofing variants</span>
+    <span class="il">Pigeon Proofing Materials - 29 panel system</span><span class="il">Pigeon Proofing - Wire Mesh Material (per roll)</span><span class="il">Pigeon Proofing - Clips &amp; Hardware</span><span class="il">Pigeon Proofing - Labor &amp; Debris Removal</span><span class="il">Pigeon Proofing - Disposal &amp; Site Cleanup</span><span class="il">Nesting Material Removal &amp; Panel Preparation</span><span class="il">Professional Labor</span>
+    <span class="grp">Bird-deterrent &amp; roof-wash one-offs</span>
+    <span class="il">Bird Deterrent Materials &amp; Hardware</span><span class="il">Bird Deterrent Installation Labor</span><span class="il">Roof Wash Materials &amp; Supplies</span><span class="il">Roof Wash Labor &amp; Application</span>
+    <span class="grp">Custom-job one-offs</span>
+    <span class="il">Custom Access Platform Fee</span><span class="il">Plywood Materials (Reimbursement)</span><span class="il">Negotiated Discount</span><span class="il">Complimentary Roof Tile Crack Sealing</span><span class="il">Complimentary Roof Wash (Pressure Washing)</span>
+    <span class="grp">Stop selling overhead as a line</span>
+    <span class="il">Insurance &amp; Job Overhead</span><span class="il">Safety Equipment &amp; Roof Safety</span><span class="il">Liability &amp; Insurance Coverage</span><span class="il">Lifetime Warranty (Screen Re-Mesh)</span><span class="il">Lifetime Warranty (Bird Mesh &amp; Clips)</span>
+  </div>
+  <div class="note gold"><b>Insurance, warranty &amp; “safety” lines:</b> stop billing these as separate items — customers shouldn't see your overhead itemized. Build it into your labor/install price and mention the warranty in the line description instead.</div>
+</div>
+
+<!-- PART 6 -->
+<div class="part">
+  <div class="ph"><span class="chip">6</span><h2>Retire the “Sales” category</h2><span class="mins">~2 min</span></div>
+  <p style="margin-top:2px;">Two different things are both named “Sales”: the <b>item</b> (handled in Parts 4–5) and the income <b>account</b> (this step). Retire the account last:</p>
+  <div class="rules">
+    <div class="rule"><span class="n">1</span><span class="ck"></span> &nbsp;Run <b>Reports ▸ Profit &amp; Loss</b>, dates Jan 1 – today. Confirm the <b>Sales</b> line now reads <b>$0.00</b> (Part 4 moved it into your service lines). <small class="soft">If a little revenue lingers, it's from an old one-off item — do the optional invoice cleanup on the last page, or leave it as a small historical bucket.</small></div>
+    <div class="rule"><span class="n">2</span><span class="ck"></span> &nbsp;Chart of accounts ▸ find <b>Sales</b> ▸ dropdown arrow ▸ <b>Make inactive</b>. <small class="soft">QuickBooks may label this “Delete,” but it only deactivates — past reports keep their history as “Sales (deleted).”</small></div>
+    <div class="rule"><span class="n">3</span><span class="ck"></span> &nbsp;Do the same for <b>Billable Expense Income</b> if it's empty. If it won't deactivate, go Gear ▸ Account and settings ▸ Expenses ▸ “Track billable expenses as income” ▸ switch its account to <b>Materials &amp; Reimbursements</b>, then make it inactive.</div>
+  </div>
+</div>
+
+<!-- PART 7 -->
+<div class="part">
+  <div class="ph"><span class="chip">7</span><h2>Five small money fixes</h2><span class="mins">~10 min</span></div>
+  <table>
+    <thead><tr><th class="col-ck"></th><th>What</th><th class="r">Amount</th><th>Do this</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ck"></span></td><td>Ron D — unapplied payment (Jul 2025)</td><td class="r num">$50.00</td><td>Open the payment ▸ apply to their open invoice, or refund</td></tr>
+      <tr><td><span class="ck"></span></td><td>Isaac — unapplied payment (Aug 2025)</td><td class="r num">$10.00</td><td>Apply to an invoice, or write off</td></tr>
+      <tr><td><span class="ck"></span></td><td>“Sample Customer” — test data</td><td class="r num">$5.00</td><td>Delete the payment, make the customer inactive</td></tr>
+      <tr><td><span class="ck"></span></td><td>Customer Deposit liability</td><td class="r num">$81.00</td><td>Confirm it's Mike Miller's deposit; clear it against invoice 1061</td></tr>
+      <tr><td><span class="ck"></span></td><td>Invoice # gaps 1035–46, 1050, 1052, 1055, 1057–58</td><td class="r">—</td><td>Gear ▸ Audit log ▸ confirm they were deleted drafts, nothing real</td></tr>
+    </tbody>
+  </table>
+  <div class="note red"><b>Not yours yet:</b> don't touch the personal accounts, *W-2 Job Income, or the −$66,690 Opening Balance Equity. That separation happens later with a CPA's sign-off.</div>
+</div>
+
+<!-- PART 8 -->
+<div class="part pagebreak">
+  <div class="ph"><span class="chip">8</span><h2>How to bill every job from now on</h2><span class="mins">keep by the desk</span></div>
+  <div class="rules">
+    <div class="rule"><span class="n">1</span> <b>One line per service, standard items only.</b> The item never changes — quantity, rate, and description do. The description is free text the customer sees; it doesn't affect the books.</div>
+    <div class="rule"><span class="n">2</span> <b>Combos = multiple lines, never a bundle item.</b> Windows + solar is two lines. Quoted one price? Adjust the line rates so they add up to it.</div>
+    <div class="rule"><span class="n">3</span> <b>Deposits use “Customer Deposit Received,” both ways.</b> +amount on the deposit invoice, −amount line on the final invoice. Never subtract a deposit in the Discount field.</div>
+    <div class="rule"><span class="n">4</span> <b>Discounts go in the Discount field only</b> — so you can see what price breaks cost you per year. Never a negative service line.</div>
+    <div class="rule"><span class="n">5</span> <b>Free/courtesy work lives in a description,</b> never a $0 line. A scope breakdown before the sale is an <b>Estimate</b>, not a $0 invoice.</div>
+    <div class="rule"><span class="n">6</span> <b>Materials get their own line only on purpose</b> — the Materials items, at cost. Otherwise price lump-sum and skip it.</div>
+  </div>
+  <p style="font-weight:800; color:var(--navy); margin:9px 0 2px; font-size:8.6pt; letter-spacing:.04em; text-transform:uppercase;">Cheat sheet — you did… → bill with… → lands in</p>
+  <table>
+    <thead><tr><th>You did</th><th>Bill with item</th><th>Lands in</th></tr></thead>
+    <tbody>
+      <tr><td>House windows, outside</td><td>Window Cleaning - 1 or 2 Story Exterior Only</td><td class="acct">Windows – Res.</td></tr>
+      <tr><td>Inside added on</td><td>Window Cleaning - Interior Add-on</td><td class="acct">Windows – Res.</td></tr>
+      <tr><td>Storefront / business</td><td>Window Cleaning - Commercial</td><td class="acct">Windows – Comm.</td></tr>
+      <tr><td>Solar wash</td><td>Solar Panel Cleaning (per panel) × count</td><td class="acct">Solar</td></tr>
+      <tr><td>Re-mesh screens</td><td>Screen Repair - Standard / Pet Proof (per screen)</td><td class="acct">Screens</td></tr>
+      <tr><td>Whole new screen</td><td>Screen - New Frame &amp; Screen (per screen)</td><td class="acct">Screens</td></tr>
+      <tr><td>Pigeon mesh install</td><td>Pigeon Proofing - Installation &amp; Sealing</td><td class="acct">Pigeon Proofing</td></tr>
+      <tr><td>Nest cleanout / sanitize</td><td>Pigeon Proofing - Cleanout &amp; Debris Removal</td><td class="acct">Pigeon Proofing</td></tr>
+      <tr><td>Spinners</td><td>Pigeon proofing spinners</td><td class="acct">Pigeon Proofing</td></tr>
+      <tr><td>Mesh &amp; clips, itemized</td><td>Pigeon Proofing - Materials &amp; Supplies</td><td class="acct">Materials</td></tr>
+      <tr><td>Gutters · roof wash · bins</td><td>Gutter Cleaning · Exterior Cleaning - Other</td><td class="acct">Exterior – Other</td></tr>
+      <tr><td>Hard water spots</td><td>Hard Water Stain Removal</td><td class="acct">Hard Water</td></tr>
+      <tr><td>Odd labor / trip fee</td><td>Miscellaneous Labor · Service Call / Trip Fee</td><td class="acct">Other Service</td></tr>
+      <tr><td>Deposit taken / applied</td><td>Customer Deposit Received (+ then −)</td><td class="acct">Liability</td></tr>
+      <tr><td>Price break</td><td><i>Discount field</i></td><td class="acct">Discounts</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- PART 9 -->
+<div class="part">
+  <div class="ph"><span class="chip">9</span><h2>The routine that keeps it clean</h2><span class="mins">under 1 hr/wk</span></div>
+  <table>
+    <thead><tr><th>Every Monday · ~30 min</th><th>Last day of month · ~30 min</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>
+          <b>Match</b> each customer payment to its invoice — never “Add” a deposit, or income doubles.<br>
+          <b>Categorize</b> the rest (Zelle to you = Draw; personal = Draw; between your accounts = Transfer).<br>
+          <b>Invoice</b> last week's jobs; nudge anything 3+ days overdue.<br>
+          <b>Check:</b> no account negative, Undeposited Funds empty, no negative A/R.
+        </td>
+        <td>
+          <b>Reconcile</b> each business account to its statement.<br>
+          <b>Read</b> the P&amp;L, this month vs last.<br>
+          <b>Sales by Product/Service</b> — your service scoreboard.<br>
+          <b>A/R Aging</b> — call anyone 14+ days out.<br>
+          <b>Set aside 25–30%</b> of net profit for taxes.
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="note"><b>During the week:</b> photograph every receipt into the QuickBooks mobile app at the register — ten seconds, and it saves you a deduction hunt later.</div>
+</div>
+
+<!-- PART 10 -->
+<div class="part">
+  <div class="ph"><span class="chip">10</span><h2>Payments — verified &amp; the one thing left</h2><span class="mins">status</span></div>
+  <div class="note green"><b>✓ Invoice side is verified.</b> All 14 invoices of 2026 — <b>$5,568.80</b> — show paid in full. No missing customer payments.</div>
+  <div class="note gold"><b>⏳ Bank side needs one file from you.</b> Log in to Bank of America ▸ business checking (…0802) ▸ <b>Download ▸ CSV</b>, dates <b>Jan 1, 2026 → today</b> ▸ send it over. I'll tie every payment to its actual deposit (right amount, right account, once, fees accounted), flag anything unmatched or duplicated, and categorize your whole expense backlog for your approval — that's where your missing tax deductions are.</div>
+  <div class="note"><b>Already done for you:</b> the 9 standard items created in QuickBooks · your written manuals, payment log, and this worksheet saved on the project's bookkeeping branch · the foldable on-screen version of this guide.</div>
+</div>
+
+<!-- OPTIONAL APPENDIX -->
+<div class="part pagebreak">
+  <div class="ph"><span class="chip">★</span><h2>Optional: rewrite the 14 invoices for a spotless year</h2><span class="mins">~35 min</span></div>
+  <p style="margin-top:2px;">Part 4 moves your <i>keeper</i> items' revenue out of “Sales.” But revenue billed on old one-off items stays in Sales for the year unless you also touch those invoices. Since there are only <b>14</b>, editing them is the honest way to get a 100%-clean, bill-by-service year and a truly empty Sales account. <b>Keep each invoice's total identical</b> (adjust rates to match) so the applied payment stays put.</p>
+  <table>
+    <thead><tr><th class="col-ck"></th><th>Invoice</th><th class="r">Total</th><th>Replace old lines with</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ck"></span></td><td>1032 · Linda</td><td class="r num">$249</td><td>Window Cleaning - 2 Story Exterior Only $249 → <span class="acct">Windows-Res</span></td></tr>
+      <tr><td><span class="ck"></span></td><td>1034 · Miguel</td><td class="r num">$140</td><td>Customer Deposit Received $140 → <span class="acct">Liability</span> <small class="soft">(was booked as income — this corrects it)</small></td></tr>
+      <tr><td><span class="ck"></span></td><td>1033 · Miguel</td><td class="r num">$1,560</td><td>Materials &amp; Supplies $700 · Solar Panel Cleaning $400 · Installation &amp; Sealing $600 · <i>then</i> Customer Deposit Received −$140 <small class="soft">(replaces the fake $140 discount)</small></td></tr>
+      <tr><td><span class="ck"></span></td><td>1047 · Carie</td><td class="r num">$220</td><td>Window Cleaning ext + Interior Add-on, rates summing $220 → <span class="acct">Windows-Res</span></td></tr>
+      <tr><td><span class="ck"></span></td><td>1048 · Irene</td><td class="r num">$0</td><td><b class="tag">Review:</b> a $0 invoice. If it was a quote, delete &amp; make an Estimate; if the job happened, build a real invoice</td></tr>
+      <tr><td><span class="ck"></span></td><td>1049 · Antonio</td><td class="r num">$120</td><td>Solar Panel Cleaning $120 → <span class="acct">Solar</span></td></tr>
+      <tr><td><span class="ck"></span></td><td>1054 · Wayne</td><td class="r num">$55</td><td>Window Cleaning - 1 Story Exterior Only, rate $55 → <span class="acct">Windows-Res</span></td></tr>
+      <tr><td><span class="ck"></span></td><td>1051 · Staci</td><td class="r num">$570.89</td><td>Screen Repair - Pet Proof ×10 @ $52.99 + slider $40.99 → <span class="acct">Screens</span></td></tr>
+      <tr><td><span class="ck"></span></td><td>1053 · Heather</td><td class="r num">$320</td><td>1 Story Exterior $149 + Interior Add-on $75 + Solar (per panel) ×12 @ $8 → <span class="acct">Windows-Res + Solar</span></td></tr>
+      <tr><td><span class="ck"></span></td><td>1056 · Bridget</td><td class="r num">$675</td><td>Materials &amp; Supplies $320 · Cleanout $105 · Installation &amp; Sealing $250 → <span class="acct">Pigeon + Materials</span></td></tr>
+      <tr><td><span class="ck"></span></td><td>1059 · Linda Smith</td><td class="r num">$239</td><td>1 Story Exterior $149 + Solar Panel Cleaning $90 → <span class="acct">Windows-Res + Solar</span></td></tr>
+      <tr><td><span class="ck"></span></td><td>1060 · Sarah</td><td class="r num">$280</td><td>Window Cleaning $200 + Solar Panel Cleaning $80 → <span class="acct">Windows-Res + Solar</span></td></tr>
+      <tr><td><span class="ck"></span></td><td>1061 · Mike Miller</td><td class="r num">$879</td><td>Materials $320.99 · Cleanout $145 · Installation &amp; Sealing $344.01 · spinners $150 · Deposit −$81 <small class="soft">(replaces the $81 discount)</small></td></tr>
+      <tr><td><span class="ck"></span></td><td>1062 · Linda Smith</td><td class="r num">$260.91</td><td>Screen Repair - Standard ×9 @ $33.99, then $45 in the Discount field → <span class="acct">Screens</span></td></tr>
+    </tbody>
+  </table>
+  <div class="note"><b>Not up for this now?</b> That's fine — skip it. Part 4 already fixes everything going forward; the only cost of skipping is that early-2026 history keeps a small “Sales (deleted)” bucket. You can also send me the BofA CSV and I'll hand you the exact edits alongside the expense cleanup.</div>
+  <div class="foot">Prepared from your live QuickBooks file, Jul 17 2026. Bookkeeping guidance, not tax advice — confirm the California materials/sales-tax point and your vehicle-deduction method with a CPA. Full manuals live in the project's <b>bookkeeping/</b> folder on the <span class="num">claude/window-cleaning-quickbooks-whn2y7</span> branch.</div>
+</div>
+
+</body>
+</html>
