@@ -15,6 +15,7 @@ balance sheet — not generic templates.
 | [03-transaction-rules.md](03-transaction-rules.md) | Naming conventions, category + memo + billable + tax for every common transaction, and the QuickBooks bank rules to create |
 | [04-cleanup-plan.md](04-cleanup-plan.md) | What I found in your file (with evidence), your payment verification checklist, month-by-month review, and the fix list in priority order |
 | [05-best-practices.md](05-best-practices.md) | Tags, customer naming, estimates vs. invoices, recurring transactions, and the monthly reports to read |
+| [06-billing-guide.md](06-billing-guide.md) | How invoicing really works: items → income accounts, the six billing rules, worked examples from your real jobs, and the billing cheat sheet |
 
 ## Start here — one-time setup, ~20 minutes in QuickBooks
 
