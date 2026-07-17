@@ -1,0 +1,18 @@
+record,invoice_date,customer,service,invoice_amount,payment_method,payment_date,bank_deposit_date,bank_account,bank_deposit_amount,merchant_fee,match_status,notes
+INV 1032,2026-03-17,Linda,Window cleaning - exterior,249.00,,,,,,,PENDING BANK VERIFICATION,
+INV 1034,2026-04-28,Miguel,Materials deposit (20%),140.00,,,,,,,PENDING BANK VERIFICATION,Deposit - future ones use Customer Deposit Received item
+INV 1033,2026-05-03,Miguel,Pigeon proofing - materials + cleanout + labor,1560.00,,,,,,,PENDING BANK VERIFICATION,$1700 less $140 deposit netted as discount
+INV 1047,2026-05-28,Carie,Window cleaning - ext + int,220.00,,,,,,,PENDING BANK VERIFICATION,
+INV 1048,2026-05-28,Irene Atteberry,Pigeon proofing (itemized),0.00,,,,,,,REVIEW,$0 invoice - confirm this job was actually billed and paid somewhere
+INV 1049,2026-05-28,Antonio,Solar panel cleaning,120.00,,,,,,,PENDING BANK VERIFICATION,
+INV 1054,2026-06-02,Wayne,Window cleaning - ext 1-story,55.00,,,,,,,PENDING BANK VERIFICATION,
+INV 1051,2026-06-04,Staci,Pet-proof re-mesh x10 + sliding door,570.89,,,,,,,PENDING BANK VERIFICATION,
+INV 1053,2026-06-16,Heather,Windows + 12 solar panels bundle,320.00,,,,,,,PENDING BANK VERIFICATION,
+INV 1056,2026-06-23,Bridget Paley,Pigeon proofing - 27-panel array,675.00,,,,,,,PENDING BANK VERIFICATION,
+INV 1059,2026-07-07,Linda Smith,Ext windows + solar,239.00,,,,,,,PENDING BANK VERIFICATION,
+INV 1060,2026-07-09,Sarah Residence,Ext + int windows + solar,280.00,,,,,,,PENDING BANK VERIFICATION,
+INV 1061,2026-07-15,Mike Miller,Pigeon proofing - 22-panel + spinners,879.00,,,,,,,PENDING BANK VERIFICATION,$960 less $81 discount - verify against the $81 Customer Deposit liability
+INV 1062,2026-07-16,Linda Smith,Standard re-mesh x9,260.91,,,,,,,PENDING BANK VERIFICATION,$305.91 less $45 discount - repeat customer
+UNAPPLIED,2025-07-16,Ron D,Unapplied payment in A/R,-50.00,,,,,,,ACTION NEEDED,Apply to an open invoice or refund/write off
+UNAPPLIED,2025-08-15,Isaac,Unapplied payment in A/R,-10.00,,,,,,,ACTION NEEDED,Apply or write off
+UNAPPLIED,2025-08-15,Sample Customer,Leftover test data,-5.00,,,,,,,ACTION NEEDED,Delete payment and make customer inactive

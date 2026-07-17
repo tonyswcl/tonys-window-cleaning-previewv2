@@ -134,9 +134,10 @@ with you; 3–6 are one QBO session each.
 2. ☐ **Bank-feed backlog + deposit verification** — export or share the 2026
    bank/card transactions and we categorize per doc 03 and tie out section B's
    deposit column.
-3. ☐ Create the new income/COGS/expense accounts (doc 01) and the 18 items
-   (doc 02); repoint kept items; deactivate the rest. *(I can do this in
-   QuickBooks for you once the connection is re-authorized — say the word.)*
+3. ◐ **Items: done July 17** — the nine missing standard items were created
+   in QuickBooks via the connector. Still by hand (README "Start here"):
+   create the income/COGS/equity accounts, repoint items to them, deactivate
+   the old items.
 4. ☐ Apply the −$65 unapplied payments; resolve the $81 deposit; audit-log
    check on invoice gaps.
 5. ☐ Disconnect personal accounts; sweep their history to equity; CPA blesses

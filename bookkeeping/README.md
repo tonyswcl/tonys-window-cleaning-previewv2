@@ -16,6 +16,27 @@ balance sheet — not generic templates.
 | [04-cleanup-plan.md](04-cleanup-plan.md) | What I found in your file (with evidence), your payment verification checklist, month-by-month review, and the fix list in priority order |
 | [05-best-practices.md](05-best-practices.md) | Tags, customer naming, estimates vs. invoices, recurring transactions, and the monthly reports to read |
 
+## Start here — one-time setup, ~20 minutes in QuickBooks
+
+The 9 missing standard items were already created for you (July 17). Three
+things remain that can only be clicked in QuickBooks itself:
+
+1. **Create the income & core accounts** (Gear → Chart of accounts → New).
+   Minimum set: the six income accounts 4000/4010/4100/4200/4300/4400, plus
+   5000 Job Materials & Supplies (COGS), 3000 Owner's Contributions, and
+   rename "Owner's Pay & Personal Expenses" → 3100 Owner's Draws (doc 01 has
+   the full table — add the rest as you go).
+2. **Repoint items** (Sales → Products & services → Edit each): every kept or
+   new item gets its income account from doc 02's table. **Most important
+   one: "Customer Deposit Received" must point to "Customer Deposit
+   (Liability)"** — never an income account.
+3. **Deactivate the old items** from doc 02's "make inactive" list (Edit →
+   Make inactive). History is preserved.
+
+After that, the system runs on the weekly workflow below, and invoices only
+ever use the standard items — vary quantity, rate, and description, never
+create a new item per job.
+
 ## Your weekly workflow (under 1 hour)
 
 Do this every Monday morning. After the first month it takes 30–40 minutes.
@@ -52,6 +73,8 @@ Work every account to zero "For review":
 ## Where things stand (July 17, 2026)
 
 - 2026 invoiced & collected: **$5,568.80** across 14 invoices — all paid. ✅
+  Bank-side verification is tracked in [payment-log-2026.csv](payment-log-2026.csv) — pending the business checking export.
+- Standard service items created directly in QuickBooks on July 17 (doc 02) — finish with the "Start here" steps above.
 - Categorized expenses: **only $356.84** — your books are missing most of your real costs (materials, fuel, insurance, phone). Fixing this is priority #1 in doc 04.
 - Revenue mix: pigeon proofing ≈ 58%, windows ≈ 16%, screens ≈ 15%, solar ≈ 5%, bundles ≈ 6%.
 - The file currently mixes personal accounts (W-2 paychecks, personal loan, Honda Civic loan, several personal cards) with the business — the cleanup plan in doc 04 separates them.

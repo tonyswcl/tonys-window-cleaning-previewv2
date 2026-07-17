@@ -13,6 +13,15 @@ Create these, map each to its income account from doc 01, and stop creating
 new items per job — vary the **quantity, rate, and description**, not the item.
 All are QBO type **Service**, all **non-taxable** (see the sales-tax note below).
 
+> **Status July 17, 2026:** the nine items that didn't already exist were
+> created in your QuickBooks file (Gutter Cleaning, Window Cleaning -
+> Commercial, Hard Water Stain Removal, Screen - New Frame & Screen,
+> Exterior Cleaning - Other, Service Call / Trip Fee, Miscellaneous Labor,
+> Materials Reimbursement, Customer Deposit Received). The rest of the list
+> reuses items you already had. Remaining by hand: point each item at its
+> income account (the connector can't create accounts) and deactivate the
+> old ones below.
+
 | Item name | Default rate | Income account | Notes |
 |---|---|---|---|
 | Window Cleaning – Exterior (Residential) | $149 (1-story) / $249 (2-story) | 4000 | Your existing tiered descriptions are good — keep them |
