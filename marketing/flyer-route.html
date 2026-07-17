@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<style>
+  @page{ size:Letter; margin:0.5in 0.55in 0.6in; }
+  *{ box-sizing:border-box; }
+  :root{
+    --navy:#0f2f4f; --blue:#2c6aa8; --blue-soft:#eaf2fb; --gold:#b9791f; --gold-soft:#fbf1dc;
+    --ink:#1a2733; --soft:#4d6072; --line:#cdddec; --line2:#e6eef6; --zebra:#f6fafd;
+    --green:#1d6b34; --green-soft:#e6f3ea; --red:#9a2f2f; --red-soft:#fbe9e9;
+  }
+  html{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  body{ font:10.3pt/1.45 -apple-system,"Segoe UI","Liberation Sans",Arial,sans-serif; color:var(--ink); margin:0; }
+  h1,h2{ margin:0; line-height:1.12; }
+  p{ margin:.3em 0 .55em; }
+  b{ color:var(--navy); } small{ font-size:8.4pt; } .soft{ color:var(--soft); }
+  .num{ font-variant-numeric:tabular-nums; }
+
+  .head{ border:1.5px solid var(--navy); border-radius:10px; padding:14px 16px; }
+  .brow{ display:flex; align-items:baseline; border-bottom:1px solid var(--line); padding-bottom:8px; margin-bottom:10px; }
+  .logo{ font-size:8pt; letter-spacing:.16em; text-transform:uppercase; color:var(--blue); font-weight:700; }
+  .brow .r{ margin-left:auto; font-size:8.4pt; color:var(--soft); }
+  h1{ font-size:19pt; color:var(--navy); letter-spacing:-.01em; }
+  .sun{ height:4px; width:60px; border-radius:9px; background:linear-gradient(90deg,var(--gold),var(--blue)); margin:8px 0 0; }
+  .sub{ color:var(--soft); font-size:10pt; margin-top:7px; }
+
+  .strip{ display:flex; gap:9px; margin-top:11px; }
+  .strip .box{ flex:1; border:1px solid var(--line); border-radius:8px; padding:7px 10px; }
+  .strip .box.gold{ background:var(--gold-soft); border-color:#e7cf9c; }
+  .strip .box.blue{ background:var(--blue-soft); }
+  .strip .box .k{ font-size:7.4pt; letter-spacing:.08em; text-transform:uppercase; font-weight:700; color:var(--blue); }
+  .strip .box.gold .k{ color:var(--gold); }
+  .strip .box .t{ font-size:9pt; margin-top:2px; }
+
+  .legend{ display:flex; flex-wrap:wrap; gap:5px 14px; margin:11px 0 2px; font-size:8.7pt; align-items:center; }
+  .pill{ display:inline-block; border-radius:20px; padding:1px 8px; font-weight:800; font-size:8pt; color:#fff; }
+  .t1{ background:var(--gold); } .t2{ background:var(--blue); } .t3{ background:var(--blue-soft); color:var(--blue); }
+  .code{ font-weight:800; color:var(--navy); }
+
+  .ph{ display:flex; align-items:center; gap:8px; margin:13px 0 5px; }
+  .ph h2{ font-size:10.4pt; color:#fff; background:var(--navy); padding:3px 11px; border-radius:6px; letter-spacing:.02em; }
+  .ph .hint{ font-size:8.4pt; color:var(--soft); }
+
+  table{ width:100%; border-collapse:collapse; table-layout:fixed; }
+  col.c-ck{ width:4%; } col.c-hood{ width:33%; } col.c-tier{ width:7%; } col.c-lead{ width:12%; }
+  col.c-date{ width:15%; } col.c-fly{ width:9%; } col.c-call{ width:10%; } col.c-job{ width:10%; }
+  th{ font-size:7.2pt; letter-spacing:.04em; text-transform:uppercase; color:var(--soft); background:var(--blue-soft); border-bottom:1px solid var(--line); padding:3px 6px; text-align:left; }
+  th.ctr,td.ctr{ text-align:center; }
+  td{ padding:5px 6px; border-bottom:1px solid var(--line2); vertical-align:middle; font-size:9.3pt; }
+  tr:nth-child(even) td{ background:var(--zebra); }
+  .hood{ font-weight:700; color:var(--ink); }
+  .look{ display:block; font-size:7.9pt; color:var(--soft); font-weight:400; line-height:1.2; }
+  .ck{ display:inline-block; width:12px; height:12px; border:1.4px solid var(--blue); border-radius:2.5px; }
+  .lead{ font-weight:800; color:var(--blue); font-size:8.6pt; letter-spacing:.02em; }
+  .wr{ border-bottom:1px dotted #9db6cc; height:11px; }
+  .tierbadge{ display:inline-block; border-radius:20px; padding:0 7px; font-weight:800; font-size:7.6pt; color:#fff; }
+
+  .skip td{ background:#f4f6f8 !important; color:var(--soft); }
+  .skip .hood{ color:var(--soft); font-weight:600; }
+
+  .note{ border-left:3px solid var(--blue); background:var(--blue-soft); border-radius:0 7px 7px 0; padding:6px 10px; margin:8px 0; font-size:9pt; }
+  .note.gold{ border-color:var(--gold); background:var(--gold-soft); }
+  .foot{ margin-top:12px; border-top:1px solid var(--line); padding-top:6px; font-size:8.2pt; color:var(--soft); }
+  .tips{ font-size:8.9pt; }
+  .tips b{ color:var(--navy); }
+</style>
+</head>
+<body>
+
+<div class="head">
+  <div class="brow"><span class="logo">Tony's Window Cleaning</span><span class="r">High Desert Flyer Route &amp; Conversion Tracker · Jul 2026</span></div>
+  <h1>Where the flyers go —<br>and where they've been.</h1>
+  <div class="sun"></div>
+  <p class="sub">Every neighborhood is listed once. Tick it when it's covered, jot the date and counts, and you'll never double-drop a street by accident — plus you'll learn which neighborhoods actually pay you back.</p>
+
+  <div class="strip">
+    <div class="box gold"><div class="k">Golden rule</div><div class="t">A house with rooftop solar = a warm <b>pigeon-proofing + solar</b> lead. That's 58% of your revenue — target the panels you can see from the curb.</div></div>
+    <div class="box blue"><div class="k">Best timing</div><div class="t">55+ &amp; lake/golf areas: <b>mid-morning weekdays</b> — people are home and read the door. Leave 5–10 extra where you just worked.</div></div>
+  </div>
+
+  <div class="legend">
+    <span><span class="pill t1">T1</span> drop first</span>
+    <span><span class="pill t2">T2</span> strong</span>
+    <span><span class="pill t3">T3</span> cherry-pick</span>
+    <span class="soft">|</span>
+    <span><span class="code">WIN</span> windows</span>
+    <span><span class="code">SOL</span> solar cleaning</span>
+    <span><span class="code">PP</span> pigeon proofing</span>
+    <span><span class="code">SCR</span> screens</span>
+  </div>
+</div>
+
+<!-- VICTORVILLE -->
+<div class="ph"><h2>Victorville</h2><span class="hint">start with Spring Valley Lake &amp; Eagle Ranch</span></div>
+<table>
+  <colgroup><col class="c-ck"><col class="c-hood"><col class="c-tier"><col class="c-lead"><col class="c-date"><col class="c-fly"><col class="c-call"><col class="c-job"></colgroup>
+  <thead><tr><th class="ctr">✓</th><th>Neighborhood</th><th class="ctr">Tier</th><th>Lead</th><th>Date dropped</th><th class="ctr">Flyers</th><th class="ctr">Callbacks</th><th class="ctr">Jobs</th></tr></thead>
+  <tbody>
+    <tr><td class="ctr"><span class="ck"></span></td><td><span class="hood">Spring Valley Lake</span><span class="look">Lake/golf, 2-story, solar, HOA — referrals spread</span></td><td class="ctr"><span class="tierbadge t1">1</span></td><td class="lead">WIN·SOL·PP</td><td><div class="wr"></div></td><td class="ctr"><div class="wr"></div></td><td class="ctr"><div class="wr"></div></td><td class="ctr"><div class="wr"></div></td></tr>
+    <tr><td class="ctr"><span class="ck"></span></td><td><span class="hood">Eagle Ranch</span><span class="look">Newer tract, rooftop solar on nearly every home</span></td><td class="ctr"><span class="tierbadge t2">2</span></td><td class="lead">PP·SOL</td><td><div class="wr"></div></td><td class="ctr"><div class="wr"></div></td><td class="ctr"><div class="wr"></div></td><td class="ctr"><div class="wr"></div></td></tr>
+    <tr><td class="ctr"><span class="ck"></span></td><td><span class="hood">Brentwood / West Creek</span><span class="look">Tract solar, dense &amp; walkable for door-hangers</span></td><td class="ctr"><span class="tierbadge t2">2</span></td><td class="lead">SOL·PP</td><td><div class="wr"></div></td><td class="ctr"><div class="wr"></div></td><td class="ctr"><div class="wr"></div></td><td class="ctr"><div class="wr"></div></td></tr>
+    <tr><td class="ctr"><span class="ck"></span></td><td><span class="hood">Mojave Heights / Sunset Ridge</span><span class="look">Established owners, larger older homes</span></td><td class="ctr"><span class="tierbadge t3">3</span></td><td class="lead">WIN·SCR</td><td><div class="wr"></div></td><td class="ctr"><div class="wr"></div></td><td class="ctr"><div class="wr"></div></td><td class="ctr"><div class="wr"></div></td></tr>
+    <tr><td class="ctr"><span class="ck"></span></td><td><span class="hood wr" style="width:70%"></span><span class="look">your own find</span></td><td class="ctr"></td><td></td><td><div class="wr"></div></td><td class="ctr"><div class="wr"></div></td><td class="ctr"><div class="wr"></div></td><td class="ctr"><div class="wr"></div></td></tr>
+  </tbody>
+</table>
+
+<!-- APPLE VALLEY -->
+<div class="ph"><h2>Apple Valley</h2><span class="hint">Jess Ranch is your gold mine</span></div>
+<table>
+  <colgroup><col class="c-ck"><col class="c-hood"><col class="c-tier"><col class="c-lead"><col class="c-date"><col class="c-fly"><col class="c-call"><col class="c-job"></colgroup>
+  <thead><tr><th class="ctr">✓</th><th>Neighborhood</th><th class="ctr">Tier</th><th>Lead</th><th>Date dropped</th><th class="ctr">Flyers</th><th class="ctr">Callbacks</th><th class="ctr">Jobs</th></tr></thead>
+  <tbody>
+    <tr><td class="ctr"><span class="ck"></span></td><td><span class="hood">Jess Ranch (55+)</span><span class="look">Retirees, single-story, won't climb ladders, high solar</span></td><td class="ctr"><span class="tierbadge t1">1</span></td><td class="lead">SOL·WIN·SCR</td><td><div class="wr"></div></td><td class="ctr"><div class="wr"></div></td><td class="ctr"><div class="wr"></div></td><td class="ctr"><div class="wr"></div></td></tr>
+    <tr><td class="ctr"><span class="ck"></span></td><td><span class="hood">Desert Knolls</span><span class="look">Established, nicer homes, pride of ownership</span></td><td class="ctr"><span class="tierbadge t2">2</span></td><td class="lead">WIN·SOL</td><td><div class="wr"></div></td><td class="ctr"><div class="wr"></div></td><td class="ctr"><div class="wr"></div></td><td class="ctr"><div class="wr"></div></td></tr>
+    <tr><td class="ctr"><span class="ck"></span></td><td><span class="hood">North Apple Valley tracts</span><span class="look">Newer builds, solar-heavy</span></td><td class="ctr"><span class="tierbadge t2">2</span></td><td class="lead">PP·SOL</td><td><div class="wr"></div></td><td class="ctr"><div class="wr"></div></td><td class="ctr"><div class="wr"></div></td><td class="ctr"><div class="wr"></div></td></tr>
+    <tr><td class="ctr"><span class="ck"></span></td><td><span class="hood">Rancherias / Sitting Bull</span><span class="look">Horse properties, big custom homes &amp; lots</span></td><td class="ctr"><span class="tierbadge t3">3</span></td><td class="lead">WIN·SOL·PP</td><td><div class="wr"></div></td><td class="ctr"><div class="wr"></div></td><td class="ctr"><div class="wr"></div></td><td class="ctr"><div class="wr"></div></td></tr>
+    <tr><td class="ctr"><span class="ck"></span></td><td><span class="hood">Quailwood / Sycamore Rocks</span><span class="look">Established owner density</span></td><td class="ctr"><span class="tierbadge t3">3</span></td><td class="lead">WIN·SCR</td><td><div class="wr"></div></td><td class="ctr"><div class="wr"></div></td><td class="ctr"><div class="wr"></div></td><td class="ctr"><div class="wr"></div></td></tr>
+    <tr><td class="ctr"><span class="ck"></span></td><td><span class="hood wr" style="width:70%"></span><span class="look">your own find</span></td><td class="ctr"></td><td></td><td><div class="wr"></div></td><td class="ctr"><div class="wr"></div></td><td class="ctr"><div class="wr"></div></td><td class="ctr"><div class="wr"></div></td></tr>
+  </tbody>
+</table>
+
+<!-- HESPERIA -->
+<div class="ph"><h2>Hesperia</h2><span class="hint">newer west-side tracts convert best</span></div>
+<table>
+  <colgroup><col class="c-ck"><col class="c-hood"><col class="c-tier"><col class="c-lead"><col class="c-date"><col class="c-fly"><col class="c-call"><col class="c-job"></colgroup>
+  <thead><tr><th class="ctr">✓</th><th>Neighborhood</th><th class="ctr">Tier</th><th>Lead</th><th>Date dropped</th><th class="ctr">Flyers</th><th class="ctr">Callbacks</th><th class="ctr">Jobs</th></tr></thead>
+  <tbody>
+    <tr><td class="ctr"><span class="ck"></span></td><td><span class="hood">West Hesperia / Mesa tracts</span><span class="look">Newer builds, solar, homeowners</span></td><td class="ctr"><span class="tierbadge t2">2</span></td><td class="lead">PP·SOL</td><td><div class="wr"></div></td><td class="ctr"><div class="wr"></div></td><td class="ctr"><div class="wr"></div></td><td class="ctr"><div class="wr"></div></td></tr>
+    <tr><td class="ctr"><span class="ck"></span></td><td><span class="hood">Hesperia Golf &amp; Country Club area</span><span class="look">Established, larger homes, pride</span></td><td class="ctr"><span class="tierbadge t2">2</span></td><td class="lead">WIN·SOL</td><td><div class="wr"></div></td><td class="ctr"><div class="wr"></div></td><td class="ctr"><div class="wr"></div></td><td class="ctr"><div class="wr"></div></td></tr>
+    <tr><td class="ctr"><span class="ck"></span></td><td><span class="hood">Maple / Cottonwood tracts</span><span class="look">Solid owner density, screens sun-worn</span></td><td class="ctr"><span class="tierbadge t3">3</span></td><td class="lead">SOL·SCR</td><td><div class="wr"></div></td><td class="ctr"><div class="wr"></div></td><td class="ctr"><div class="wr"></div></td><td class="ctr"><div class="wr"></div></td></tr>
+    <tr><td class="ctr"><span class="ck"></span></td><td><span class="hood wr" style="width:70%"></span><span class="look">your own find</span></td><td class="ctr"></td><td></td><td><div class="wr"></div></td><td class="ctr"><div class="wr"></div></td><td class="ctr"><div class="wr"></div></td><td class="ctr"><div class="wr"></div></td></tr>
+  </tbody>
+</table>
+
+<!-- OAK HILLS / HELENDALE -->
+<div class="ph"><h2>Oak Hills &nbsp;·&nbsp; Helendale (Silver Lakes)</h2><span class="hint">highest ticket sizes — worth the drive</span></div>
+<table>
+  <colgroup><col class="c-ck"><col class="c-hood"><col class="c-tier"><col class="c-lead"><col class="c-date"><col class="c-fly"><col class="c-call"><col class="c-job"></colgroup>
+  <thead><tr><th class="ctr">✓</th><th>Neighborhood</th><th class="ctr">Tier</th><th>Lead</th><th>Date dropped</th><th class="ctr">Flyers</th><th class="ctr">Callbacks</th><th class="ctr">Jobs</th></tr></thead>
+  <tbody>
+    <tr><td class="ctr"><span class="ck"></span></td><td><span class="hood">Oak Hills Ranchos</span><span class="look">Affluent, 2-story custom homes, big lots, solar</span></td><td class="ctr"><span class="tierbadge t1">1</span></td><td class="lead">WIN·SOL·PP</td><td><div class="wr"></div></td><td class="ctr"><div class="wr"></div></td><td class="ctr"><div class="wr"></div></td><td class="ctr"><div class="wr"></div></td></tr>
+    <tr><td class="ctr"><span class="ck"></span></td><td><span class="hood">Silver Lakes (Helendale)</span><span class="look">Gated lake/golf, retirees, solar, low competition</span></td><td class="ctr"><span class="tierbadge t1">1</span></td><td class="lead">WIN·SOL</td><td><div class="wr"></div></td><td class="ctr"><div class="wr"></div></td><td class="ctr"><div class="wr"></div></td><td class="ctr"><div class="wr"></div></td></tr>
+    <tr><td class="ctr"><span class="ck"></span></td><td><span class="hood wr" style="width:70%"></span><span class="look">your own find</span></td><td class="ctr"></td><td></td><td><div class="wr"></div></td><td class="ctr"><div class="wr"></div></td><td class="ctr"><div class="wr"></div></td><td class="ctr"><div class="wr"></div></td></tr>
+  </tbody>
+</table>
+
+<!-- PHELAN / ADELANTO -->
+<div class="ph"><h2>Phelan / Piñon Hills &nbsp;·&nbsp; Adelanto</h2><span class="hint">cherry-pick the nicer homes only</span></div>
+<table>
+  <colgroup><col class="c-ck"><col class="c-hood"><col class="c-tier"><col class="c-lead"><col class="c-date"><col class="c-fly"><col class="c-call"><col class="c-job"></colgroup>
+  <thead><tr><th class="ctr">✓</th><th>Neighborhood</th><th class="ctr">Tier</th><th>Lead</th><th>Date dropped</th><th class="ctr">Flyers</th><th class="ctr">Callbacks</th><th class="ctr">Jobs</th></tr></thead>
+  <tbody>
+    <tr><td class="ctr"><span class="ck"></span></td><td><span class="hood">Phelan / Piñon Hills custom homes</span><span class="look">Acreage, tall/steep roofs, solar — skip the fixer-uppers</span></td><td class="ctr"><span class="tierbadge t3">3</span></td><td class="lead">SOL·PP</td><td><div class="wr"></div></td><td class="ctr"><div class="wr"></div></td><td class="ctr"><div class="wr"></div></td><td class="ctr"><div class="wr"></div></td></tr>
+    <tr><td class="ctr"><span class="ck"></span></td><td><span class="hood">Adelanto — newer solar tracts only</span><span class="look">You already sold here; stick to the newer builds</span></td><td class="ctr"><span class="tierbadge t3">3</span></td><td class="lead">PP·SOL</td><td><div class="wr"></div></td><td class="ctr"><div class="wr"></div></td><td class="ctr"><div class="wr"></div></td><td class="ctr"><div class="wr"></div></td></tr>
+    <tr><td class="ctr"><span class="ck"></span></td><td><span class="hood wr" style="width:70%"></span><span class="look">your own find</span></td><td class="ctr"></td><td></td><td><div class="wr"></div></td><td class="ctr"><div class="wr"></div></td><td class="ctr"><div class="wr"></div></td><td class="ctr"><div class="wr"></div></td></tr>
+  </tbody>
+</table>
+
+<!-- EXPANSION / SKIP -->
+<div class="ph"><h2>Expansion &amp; “don't bother” — logged so you don't wonder</h2></div>
+<table>
+  <colgroup><col class="c-ck"><col class="c-hood"><col class="c-tier"><col class="c-lead"><col class="c-date"><col class="c-fly"><col class="c-call"><col class="c-job"></colgroup>
+  <thead><tr><th class="ctr">✓</th><th>Area</th><th class="ctr">Tier</th><th>Lead</th><th>Date dropped</th><th class="ctr">Flyers</th><th class="ctr">Callbacks</th><th class="ctr">Jobs</th></tr></thead>
+  <tbody>
+    <tr><td class="ctr"><span class="ck"></span></td><td><span class="hood">Lucerne Valley</span><span class="look">Rural, spread out — only if you're already out there</span></td><td class="ctr"><span class="tierbadge t3">3</span></td><td class="lead">WIN·SOL</td><td><div class="wr"></div></td><td class="ctr"><div class="wr"></div></td><td class="ctr"><div class="wr"></div></td><td class="ctr"><div class="wr"></div></td></tr>
+    <tr><td class="ctr"><span class="ck"></span></td><td><span class="hood">Wrightwood</span><span class="look">Cabins &amp; 2nd homes, pine not dust — windows, not solar</span></td><td class="ctr"><span class="tierbadge t3">3</span></td><td class="lead">WIN</td><td><div class="wr"></div></td><td class="ctr"><div class="wr"></div></td><td class="ctr"><div class="wr"></div></td><td class="ctr"><div class="wr"></div></td></tr>
+    <tr class="skip"><td class="ctr">✗</td><td><span class="hood">Old Town Victorville · central Adelanto · Barstow</span><span class="look">Mostly renters / lower ticket — skip for flyers, take the jobs if they call</span></td><td class="ctr">—</td><td class="soft" style="font-weight:700;">skip</td><td class="soft" style="font-size:8pt;">intentionally skipped</td><td class="ctr">—</td><td class="ctr">—</td><td class="ctr">—</td></tr>
+  </tbody>
+</table>
+
+<div class="note gold"><b>Read your own results after 2–3 weeks:</b> whichever neighborhoods show the most callbacks per 100 flyers, that's where the next batch goes — double down there and drop the dead ones. Your tracker becomes your ad-spend guide.</div>
+
+<div class="foot">Neighborhood picks are local-market judgment for the High Desert (San Bernardino County) tuned to your services — you know the streets, so overrule me where one runs younger or more rental than expected. Not affiliated with any HOA or community listed.</div>
+
+</body>
+</html>
