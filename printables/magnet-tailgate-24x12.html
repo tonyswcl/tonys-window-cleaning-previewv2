@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Tony's Window Cleaning — Tailgate Magnet 24×12 (full bleed 24.25×12.25)</title>
+<link rel="stylesheet" href="brand-print.css">
+<style>
+  /* VistaPrint car magnet: trim 24in × 12in, bleed .125in per side, no crop marks.
+     Keep all text ≥ .35in inside the trim edge (safe zone). */
+  @page{size:24.25in 12.25in;margin:0}
+  body{
+    width:24.25in;height:12.25in;overflow:hidden;
+    display:flex;flex-direction:column;align-items:center;
+    position:relative;color:#fff;
+    background:
+      radial-gradient(18in 13in at 85% 0%, rgba(63,134,201,.5) 0%, rgba(63,134,201,0) 60%),
+      radial-gradient(20in 15in at 0% 100%, rgba(29,74,120,.8) 0%, rgba(29,74,120,0) 65%),
+      linear-gradient(160deg, var(--navy-900) 0%, var(--navy-800) 55%, var(--navy-600) 100%);
+  }
+  body>*{flex-shrink:0}
+
+  .sparkle{position:absolute;opacity:.9}
+  .s1{top:1.1in;left:1.5in;font-size:80px;color:var(--brand-300)}
+  .s2{top:3.2in;right:1.7in;font-size:56px;color:var(--gold-400)}
+  .s3{bottom:3.4in;left:2.2in;font-size:48px;color:var(--brand-400)}
+
+  .brandline{
+    margin-top:.62in;
+    font-family:var(--font-head);font-weight:800;font-size:78px;
+    letter-spacing:.08em;text-transform:uppercase;color:var(--sky-200);
+  }
+  .brandline strong{color:#fff}
+
+  .headline{margin-top:.42in;text-align:center}
+  .headline .free{font-size:210px;display:block}
+  .headline .free.t3d{text-shadow:
+    0 3px 0 #a06a10, 0 6px 0 #96620d, 0 9px 0 #8b5a0b,
+    0 12px 0 #7f5209, 0 15px 0 #734a08, 0 18px 0 #674206,
+    0 32px 46px rgba(0,0,0,.45);}
+
+  .callortext{
+    margin-top:.5in;
+    font-size:54px;font-weight:800;letter-spacing:.42em;text-transform:uppercase;
+    color:var(--gold-400);
+  }
+
+  .phone-wrap{margin-top:.28in;text-align:center}
+  .phone{font-size:230px;letter-spacing:.02em}
+  .phone.t3d{text-shadow:
+    0 3px 0 #5c92c6, 0 6px 0 #4d83b8, 0 9px 0 #3f74a9,
+    0 12px 0 #32659a, 0 15px 0 #26578b, 0 18px 0 #1b497c,
+    0 36px 52px rgba(0,0,0,.5);}
+
+  .svc-band{
+    margin-top:auto;width:100%;
+    background:linear-gradient(120deg,var(--gold-400) 0%,var(--gold-500) 55%,var(--gold-600) 100%);
+    color:var(--navy-900);
+    padding:.4in .6in .5in; /* extra bottom = bleed + corner rounding clearance */
+    display:flex;justify-content:center;align-items:center;gap:.42in;
+    font-weight:800;font-size:40px;letter-spacing:.02em;white-space:nowrap;
+  }
+  .svc-band .dot{color:var(--navy-800);opacity:.55}
+  .svc-band .site{font-weight:800}
+</style>
+</head>
+<body>
+  <span class="sparkle s1">✦</span>
+  <span class="sparkle s2">✦</span>
+  <span class="sparkle s3">✦</span>
+
+  <div class="brandline">Tony's <strong>Window Cleaning</strong></div>
+
+  <div class="headline">
+    <span class="t3d t3d-gold free" data-text="FREE QUOTES">FREE QUOTES</span>
+  </div>
+
+  <div class="callortext">Call or Text</div>
+  <div class="phone-wrap">
+    <span class="t3d t3d-ice phone" data-text="714-559-0300">714-559-0300</span>
+  </div>
+
+  <div class="svc-band gloss-band">
+    <span>Windows</span><span class="dot">✦</span>
+    <span>Solar Panels</span><span class="dot">✦</span>
+    <span>Pigeon Proofing</span><span class="dot">✦</span>
+    <span>Pressure Washing</span><span class="dot">✦</span>
+    <span class="site">twindowclean.com</span>
+  </div>
+</body>
+</html>

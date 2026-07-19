@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Tony's Window Cleaning — Door Magnet 20×10 (full bleed 20.25×10.25)</title>
+<link rel="stylesheet" href="brand-print.css">
+<style>
+  /* VistaPrint car magnet: trim 20in × 10in, bleed .125in per side, no crop marks.
+     Keep all text ≥ .35in inside the trim edge (safe zone). */
+  @page{size:20.25in 10.25in;margin:0}
+  body{
+    width:20.25in;height:10.25in;overflow:hidden;
+    display:flex;flex-direction:column;align-items:center;
+    position:relative;
+    background:
+      radial-gradient(16in 11in at 90% -10%, var(--gold-300) 0%, rgba(251,227,154,0) 55%),
+      radial-gradient(18in 14in at -10% 115%, var(--sky-200) 0%, rgba(192,224,240,0) 60%),
+      linear-gradient(180deg, var(--white) 0%, var(--sky-50) 55%, var(--sky-100) 100%);
+  }
+  body>*{flex-shrink:0}
+
+  .sun{
+    position:absolute;top:.75in;right:.9in;width:2.1in;height:2.1in;
+    background:radial-gradient(circle at 38% 34%, #fff3cf 0%, var(--gold-400) 38%, var(--gold-500) 62%, var(--gold-600) 100%);
+    border-radius:50%;
+    box-shadow:0 0 0 .13in rgba(255,255,255,.9), 0 .2in .45in rgba(224,153,42,.45);
+  }
+  .sun::before{
+    content:"";position:absolute;inset:-.6in;border-radius:50%;
+    background:repeating-conic-gradient(from 8deg, var(--gold-400) 0deg 9deg, transparent 9deg 30deg);
+    -webkit-mask:radial-gradient(circle, transparent 54%, #000 55%, #000 72%, transparent 73%);
+    mask:radial-gradient(circle, transparent 54%, #000 55%, #000 72%, transparent 73%);
+  }
+  .sparkle{position:absolute;color:var(--brand-400);opacity:.85}
+  .s1{top:1.5in;left:1.4in;font-size:80px}
+  .s2{top:3.4in;left:2.6in;font-size:46px;color:var(--brand-300)}
+  .s3{top:2.3in;right:3.9in;font-size:54px;color:var(--gold-500)}
+
+  .top-chip{
+    margin-top:.72in;
+    background:var(--navy-800);color:#fff;
+    padding:.2in .75in;font-size:40px;letter-spacing:.14em;
+    text-transform:uppercase;font-weight:700;
+    border-radius:999px;
+    box-shadow:0 .14in .38in rgba(16,48,80,.35);
+  }
+  .top-chip .stars{color:var(--gold-400);margin-right:.2em}
+
+  .name{margin-top:.55in;text-align:center}
+  .name .line1{font-size:300px;display:block}
+  .name .line1.t3d{text-shadow:
+    0 3px 0 #a06a10, 0 6px 0 #96620d, 0 9px 0 #8b5a0b,
+    0 12px 0 #7f5209, 0 15px 0 #734a08, 0 18px 0 #674206,
+    0 30px 44px rgba(16,48,80,.38);}
+  .name .line2{font-size:136px;display:block;margin-top:.42in;letter-spacing:.04em}
+  .name .line2.t3d{text-shadow:
+    0 2.5px 0 #081a2c, 0 5px 0 #071726, 0 7.5px 0 #061421,
+    0 10px 0 #05111c, 0 12.5px 0 #040e17, 0 15px 0 #030b12,
+    0 28px 40px rgba(10,33,56,.4);}
+
+  .contact{
+    margin-top:auto;width:100%;
+    background:linear-gradient(120deg,var(--navy-900) 0%,var(--navy-800) 55%,var(--navy-600) 100%);
+    display:flex;align-items:center;justify-content:center;gap:1.1in;
+    padding:.5in 0 .62in; /* extra bottom padding = bleed + corner rounding clearance */
+  }
+  .phone{font-family:var(--font-head);font-weight:800;font-size:120px;color:#fff;display:flex;align-items:center;gap:.4in}
+  .phone svg{width:1.1in;height:1.1in;fill:var(--gold-500)}
+  .site{font-size:64px;font-weight:700;color:var(--sky-200)}
+</style>
+</head>
+<body>
+  <div class="sun"></div>
+  <span class="sparkle s1">✦</span>
+  <span class="sparkle s2">✦</span>
+  <span class="sparkle s3">✦</span>
+
+  <div class="top-chip gloss-band"><span class="stars">★★★★★</span> Rated 5 Stars on Google · Free Quotes</div>
+
+  <div class="name">
+    <span class="t3d t3d-gold line1" data-text="TONY'S">TONY'S</span>
+    <span class="t3d t3d-navy line2" data-text="WINDOW CLEANING">WINDOW CLEANING</span>
+  </div>
+
+  <div class="contact gloss-band">
+    <span class="phone">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.8a15.5 15.5 0 006.6 6.6l2.2-2.2a1 1 0 011-.24c1.1.37 2.3.57 3.5.57a1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.2.2 2.4.57 3.5a1 1 0 01-.24 1l-2.23 2.3z"/></svg>
+      714-559-0300
+    </span>
+    <span class="site">twindowclean.com</span>
+  </div>
+</body>
+</html>

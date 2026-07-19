@@ -13,6 +13,17 @@ Sora + Plus Jakarta Sans).
 | `pdf/flyer-services.pdf` | 8.5×11" portrait | Full services flyer with logo, all 8 services & service areas |
 | `pdf/poster-crystal-clear.pdf` | 8.5×11" portrait | "See the World Crystal Clear" poster |
 | `pdf/tonys-printables-all.pdf` | all four | One-click print of the whole set |
+| `pdf/magnet-door-20x10.pdf` | 20×10" (bleed 20.25×10.25") | VistaPrint car magnet — truck doors (order 2) |
+| `pdf/magnet-tailgate-24x12.pdf` | 24×12" (bleed 24.25×12.25") | VistaPrint car magnet — tailgate |
+
+## VistaPrint magnets
+
+The two `magnet-*` PDFs are built for VistaPrint car magnets: full-bleed
+size = trim + 0.125" per side, no crop marks, all text at least 0.35" inside
+the trim edge. Upload the PDF, pick the matching size (20"×10" doors,
+24"×12" tailgate), and check their preview shows nothing important near
+the edges. Magnets need a fully flat steel surface — keep them clear of
+body creases, badges, and door handles, and press out any air gaps.
 
 ## Printing & laminating tips
 
