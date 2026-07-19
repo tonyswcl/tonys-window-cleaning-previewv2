@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Tony's Window Cleaning — Crystal Clear Poster (8.5×11 portrait)</title>
+<link rel="stylesheet" href="brand-print.css">
+<style>
+  @page{size:8.5in 11in;margin:0}
+  body{
+    background:
+      radial-gradient(7in 5in at 100% -6%, var(--gold-300) 0%, rgba(251,227,154,0) 55%),
+      radial-gradient(8in 7in at -14% 108%, var(--brand-300) 0%, rgba(168,205,236,0) 60%),
+      linear-gradient(180deg, var(--white) 0%, var(--sky-50) 50%, var(--sky-200) 100%);
+    display:flex;flex-direction:column;align-items:center;
+    position:relative;
+  }
+  .sun{
+    position:absolute;bottom:1.6in;right:.55in;width:1.15in;height:1.15in;
+    background:radial-gradient(circle at 38% 34%, #fff3cf 0%, var(--gold-400) 38%, var(--gold-500) 62%, var(--gold-600) 100%);
+    border-radius:50%;
+    box-shadow:0 0 0 .08in rgba(255,255,255,.9), 0 .12in .28in rgba(224,153,42,.45);
+  }
+  .sun::before{
+    content:"";position:absolute;inset:-.38in;border-radius:50%;
+    background:repeating-conic-gradient(from 8deg, var(--gold-400) 0deg 9deg, transparent 9deg 30deg);
+    -webkit-mask:radial-gradient(circle, transparent 54%, #000 55%, #000 72%, transparent 73%);
+    mask:radial-gradient(circle, transparent 54%, #000 55%, #000 72%, transparent 73%);
+  }
+  .sparkle{position:absolute;opacity:.85}
+  .s1{top:1.4in;left:.8in;font-size:46px;color:var(--brand-400)}
+  .s2{top:1in;right:.8in;font-size:34px;color:var(--gold-500)}
+  .s3{top:2.5in;left:1.9in;font-size:24px;color:var(--brand-300)}
+
+  .brandline{
+    margin-top:.5in;
+    font-family:var(--font-head);font-weight:800;font-size:28px;
+    letter-spacing:.12em;text-transform:uppercase;color:var(--navy-700);
+  }
+  .brandline strong{color:var(--brand-600)}
+
+  .headline{margin-top:.45in;text-align:center}
+  .headline .see{font-size:68px;display:block}
+  .headline .crystal{font-size:116px;display:block;margin-top:.24in}
+  .headline .clear{font-size:116px;display:block;margin-top:.2in}
+
+  .sub{
+    margin-top:.42in;text-align:center;
+    font-size:20px;font-weight:600;color:var(--navy-700);line-height:1.6;
+    max-width:6.4in;
+  }
+
+  .badges{
+    margin-top:.34in;display:flex;gap:.3in;
+  }
+  .badge{
+    background:#fff;border:1.8px solid var(--sky-200);border-radius:.16in;
+    padding:.14in .3in;text-align:center;
+    box-shadow:0 .09in .2in -.06in rgba(16,48,80,.3);
+  }
+  .badge strong{display:block;font-family:var(--font-head);font-size:24px;color:var(--navy-800)}
+  .badge span{font-size:13.5px;color:#46617a;font-weight:600}
+  .badge .gold{color:var(--gold-600)}
+
+  .contact{
+    margin-top:auto;width:100%;
+    background:linear-gradient(120deg,var(--navy-900) 0%,var(--navy-800) 55%,var(--navy-600) 100%);
+    display:flex;align-items:center;justify-content:center;gap:.55in;
+    padding:.28in 0 .32in;
+  }
+  .phone{font-family:var(--font-head);font-weight:800;font-size:54px;color:#fff;display:flex;align-items:center;gap:.2in}
+  .phone svg{width:.52in;height:.52in;fill:var(--gold-500)}
+  .site{font-size:28px;font-weight:700;color:var(--sky-200)}
+</style>
+</head>
+<body class="portrait">
+  <div class="sun"></div>
+  <span class="sparkle s1">✦</span>
+  <span class="sparkle s2">✦</span>
+  <span class="sparkle s3">✦</span>
+
+  <div class="brandline">Tony's <strong>Window Cleaning</strong></div>
+
+  <div class="headline">
+    <span class="t3d t3d-navy t3d-sm see" data-text="SEE THE WORLD">SEE THE WORLD</span>
+    <span class="t3d t3d-gold crystal" data-text="CRYSTAL">CRYSTAL</span>
+    <span class="t3d t3d-navy clear" data-text="CLEAR">CLEAR</span>
+  </div>
+
+  <p class="sub">Windows · Solar Panels · Pigeon Proofing · Pressure Washing · Bin Cleaning<br>
+  Purified water &amp; pro-grade gear for a spotless, streak-free finish.</p>
+
+  <div class="badges">
+    <div class="badge"><strong class="gold">★★★★★</strong><span>5.0 Google Rating</span></div>
+    <div class="badge"><strong>Free</strong><span>Estimates</span></div>
+    <div class="badge"><strong>Same-Day</strong><span>Replies</span></div>
+  </div>
+
+  <div class="contact gloss-band">
+    <span class="phone">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.8a15.5 15.5 0 006.6 6.6l2.2-2.2a1 1 0 011-.24c1.1.37 2.3.57 3.5.57a1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.2.2 2.4.57 3.5a1 1 0 01-.24 1l-2.23 2.3z"/></svg>
+      714-559-0300
+    </span>
+    <span class="site">twindowclean.com</span>
+  </div>
+</body>
+</html>

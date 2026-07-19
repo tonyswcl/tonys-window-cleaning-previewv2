@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Tony's Window Cleaning — Services Flyer (8.5×11 portrait)</title>
+<link rel="stylesheet" href="brand-print.css">
+<style>
+  @page{size:8.5in 11in;margin:0}
+  body{
+    background:linear-gradient(180deg,var(--white) 0%,var(--sky-50) 60%,var(--sky-100) 100%);
+    display:flex;flex-direction:column;
+  }
+
+  /* ---------- header ---------- */
+  .head{
+    background:
+      radial-gradient(5in 3.4in at 88% -12%, rgba(240,176,64,.5) 0%, rgba(240,176,64,0) 60%),
+      linear-gradient(150deg,var(--navy-900) 0%,var(--navy-800) 55%,var(--navy-600) 100%);
+    text-align:center;
+    padding:.34in 0 .32in;
+    position:relative;
+  }
+  .head .logo{
+    width:.95in;height:.95in;border-radius:.18in;
+    box-shadow:0 .08in .22in rgba(0,0,0,.4);
+  }
+  .head .name{margin-top:.14in}
+  .head .name .line1{font-size:64px;display:block}
+  .head .name .line2{font-size:34px;display:block;margin-top:.1in;letter-spacing:.06em}
+  .head .chip{
+    margin-top:.2in;
+    background:rgba(255,255,255,.12);color:var(--sky-100);
+    border:1.6px solid rgba(255,255,255,.35);
+    padding:.07in .3in;font-size:15px;letter-spacing:.1em;text-transform:uppercase;
+  }
+  .head .chip .stars{color:var(--gold-400)}
+
+  /* ---------- services grid ---------- */
+  .svc-wrap{padding:.26in .5in .05in}
+  .svc-title{
+    text-align:center;font-family:var(--font-head);font-weight:800;
+    color:var(--navy-800);font-size:23px;letter-spacing:.24em;text-transform:uppercase;
+    margin-bottom:.2in;
+  }
+  .svc-title .dot{color:var(--gold-600)}
+  .grid{
+    display:grid;grid-template-columns:1fr 1fr;gap:.16in;
+  }
+  .card{
+    background:#fff;
+    border:1.8px solid var(--sky-200);
+    border-radius:.18in;
+    padding:.13in .18in;
+    display:flex;align-items:center;gap:.2in;
+    box-shadow:0 .09in .2in -.06in rgba(16,48,80,.28);
+  }
+  .card .ic{
+    flex:0 0 auto;width:.55in;height:.55in;border-radius:.12in;
+    background:linear-gradient(160deg,var(--sky-100),var(--sky-200));
+    display:flex;align-items:center;justify-content:center;font-size:26px;
+  }
+  .card h3{font-family:var(--font-head);font-size:18px;color:var(--navy-800);font-weight:800}
+  .card p{font-size:12.5px;color:#46617a;line-height:1.35;margin-top:2px}
+
+  /* ---------- areas ---------- */
+  .areas{
+    text-align:center;padding:.2in .6in 0;
+  }
+  .areas h4{
+    font-size:14px;font-weight:800;color:var(--brand-600);
+    letter-spacing:.2em;text-transform:uppercase;margin-bottom:.12in;
+  }
+  .areas p{font-size:13px;color:#46617a;line-height:1.55}
+  .areas strong{color:var(--navy-800)}
+
+  /* ---------- footer ---------- */
+  .foot{
+    margin-top:auto;
+    background:linear-gradient(120deg,var(--navy-900) 0%,var(--navy-800) 55%,var(--navy-600) 100%);
+    display:flex;align-items:center;justify-content:center;gap:.45in;
+    padding:.24in 0 .28in;
+  }
+  .foot .phone{font-family:var(--font-head);font-weight:800;font-size:46px;color:#fff;display:flex;align-items:center;gap:.18in}
+  .foot .phone svg{width:.46in;height:.46in;fill:var(--gold-500)}
+  .foot .right{text-align:left}
+  .foot .site{font-size:24px;font-weight:700;color:var(--sky-200)}
+  .foot .free{font-size:15px;font-weight:700;color:var(--gold-400);letter-spacing:.08em;text-transform:uppercase;margin-top:2px}
+</style>
+</head>
+<body class="portrait">
+  <header class="head gloss-band">
+    <img class="logo" src="../assets/logo.png" alt="Tony's Window Cleaning logo">
+    <div class="name">
+      <span class="t3d t3d-gold line1" data-text="TONY'S">TONY'S</span>
+      <span class="t3d t3d-ice t3d-sm line2" data-text="WINDOW CLEANING">WINDOW CLEANING</span>
+    </div>
+    <div class="chip"><span class="stars">★★★★★</span>&nbsp; Rated 5 Stars on Google · Locally Owned</div>
+  </header>
+
+  <section class="svc-wrap">
+    <div class="svc-title">Our <span class="dot">✦</span> Services</div>
+    <div class="grid">
+      <div class="card"><div class="ic">🪟</div><div><h3>Window Cleaning</h3><p>Interior &amp; exterior glass, streak-free finish.</p></div></div>
+      <div class="card"><div class="ic">☀️</div><div><h3>Solar Panel Cleaning</h3><p>Purified water restores peak efficiency.</p></div></div>
+      <div class="card"><div class="ic">🐦</div><div><h3>Pigeon Proofing</h3><p>Cleanup, bird-proofing &amp; deterrents for roof and solar.</p></div></div>
+      <div class="card"><div class="ic">💦</div><div><h3>Pressure Washing</h3><p>Driveways, walkways, patios &amp; siding.</p></div></div>
+      <div class="card"><div class="ic">🗑️</div><div><h3>Trash Bin Cleaning</h3><p>Deep-cleaned, deodorized &amp; sanitized.</p></div></div>
+      <div class="card"><div class="ic">💎</div><div><h3>Hard Water Removal</h3><p>Mineral spots gone, clear glass restored.</p></div></div>
+      <div class="card"><div class="ic">🧰</div><div><h3>Screens, Tracks &amp; Sills</h3><p>Removed, cleaned, detailed &amp; reinstalled.</p></div></div>
+      <div class="card"><div class="ic">🏢</div><div><h3>Commercial Service</h3><p>Storefronts, offices &amp; recurring plans.</p></div></div>
+    </div>
+  </section>
+
+  <section class="areas">
+    <h4>Proudly Serving the High Desert &amp; Inland Empire</h4>
+    <p><strong>Victorville · Hesperia · Apple Valley · Rancho Cucamonga · Fontana · Ontario · San Bernardino</strong><br>
+    Rialto · Redlands · Highland · Upland · Chino Hills · Eastvale · Corona · Yucaipa · San Jacinto · Adelanto · Oak Hills · Barstow · Phelan · Lucerne Valley</p>
+  </section>
+
+  <footer class="foot gloss-band">
+    <span class="phone">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.8a15.5 15.5 0 006.6 6.6l2.2-2.2a1 1 0 011-.24c1.1.37 2.3.57 3.5.57a1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.2.2 2.4.57 3.5a1 1 0 01-.24 1l-2.23 2.3z"/></svg>
+      714-559-0300
+    </span>
+    <span class="right">
+      <div class="site">twindowclean.com</div>
+      <div class="free">Free Estimates · Same-Day Replies</div>
+    </span>
+  </footer>
+</body>
+</html>

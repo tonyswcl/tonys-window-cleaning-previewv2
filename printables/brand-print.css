@@ -1,0 +1,140 @@
+/* =========================================================
+   Tony's Window Cleaning — 3D laminated printables
+   Brand palette (same as the website):
+   navy #103050 · brand blue #80b0e0 · sky #c0e0f0 · sun gold #f0b040
+   ========================================================= */
+@import url('fonts/fonts.css');
+
+:root{
+  --navy-900:#0a2138;
+  --navy-800:#103050;
+  --navy-700:#16395e;
+  --navy-600:#1d4a78;
+  --brand-600:#2f6fb0;
+  --brand-500:#3f86c9;
+  --brand-400:#80b0e0;
+  --brand-300:#a8cdec;
+  --sky-200:#c0e0f0;
+  --sky-100:#dcecfa;
+  --sky-50:#eef6fd;
+  --gold-700:#b97a15;
+  --gold-600:#e0992a;
+  --gold-500:#f0b040;
+  --gold-400:#f7c563;
+  --gold-300:#fbe39a;
+  --white:#ffffff;
+  --font:'Plus Jakarta Sans',system-ui,sans-serif;
+  --font-head:'Sora','Plus Jakarta Sans',sans-serif;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{
+  -webkit-print-color-adjust:exact;
+  print-color-adjust:exact;
+  font-family:var(--font);
+}
+
+/* ---------- page sizes (US Letter) ---------- */
+body.landscape{width:11in;height:8.5in;overflow:hidden}
+body.portrait{width:8.5in;height:11in;overflow:hidden}
+/* pages are fixed-height flex columns — never let sections squash */
+body.landscape>*,body.portrait>*{flex-shrink:0}
+@page{margin:0}
+
+/* =========================================================
+   3D extruded lettering
+   The element itself carries the stacked-shadow extrusion
+   (the 3D depth); the ::after duplicate sits on top with a
+   glossy gradient face clipped to the letters — the
+   laminated shine.
+   ========================================================= */
+.t3d{
+  position:relative;
+  display:inline-block;
+  font-family:var(--font-head);
+  font-weight:800;
+  line-height:1.05;
+  letter-spacing:.01em;
+  white-space:nowrap;
+}
+.t3d::after{
+  content:attr(data-text);
+  position:absolute;
+  inset:0;
+  color:transparent;
+  -webkit-background-clip:text;
+  background-clip:text;
+  text-shadow:none;
+}
+
+/* Gold face — sun-gold laminate with white gloss at the top */
+.t3d-gold{
+  color:var(--gold-700);
+  text-shadow:
+    0 1.5px 0 #a06a10, 0 3px 0 #96620d, 0 4.5px 0 #8b5a0b,
+    0 6px 0 #7f5209, 0 7.5px 0 #734a08, 0 9px 0 #674206,
+    0 16px 22px rgba(16,48,80,.38);
+}
+.t3d-gold::after{
+  background-image:linear-gradient(180deg,
+    #fff8e1 0%, var(--gold-300) 14%, var(--gold-500) 46%,
+    var(--gold-600) 78%, var(--gold-700) 100%);
+}
+
+/* Navy face — deep brand navy with icy gloss */
+.t3d-navy{
+  color:var(--navy-900);
+  text-shadow:
+    0 1.5px 0 #081a2c, 0 3px 0 #071726, 0 4.5px 0 #061421,
+    0 6px 0 #05111c, 0 7.5px 0 #040e17, 0 9px 0 #030b12,
+    0 16px 22px rgba(10,33,56,.4);
+}
+.t3d-navy::after{
+  background-image:linear-gradient(180deg,
+    #e9f4fd 0%, var(--brand-300) 12%, var(--brand-600) 40%,
+    var(--navy-800) 75%, var(--navy-900) 100%);
+}
+
+/* White/ice face for dark backgrounds */
+.t3d-ice{
+  color:var(--brand-400);
+  text-shadow:
+    0 1.5px 0 #5c92c6, 0 3px 0 #4d83b8, 0 4.5px 0 #3f74a9,
+    0 6px 0 #32659a, 0 7.5px 0 #26578b, 0 9px 0 #1b497c,
+    0 18px 26px rgba(0,0,0,.5);
+}
+.t3d-ice::after{
+  background-image:linear-gradient(180deg,
+    #ffffff 0%, #ffffff 30%, var(--sky-100) 55%,
+    var(--sky-200) 78%, var(--brand-300) 100%);
+}
+
+/* smaller extrusion for mid-size headings */
+.t3d-sm.t3d-gold{
+  text-shadow:
+    0 1px 0 #a06a10, 0 2px 0 #8b5a0b, 0 3px 0 #7f5209,
+    0 4px 0 #674206, 0 9px 14px rgba(16,48,80,.35);
+}
+.t3d-sm.t3d-navy{
+  text-shadow:
+    0 1px 0 #081a2c, 0 2px 0 #061421, 0 3px 0 #05111c,
+    0 4px 0 #030b12, 0 9px 14px rgba(10,33,56,.35);
+}
+.t3d-sm.t3d-ice{
+  text-shadow:
+    0 1px 0 #5c92c6, 0 2px 0 #4d83b8, 0 3px 0 #32659a,
+    0 4px 0 #1b497c, 0 10px 16px rgba(0,0,0,.45);
+}
+
+/* ---------- shared bits ---------- */
+.stars{color:var(--gold-500);letter-spacing:.12em}
+.chip{
+  display:inline-flex;align-items:center;gap:.45em;
+  font-weight:700;border-radius:999px;
+}
+.gloss-band{position:relative;overflow:hidden}
+.gloss-band::after{
+  content:"";position:absolute;inset:0 0 55% 0;
+  background:linear-gradient(180deg,rgba(255,255,255,.28),rgba(255,255,255,0));
+  pointer-events:none;
+}
