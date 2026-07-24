@@ -36,6 +36,8 @@ Beyond the ad metrics:
 - **Ad set:** "High Desert Core — 25mi Hesperia/Victorville — Messenger" — ID `120248640500660328`, optimized for Messenger conversations (your proven format), billed by impressions, 25-mile radius centered between Hesperia and Victorville (covers Victorville, Hesperia, Apple Valley, Adelanto, Oak Hills, Phelan), Advantage+ audience with age 28+ suggestion. **ACTIVE**
 - **Ad:** "HD Window+Solar Combo — Dirty Panels — Messenger — Jul 2026" — ID `120248656178360328`, creative `920827204374752` with the dirty-panels before photo attached. **ACTIVE** (delivering once Meta's standard ad review clears)
 
+Tony's manual adjustments after launch (Jul 24, via Ads Manager): age narrowed to 28–60, end date set to Monday Jul 27, budget raised to $35/day → total flight ≈ $120–140 over ~4 days. Messenger chat builder filled in with a qualifying greeting (city, panel/window count, stories) and three suggested questions (solar price, window+solar bundle, pigeon proofing).
+
 ## The ad creative (paste-ready)
 
 **Image:** the dirty-panels "before" photo — https://twindowclean.com/assets/gallery/solar-before.jpg (bird droppings + dust streaks; instant recognition for any HD solar owner, and it pre-sells pigeon proofing).
