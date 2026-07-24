@@ -30,10 +30,11 @@ Beyond the ad metrics:
 - **The desert makes the demand.** Dust storms re-dirty panels fast (repeat business) and pigeons nesting under panels feed the highest-ticket upsell: pigeon proofing.
 - **IE isn't dead** — $7.96/conversation is workable. It's the expansion market for later, or for slow weeks. It just isn't where the next dollar works hardest.
 
-## What's already set up in Ads Manager (PAUSED — flip on when ready)
+## What's live in Ads Manager (activated July 24, 2026)
 
-- **Campaign:** "High Desert Window + Solar Combo — Messenger — Jul 2026" — ID `120248640498440328`, engagement objective, $20/day campaign budget (CBO), auction.
-- **Ad set:** "High Desert Core — 25mi Hesperia/Victorville — Messenger" — ID `120248640500660328`, optimized for Messenger conversations (your proven format), billed by impressions, 25-mile radius centered between Hesperia and Victorville (covers Victorville, Hesperia, Apple Valley, Adelanto, Oak Hills, Phelan), Advantage+ audience with age 28+ suggestion.
+- **Campaign:** "High Desert Window + Solar Combo — Messenger — Jul 2026" — ID `120248640498440328`, engagement objective, $20/day campaign budget (CBO), auction. **ACTIVE**
+- **Ad set:** "High Desert Core — 25mi Hesperia/Victorville — Messenger" — ID `120248640500660328`, optimized for Messenger conversations (your proven format), billed by impressions, 25-mile radius centered between Hesperia and Victorville (covers Victorville, Hesperia, Apple Valley, Adelanto, Oak Hills, Phelan), Advantage+ audience with age 28+ suggestion. **ACTIVE**
+- **Ad:** "HD Window+Solar Combo — Dirty Panels — Messenger — Jul 2026" — ID `120248656178360328`, creative `920827204374752` with the dirty-panels before photo attached. **ACTIVE** (delivering once Meta's standard ad review clears)
 
 ## The ad creative (paste-ready)
 
@@ -62,7 +63,7 @@ Beyond the ad metrics:
 
 ## Launch checklist
 
-1. Attach the creative above to ad set `120248640500660328` (or approve the pending Claude tool call that does it).
+1. ~~Attach the creative and activate~~ Done — campaign, ad set, and ad all activated July 24, 2026.
 2. Reply to Messenger leads fast — your $5–8/conversation economics only pay off when conversations get answered same-day.
 3. Give it 5–7 days / ~$100–140 before judging. Target: ≤ $8 per conversation (your HD historical range is $5–8).
 4. If cost/conversation beats $6 for two straight weeks, raise the daily budget in $5 steps — don't double it, that resets learning.
