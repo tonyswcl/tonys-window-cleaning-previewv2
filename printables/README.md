@@ -15,6 +15,23 @@ Sora + Plus Jakarta Sans).
 | `pdf/tonys-printables-all.pdf` | all four | One-click print of the whole set |
 | `pdf/magnet-door-20x10.pdf` | 20×10" (bleed 20.25×10.25") | VistaPrint car magnet — truck doors (order 2) |
 | `pdf/magnet-tailgate-24x12.pdf` | 24×12" (bleed 24.25×12.25") | VistaPrint car magnet — tailgate |
+| `pdf/magnet-windshield-48x32.pdf` | 48×32" (bleed 48.25×32.25") | **UPrinting 30pt windshield magnet with QR code** |
+
+## Windshield magnet (48×32, UPrinting)
+
+`magnet-windshield-48x32.pdf` is built to UPrinting's custom car magnet
+spec: 48"×32" trim, 0.125" bleed on every side (page is 48.25"×32.25"),
+1/4" rounded corners, 30pt magnetic stock, front only. All content sits at
+least 1" inside the trim, so the corner rounding never touches type.
+
+Clean flat-color treatment matching the flyer and the website — navy
+header and footer bands, gold accent rule, no effects. Fonts are embedded
+in the PDF; upload it as-is.
+
+The QR code points to **https://twindowclean.com/#quote** — it opens the
+site and lands on the free-quote form. It prints about 9.8" square, which
+scans easily from across a parking lot. To repoint it somewhere else,
+edit the URL in `build-qr.py`, re-run it, and re-export the PDF.
 
 ## VistaPrint magnets
 

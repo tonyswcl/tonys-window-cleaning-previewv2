@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Tony's Window Cleaning — Windshield Magnet 48×32 (full bleed 48.25×32.25)</title>
+<style>
+  /* =========================================================
+     UPrinting custom car magnet — trim 48" × 32", 30pt stock,
+     1/4" rounded corners. Page = trim + .125" bleed per side.
+     All content sits at least 1" inside the trim line.
+     Flat brand colors, no effects — matches the flyer + site.
+     ========================================================= */
+  @import url('fonts/fonts.css');
+
+  :root{
+    --navy:#103050;
+    --navy-deep:#0a2138;
+    --blue:#2f6fb0;
+    --sky:#a8cdec;
+    --sky-pale:#dcecfa;
+    --paper:#f7fbfe;
+    --gold:#f0b040;
+    --ink-soft:#46617a;
+    --font:'Plus Jakarta Sans',system-ui,sans-serif;
+    --head:'Sora','Plus Jakarta Sans',sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  @page{size:48.25in 32.25in;margin:0}
+  body{
+    width:48.25in;height:32.25in;overflow:hidden;
+    font-family:var(--font);color:var(--navy);
+    background:var(--paper);
+    display:flex;flex-direction:column;
+  }
+  body>*{flex-shrink:0}
+
+  /* ---------- header ---------- */
+  .head{
+    background:var(--navy);
+    padding:1.5in 2in 1.35in;   /* top padding absorbs the .125in bleed */
+    display:flex;align-items:center;gap:1.5in;
+  }
+  .logo{
+    width:5.3in;height:5.3in;flex:0 0 auto;
+    border-radius:.8in;background:#fff;
+    padding:.5in;
+  }
+  .logo img{width:100%;height:100%;object-fit:contain}
+
+  .wordmark{flex:1 1 auto}
+  .wordmark .l1{
+    display:block;font-family:var(--head);font-weight:800;
+    font-size:330px;line-height:.95;color:#fff;letter-spacing:-.005em;
+  }
+  .wordmark .l2{
+    display:block;font-family:var(--head);font-weight:700;
+    font-size:172px;line-height:1.1;color:var(--sky);
+    letter-spacing:.055em;margin-top:.22in;
+  }
+
+  .rating{flex:0 0 auto;text-align:right}
+  .rating .stars{
+    display:block;font-size:150px;line-height:1;color:var(--gold);letter-spacing:.06em;
+  }
+  .rating .label{
+    display:block;font-size:88px;font-weight:700;color:#fff;
+    letter-spacing:.2em;margin-top:.28in;
+  }
+
+  .rule{height:.34in;background:var(--gold)}
+
+  /* ---------- services line ---------- */
+  .services{
+    text-align:center;padding:1.05in 1.6in 0;
+    font-family:var(--head);font-weight:700;
+    font-size:112px;letter-spacing:.09em;color:var(--navy);
+    white-space:nowrap;
+  }
+  .services .sep{color:var(--gold);margin:0 .42em}
+
+  /* ---------- middle: phone + QR ---------- */
+  .main{
+    flex:1 1 auto;
+    display:flex;align-items:center;gap:2in;
+    padding:0 2in;
+  }
+  .pitch{flex:1 1 auto}
+  .eyebrow{
+    display:block;font-size:118px;font-weight:800;color:var(--blue);
+    letter-spacing:.26em;text-transform:uppercase;
+  }
+  .phone{
+    display:block;font-family:var(--head);font-weight:800;
+    font-size:370px;line-height:1;color:var(--navy);
+    letter-spacing:-.01em;margin-top:.5in;white-space:nowrap;
+  }
+  .note{
+    display:block;font-size:104px;font-weight:600;color:var(--ink-soft);
+    margin-top:.55in;white-space:nowrap;
+  }
+  .note b{color:var(--navy);font-weight:800}
+
+  .qr-card{
+    flex:0 0 auto;width:11.6in;align-self:center;
+    background:#fff;border:.07in solid var(--sky-pale);
+    border-radius:.7in;padding:.85in .85in .7in;
+    text-align:center;
+  }
+  .qr-card img{
+    display:block;width:100%;height:auto;
+    image-rendering:pixelated;
+  }
+  .qr-card .cap{
+    display:block;font-family:var(--head);font-weight:800;
+    font-size:104px;line-height:1.2;color:var(--navy);
+    letter-spacing:.06em;margin-top:.6in;
+  }
+  .qr-card .cap small{
+    display:block;font-family:var(--font);font-weight:700;
+    font-size:78px;letter-spacing:.12em;color:var(--blue);margin-top:.16in;
+  }
+
+  /* ---------- footer ---------- */
+  .foot{
+    background:var(--navy);
+    padding:.95in 2in 1.1in;   /* bottom padding absorbs the .125in bleed */
+    display:flex;align-items:center;justify-content:center;gap:1in;
+  }
+  .foot .site{
+    font-family:var(--head);font-weight:800;font-size:182px;color:#fff;letter-spacing:.01em;white-space:nowrap;
+  }
+  .foot .dot{width:.34in;height:.34in;border-radius:50%;background:var(--gold);flex:0 0 auto}
+  .foot .area{font-size:106px;font-weight:700;color:var(--sky);letter-spacing:.05em;white-space:nowrap}
+</style>
+</head>
+<body>
+
+  <header class="head">
+    <div class="logo"><img src="assets/logo-icon.png" alt="Tony's Window Cleaning"></div>
+    <div class="wordmark">
+      <span class="l1">TONY'S</span>
+      <span class="l2">WINDOW CLEANING</span>
+    </div>
+    <div class="rating">
+      <span class="stars">★★★★★</span>
+      <span class="label">5.0 ON GOOGLE</span>
+    </div>
+  </header>
+
+  <div class="rule"></div>
+
+  <div class="services">
+    Windows<span class="sep">·</span>Solar Panels<span class="sep">·</span>Pressure Washing<span class="sep">·</span>Pigeon Proofing
+  </div>
+
+  <main class="main">
+    <div class="pitch">
+      <span class="eyebrow">Call or Text — Free Quote</span>
+      <span class="phone">714-559-0300</span>
+      <span class="note">Locally owned · Free estimates · <b>Same-day replies</b></span>
+    </div>
+
+    <div class="qr-card">
+      <img src="assets/qr-quote.png" alt="Scan for a free quote">
+      <span class="cap">SCAN FOR A FREE QUOTE<small>twindowclean.com</small></span>
+    </div>
+  </main>
+
+  <footer class="foot">
+    <span class="site">twindowclean.com</span>
+    <span class="dot"></span>
+    <span class="area">Serving the High Desert &amp; Inland Empire</span>
+  </footer>
+
+</body>
+</html>
