@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Tony's Window Cleaning — Tailgate Decal 20×8 (clear vinyl, pair)</title>
+<style>
+  /* =========================================================
+     Tailgate decal — 20" x 8", printed on CLEAR adhesive vinyl.
+     Sized for the flat panels either side of the Ford oval and
+     above the MAVERICK stamping on a Ford Maverick tailgate.
+     Order TWO and mirror them left and right of the oval.
+     Background is transparent — only the artwork prints.
+     ========================================================= */
+  @import url('fonts/fonts.css');
+
+  :root{
+    --navy:#103050;
+    --gold:#f0b040;
+    --font:'Plus Jakarta Sans',system-ui,sans-serif;
+    --head:'Sora','Plus Jakarta Sans',sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{-webkit-print-color-adjust:exact;print-color-adjust:exact;background:transparent}
+  @page{size:20in 8in;margin:0}
+  body{
+    width:20in;height:8in;overflow:hidden;
+    font-family:var(--font);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:.25in;
+  }
+
+  .row{display:flex;align-items:center;gap:.4in}
+  .row img{height:2.7in;width:auto;flex:0 0 auto}
+  .tonys{
+    font-family:var(--head);font-weight:800;
+    font-size:287px;line-height:1.05;color:#fff;white-space:nowrap;
+  }
+  .cleaning{
+    font-family:var(--head);font-weight:800;
+    font-size:136px;line-height:1.15;color:#fff;letter-spacing:.075em;
+    white-space:nowrap;margin-top:.12in;
+  }
+  .rule{height:.08in;width:18in;background:var(--gold);margin:.22in 0 .2in}
+  .phone{
+    font-family:var(--head);font-weight:800;
+    font-size:214px;line-height:1.1;color:var(--gold);white-space:nowrap;
+  }
+</style>
+</head>
+<body>
+  <div class="row">
+    <img src="assets/logo-icon.png" alt="Tony's Window Cleaning">
+    <span class="tonys">TONY'S</span>
+  </div>
+  <span class="cleaning">WINDOW CLEANING</span>
+  <div class="rule"></div>
+  <span class="phone">714-559-0300</span>
+</body>
+</html>

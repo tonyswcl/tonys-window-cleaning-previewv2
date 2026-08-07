@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Tony's Window Cleaning — Tailgate Decal 20×8 (navy panel, pair)</title>
+<style>
+  /* =========================================================
+     Tailgate decal — 20" x 8", printed on CLEAR adhesive vinyl.
+     Sized for the flat panels either side of the Ford oval and
+     above the MAVERICK stamping on a Ford Maverick tailgate.
+     Order TWO and mirror them left and right of the oval.
+     Navy panel version: prints on ordinary WHITE adhesive vinyl,
+     kiss-cut to the rounded rectangle. Use this one unless your
+     printer explicitly offers white ink on clear vinyl.
+     ========================================================= */
+  @import url('fonts/fonts.css');
+
+  :root{
+    --navy:#103050;
+    --gold:#f0b040;
+    --font:'Plus Jakarta Sans',system-ui,sans-serif;
+    --head:'Sora','Plus Jakarta Sans',sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{-webkit-print-color-adjust:exact;print-color-adjust:exact;background:transparent}
+  @page{size:20.25in 8.25in;margin:0}
+  body{
+    width:20.25in;height:8.25in;overflow:hidden;
+    font-family:var(--font);
+    display:flex;align-items:center;justify-content:center;
+    background:var(--navy);
+  }
+  .panel{
+    width:100%;height:100%;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:.35in;
+  }
+
+  .row{display:flex;align-items:center;gap:.4in}
+  .row img{height:2.7in;width:auto;flex:0 0 auto}
+  .tonys{
+    font-family:var(--head);font-weight:800;
+    font-size:287px;line-height:1.05;color:#fff;white-space:nowrap;
+  }
+  .cleaning{
+    font-family:var(--head);font-weight:800;
+    font-size:136px;line-height:1.15;color:#fff;letter-spacing:.075em;
+    white-space:nowrap;margin-top:.12in;
+  }
+  .rule{height:.08in;width:18in;background:var(--gold);margin:.22in 0 .2in}
+  .phone{
+    font-family:var(--head);font-weight:800;
+    font-size:214px;line-height:1.1;color:var(--gold);white-space:nowrap;
+  }
+</style>
+</head>
+<body>
+  <div class="panel">
+  <div class="row">
+    <img src="assets/logo-icon.png" alt="Tony's Window Cleaning">
+    <span class="tonys">TONY'S</span>
+  </div>
+  <span class="cleaning">WINDOW CLEANING</span>
+  <div class="rule"></div>
+  <span class="phone">714-559-0300</span>
+  </div>
+</body>
+</html>

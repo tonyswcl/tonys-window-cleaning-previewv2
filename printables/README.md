@@ -16,6 +16,9 @@ Sora + Plus Jakarta Sans).
 | `pdf/magnet-door-20x10.pdf` | 20×10" (bleed 20.25×10.25") | VistaPrint car magnet — truck doors (order 2) |
 | `pdf/magnet-tailgate-24x12.pdf` | 24×12" (bleed 24.25×12.25") | VistaPrint car magnet — tailgate |
 | `pdf/magnet-windshield-48x32.pdf` | 48×32" (bleed 48.25×32.25") | **UPrinting 30pt windshield magnet with QR code** |
+| `pdf/decal-tailgate-20x8-navy.pdf` | 20×8" (bleed 20.25×8.25") | **Tailgate decal, navy panel — order 2, one per side of the Ford oval** |
+| `pdf/decal-tailgate-20x8.pdf` | 20×8" | Same decal, transparent background (clear vinyl / cut lettering) |
+| `pdf/decal-tailgate-44x5_5.pdf` | 44×5.5" | Long strip — rear window or bed sides, transparent background |
 
 ## Windshield magnet (48×32, UPrinting)
 
@@ -32,6 +35,29 @@ The QR code points to **https://twindowclean.com/#quote** — it opens the
 site and lands on the free-quote form. It prints about 9.8" square, which
 scans easily from across a parking lot. To repoint it somewhere else,
 edit the URL in `build-qr.py`, re-run it, and re-export the PDF.
+
+## Tailgate decals (Ford Maverick)
+
+The Maverick tailgate has three obstructions: the recessed handle across
+the top centre, the Ford oval in the middle, and the MAVERICK stamping
+below it. Vinyl will not lie flat over any of them, so the artwork is
+sized to the two clear panels either side of the Ford oval and above the
+MAVERICK letters — roughly 22" wide × 9" tall each.
+
+`decal-tailgate-20x8-navy.pdf` is the one to order: a navy panel on plain
+white adhesive vinyl, kiss-cut to a rounded rectangle, 0.125" bleed built
+in. Order **two**.
+
+`decal-tailgate-20x8.pdf` is the same design with a transparent
+background. Only use it if the printer explicitly offers **white ink on
+clear vinyl** — most do not, and without it every white letter prints as
+nothing.
+
+`decal-tailgate-44x5_5.pdf` is a long single-line strip. It does not fit
+the tailgate; it is sized for the rear window or the bed sides.
+
+Measure the real panel on the truck before ordering — these dimensions
+were derived from a photo, not a tape measure.
 
 ## VistaPrint magnets
 

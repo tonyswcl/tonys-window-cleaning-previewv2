@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Tony's Window Cleaning — Tailgate Decal 44×5.5 (clear vinyl)</title>
+<style>
+  /* =========================================================
+     Tailgate decal — 44" x 5.5", printed on CLEAR adhesive vinyl.
+     Sized for the flat band across the top of a Ford Maverick
+     tailgate, above the Ford oval and clear of the MAVERICK
+     stamping. Background is intentionally transparent: only the
+     logo, letters and gold rule print.
+     .25" of empty margin all around guards against trim drift.
+     ========================================================= */
+  @import url('fonts/fonts.css');
+
+  :root{
+    --navy:#103050;
+    --gold:#f0b040;
+    --sky:#a8cdec;
+    --font:'Plus Jakarta Sans',system-ui,sans-serif;
+    --head:'Sora','Plus Jakarta Sans',sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{-webkit-print-color-adjust:exact;print-color-adjust:exact;background:transparent}
+  @page{size:44in 5.5in;margin:0}
+  body{
+    width:44in;height:5.5in;overflow:hidden;
+    font-family:var(--font);
+    display:flex;align-items:center;justify-content:center;gap:.85in;
+    padding:.25in;
+  }
+
+  .logo{flex:0 0 auto;height:4.35in;width:4.95in}
+  .logo img{width:100%;height:100%;object-fit:contain}
+
+  .stack{flex:0 0 auto;text-align:left}
+
+  .name{
+    display:block;font-family:var(--head);font-weight:800;
+    font-size:230px;line-height:1.1;color:#fff;letter-spacing:.005em;
+    white-space:nowrap;
+  }
+
+  .rule{height:.085in;background:var(--gold);margin:.14in 0 .12in}
+
+  .contact{
+    display:flex;align-items:baseline;gap:.42in;white-space:nowrap;
+    font-family:var(--head);font-weight:800;
+  }
+  .contact .phone{font-size:155px;line-height:1.1;color:var(--gold);}
+  .contact .dot{width:.17in;height:.17in;border-radius:50%;background:#fff;align-self:center;flex:0 0 auto}
+  .contact .site{font-size:119px;line-height:1.1;color:#fff;letter-spacing:.02em;}
+</style>
+</head>
+<body>
+  <div class="logo"><img src="assets/logo-icon.png" alt="Tony's Window Cleaning"></div>
+
+  <div class="stack">
+    <span class="name">TONY'S WINDOW CLEANING</span>
+    <div class="rule"></div>
+    <div class="contact">
+      <span class="phone">714-559-0300</span>
+      <span class="dot"></span>
+      <span class="site">twindowclean.com</span>
+    </div>
+  </div>
+</body>
+</html>
