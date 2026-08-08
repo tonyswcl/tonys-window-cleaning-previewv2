@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Tony's Window Cleaning — Side Door Magnet 24×12 (full bleed 24.25×12.25)</title>
+<style>
+  /* =========================================================
+     VistaPrint car magnet — trim 24" x 12" (a stock VistaPrint
+     size), 0.125" bleed per side, page = 24.25" x 12.25".
+     All type sits at least 0.9" inside the trim.
+     Order TWO — one for each front door.
+     ========================================================= */
+  @import url('fonts/fonts.css');
+
+  :root{
+    --navy:#103050;
+    --navy-deep:#0a2138;
+    --sky:#a8cdec;
+    --gold:#f0b040;
+    --font:'Plus Jakarta Sans',system-ui,sans-serif;
+    --head:'Sora','Plus Jakarta Sans',sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  @page{size:24.25in 12.25in;margin:0}
+  body{
+    width:24.25in;height:12.25in;overflow:hidden;
+    font-family:var(--font);color:#fff;
+    background:var(--navy);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:.96in 1.2in;
+  }
+  body>*{flex-shrink:0}
+
+  .lockup{display:flex;align-items:center;gap:.5in}
+  .lockup img{height:3in;width:auto;flex:0 0 auto}
+  .names{text-align:left}
+  .names .l1{
+    display:block;font-family:var(--head);font-weight:800;
+    font-size:235px;line-height:1;letter-spacing:-.005em;white-space:nowrap;
+  }
+  .names .l2{
+    display:block;font-family:var(--head);font-weight:700;
+    font-size:115px;line-height:1.1;color:var(--sky);
+    letter-spacing:.085em;white-space:nowrap;margin-top:.13in;
+  }
+
+  .rule{height:.09in;width:100%;background:var(--gold);margin:.41in 0 .36in}
+
+  .phone{
+    display:block;font-family:var(--head);font-weight:800;
+    font-size:259px;line-height:1;color:var(--gold);
+    letter-spacing:-.005em;white-space:nowrap;
+  }
+
+  .services{
+    display:block;font-family:var(--head);font-weight:700;
+    font-size:58px;letter-spacing:.05em;color:#fff;
+    white-space:nowrap;margin-top:.36in;
+  }
+  .services i{font-style:normal;color:var(--gold);margin:0 .42em}
+
+  .foot{
+    display:flex;align-items:center;gap:.42in;margin-top:.34in;white-space:nowrap;
+  }
+  .foot .site{font-family:var(--head);font-weight:800;font-size:89px;color:#fff}
+  .foot .dot{width:.14in;height:.14in;border-radius:50%;background:var(--gold);flex:0 0 auto}
+  .foot .stars{font-size:84px;color:var(--gold);letter-spacing:.08em;line-height:1}
+  .foot .rate{font-size:67px;font-weight:700;color:var(--sky);letter-spacing:.07em}
+</style>
+</head>
+<body>
+
+  <div class="lockup">
+    <img src="assets/logo-icon.png" alt="Tony's Window Cleaning">
+    <div class="names">
+      <span class="l1">TONY'S</span>
+      <span class="l2">WINDOW CLEANING</span>
+    </div>
+  </div>
+
+  <div class="rule"></div>
+
+  <span class="phone">714-559-0300</span>
+
+  <span class="services">Windows<i>·</i>Solar Panels<i>·</i>Pressure Washing<i>·</i>Pigeon Proofing</span>
+
+  <div class="foot">
+    <span class="site">twindowclean.com</span>
+    <span class="dot"></span>
+    <span class="stars">★★★★★</span>
+    <span class="rate">5.0 ON GOOGLE</span>
+  </div>
+
+</body>
+</html>

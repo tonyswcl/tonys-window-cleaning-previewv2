@@ -21,7 +21,8 @@ Sora + Plus Jakarta Sans).
 | `pdf/decal-tailgate-44x5_5.pdf` | 44×5.5" | Long strip — rear window or bed sides, transparent background |
 | `pdf/banner-48x28.pdf` | 48×28" (bleed 48.5×28.5") | **Outdoor vinyl banner with QR code** |
 | `pdf/decal-tailgate-white-text.pdf` | 20×8" | **Tailgate white lettering, text only — order 2 on clear vinyl** |
-| `pdf/magnet-door-20x10-clean.pdf` | 20×10" (bleed 20.25×10.25") | **Side door magnets — order 2** (replaces the old 3D `magnet-door-20x10.pdf`) |
+| `pdf/magnet-door-24x12.pdf` | 24×12" (bleed 24.25×12.25") | **Side door magnets — order 2** (recommended size) |
+| `pdf/magnet-door-20x10-clean.pdf` | 20×10" (bleed 20.25×10.25") | Same design, smaller fallback if the door's flat area is tight |
 
 ## Windshield magnet (48×32, UPrinting)
 
@@ -67,10 +68,20 @@ shows white letters, not blank.
 If they cannot print white ink on clear, order the same artwork on
 **white vinyl with a die cut around the text block** instead.
 
-**Side doors** — `magnet-door-20x10-clean.pdf`, **quantity 2**, under Car
-Door Magnets: Square/Rectangle, 20"×10" (a stock VistaPrint size). Navy
-ground with white and gold type, 0.125" bleed, all type at least 0.75"
-inside the trim.
+**Side doors** — `magnet-door-24x12.pdf`, **quantity 2**, under Car Door
+Magnets: Square/Rectangle, 24"×12" (a stock VistaPrint size). 24×12 is
+the industry-standard truck door magnet and the right call for the
+Maverick's SuperCrew front door: ~24" of width leaves roughly 7–8" of
+margin on a ~39" door, and 12" of height stays under the beltline and
+above the lower body crease.
+
+Do **not** go to 24×18 — 18" of height runs past the Maverick's lower
+character line into the curved section, and a magnet that bridges a
+crease lifts at speed.
+
+`magnet-door-20x10-clean.pdf` is the same artwork at 20×10 as a fallback
+if the flat area turns out tighter than expected. Both carry 0.125"
+bleed with type well inside the trim.
 
 ## Tailgate decals (Ford Maverick)
 
