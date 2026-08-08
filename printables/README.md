@@ -20,6 +20,8 @@ Sora + Plus Jakarta Sans).
 | `pdf/decal-tailgate-20x8.pdf` | 20×8" | Same decal, transparent background (clear vinyl / cut lettering) |
 | `pdf/decal-tailgate-44x5_5.pdf` | 44×5.5" | Long strip — rear window or bed sides, transparent background |
 | `pdf/banner-48x28.pdf` | 48×28" (bleed 48.5×28.5") | **Outdoor vinyl banner with QR code** |
+| `pdf/decal-tailgate-white-text.pdf` | 20×8" | **Tailgate white lettering, text only — order 2 on clear vinyl** |
+| `pdf/magnet-door-20x10-clean.pdf` | 20×10" (bleed 20.25×10.25") | **Side door magnets — order 2** (replaces the old 3D `magnet-door-20x10.pdf`) |
 
 ## Windshield magnet (48×32, UPrinting)
 
@@ -50,6 +52,25 @@ estimates, locally owned, purified-water/streak-free, the
 "Satisfaction Guaranteed" slogan, 8am–8pm daily hours, and the High
 Desert service-area cities. No licences, insurance, awards or
 years-in-business are claimed, because none are published anywhere.
+
+## VistaPrint order — tailgate lettering + door magnets
+
+**Tailgate, white text only** — `decal-tailgate-white-text.pdf`, 20"×8",
+**quantity 2**, one either side of the Ford oval above the MAVERICK
+stamping. Order under Car Decals / Car Window Decals: custom shape,
+**clear vinyl**, outside-glass/surface application. Only white ink is
+used, so nothing can clash with the carbonized-grey paint. A transparent
+PNG (`assets/decal-tailgate-white-text.png`, 192 dpi) is included in case
+their uploader flattens PDF transparency — check their on-screen proof
+shows white letters, not blank.
+
+If they cannot print white ink on clear, order the same artwork on
+**white vinyl with a die cut around the text block** instead.
+
+**Side doors** — `magnet-door-20x10-clean.pdf`, **quantity 2**, under Car
+Door Magnets: Square/Rectangle, 20"×10" (a stock VistaPrint size). Navy
+ground with white and gold type, 0.125" bleed, all type at least 0.75"
+inside the trim.
 
 ## Tailgate decals (Ford Maverick)
 

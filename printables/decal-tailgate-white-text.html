@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Tony's Window Cleaning — Tailgate White Lettering 20×8 (order 2)</title>
+<style>
+  /* =========================================================
+     Tailgate lettering — WHITE TEXT ONLY, transparent ground.
+     20" x 8" each; order TWO and mirror them left and right of
+     the Ford oval, above the MAVERICK stamping.
+
+     Order as CLEAR vinyl (VistaPrint car / window decal, custom
+     shape) so only the white letters show. Nothing but white
+     ink is used, so there is no colour to mismatch the truck.
+     ========================================================= */
+  @import url('fonts/fonts.css');
+
+  :root{
+    --font:'Plus Jakarta Sans',system-ui,sans-serif;
+    --head:'Sora','Plus Jakarta Sans',sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{-webkit-print-color-adjust:exact;print-color-adjust:exact;background:transparent}
+  @page{size:20in 8in;margin:0}
+  body{
+    width:20in;height:8in;overflow:hidden;
+    font-family:var(--font);color:#fff;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:.3in;
+  }
+  .tonys{
+    display:block;font-family:var(--head);font-weight:800;
+    font-size:300px;line-height:1;letter-spacing:.005em;white-space:nowrap;
+  }
+  .cleaning{
+    display:block;font-family:var(--head);font-weight:700;
+    font-size:126px;line-height:1.1;letter-spacing:.115em;
+    white-space:nowrap;margin-top:.18in;
+  }
+  .rule{height:.07in;width:16.4in;background:#fff;margin:.26in 0 .24in;opacity:.95}
+  .phone{
+    display:block;font-family:var(--head);font-weight:800;
+    font-size:206px;line-height:1.1;letter-spacing:.005em;white-space:nowrap;
+  }
+</style>
+</head>
+<body>
+  <span class="tonys">TONY'S</span>
+  <span class="cleaning">WINDOW CLEANING</span>
+  <div class="rule"></div>
+  <span class="phone">714-559-0300</span>
+</body>
+</html>
