@@ -20,8 +20,11 @@ Sora + Plus Jakarta Sans).
 | `pdf/decal-tailgate-20x8.pdf` | 20×8" | Same decal, transparent background (clear vinyl / cut lettering) |
 | `pdf/decal-tailgate-44x5_5.pdf` | 44×5.5" | Long strip — rear window or bed sides, transparent background |
 | `pdf/banner-48x28.pdf` | 48×28" (bleed 48.5×28.5") | **Outdoor vinyl banner with QR code** |
-| `pdf/decal-tailgate-white-text.pdf` | 20×8" | **Tailgate white lettering, text only — order 2 on clear vinyl** |
-| `pdf/magnet-door-24x12.pdf` | 24×12" (bleed 24.25×12.25") | **Side door magnets — order 2** (recommended size) |
+| `pdf/decal-tailgate-white-left.pdf` | 20×8" | **Tailgate white lettering — LEFT panel (the name)** |
+| `pdf/decal-tailgate-white-right.pdf` | 20×8" | **Tailgate white lettering — RIGHT panel (the contact)** |
+| `pdf/decal-tailgate-white-text.pdf` | 20×8" | Superseded — the old version that repeated on both sides |
+| `pdf/magnet-door-24x12-light.pdf` | 24×12" (bleed 24.25×12.25") | **Side door magnets — order 2** (recommended) |
+| `pdf/magnet-door-24x12.pdf` | 24×12" (bleed 24.25×12.25") | Navy-ground version of the same size |
 | `pdf/magnet-door-20x10-clean.pdf` | 20×10" (bleed 20.25×10.25") | Same design, smaller fallback if the door's flat area is tight |
 
 ## Windshield magnet (48×32, UPrinting)
@@ -56,9 +59,13 @@ years-in-business are claimed, because none are published anywhere.
 
 ## VistaPrint order — tailgate lettering + door magnets
 
-**Tailgate, white text only** — `decal-tailgate-white-text.pdf`, 20"×8",
-**quantity 2**, one either side of the Ford oval above the MAVERICK
-stamping. Order under Car Decals / Car Window Decals: custom shape,
+**Tailgate, white text only** — two DIFFERENT panels, 20"×8" each,
+**quantity 1 of each**. `decal-tailgate-white-left.pdf` carries the name
+and goes left of the Ford oval; `decal-tailgate-white-right.pdf` carries
+the phone and website and goes right of it. Splitting the content stops
+the tailgate reading as the same block printed twice, and lets both lines
+of type run much larger than they could when each side had to hold
+everything. Order under Car Decals / Car Window Decals: custom shape,
 **clear vinyl**, outside-glass/surface application. Only white ink is
 used, so nothing can clash with the carbonized-grey paint. A transparent
 PNG (`assets/decal-tailgate-white-text.png`, 192 dpi) is included in case
@@ -68,8 +75,16 @@ shows white letters, not blank.
 If they cannot print white ink on clear, order the same artwork on
 **white vinyl with a die cut around the text block** instead.
 
-**Side doors** — `magnet-door-24x12.pdf`, **quantity 2**, under Car Door
-Magnets: Square/Rectangle, 24"×12" (a stock VistaPrint size). 24×12 is
+**Side doors** — `magnet-door-24x12-light.pdf`, **quantity 2**, under Car
+Door Magnets: Square/Rectangle, 24"×12" (a stock VistaPrint size).
+
+This version uses navy as INK on a soft near-white ground rather than as
+a solid field. A large navy panel sits dark-on-dark against carbonized-
+grey paint and reads heavy; the light ground separates from the paint and
+reads as a fitted plaque. Content is deliberately sparse — mark, name,
+number, website. No service list, no review badge, no call to action.
+`magnet-door-24x12.pdf` keeps the navy-ground treatment if it is ever
+wanted for a light-coloured vehicle. 24×12 is
 the industry-standard truck door magnet and the right call for the
 Maverick's SuperCrew front door: ~24" of width leaves roughly 7–8" of
 margin on a ~39" door, and 12" of height stays under the beltline and
