@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<title>Tony's Window Cleaning — Thank You Card, front (5×7)</title>
+<style>
+  /* Thank-you card, FRONT. Trim 5 x 7", .125" bleed per side. */
+  @import url('fonts/fonts.css');
+  :root{--navy:#103050;--blue:#2f6fb0;--slate:#46617a;--gold:#e0992a;
+        --paper:#fbfdff;--line:#dbe8f3;
+        --font:'Plus Jakarta Sans',system-ui,sans-serif;--head:'Sora',sans-serif}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  @page{size:5.25in 7.25in;margin:0}
+  body{width:5.25in;height:7.25in;overflow:hidden;background:var(--paper);
+       font-family:var(--font);color:var(--navy);
+       display:flex;flex-direction:column;align-items:center;
+       padding:.75in .6in .68in}
+  body>*{flex-shrink:0}
+  img.mark{height:.95in;width:auto}
+  h1{font-family:var(--head);font-weight:800;font-size:52px;letter-spacing:-.01em;margin-top:.3in}
+  .rule{width:1.1in;height:.035in;background:var(--gold);margin:.24in 0 .3in}
+  p{font-size:14.5px;line-height:1.75;text-align:center;color:var(--slate);max-width:3.5in}
+  p+p{margin-top:.16in}
+  p b{color:var(--navy);font-weight:700}
+  .sig{font-family:var(--head);font-weight:800;font-size:26px;margin-top:.34in;color:var(--navy)}
+  .sig small{display:block;font-family:var(--font);font-weight:600;font-size:11px;
+             letter-spacing:.16em;text-transform:uppercase;color:var(--blue);margin-top:.07in}
+  .foot{margin-top:auto;text-align:center;border-top:1.5px solid var(--line);
+        padding-top:.2in;width:100%}
+  .foot .ph{font-family:var(--head);font-weight:800;font-size:24px;display:block}
+  .foot .st{font-size:12px;font-weight:600;color:var(--slate);letter-spacing:.05em;margin-top:.05in;display:block}
+</style></head>
+<body>
+  <img class="mark" src="assets/logo-tile.png" alt="">
+  <h1>Thank you.</h1>
+  <div class="rule"></div>
+  <p>Your glass is done, and I hope it looks the way you were picturing when you called.</p>
+  <p>If anything isn't right — a streak, a spot I missed, anything — <b>call or text me and I'll come back out.</b> No charge, no hassle. That's the whole guarantee.</p>
+  <p>I appreciate you giving a local guy the work.</p>
+  <span class="sig">— Tony<small>Owner</small></span>
+  <div class="foot">
+    <span class="ph">714-559-0300</span>
+    <span class="st">twindowclean.com</span>
+  </div>
+</body></html>

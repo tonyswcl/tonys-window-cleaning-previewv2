@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Tony's Window Cleaning — Client Goodie Bag, package &amp; order spec</title>
+<style>
+  @import url('fonts/fonts.css');
+  :root{
+    --navy:#103050; --navy-deep:#0a2138; --blue:#2f6fb0;
+    --slate:#46617a; --sky:#a8cdec; --pale:#eef5fb; --gold:#e0992a;
+    --line:#d5e3ef;
+    --font:'Plus Jakarta Sans',system-ui,sans-serif;
+    --head:'Sora','Plus Jakarta Sans',sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  @page{size:11in 17in;margin:0}
+  body{width:11in;height:17in;overflow:hidden;background:#fff;
+       font-family:var(--font);color:var(--navy);display:flex;flex-direction:column}
+  body>*{flex-shrink:0}
+
+  header{background:var(--navy);color:#fff;padding:.4in .55in .36in;
+         display:flex;align-items:center;gap:.3in}
+  header img{height:.7in;width:auto}
+  header .t{flex:1 1 auto}
+  header h1{font-family:var(--head);font-size:24px;font-weight:800}
+  header p{font-size:12.5px;color:var(--sky);margin-top:3px;font-weight:600}
+  header .r{text-align:right;font-size:12px;line-height:1.5;color:var(--sky)}
+  header .r b{color:#fff;display:block;font-size:13.5px}
+  .strip{height:.09in;background:var(--gold)}
+
+  h3.sec{font-family:var(--head);font-size:13.5px;font-weight:800;letter-spacing:.14em;
+         text-transform:uppercase;color:var(--blue);padding:.28in .55in .12in}
+
+  .grid{display:flex;gap:.2in;padding:0 .55in;align-items:flex-start}
+  .it{flex:1 1 0;min-width:0;text-align:center}
+  .it .box{border:1.5px solid var(--line);border-radius:.08in;overflow:hidden;background:#fbfdff}
+  .it img{display:block;width:100%}
+  .it .cap{display:block;font-family:var(--head);font-weight:800;font-size:11px;margin-top:.09in}
+  .it .cap small{display:block;font-family:var(--font);font-weight:600;font-size:9.5px;
+                 color:var(--slate);margin-top:2px}
+
+  table{width:calc(100% - 1.1in);margin:0 .55in;border-collapse:collapse;font-size:12px}
+  th{background:var(--pale);text-align:left;padding:.08in .09in;font-weight:800;
+     font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--slate);
+     border-bottom:1.5px solid var(--line)}
+  td{padding:.09in;border-bottom:1px solid var(--line);vertical-align:top}
+  td.n{font-family:var(--head);font-weight:800}
+  td.q{text-align:center;font-weight:800;white-space:nowrap}
+  td small{display:block;color:var(--slate);font-weight:600;margin-top:2px;font-size:10.5px}
+
+  .cols{display:flex;gap:.4in;padding:0 .55in}
+  .col{flex:1 1 0}
+  .col h4{font-family:var(--head);font-size:12px;font-weight:800;color:var(--navy);
+          margin-bottom:.09in}
+  .col li{font-size:11.5px;line-height:1.6;color:var(--slate);list-style:none;
+          padding-left:.17in;position:relative;margin-bottom:.06in}
+  .col li::before{content:"";position:absolute;left:0;top:.07in;width:5px;height:5px;
+                  border-radius:50%;background:var(--gold)}
+  .col li b{color:var(--navy)}
+
+  .callout{margin:.24in .55in 0;background:var(--pale);border-left:.05in solid var(--gold);
+           border-radius:0 .06in .06in 0;padding:.16in .22in;font-size:11.5px;
+           line-height:1.65;color:var(--slate)}
+  .callout b{color:var(--navy)}
+
+  footer{margin-top:auto;background:var(--navy);color:#fff;padding:.22in .55in .26in;
+         display:flex;align-items:center;justify-content:space-between;font-size:12.5px}
+  footer b{font-family:var(--head);font-size:16px}
+  footer span{color:var(--sky);font-weight:600}
+</style>
+</head>
+<body>
+
+  <header>
+    <img src="assets/logo-tile.png" alt="">
+    <div class="t">
+      <h1>Client Goodie Bag — Package &amp; Order Spec</h1>
+      <p>Handed over at the end of every job</p>
+    </div>
+    <div class="r">
+      <b>Tony's Window Cleaning</b>
+      Victorville &amp; the High Desert
+    </div>
+  </header>
+  <div class="strip"></div>
+
+  <h3 class="sec">What goes in the bag</h3>
+  <div class="grid">
+    <div class="it">
+      <div class="box"><img src="goodiebag/t-card-thankyou-front.jpg" alt=""></div>
+      <span class="cap">Thank-you card, front<small>5 × 7"</small></span>
+    </div>
+    <div class="it">
+      <div class="box"><img src="goodiebag/t-card-thankyou-back.jpg" alt=""></div>
+      <span class="cap">Thank-you card, back<small>Google · Facebook · Yelp</small></span>
+    </div>
+    <div class="it">
+      <div class="box"><img src="goodiebag/t-card-referral-front.jpg" alt=""></div>
+      <span class="cap">Referral card, front<small>3.5 × 2.5" — 2 per bag</small></span>
+    </div>
+    <div class="it">
+      <div class="box"><img src="goodiebag/t-card-referral-back.jpg" alt=""></div>
+      <span class="cap">Referral card, back<small>Name line makes it trackable</small></span>
+    </div>
+  </div>
+  <div class="grid" style="padding-top:.2in">
+    <div class="it" style="flex:2 1 0">
+      <div class="box"><img src="goodiebag/t-coozie-wrap.jpg" alt=""></div>
+      <span class="cap">Can cooler, both panels<small>4 × 4" print area per side</small></span>
+    </div>
+    <div class="it">
+      <div class="box"><img src="goodiebag/t-sticker-bag-seal.jpg" alt=""></div>
+      <span class="cap">Bag seal sticker<small>2.5" round</small></span>
+    </div>
+    <div class="it" style="flex:2 1 0"></div>
+  </div>
+
+  <h3 class="sec">Order list — 100 bags</h3>
+  <table>
+    <tr><th>Item</th><th>Size</th><th>Stock &amp; finish</th><th>Qty</th><th>Where</th></tr>
+    <tr>
+      <td class="n">Thank-you card</td>
+      <td>5 × 7"<small>bleed 5.25 × 7.25</small></td>
+      <td>16pt matte or uncoated, <b>double-sided</b><small>Uncoated feels more personal than gloss</small></td>
+      <td class="q">100</td>
+      <td>Staples / VistaPrint</td>
+    </tr>
+    <tr>
+      <td class="n">Referral card</td>
+      <td>3.5 × 2.5"<small>bleed 3.75 × 2.75</small></td>
+      <td>16pt matte, <b>double-sided</b>, rounded corners<small>Back must take pen — matte, never gloss</small></td>
+      <td class="q">250</td>
+      <td>Staples / VistaPrint</td>
+    </tr>
+    <tr>
+      <td class="n">Can cooler</td>
+      <td>4 × 4" per side<small>confirm supplier template</small></td>
+      <td>Collapsible neoprene, full-color both sides</td>
+      <td class="q">100</td>
+      <td>4imprint / Custom Ink</td>
+    </tr>
+    <tr>
+      <td class="n">Bag seal sticker</td>
+      <td>2.5" round<small>bleed 2.75</small></td>
+      <td>Matte vinyl, kiss-cut on sheets</td>
+      <td class="q">150</td>
+      <td>Staples / StickerMule</td>
+    </tr>
+    <tr>
+      <td class="n">Gift bag</td>
+      <td>approx 5.5 × 8"<small>small kraft, no print</small></td>
+      <td>Plain white or kraft — the seal sticker brands it<small>Cheaper than printed bags and looks better</small></td>
+      <td class="q">100</td>
+      <td>Amazon / Costco</td>
+    </tr>
+  </table>
+
+  <h3 class="sec">How to run it</h3>
+  <div class="cols">
+    <div class="col">
+      <h4>At the end of every job</h4>
+      <ul>
+        <li>Walk the customer around the glass first. <b>Get the "wow" before you hand anything over.</b></li>
+        <li>Hand them the bag and say one line: <b>"There's a thank-you in here, and two cards worth $25 off for anyone you send my way."</b></li>
+        <li>Then stop talking about it. The card does the rest.</li>
+      </ul>
+    </div>
+    <div class="col">
+      <h4>Tracking it</h4>
+      <ul>
+        <li>When a referral card comes back, the <b>Referred by</b> line tells you who to pay.</li>
+        <li>Pay the $25 the day the referred job is paid — fast payment is what makes people hand out the second card.</li>
+        <li>Keep a simple tally. If a name shows up twice, that customer is worth a Christmas card.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout">
+    <b>Keep the review ask and the reward separate.</b> The reward on the referral card is paid for
+    <b>sending a customer</b>, never for writing a review. Google's policies prohibit incentivized
+    reviews and will filter or remove them, and Yelp penalizes businesses that solicit reviews at all —
+    which is why the Yelp code here is labelled "find us" rather than "review us". Asking every
+    customer for an honest review, with nothing attached, is allowed and is what this card does.
+  </div>
+
+  <footer>
+    <span><b>Tony's Window Cleaning</b> · Victorville, CA</span>
+    <span>714-559-0300 · twindowclean.com</span>
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<title>Tony's Window Cleaning — Thank You Card, back (5×7)</title>
+<style>
+  /* Thank-you card, BACK: the review ask. Google is the primary target and
+     is given the large code; the other two sit underneath at half size. */
+  @import url('fonts/fonts.css');
+  :root{--navy:#103050;--blue:#2f6fb0;--slate:#46617a;--gold:#e0992a;
+        --paper:#fbfdff;--line:#dbe8f3;
+        --font:'Plus Jakarta Sans',system-ui,sans-serif;--head:'Sora',sans-serif}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  @page{size:5.25in 7.25in;margin:0}
+  body{width:5.25in;height:7.25in;overflow:hidden;background:var(--paper);
+       font-family:var(--font);color:var(--navy);
+       display:flex;flex-direction:column;align-items:center;
+       padding:.5in .45in .45in}
+  body>*{flex-shrink:0}
+  .kick{font-size:10.5px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;color:var(--blue)}
+  h2{font-family:var(--head);font-weight:800;font-size:26px;line-height:1.25;
+     text-align:center;margin-top:.1in;max-width:4.1in}
+  .sub{font-size:12px;line-height:1.6;color:var(--slate);text-align:center;
+       max-width:3.7in;margin-top:.11in}
+
+  .primary{margin-top:.24in;text-align:center;
+           border:1.5px solid var(--line);border-radius:.14in;padding:.16in .18in .14in;background:#fff}
+  .primary img{display:block;width:1.52in;height:1.52in;image-rendering:pixelated}
+  .primary .lbl{display:block;font-family:var(--head);font-weight:800;font-size:15px;margin-top:.1in}
+  .primary .lbl small{display:block;font-family:var(--font);font-weight:600;font-size:11px;
+                      color:var(--slate);letter-spacing:.03em;margin-top:.04in}
+
+  .others{display:flex;gap:.3in;margin-top:.24in}
+  .o{text-align:center}
+  .o img{display:block;width:.85in;height:.85in;image-rendering:pixelated;
+         border:1.5px solid var(--line);border-radius:.08in;background:#fff;padding:.04in}
+  .o span{display:block;font-family:var(--head);font-weight:800;font-size:11.5px;margin-top:.08in}
+  .o small{display:block;font-size:9.5px;color:var(--slate);font-weight:600;margin-top:1px}
+
+  .foot{margin-top:auto;text-align:center;width:100%;border-top:1.5px solid var(--line);padding-top:.14in}
+  .foot b{font-family:var(--head);font-weight:800;font-size:15px;display:block}
+  .foot span{display:block;font-size:11px;color:var(--slate);font-weight:600;margin-top:.04in}
+</style></head>
+<body>
+  <span class="kick">One small favor</span>
+  <h2>Reviews are how neighbors find us.</h2>
+  <p class="sub">No ad budget here — a few honest words from you does more than anything we could buy.</p>
+
+  <div class="primary">
+    <img src="assets/qr/qr-google.png" alt="">
+    <span class="lbl">Review us on Google<small>Takes about 30 seconds</small></span>
+  </div>
+
+  <div class="others">
+    <div class="o">
+      <img src="assets/qr/qr-facebook.png" alt="">
+      <span>Facebook</span><small>Leave a recommendation</small>
+    </div>
+    <div class="o">
+      <img src="assets/qr/qr-yelp.png" alt="">
+      <span>Yelp</span><small>Find us here</small>
+    </div>
+  </div>
+
+  <div class="foot">
+    <b>714-559-0300</b>
+    <span>twindowclean.com · Victorville &amp; the High Desert</span>
+  </div>
+</body></html>

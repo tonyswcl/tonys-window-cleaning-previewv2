@@ -1,15 +1,24 @@
 #!/usr/bin/env python3
-"""Regenerate the QR code used on the windshield magnet.
+"""Regenerate every QR code used across the print pieces.
 
     pip install segno && python3 build-qr.py
 
-Change QR_URL below to repoint the code, then re-export the magnet PDF.
+Sources are the links the website itself publishes. Re-run after changing
+any of them, then re-export the affected PDFs.
 """
 import segno
 
-QR_URL = "https://twindowclean.com/#quote"
+LINKS = {
+    "quote":    "https://twindowclean.com/#quote",
+    "google":   "https://g.page/r/CWQH1O3JGKh4EAE/review",
+    "facebook": "https://www.facebook.com/tonyswindowcleaninghd",
+    "yelp":     "https://www.yelp.com/biz/tony-s-window-cleaning-hesperia",
+    "site":     "https://twindowclean.com/",
+}
 
-qr = segno.make(QR_URL, error="q")          # 'q' = 25% error correction
-qr.save("assets/qr-quote.png", scale=100, border=2,
-        dark="#0a2138", light="#ffffff")
-print(f"wrote assets/qr-quote.png for {QR_URL}")
+for name, url in LINKS.items():
+    qr = segno.make(url, error="q")          # 25% error correction
+    path = "assets/qr-quote.png" if name == "quote" else f"assets/qr/qr-{name}.png"
+    scale = 100 if name == "quote" else 60
+    qr.save(path, scale=scale, border=2, dark="#0a2138", light="#ffffff")
+    print(f"{path} <- {url}")

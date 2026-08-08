@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<title>Tony's Window Cleaning — Referral Card, front (3.5×2.5)</title>
+<style>
+  /* Referral card FRONT. Trim 3.5 x 2.5", .125" bleed per side.
+     The reward lives on THIS card, not on the review ask. */
+  @import url('fonts/fonts.css');
+  :root{--navy:#103050;--navy-deep:#0a2138;--sky:#a8cdec;--gold:#f0b040;
+        --font:'Plus Jakarta Sans',system-ui,sans-serif;--head:'Sora',sans-serif}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  @page{size:3.75in 2.75in;margin:0}
+  body{width:3.75in;height:2.75in;overflow:hidden;background:var(--navy);
+       font-family:var(--font);color:#fff;
+       display:flex;flex-direction:column;align-items:center;justify-content:center;
+       padding:.32in}
+  body>*{flex-shrink:0}
+  .kick{font-size:8px;font-weight:800;letter-spacing:.26em;text-transform:uppercase;color:var(--sky)}
+  .amt{font-family:var(--head);font-weight:800;font-size:64px;line-height:1;color:var(--gold);margin-top:.05in}
+  .svc{font-family:var(--head);font-weight:800;font-size:15px;letter-spacing:.13em;
+       text-transform:uppercase;margin-top:.05in}
+  .rule{width:1.9in;height:.022in;background:var(--gold);margin:.14in 0 .12in;opacity:.9}
+  .lock{display:flex;align-items:center;gap:.1in}
+  .lock img{height:.4in;width:auto}
+  .lock span{font-family:var(--head);font-weight:800;font-size:12.5px;letter-spacing:.03em}
+  .tag{font-size:8.5px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;
+       color:var(--sky);margin-top:.09in}
+</style></head>
+<body>
+  <span class="kick">Friends &amp; Neighbors</span>
+  <span class="amt">$25</span>
+  <span class="svc">Off Any Service</span>
+  <div class="rule"></div>
+  <div class="lock">
+    <img src="assets/logo-tile.png" alt="">
+    <span>TONY'S WINDOW CLEANING</span>
+  </div>
+  <span class="tag">Gift Certificate</span>
+</body></html>

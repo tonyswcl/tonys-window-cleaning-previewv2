@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<title>Tony's Window Cleaning — Referral Card, back (3.5×2.5)</title>
+<style>
+  /* Referral card BACK: how it works + the name line that makes it trackable. */
+  @import url('fonts/fonts.css');
+  :root{--navy:#103050;--blue:#2f6fb0;--slate:#46617a;--gold:#e0992a;
+        --paper:#fbfdff;--line:#dbe8f3;
+        --font:'Plus Jakarta Sans',system-ui,sans-serif;--head:'Sora',sans-serif}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  @page{size:3.75in 2.75in;margin:0}
+  body{width:3.75in;height:2.75in;overflow:hidden;background:var(--paper);
+       font-family:var(--font);color:var(--navy);
+       display:flex;flex-direction:column;padding:.34in .32in .3in}
+  body>*{flex-shrink:0}
+  .h{font-family:var(--head);font-weight:800;font-size:13px;letter-spacing:.11em;
+     text-transform:uppercase;color:var(--blue)}
+  ol{margin-top:.11in;padding-left:.19in}
+  li{font-size:10.5px;line-height:1.5;color:var(--slate);margin-bottom:.045in}
+  li b{color:var(--navy);font-weight:700}
+  .name{margin-top:.13in;font-size:10px;font-weight:700;color:var(--navy);
+        display:flex;align-items:flex-end;gap:.07in}
+  .name i{flex:1 1 auto;font-style:normal;border-bottom:1.2px solid var(--navy);height:.15in}
+  .foot{margin-top:auto;border-top:1.2px solid var(--line);padding-top:.11in;
+        display:flex;align-items:baseline;justify-content:space-between}
+  .foot b{font-family:var(--head);font-weight:800;font-size:13.5px}
+  .foot span{font-size:9px;color:var(--slate);font-weight:600}
+  .fine{font-size:7px;color:var(--slate);margin-top:.05in;line-height:1.4}
+</style></head>
+<body>
+  <span class="h">How it works</span>
+  <ol>
+    <li><b>Write your name</b> on the line below.</li>
+    <li><b>Give this card</b> to a friend, neighbor or family member.</li>
+    <li>When they book, <b>they save $25 — and you get $25 back.</b></li>
+  </ol>
+  <div class="name">Referred by: <i></i></div>
+  <div class="foot">
+    <b>714-559-0300</b>
+    <span>twindowclean.com</span>
+  </div>
+  <p class="fine">One certificate per job. New customers only. No expiry. Reward paid after the referred job is completed and paid.</p>
+</body></html>
