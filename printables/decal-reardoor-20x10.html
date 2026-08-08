@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Tony's Window Cleaning — Rear Door Decal 20×10 (die-cut, service list)</title>
+<style>
+  /* VistaPrint car magnet — trim 20" x 10", .125" bleed, page 20.25 x 10.25.
+     REAR doors (the Maverick's rear door is ~31" long, shorter than the
+     front, so this runs smaller than the 24x12 front-door magnet).
+     Same light treatment: navy as ink on a soft ground. Order TWO. */
+  @import url('fonts/fonts.css');
+  :root{
+    --ground:#f3f7fb; --navy:#103050; --slate:#46617a;
+    --gold:#e0992a; --keyline:#cbdded;
+    --font:'Plus Jakarta Sans',system-ui,sans-serif;
+    --head:'Sora','Plus Jakarta Sans',sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  @page{size:20in 10in;margin:0}
+  body{
+    width:20in;height:10in;overflow:hidden;
+    font-family:var(--font);color:var(--navy);background:transparent;
+  }
+  .plate{
+    width:100%;height:100%;
+    background:var(--ground);border-radius:.75in;position:relative;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:.5in .8in;
+  }
+  .plate>*{flex-shrink:0}
+
+  .head{display:flex;align-items:center;gap:.34in}
+  .head img{height:1.9in;width:auto;flex:0 0 auto}
+  .head .nm{text-align:left}
+  .head .nm b{display:block;font-family:var(--head);font-weight:800;font-size:130px;
+     line-height:1;color:var(--navy);letter-spacing:-.005em;white-space:nowrap}
+  .head .nm i{display:block;font-style:normal;font-family:var(--head);font-weight:700;
+     font-size:70px;line-height:1.1;color:var(--slate);letter-spacing:.085em;
+     white-space:nowrap;margin-top:.1in}
+
+  .rule{height:.045in;width:11in;background:var(--gold);margin:.34in 0 .32in;opacity:.9}
+
+  .svc{
+    display:grid;grid-template-columns:auto auto;
+    column-gap:.8in;row-gap:.17in;
+    font-family:var(--head);font-weight:700;font-size:66px;
+    line-height:1.15;color:var(--navy);white-space:nowrap;
+  }
+  .svc span::before{content:"•";color:var(--gold);margin-right:.42em}
+
+  .phone{
+    font-family:var(--head);font-weight:800;font-size:132px;line-height:1;
+    color:var(--navy);letter-spacing:-.005em;white-space:nowrap;margin-top:.4in;
+  }
+  .plate::before{
+    content:"";position:absolute;inset:.5in;
+    border:.05in solid var(--keyline);border-radius:.45in;pointer-events:none;
+  }
+</style>
+</head>
+<body>
+  <div class="plate">
+    <div class="head">
+      <img src="assets/logo-tile.png" alt="Tony's Window Cleaning">
+      <span class="nm"><b>TONY'S</b><i>WINDOW CLEANING</i></span>
+    </div>
+
+    <div class="rule"></div>
+
+    <div class="svc">
+      <span>Window Cleaning</span><span>Pressure Washing</span>
+      <span>Solar Panel Cleaning</span><span>Trash Bin Cleaning</span>
+      <span>Pigeon Proofing</span><span>Hard Water Removal</span>
+    </div>
+
+    <span class="phone">714-559-0300</span>
+  </div>
+</body>
+</html>

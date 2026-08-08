@@ -45,6 +45,29 @@ site and lands on the free-quote form. It prints about 9.8" square, which
 scans easily from across a parking lot. To repoint it somewhere else,
 edit the URL in `build-qr.py`, re-run it, and re-export the PDF.
 
+## BannerBuzz vinyl order (all-vinyl route)
+
+Everything that touches the truck body goes on vinyl, one of each unless
+noted. Nothing here can blow off at speed, which magnets can.
+
+| Piece | Trim size | BannerBuzz product | Qty |
+|---|---|---|---|
+| Tailgate, logo + name | 20 × 8" | Clear die-cut car decal, **white ink** | 1 |
+| Tailgate, phone + site | 20 × 8" | Clear die-cut car decal, **white ink** | 1 |
+| Tailgate, services bar | 48 × 4" | Clear die-cut car decal, **white ink** | 1 |
+| Front doors | 24 × 12" | Opaque bubble-free die-cut car decal | 2 |
+| Rear doors | 20 × 10" | Opaque bubble-free die-cut car decal | 2 |
+
+The three tailgate files are white type on a transparent ground — on
+BannerBuzz's clear decal, select **full white ink**, or the lettering
+prints as nothing. The two door files (`decal-door-24x12`,
+`decal-reardoor-20x10`) are a light plate on a transparent page, so the
+cut line follows the rounded rectangle; order those on the opaque
+(white vinyl) product.
+
+The 48 × 32" windshield piece must stay a **magnet** — it is lifted on
+and off while parked, so adhesive is wrong for it.
+
 ## Uploading from a phone
 
 `upload/` holds flat image versions of the pieces that get ordered
