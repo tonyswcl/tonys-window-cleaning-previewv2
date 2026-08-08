@@ -55,15 +55,15 @@ noted. Nothing here can blow off at speed, which magnets can.
 | Tailgate, logo + name | 20 × 8" | Clear die-cut car decal, **white ink** | 1 |
 | Tailgate, phone + site | 20 × 8" | Clear die-cut car decal, **white ink** | 1 |
 | Tailgate, services bar | 48 × 4" | Clear die-cut car decal, **white ink** | 1 |
-| Front doors | 24 × 12" | Opaque bubble-free die-cut car decal | 2 |
-| Rear doors | 20 × 10" | Opaque bubble-free die-cut car decal | 2 |
+| Front doors | 24 × 12" | Clear die-cut car decal, **white ink** | 2 |
+| Rear doors | 20 × 10" | Clear die-cut car decal, **white ink** | 2 |
 
-The three tailgate files are white type on a transparent ground — on
-BannerBuzz's clear decal, select **full white ink**, or the lettering
-prints as nothing. The two door files (`decal-door-24x12`,
-`decal-reardoor-20x10`) are a light plate on a transparent page, so the
-cut line follows the rounded rectangle; order those on the opaque
-(white vinyl) product.
+**All seven pieces are now white lettering on a transparent ground** —
+no plates. Order every one on the clear product with **full white ink**;
+on opaque/white vinyl the lettering prints white-on-white and arrives
+blank. A solid plate on carbonized-grey paint reads as a sticker stuck to
+the door; lettering straight on the paint reads as fleet livery, which is
+why the door designs were rebuilt to match the tailgate.
 
 The 48 × 32" windshield piece must stay a **magnet** — it is lifted on
 and off while parked, so adhesive is wrong for it.
