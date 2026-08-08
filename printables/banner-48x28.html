@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Tony's Window Cleaning — Vinyl Banner 48×28 (full bleed 48.5×28.5)</title>
+<style>
+  /* =========================================================
+     Vinyl banner — trim 48" x 28", 0.25" bleed per side
+     (page = 48.5" x 28.5"). All content sits >= 2" inside the
+     trim so hems and grommets never cover type.
+
+     Every claim on this banner is taken from the business's own
+     published material (site schema, Google profile, Facebook):
+     5.0 Google rating, free estimates, same-day replies,
+     locally owned, "Satisfaction Guaranteed", open 7 days 8-8.
+     ========================================================= */
+  @import url('fonts/fonts.css');
+
+  :root{
+    --navy:#103050;
+    --navy-deep:#0a2138;
+    --blue:#2f6fb0;
+    --sky:#a8cdec;
+    --sky-pale:#dcecfa;
+    --paper:#f7fbfe;
+    --gold:#f0b040;
+    --ink-soft:#46617a;
+    --font:'Plus Jakarta Sans',system-ui,sans-serif;
+    --head:'Sora','Plus Jakarta Sans',sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  @page{size:48.5in 28.5in;margin:0}
+  body{
+    width:48.5in;height:28.5in;overflow:hidden;
+    font-family:var(--font);color:var(--navy);
+    background:var(--paper);
+    display:flex;flex-direction:column;
+  }
+  body>*{flex-shrink:0}
+
+  /* ---------- header ---------- */
+  .head{
+    background:var(--navy);
+    padding:1.05in 2.25in .95in;   /* top padding absorbs the .25in bleed */
+    display:flex;align-items:center;gap:1.3in;
+  }
+  .logo{
+    width:4.3in;height:4.3in;flex:0 0 auto;
+    border-radius:.65in;background:#fff;padding:.4in;
+  }
+  .logo img{width:100%;height:100%;object-fit:contain}
+
+  .wordmark{flex:1 1 auto}
+  .wordmark .l1{
+    display:block;font-family:var(--head);font-weight:800;
+    font-size:268px;line-height:.95;color:#fff;letter-spacing:-.005em;
+  }
+  .wordmark .l2{
+    display:block;font-family:var(--head);font-weight:700;
+    font-size:140px;line-height:1.1;color:var(--sky);
+    letter-spacing:.055em;margin-top:.2in;
+  }
+
+  .rating{flex:0 0 auto;text-align:right}
+  .rating .stars{display:block;font-size:122px;line-height:1;color:var(--gold);letter-spacing:.06em}
+  .rating .label{display:block;font-size:74px;font-weight:700;color:#fff;letter-spacing:.19em;margin-top:.2in}
+
+  .rule{height:.3in;background:var(--gold)}
+
+  /* ---------- services ---------- */
+  .services{
+    text-align:center;padding:.7in 2.25in 0;
+    font-family:var(--head);font-weight:700;color:var(--navy);
+  }
+  .services span{display:block;white-space:nowrap}
+  .services .r1{font-size:104px;letter-spacing:.07em}
+  .services .r2{font-size:82px;letter-spacing:.06em;margin-top:.24in;color:var(--blue)}
+  .services .sep{display:inline;color:var(--gold);margin:0 .38em}
+
+  /* ---------- phone + QR ---------- */
+  .main{
+    flex:1 1 auto;
+    display:flex;align-items:center;gap:1.8in;
+    padding:0 2.25in;
+  }
+  .pitch{flex:1 1 auto}
+  .eyebrow{
+    display:block;font-size:112px;font-weight:800;color:var(--blue);
+    letter-spacing:.24em;text-transform:uppercase;
+  }
+  .phone{
+    display:block;font-family:var(--head);font-weight:800;
+    font-size:400px;line-height:1.05;color:var(--navy);
+    letter-spacing:-.01em;margin-top:.38in;white-space:nowrap;
+  }
+  .note{
+    display:block;font-size:88px;font-weight:600;color:var(--ink-soft);
+    margin-top:.36in;white-space:nowrap;
+  }
+  .note b{color:var(--navy);font-weight:800}
+
+  .qr-card{
+    flex:0 0 auto;width:9.8in;align-self:center;
+    background:#fff;border:.06in solid var(--sky-pale);
+    border-radius:.6in;padding:.7in .7in .58in;text-align:center;
+  }
+  .qr-card img{display:block;width:100%;height:auto;image-rendering:pixelated}
+  .qr-card .cap{
+    display:block;font-family:var(--head);font-weight:800;
+    font-size:94px;line-height:1.2;color:var(--navy);
+    letter-spacing:.05em;margin-top:.5in;
+  }
+  .qr-card .cap small{
+    display:block;font-family:var(--font);font-weight:700;
+    font-size:70px;letter-spacing:.1em;color:var(--blue);margin-top:.14in;
+  }
+
+  /* ---------- footer ---------- */
+  .foot{
+    background:var(--navy);
+    padding:.62in 2.25in .8in;   /* bottom padding absorbs the .25in bleed */
+    text-align:center;
+  }
+  .foot .line1{
+    display:flex;align-items:center;justify-content:center;gap:.85in;white-space:nowrap;
+  }
+  .foot .site{font-family:var(--head);font-weight:800;font-size:150px;color:#fff;letter-spacing:.01em}
+  .foot .dot{width:.3in;height:.3in;border-radius:50%;background:var(--gold);flex:0 0 auto}
+  .foot .hours{font-size:90px;font-weight:700;color:var(--sky);letter-spacing:.04em}
+  .foot .area{
+    display:block;font-size:72px;font-weight:600;color:var(--sky-pale);
+    letter-spacing:.04em;margin-top:.26in;white-space:nowrap;opacity:.92;
+  }
+</style>
+</head>
+<body>
+
+  <header class="head">
+    <div class="logo"><img src="assets/logo-icon.png" alt="Tony's Window Cleaning"></div>
+    <div class="wordmark">
+      <span class="l1">TONY'S</span>
+      <span class="l2">WINDOW CLEANING</span>
+    </div>
+    <div class="rating">
+      <span class="stars">★★★★★</span>
+      <span class="label">5.0 ON GOOGLE</span>
+    </div>
+  </header>
+
+  <div class="rule"></div>
+
+  <div class="services">
+    <span class="r1">Window Cleaning<i class="sep">·</i>Solar Panel Cleaning<i class="sep">·</i>Pressure Washing</span>
+    <span class="r2">Pigeon Proofing<i class="sep">·</i>Trash Bin Cleaning<i class="sep">·</i>Hard Water Removal<i class="sep">·</i>Screens, Tracks &amp; Sills</span>
+  </div>
+
+  <main class="main">
+    <div class="pitch">
+      <span class="eyebrow">Call or Text — Free Estimate</span>
+      <span class="phone">714-559-0300</span>
+      <span class="note">Locally owned · Purified water, streak-free · <b>Satisfaction Guaranteed</b></span>
+    </div>
+
+    <div class="qr-card">
+      <img src="assets/qr-quote.png" alt="Scan for a free quote">
+      <span class="cap">SCAN FOR A FREE QUOTE<small>twindowclean.com</small></span>
+    </div>
+  </main>
+
+  <footer class="foot">
+    <div class="line1">
+      <span class="site">twindowclean.com</span>
+      <span class="dot"></span>
+      <span class="hours">Open 7 Days · 8am – 8pm</span>
+    </div>
+    <span class="area">Serving Victorville · Hesperia · Apple Valley · Adelanto · Oak Hills · Phelan · Barstow · Lucerne Valley</span>
+  </footer>
+
+</body>
+</html>

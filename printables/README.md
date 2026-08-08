@@ -19,6 +19,7 @@ Sora + Plus Jakarta Sans).
 | `pdf/decal-tailgate-20x8-navy.pdf` | 20×8" (bleed 20.25×8.25") | **Tailgate decal, navy panel — order 2, one per side of the Ford oval** |
 | `pdf/decal-tailgate-20x8.pdf` | 20×8" | Same decal, transparent background (clear vinyl / cut lettering) |
 | `pdf/decal-tailgate-44x5_5.pdf` | 44×5.5" | Long strip — rear window or bed sides, transparent background |
+| `pdf/banner-48x28.pdf` | 48×28" (bleed 48.5×28.5") | **Outdoor vinyl banner with QR code** |
 
 ## Windshield magnet (48×32, UPrinting)
 
@@ -35,6 +36,20 @@ The QR code points to **https://twindowclean.com/#quote** — it opens the
 site and lands on the free-quote form. It prints about 9.8" square, which
 scans easily from across a parking lot. To repoint it somewhere else,
 edit the URL in `build-qr.py`, re-run it, and re-export the PDF.
+
+## Vinyl banner (48×28)
+
+`banner-48x28.pdf` — 48"×28" trim with 0.25" bleed per side. All type sits
+at least 2" inside the trim so hems and grommets never cover it. Order on
+13oz scrim vinyl, hemmed with grommets every 2 ft.
+
+Content is drawn only from what the business already publishes on
+twindowclean.com and its linked Google/Facebook/Yelp profiles: the eight
+services in the site's service catalog, the 5.0 Google rating, free
+estimates, locally owned, purified-water/streak-free, the
+"Satisfaction Guaranteed" slogan, 8am–8pm daily hours, and the High
+Desert service-area cities. No licences, insurance, awards or
+years-in-business are claimed, because none are published anywhere.
 
 ## Tailgate decals (Ford Maverick)
 
