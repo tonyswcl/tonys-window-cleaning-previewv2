@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Tony's Window Cleaning — Tailgate bottom bar 48×4</title>
+<style>
+  /* Tailgate vinyl, piece 3 of 3. Full-width bar that sits BELOW the
+     MAVERICK stamping. White type on a transparent ground. */
+  @import url('fonts/fonts.css');
+  :root{--gold:#f0b040}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{-webkit-print-color-adjust:exact;print-color-adjust:exact;background:transparent}
+  @page{size:48in 4in;margin:0}
+  body{
+    width:48in;height:4in;overflow:hidden;
+    font-family:'Sora','Plus Jakarta Sans',sans-serif;color:#fff;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:.25in;
+  }
+  .svc{display:block;font-weight:800;font-size:96px;line-height:1.1;
+       letter-spacing:.04em;white-space:nowrap}
+  .claims{display:block;font-weight:700;font-size:92px;line-height:1.1;
+       letter-spacing:.065em;white-space:nowrap;margin-top:.32in}
+  .sep{font-style:normal;color:var(--gold);margin:0 .5em}
+</style>
+</head>
+<body>
+  <span class="svc">Window Cleaning<i class="sep">•</i>Solar Panel Cleaning<i class="sep">•</i>Pigeon Proofing<i class="sep">•</i>Pressure Washing</span>
+  <span class="claims">Satisfaction Guaranteed<i class="sep">•</i>Lifetime Warranty<i class="sep">•</i>5.0 Stars on Google</span>
+</body>
+</html>

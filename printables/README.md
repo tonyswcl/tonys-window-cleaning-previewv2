@@ -20,10 +20,12 @@ Sora + Plus Jakarta Sans).
 | `pdf/decal-tailgate-20x8.pdf` | 20×8" | Same decal, transparent background (clear vinyl / cut lettering) |
 | `pdf/decal-tailgate-44x5_5.pdf` | 44×5.5" | Long strip — rear window or bed sides, transparent background |
 | `pdf/banner-48x28.pdf` | 48×28" (bleed 48.5×28.5") | **Outdoor vinyl banner with QR code** |
-| `pdf/decal-tailgate-white-left.pdf` | 20×8" | **Tailgate white lettering — LEFT panel (the name)** |
+| `pdf/decal-tailgate-white-left.pdf` | 20×8" | **Tailgate — LEFT panel (logo mark + name)** |
+| `pdf/decal-tailgate-bar-48x4.pdf` | 48×4" | **Tailgate — bottom bar (services + guarantees)** |
 | `pdf/decal-tailgate-white-right.pdf` | 20×8" | **Tailgate white lettering — RIGHT panel (the contact)** |
 | `pdf/decal-tailgate-white-text.pdf` | 20×8" | Superseded — the old version that repeated on both sides |
-| `pdf/magnet-door-24x12-light.pdf` | 24×12" (bleed 24.25×12.25") | **Side door magnets — order 2** (recommended) |
+| `pdf/magnet-door-24x12-light.pdf` | 24×12" (bleed 24.25×12.25") | **Front door magnets — order 2** |
+| `pdf/magnet-reardoor-20x10.pdf` | 20×10" (bleed 20.25×10.25") | **Rear door magnets, service list — order 2** |
 | `pdf/magnet-door-24x12.pdf` | 24×12" (bleed 24.25×12.25") | Navy-ground version of the same size |
 | `pdf/magnet-door-20x10-clean.pdf` | 20×10" (bleed 20.25×10.25") | Same design, smaller fallback if the door's flat area is tight |
 
@@ -59,8 +61,25 @@ years-in-business are claimed, because none are published anywhere.
 
 ## VistaPrint order — tailgate lettering + door magnets
 
-**Tailgate, white text only** — two DIFFERENT panels, 20"×8" each,
-**quantity 1 of each**. `decal-tailgate-white-left.pdf` carries the name
+**Tailgate — three pieces, one of each.** `decal-tailgate-white-left.pdf`
+(20×8) carries the logo mark and the name, left of the Ford oval.
+`decal-tailgate-white-right.pdf` (20×8) carries the phone and website,
+right of it. `decal-tailgate-bar-48x4.pdf` (48×4) is a full-width bar
+listing the services and the guarantees, and sits BELOW the MAVERICK
+stamping — that band measures roughly 4.2" tall, so verify it before
+ordering.
+
+Order these from **UPrinting**, not VistaPrint: VistaPrint's decals have
+a 5" minimum dimension, which the 4"-tall bar fails. UPrinting's clear
+and white adhesive vinyl runs 3–52" wide and 3–600" high, so all three
+pieces are in range.
+
+The right panel and the bottom bar are white type only, so they can also
+be cut from white vinyl as lettering, which sidesteps the white-ink
+question entirely. Only the left panel needs full-colour printing,
+because of the logo mark.
+
+Superseded note — the earlier pair were identical to each other: `decal-tailgate-white-left.pdf` carries the name
 and goes left of the Ford oval; `decal-tailgate-white-right.pdf` carries
 the phone and website and goes right of it. Splitting the content stops
 the tailgate reading as the same block printed twice, and lets both lines
@@ -75,8 +94,14 @@ shows white letters, not blank.
 If they cannot print white ink on clear, order the same artwork on
 **white vinyl with a die cut around the text block** instead.
 
-**Side doors** — `magnet-door-24x12-light.pdf`, **quantity 2**, under Car
-Door Magnets: Square/Rectangle, 24"×12" (a stock VistaPrint size).
+**Front doors** — `magnet-door-24x12-light.pdf`, **quantity 2**, under
+Car Door Magnets: Square/Rectangle, 24"×12" (a stock VistaPrint size).
+
+**Rear doors** — `magnet-reardoor-20x10.pdf`, **quantity 2**, same
+product at 20"×10". The Maverick's rear door is roughly 31" long against
+the front door's ~39", so 24" would leave only about 3" of margin either
+side; 20" leaves a comfortable 5". Carrying the service list back here
+also keeps the front doors uncluttered.
 
 This version uses navy as INK on a soft near-white ground rather than as
 a solid field. A large navy panel sits dark-on-dark against carbonized-
