@@ -45,6 +45,29 @@ site and lands on the free-quote form. It prints about 9.8" square, which
 scans easily from across a parking lot. To repoint it somewhere else,
 edit the URL in `build-qr.py`, re-run it, and re-export the PDF.
 
+## Uploading from a phone
+
+`upload/` holds flat image versions of the pieces that get ordered
+online. Print shops' mobile uploaders frequently reject large-format
+PDFs; these go through reliably.
+
+* `upload/magnet-door-24x12-light.jpg`, `upload/magnet-reardoor-20x10.jpg`
+  — 200 dpi JPG, no transparency, for VistaPrint.
+* `upload/decal-tailgate-*.png` — 150 dpi PNG **with transparency
+  preserved**, for the vinyl. Do not re-save these as JPG; JPG has no
+  alpha channel and the transparent ground would flatten to white.
+
+On iPhone, save these to **Photos** rather than Files and upload from the
+photo picker — that path is the one that works.
+
+## The logo mark on artwork
+
+Use `assets/logo-tile.png`, never a background-knockout of the logo. The
+solar-panel grid lines and the sun's antialiased edge are drawn in tones
+within a hair of the logo's own background colour, so any knockout eats
+them and leaves holes in the mark. The tile keeps the artwork on its own
+opaque rounded ground, so nothing can be cut out.
+
 ## Vinyl banner (48×28)
 
 `banner-48x28.pdf` — 48"×28" trim with 0.25" bleed per side. All type sits
