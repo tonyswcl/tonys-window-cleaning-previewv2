@@ -5,7 +5,9 @@
 <title>Tony's Window Cleaning — Rear Door Decal 20×10 (white, transparent)</title>
 <style>
   /* Rear doors: the service list, white lettering on a TRANSPARENT ground.
-     Sits behind the front-door lockup and reads as one system. Order 2. */
+     Sits behind the front-door lockup and reads as one system. The phone
+     lives on the front door a few feet away, so this panel carries the
+     service area instead of repeating it. Order 2. */
   @import url('fonts/fonts.css');
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{-webkit-print-color-adjust:exact;print-color-adjust:exact;background:transparent}
@@ -17,12 +19,13 @@
   }
   body>*{flex-shrink:0}
   .svc{
-    display:grid;grid-template-columns:auto auto;column-gap:.8in;row-gap:.26in;
+    display:grid;grid-template-columns:auto auto;column-gap:.8in;row-gap:.4in;
     font-weight:700;font-size:76px;line-height:1.12;white-space:nowrap;
   }
   .svc span::before{content:"•";margin-right:.4em;opacity:.85}
-  .rule{height:.06in;width:16in;background:#fff;margin:.34in 0 .3in;opacity:.95}
-  .ph{font-weight:800;font-size:220px;line-height:1;white-space:nowrap}
+  .rule{height:.06in;width:16in;background:#fff;margin:.44in 0 .4in;opacity:.95}
+  .area{font-weight:800;font-size:96px;line-height:1;white-space:nowrap;letter-spacing:.05em}
+  .area i{font-style:normal;font-weight:400;opacity:.75;margin:0 .5em}
 </style>
 </head>
 <body>
@@ -32,6 +35,6 @@
     <span>Pigeon Proofing</span><span>Hard Water Removal</span>
   </div>
   <div class="rule"></div>
-  <span class="ph">714-559-0300</span>
+  <span class="area">High Desert<i>|</i>Inland Empire</span>
 </body>
 </html>
