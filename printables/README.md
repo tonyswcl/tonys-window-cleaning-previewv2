@@ -68,6 +68,19 @@ cut line follows the rounded rectangle; order those on the opaque
 The 48 × 32" windshield piece must stay a **magnet** — it is lifted on
 and off while parked, so adhesive is wrong for it.
 
+## Installation spec sheet
+
+`spec-sheet.html` → `pdf/spec-sheet.pdf` and
+`spec/tonys-vehicle-graphics-spec.jpg` — a one-page 11×17 sheet to hand a
+sign shop. Carries both real photos with the artwork composited in place
+and lettered callouts, a parts list with sizes/materials/quantities, and
+the installation notes (what to clear, what to verify on the vehicle,
+print at 100%).
+
+The side view is a perspective composite onto the passenger-side photo;
+the driver side mirrors it. Regenerate the composites with the quads in
+the render script if the photos are ever replaced.
+
 ## Uploading from a phone
 
 `upload/` holds flat image versions of the pieces that get ordered

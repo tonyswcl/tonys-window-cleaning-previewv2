@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Tony's Window Cleaning — Vehicle Graphics Installation Spec</title>
+<style>
+  @import url('fonts/fonts.css');
+  :root{
+    --navy:#103050; --navy-deep:#0a2138; --blue:#2f6fb0;
+    --slate:#46617a; --sky:#a8cdec; --pale:#eef5fb; --gold:#e0992a;
+    --line:#d5e3ef;
+    --font:'Plus Jakarta Sans',system-ui,sans-serif;
+    --head:'Sora','Plus Jakarta Sans',sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  @page{size:11in 17in;margin:0}
+  body{width:11in;height:17in;overflow:hidden;background:#fff;
+       font-family:var(--font);color:var(--navy);display:flex;flex-direction:column}
+  body>*{flex-shrink:0}
+
+  header{background:var(--navy);color:#fff;padding:.42in .55in .38in;
+         display:flex;align-items:center;gap:.3in}
+  header img{height:.72in;width:auto}
+  header .t{flex:1 1 auto}
+  header h1{font-family:var(--head);font-size:25px;font-weight:800;letter-spacing:.01em}
+  header p{font-size:13px;color:var(--sky);margin-top:3px;font-weight:600}
+  header .veh{text-align:right;font-size:12.5px;line-height:1.5;color:var(--sky)}
+  header .veh b{color:#fff;display:block;font-size:14px}
+
+  .strip{height:.09in;background:var(--gold)}
+
+  .views{display:flex;gap:.24in;padding:.3in .55in 0}
+  .view{flex:1 1 0;min-width:0}
+  .view h2{font-family:var(--head);font-size:14px;font-weight:800;letter-spacing:.14em;
+           text-transform:uppercase;color:var(--blue);margin-bottom:.11in}
+  .shot{position:relative;border:1.5px solid var(--line);border-radius:.1in;overflow:hidden}
+  .shot img{display:block;width:100%}
+  .cal{position:absolute;width:.34in;height:.34in;border-radius:50%;
+       background:var(--gold);color:var(--navy-deep);
+       font-family:var(--head);font-weight:800;font-size:17px;
+       display:flex;align-items:center;justify-content:center;
+       box-shadow:0 0 0 3px rgba(255,255,255,.95);transform:translate(-50%,-50%)}
+
+  h3.sec{font-family:var(--head);font-size:14px;font-weight:800;letter-spacing:.14em;
+         text-transform:uppercase;color:var(--blue);padding:.3in .55in .11in}
+
+  table{width:calc(100% - 1.1in);margin:0 .55in;border-collapse:collapse;font-size:12.5px}
+  th{background:var(--pale);text-align:left;padding:.09in .1in;font-weight:800;
+     font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--slate);
+     border-bottom:1.5px solid var(--line)}
+  td{padding:.1in;border-bottom:1px solid var(--line);vertical-align:middle}
+  td.k{font-family:var(--head);font-weight:800;color:var(--gold);font-size:16px;width:.35in}
+  td.sz{font-family:var(--head);font-weight:800;white-space:nowrap}
+  td.q{text-align:center;font-weight:800}
+  td.th img{display:block;width:1.55in;height:auto;border:1px solid var(--line);border-radius:2px}
+  td small{display:block;color:var(--slate);font-weight:600;margin-top:2px;font-size:11px}
+
+  .notes{padding:.26in .55in 0;font-size:12px;line-height:1.65;color:var(--slate)}
+  .notes b{color:var(--navy)}
+  .notes li{margin-bottom:.07in;list-style:none;padding-left:.17in;position:relative}
+  .notes li::before{content:"";position:absolute;left:0;top:.075in;
+                    width:5px;height:5px;border-radius:50%;background:var(--gold)}
+
+  footer{margin-top:auto;background:var(--navy);color:#fff;padding:.24in .55in .28in;
+         display:flex;align-items:center;justify-content:space-between;font-size:13px}
+  footer b{font-family:var(--head);font-size:17px}
+  footer span{color:var(--sky);font-weight:600}
+</style>
+</head>
+<body>
+
+  <header>
+    <img src="assets/logo-tile.png" alt="">
+    <div class="t">
+      <h1>Vehicle Graphics — Installation Spec</h1>
+      <p>Tony's Window Cleaning · 7 pieces · cut/printed vinyl</p>
+    </div>
+    <div class="veh">
+      <b>2025 Ford Maverick XL Hybrid</b>
+      SuperCrew · Carbonized Gray
+    </div>
+  </header>
+  <div class="strip"></div>
+
+  <div class="views">
+    <div class="view">
+      <h2>Rear / Tailgate</h2>
+      <div class="shot">
+        <img src="spec/view-rear.jpg" alt="">
+        <div class="cal" style="left:14%;top:36%">A</div>
+        <div class="cal" style="left:80%;top:36%">B</div>
+        <div class="cal" style="left:28%;top:71%">C</div>
+      </div>
+    </div>
+    <div class="view">
+      <h2>Passenger Side (mirror on driver side)</h2>
+      <div class="shot">
+        <img src="spec/view-side.jpg" alt="">
+        <div class="cal" style="left:54%;top:40%">E</div>
+        <div class="cal" style="left:86%;top:36%">D</div>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="sec">Parts List</h3>
+  <table>
+    <tr>
+      <th></th><th>Artwork</th><th>Placement</th><th>Size (W × H)</th><th>Material &amp; finish</th><th>Qty</th>
+    </tr>
+    <tr>
+      <td class="k">A</td>
+      <td class="th"><img src="spec/thumb-A.jpg" alt=""></td>
+      <td>Tailgate, left of Ford oval<small>above the MAVERICK stamping</small></td>
+      <td class="sz">20" × 8"</td>
+      <td>Clear vinyl, <b>white ink</b><small>or cut white vinyl lettering</small></td>
+      <td class="q">1</td>
+    </tr>
+    <tr>
+      <td class="k">B</td>
+      <td class="th"><img src="spec/thumb-B.jpg" alt=""></td>
+      <td>Tailgate, right of Ford oval<small>above the MAVERICK stamping</small></td>
+      <td class="sz">20" × 8"</td>
+      <td>Clear vinyl, <b>white ink</b><small>or cut white vinyl lettering</small></td>
+      <td class="q">1</td>
+    </tr>
+    <tr>
+      <td class="k">C</td>
+      <td class="th"><img src="spec/thumb-C.jpg" alt=""></td>
+      <td>Tailgate, centred below the<small>MAVERICK stamping</small></td>
+      <td class="sz">48" × 4"</td>
+      <td>Clear vinyl, <b>white ink</b><small>or cut white vinyl lettering</small></td>
+      <td class="q">1</td>
+    </tr>
+    <tr>
+      <td class="k">D</td>
+      <td class="th"><img src="spec/thumb-D.jpg" alt=""></td>
+      <td>Front doors, centred on flat<small>panel below the beltline</small></td>
+      <td class="sz">24" × 12"</td>
+      <td>Opaque white vinyl<small>die-cut to rounded plate, UV laminate</small></td>
+      <td class="q">2</td>
+    </tr>
+    <tr>
+      <td class="k">E</td>
+      <td class="th"><img src="spec/thumb-E.jpg" alt=""></td>
+      <td>Rear doors, centred on flat<small>panel below the beltline</small></td>
+      <td class="sz">20" × 10"</td>
+      <td>Opaque white vinyl<small>die-cut to rounded plate, UV laminate</small></td>
+      <td class="q">2</td>
+    </tr>
+  </table>
+
+  <h3 class="sec">Installation Notes</h3>
+  <ul class="notes">
+    <li><b>A and B must clear the Ford oval, the tailgate handle recess and the raised MAVERICK letters.</b> Vinyl will not lie flat over any of them. Centre each piece in the flat panel to its side of the oval.</li>
+    <li><b>C sits in the band below the MAVERICK letters.</b> That band measures roughly 4.2" tall off a photo — please verify on the vehicle before cutting and tell us if the bar needs to come down to 3".</li>
+    <li><b>D and E are centred on each door's flat area</b>, clear of the handle scoop and the lower body crease. Keep the top edge level with, or just below, the beltline trim. Match height left to right.</li>
+    <li><b>A, B and C are white artwork only</b> — they are meant to read as lettering directly on the paint, with no visible background. <b>D and E are solid plates.</b></li>
+    <li>Artwork is supplied at exact size. <b>Please print at 100% — do not scale to fit.</b></li>
+    <li>Outdoor-rated vinyl with UV laminate throughout. Cast film preferred over calendered.</li>
+  </ul>
+
+  <footer>
+    <span><b>Tony's Window Cleaning</b> · Victorville, CA</span>
+    <span>714-559-0300 · twindowclean.com</span>
+  </footer>
+
+</body>
+</html>
