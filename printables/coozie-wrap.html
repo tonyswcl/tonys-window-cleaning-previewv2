@@ -6,24 +6,25 @@
      Each panel 4 x 4" — confirm against your supplier's template,
      print areas vary between 3.5 x 3.75" and 4 x 4.5". */
   @import url('fonts/fonts.css');
-  :root{--navy:#103050;--sky:#a8cdec;--gold:#f0b040;
+  :root{--navy:#103050;--slate:#46617a;--gold:#c98b1e;--paper:#f4f8fc;--line:#cfe0ee;
         --font:'Plus Jakarta Sans',system-ui,sans-serif;--head:'Sora',sans-serif}
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
   @page{size:8.5in 4.5in;margin:0}
   body{width:8.5in;height:4.5in;overflow:hidden;background:#fff;
        font-family:var(--font);display:flex;align-items:center;justify-content:center;gap:.5in}
-  .panel{width:4in;height:4in;background:var(--navy);color:#fff;
+  .panel{width:4in;height:4in;background:var(--paper);color:var(--navy);
+         border:1.2px solid var(--line);
          display:flex;flex-direction:column;align-items:center;justify-content:center;
          padding:.3in;text-align:center}
   .panel img{height:1.5in;width:auto}
   .l1{font-family:var(--head);font-weight:800;font-size:34px;line-height:1;margin-top:.16in}
   .l2{font-family:var(--head);font-weight:700;font-size:14.5px;letter-spacing:.13em;
-      color:var(--sky);margin-top:.08in}
+      color:var(--slate);margin-top:.08in}
   .rule{width:2.3in;height:.03in;background:var(--gold);margin:.2in 0 .18in}
   .ph{font-family:var(--head);font-weight:800;font-size:38px;line-height:1}
-  .st{font-size:14px;font-weight:700;color:var(--sky);letter-spacing:.05em;margin-top:.1in}
-  .svc{font-size:11px;font-weight:700;color:var(--sky);letter-spacing:.06em;margin-top:.22in;line-height:1.6}
+  .st{font-size:14px;font-weight:700;color:var(--slate);letter-spacing:.05em;margin-top:.1in}
+  .svc{font-size:11px;font-weight:700;color:var(--slate);letter-spacing:.06em;margin-top:.22in;line-height:1.6}
 </style></head>
 <body>
   <div class="panel">

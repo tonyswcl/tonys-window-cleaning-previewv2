@@ -30,24 +30,25 @@
   .strip{height:.09in;background:var(--gold)}
 
   h3.sec{font-family:var(--head);font-size:13.5px;font-weight:800;letter-spacing:.14em;
-         text-transform:uppercase;color:var(--blue);padding:.28in .55in .12in}
+         text-transform:uppercase;color:var(--blue);padding:.22in .55in .1in}
 
   .grid{display:flex;gap:.2in;padding:0 .55in;align-items:flex-start}
   .it{flex:1 1 0;min-width:0;text-align:center}
-  .it .box{border:1.5px solid var(--line);border-radius:.08in;overflow:hidden;background:#fbfdff}
-  .it img{display:block;width:100%}
+  .it .box{border:1.5px solid var(--line);border-radius:.08in;overflow:hidden;background:#fbfdff;
+           height:2.15in;display:flex;align-items:center;justify-content:center;padding:.06in}
+  .it img{display:block;max-width:100%;max-height:100%;width:auto;height:auto}
   .it .cap{display:block;font-family:var(--head);font-weight:800;font-size:11px;margin-top:.09in}
   .it .cap small{display:block;font-family:var(--font);font-weight:600;font-size:9.5px;
                  color:var(--slate);margin-top:2px}
 
-  table{width:calc(100% - 1.1in);margin:0 .55in;border-collapse:collapse;font-size:12px}
+  table{width:calc(100% - 1.1in);margin:0 .55in;border-collapse:collapse;font-size:11px}
   th{background:var(--pale);text-align:left;padding:.08in .09in;font-weight:800;
      font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--slate);
      border-bottom:1.5px solid var(--line)}
-  td{padding:.09in;border-bottom:1px solid var(--line);vertical-align:top}
+  td{padding:.075in .09in;border-bottom:1px solid var(--line);vertical-align:top}
   td.n{font-family:var(--head);font-weight:800}
   td.q{text-align:center;font-weight:800;white-space:nowrap}
-  td small{display:block;color:var(--slate);font-weight:600;margin-top:2px;font-size:10.5px}
+  td small{display:block;color:var(--slate);font-weight:600;margin-top:1px;font-size:9.5px}
 
   .cols{display:flex;gap:.4in;padding:0 .55in}
   .col{flex:1 1 0}
@@ -75,8 +76,8 @@
   <header>
     <img src="assets/logo-tile.png" alt="">
     <div class="t">
-      <h1>Client Goodie Bag — Package &amp; Order Spec</h1>
-      <p>Handed over at the end of every job</p>
+      <h1>Client Goodie Bag &amp; Field Kit — Order Spec</h1>
+      <p>Everything printable from UPrinting · all sizes are their stock products</p>
     </div>
     <div class="r">
       <b>Tony's Window Cleaning</b>
@@ -97,7 +98,7 @@
     </div>
     <div class="it">
       <div class="box"><img src="goodiebag/t-card-referral-front.jpg" alt=""></div>
-      <span class="cap">Referral card, front<small>3.5 × 2.5" — 2 per bag</small></span>
+      <span class="cap">Referral card, front<small>3.5 × 2" — 2 per bag</small></span>
     </div>
     <div class="it">
       <div class="box"><img src="goodiebag/t-card-referral-back.jpg" alt=""></div>
@@ -105,55 +106,51 @@
     </div>
   </div>
   <div class="grid" style="padding-top:.2in">
-    <div class="it" style="flex:2 1 0">
-      <div class="box"><img src="goodiebag/t-coozie-wrap.jpg" alt=""></div>
-      <span class="cap">Can cooler, both panels<small>4 × 4" print area per side</small></span>
+    <div class="it">
+      <div class="box"><img src="goodiebag/t-magnet-fridge-3.5x2.jpg" alt=""></div>
+      <span class="cap">Fridge magnet<small>3.5 × 2" — in the bag</small></span>
     </div>
     <div class="it">
       <div class="box"><img src="goodiebag/t-sticker-bag-seal.jpg" alt=""></div>
       <span class="cap">Bag seal sticker<small>2.5" round</small></span>
     </div>
-    <div class="it" style="flex:2 1 0"></div>
+    <div class="it">
+      <div class="box"><img src="goodiebag/t-doorhanger-4.25x11.jpg" alt=""></div>
+      <span class="cap">Neighbor door hanger<small>4.25 × 11"</small></span>
+    </div>
+    <div class="it">
+      <div class="box"><img src="goodiebag/t-yardsign-18x24.jpg" alt=""></div>
+      <span class="cap">Yard sign<small>18 × 24" — during the job</small></span>
+    </div>
   </div>
 
-  <h3 class="sec">Order list — 100 bags</h3>
+  <h3 class="sec">UPrinting order list</h3>
   <table>
-    <tr><th>Item</th><th>Size</th><th>Stock &amp; finish</th><th>Qty</th><th>Where</th></tr>
-    <tr>
-      <td class="n">Thank-you card</td>
+    <tr><th>Item</th><th>UPrinting product</th><th>Size</th><th>Stock &amp; finish</th><th>Qty</th></tr>
+    <tr><td class="n">Thank-you card</td><td>Postcards<small>or Greeting Cards</small></td>
       <td>5 × 7"<small>bleed 5.25 × 7.25</small></td>
-      <td>16pt matte or uncoated, <b>double-sided</b><small>Uncoated feels more personal than gloss</small></td>
-      <td class="q">100</td>
-      <td>Staples / VistaPrint</td>
-    </tr>
-    <tr>
-      <td class="n">Referral card</td>
-      <td>3.5 × 2.5"<small>bleed 3.75 × 2.75</small></td>
-      <td>16pt matte, <b>double-sided</b>, rounded corners<small>Back must take pen — matte, never gloss</small></td>
-      <td class="q">250</td>
-      <td>Staples / VistaPrint</td>
-    </tr>
-    <tr>
-      <td class="n">Can cooler</td>
-      <td>4 × 4" per side<small>confirm supplier template</small></td>
-      <td>Collapsible neoprene, full-color both sides</td>
-      <td class="q">100</td>
-      <td>4imprint / Custom Ink</td>
-    </tr>
-    <tr>
-      <td class="n">Bag seal sticker</td>
+      <td>16pt <b>matte or uncoated</b>, double-sided<small>Uncoated reads personal; gloss reads like junk mail</small></td><td class="q">100</td></tr>
+    <tr><td class="n">Referral card</td><td>Business Cards</td>
+      <td>3.5 × 2"<small>bleed 3.75 × 2.25</small></td>
+      <td>16pt <b>matte</b>, double-sided, rounded corners<small>Must take a pen — never gloss or UV</small></td><td class="q">250</td></tr>
+    <tr><td class="n">Fridge magnet</td><td>Business Card Magnets</td>
+      <td>3.5 × 2"<small>bleed 3.75 × 2.25</small></td>
+      <td>Full color, 20pt magnet stock</td><td class="q">100</td></tr>
+    <tr><td class="n">Bag seal sticker</td><td>Circle Stickers</td>
       <td>2.5" round<small>bleed 2.75</small></td>
-      <td>Matte vinyl, kiss-cut on sheets</td>
-      <td class="q">150</td>
-      <td>Staples / StickerMule</td>
-    </tr>
-    <tr>
-      <td class="n">Gift bag</td>
-      <td>approx 5.5 × 8"<small>small kraft, no print</small></td>
-      <td>Plain white or kraft — the seal sticker brands it<small>Cheaper than printed bags and looks better</small></td>
-      <td class="q">100</td>
-      <td>Amazon / Costco</td>
-    </tr>
+      <td>Matte white vinyl, kiss-cut sheets</td><td class="q">150</td></tr>
+    <tr><td class="n">Door hanger</td><td>Door Hangers</td>
+      <td>4.25 × 11"<small>bleed 4.5 × 11.25</small></td>
+      <td>14pt gloss or matte, double-sided, <b>die-cut hole</b><small>Top 2.3" left clear for the die cut</small></td><td class="q">500</td></tr>
+    <tr><td class="n">Yard sign</td><td>Yard Signs</td>
+      <td>18 × 24"<small>bleed 18.25 × 24.25</small></td>
+      <td>4mm coroplast, <b>double-sided</b>, with H-stake<small>Double-sided so it reads from both directions</small></td><td class="q">2</td></tr>
+    <tr><td class="n">Can cooler</td><td><b>Not UPrinting</b><small>4imprint / Custom Ink</small></td>
+      <td>4 × 4" per side<small>confirm supplier template</small></td>
+      <td>Collapsible neoprene, full color both sides</td><td class="q">100</td></tr>
+    <tr><td class="n">Gift bag</td><td><b>Not UPrinting</b><small>Amazon / Costco</small></td>
+      <td>approx 5.5 × 8"<small>plain kraft, no print</small></td>
+      <td>The seal sticker brands it — cheaper than printed bags</td><td class="q">100</td></tr>
   </table>
 
   <h3 class="sec">How to run it</h3>
@@ -162,16 +159,16 @@
       <h4>At the end of every job</h4>
       <ul>
         <li>Walk the customer around the glass first. <b>Get the "wow" before you hand anything over.</b></li>
-        <li>Hand them the bag and say one line: <b>"There's a thank-you in here, and two cards worth $25 off for anyone you send my way."</b></li>
+        <li>Hand them the bag and say one line: <b>"There's a thank-you in here, and two cards worth $50 off for anyone you send my way."</b></li>
         <li>Then stop talking about it. The card does the rest.</li>
       </ul>
     </div>
     <div class="col">
-      <h4>Tracking it</h4>
+      <h4>The field kit</h4>
       <ul>
-        <li>When a referral card comes back, the <b>Referred by</b> line tells you who to pay.</li>
-        <li>Pay the $25 the day the referred job is paid — fast payment is what makes people hand out the second card.</li>
-        <li>Keep a simple tally. If a name shows up twice, that customer is worth a Christmas card.</li>
+        <li><b>Yard sign goes up when you arrive, comes down when you leave.</b> Every car on that street sees who is doing the house.</li>
+        <li><b>Door hangers on the ten homes either side</b> before you drive off. The proof is next door and still wet.</li>
+        <li>When a referral card comes back, the <b>Referred by</b> line tells you who to pay. Pay it the day that job is paid.</li>
       </ul>
     </div>
   </div>

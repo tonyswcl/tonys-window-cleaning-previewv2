@@ -2,24 +2,24 @@
 <html lang="en"><head><meta charset="UTF-8">
 <title>Tony's Window Cleaning — Bag Seal Sticker 2.5" round</title>
 <style>
-  /* Round bag-seal sticker, 2.5" diameter + .125" bleed.
-     Seals the goodie bag and puts the name on it. */
   @import url('fonts/fonts.css');
-  :root{--navy:#103050;--sky:#a8cdec;--gold:#f0b040;
+  :root{--navy:#103050;--blue:#2f6fb0;--slate:#46617a;--gold:#c98b1e;
+        --paper:#fbfdff;--line:#cfe0ee;
         --font:'Plus Jakarta Sans',system-ui,sans-serif;--head:'Sora',sans-serif}
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
   @page{size:2.75in 2.75in;margin:0}
-  body{width:2.75in;height:2.75in;overflow:hidden;background:var(--navy);
-       font-family:var(--font);color:#fff;
+  body{width:2.75in;height:2.75in;overflow:hidden;background:var(--paper);
+       font-family:var(--font);color:var(--navy);
        display:flex;flex-direction:column;align-items:center;justify-content:center;
-       padding:.42in;text-align:center}
-  img{height:.72in;width:auto}
-  .l1{font-family:var(--head);font-weight:800;font-size:25px;line-height:1;margin-top:.09in}
-  .l2{font-family:var(--head);font-weight:700;font-size:9.5px;letter-spacing:.16em;
-      color:var(--sky);margin-top:.05in}
-  .rule{width:.85in;height:.022in;background:var(--gold);margin:.1in 0 .08in}
-  .th{font-size:8.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--sky)}
+       padding:.44in;text-align:center}
+  body::before{content:"";position:absolute;inset:.3in;border:1.2px solid var(--line);border-radius:50%}
+  img{height:.68in;width:auto}
+  .l1{font-family:var(--head);font-weight:800;font-size:23px;line-height:1;margin-top:.08in}
+  .l2{font-family:var(--head);font-weight:700;font-size:8.5px;letter-spacing:.17em;
+      color:var(--slate);margin-top:.04in}
+  .rule{width:.75in;height:.016in;background:var(--gold);margin:.09in 0 .07in;opacity:.9}
+  .th{font-size:7.5px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--blue)}
 </style></head>
 <body>
   <img src="assets/logo-tile.png" alt="">
