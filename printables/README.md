@@ -130,11 +130,44 @@ photo picker — that path is the one that works.
 
 ## The logo mark on artwork
 
-Use `assets/logo-tile.png`, never a background-knockout of the logo. The
+Use `assets/logo-tile.svg`, never a background-knockout of the logo. The
 solar-panel grid lines and the sun's antialiased edge are drawn in tones
 within a hair of the logo's own background colour, so any knockout eats
 them and leaves holes in the mark. The tile keeps the artwork on its own
-opaque rounded ground, so nothing can be cut out.
+rounded ground, so nothing can be cut out.
+
+`assets/logo-tile.svg` is built by `build-logo-svg.py` from the PNG, which
+is only 628×554 — printed 4.15" tall on the door decal that worked out to
+133 dpi, under the 150 dpi large-format minimum, and there was no larger
+source to go back to. The mark is flat five-colour art, so it traces
+exactly rather than approximately: the script floods the transparent
+surround with its nearest opaque neighbour (otherwise the tracer invents
+an edge there), snaps every pixel to the five brand colours, traces, and
+clips the result with a silhouette traced from the alpha channel. The
+transparent surround survives, so it still drops onto clear vinyl with no
+white plate behind it. Re-run the script if the source art ever changes.
+
+## Vector pack for the sign shop
+
+`build-vector-pack.py` -> `upload/squaresigns/` is what gets sent to a
+printer. Two files per piece, both pure paths:
+
+| File | Trim | Qty |
+|---|---|---|
+| `TonysWC_A_Tailgate-Left_20x8in` | 20 × 8" | 1 |
+| `TonysWC_B_Tailgate-Right_20x8in` | 20 × 8" | 1 |
+| `TonysWC_C_Tailgate-Bar_48x4in` | 48 × 4" | 1 |
+| `TonysWC_D_Front-Door_20x10in` | 20 × 10" | 2 |
+| `TonysWC_E_Rear-Door_20x10in` | 20 × 10" | 2 |
+| `TonysWC_Placement-Reference_11x17in.pdf` | 11 × 17" | reference only |
+
+The `pdf/` versions of these pieces are vector too, but they carry
+subsetted fonts, and a RIP quietly substituting a font is the one failure
+that ruins a job without anyone noticing until it is cut. So the pack
+converts every glyph to an outline first and re-prints from that. The
+script asserts `images=0 fonts=0` on each PDF and fails if either is not
+zero. The placement reference is the only file in the folder with photos
+in it, and it is not for print.
 
 ## Vinyl banner (48×28)
 
