@@ -1,0 +1,41 @@
+# Copy to config.toml and fill in. config.toml is gitignored - it names the
+# environment variables holding your app passwords, never the passwords.
+
+[identity]
+from_name          = "Tony - Tony's Window Cleaning"
+reply_to           = "twindowclean@gmail.com"
+# CAN-SPAM requires a real postal address on commercial mail. A PO box is fine.
+postal_address     = "Tony's Window Cleaning, PO Box 0000, Victorville, CA 92392"
+# Opt-outs land here. Honour them within 10 days - the law's number, not mine.
+unsubscribe_mailto = "twindowclean@gmail.com"
+
+[limits]
+daily_cap        = 25      # per inbox, per day, once warmed up
+min_gap_seconds  = 45
+max_gap_seconds  = 200
+send_from_hour   = 8       # local time, 24h
+send_to_hour     = 16
+timezone         = "America/Los_Angeles"
+# The day the outreach domain started sending. Leave commented out and the cap
+# applies immediately; set it and the cap ramps from 5/day over three weeks.
+# warmup_start        = "2026-08-17"
+warmup_days         = 21
+warmup_first_day_cap = 5
+
+# One block per sending inbox. Two inboxes on the same domain lets you send
+# twice the volume at half the per-inbox risk.
+[[accounts]]
+address      = "tony@twindowcleanhd.com"
+host         = "smtp.gmail.com"
+port         = 587
+imap_host    = "imap.gmail.com"
+imap_port    = 993
+password_env = "OUTREACH_PW_TONY"
+
+# [[accounts]]
+# address      = "hello@twindowcleanhd.com"
+# host         = "smtp.gmail.com"
+# port         = 587
+# imap_host    = "imap.gmail.com"
+# imap_port    = 993
+# password_env = "OUTREACH_PW_HELLO"
