@@ -25,6 +25,27 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
   <link href="style.css" rel="stylesheet">
 
+  <!--
+    ===== META PIXEL SLOT =====
+    There is currently no pixel on the ad account (verified via the Meta API —
+    zero datasets exist). Create one in Events Manager
+    (business.facebook.com/events_manager), then paste the numeric ID into BOTH
+    placeholders below and delete these comment markers.
+    The same block belongs in pigeon-proofing.html.
+
+  <script>
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+    n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+    document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', 'YOUR_PIXEL_ID');
+    fbq('track', 'PageView');
+  </script>
+  <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=YOUR_PIXEL_ID&ev=PageView&noscript=1" /></noscript>
+  -->
+
   <!-- LocalBusiness structured data for SEO -->
   <script type="application/ld+json">
   {
@@ -109,6 +130,30 @@
       },
       {
         "@type": "Question",
+        "name": "How much does pigeon proofing cost?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Most solar array pigeon proofing jobs start at $450 and are priced by panel count and roof access. That price includes removing old nests and mesh, full dropping cleanup and sanitizing, and installing new mesh secured with clips. The inspection is free and the quote is firm before we start."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How much do you charge to clean solar panels?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Solar panel cleaning starts at $7 per panel. We use a water-fed pole with purified water, which is the safe method for High Desert panels baked in sun and dust. Standard rates in this area run $10 to $12 a panel, so we sit below market for the same professional method."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Do you offer a warranty on pigeon proofing?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. Our pigeon proofing carries a 2-year pigeon-free warranty. We secure the mesh with clips rather than drilling bolts through it, because bolt-mounted mesh tears loose in High Desert wind. If pigeons get back under the array within the warranty period, we come back and fix it at no charge."
+        }
+      },
+      {
+        "@type": "Question",
         "name": "Do you clean solar panels?",
         "acceptedAnswer": {
           "@type": "Answer",
@@ -148,7 +193,7 @@
   {
     "@context": "https://schema.org",
     "@type": "Service",
-    "serviceType": "Window, Solar Panel, Pressure Washing & Trash Bin Cleaning",
+    "serviceType": "Pigeon Proofing, Solar Panel Cleaning & Window Cleaning",
     "provider": { "@type": "HomeAndConstructionBusiness", "name": "Tony's Window Cleaning" },
     "areaServed": [
       "Victorville, CA", "Hesperia, CA", "Apple Valley, CA", "Adelanto, CA",
@@ -161,14 +206,30 @@
       "@type": "OfferCatalog",
       "name": "Cleaning Services",
       "itemListElement": [
-        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Window Cleaning" } },
-        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Solar Panel Cleaning" } },
-        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Pigeon Proofing" } },
+        {
+          "@type": "Offer",
+          "itemOffered": { "@type": "Service", "name": "Pigeon Proofing & Removal", "url": "https://twindowclean.com/pigeon-proofing.html" },
+          "priceSpecification": { "@type": "PriceSpecification", "minPrice": "450", "priceCurrency": "USD" }
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": { "@type": "Service", "name": "Solar Panel Cleaning" },
+          "priceSpecification": { "@type": "UnitPriceSpecification", "price": "7", "priceCurrency": "USD", "unitText": "panel" }
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": { "@type": "Service", "name": "Window Cleaning" },
+          "priceSpecification": { "@type": "PriceSpecification", "minPrice": "179", "priceCurrency": "USD" }
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": { "@type": "Service", "name": "Screen Repair & Re-Mesh" },
+          "priceSpecification": { "@type": "UnitPriceSpecification", "price": "33.99", "priceCurrency": "USD", "unitText": "screen" }
+        },
         { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Pigeon Dropping Cleanup" } },
         { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Pressure Washing" } },
         { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Trash Bin Cleaning" } },
-        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Hard Water Stain Removal" } },
-        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Screens, Tracks & Sills" } }
+        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Hard Water Stain Removal" } }
       ]
     }
   }
@@ -187,6 +248,7 @@
 
     <nav class="nav-links" id="navLinks">
       <a href="#services">Services</a>
+      <a href="pigeon-proofing.html">Pigeon Proofing</a>
       <a href="#gallery">Gallery</a>
       <a href="#reviews">Reviews</a>
       <a href="#faq">FAQ</a>
@@ -211,10 +273,12 @@
     <div class="hero-content reveal">
       <img src="assets/logo.png" alt="Tony's Window Cleaning" class="hero-logo" width="140" height="139">
       <span class="eyebrow"><span class="gold-text">★★★★★</span> Rated 5 stars on Google</span>
-      <h1 class="hero-title">See the world <span class="grad">crystal&nbsp;clear</span>.</h1>
+      <h1 class="hero-title">Pigeon Proofing, Solar Panel &amp; Window Cleaning in <span class="grad">Victorville, Hesperia &amp; Apple&nbsp;Valley</span></h1>
+      <p class="hero-tagline">See the world crystal clear.</p>
       <p class="hero-sub">
-        Locally owned window cleaning, solar panel cleaning, and pigeon proofing
-        across the High Desert and Inland Empire. Reliable work and a clean, streak-free finish.
+        Locally owned and operated across the High Desert and Inland Empire.
+        Pigeon proofing from $450 · solar panels from $7 each · windows from $179.
+        Free quotes, same-day replies.
       </p>
       <div class="hero-actions">
         <a href="#quote" class="btn btn-primary">Get a Free Quote</a>
@@ -223,6 +287,7 @@
 
       <ul class="hero-trust">
         <li><strong>5.0★</strong><span>Google rating</span></li>
+        <li><strong>2 Year</strong><span>Pigeon-Free Warranty</span></li>
         <li><strong>Free</strong><span>Estimates</span></li>
         <li><strong>Same-day</strong><span>Replies</span></li>
       </ul>
@@ -236,12 +301,12 @@
   <!-- ===== MARQUEE ===== -->
   <div class="marquee" aria-hidden="true">
     <div class="marquee-track">
-      <span>Window Cleaning</span><span class="dot">✦</span><span>Solar Panel Cleaning</span><span class="dot">✦</span>
-      <span>Pigeon Proofing</span><span class="dot">✦</span><span>Pressure Washing</span><span class="dot">✦</span>
-      <span>Trash Bin Cleaning</span><span class="dot">✦</span><span>Hard Water Removal</span><span class="dot">✦</span>
-      <span>Window Cleaning</span><span class="dot">✦</span><span>Solar Panel Cleaning</span><span class="dot">✦</span>
-      <span>Pigeon Proofing</span><span class="dot">✦</span><span>Pressure Washing</span><span class="dot">✦</span>
-      <span>Trash Bin Cleaning</span><span class="dot">✦</span><span>Hard Water Removal</span><span class="dot">✦</span>
+      <span>Pigeon Proofing</span><span class="dot">✦</span><span>Solar Panel Cleaning</span><span class="dot">✦</span>
+      <span>Window Cleaning</span><span class="dot">✦</span><span>Screen Repair</span><span class="dot">✦</span>
+      <span>Pressure Washing</span><span class="dot">✦</span><span>Hard Water Removal</span><span class="dot">✦</span>
+      <span>Pigeon Proofing</span><span class="dot">✦</span><span>Solar Panel Cleaning</span><span class="dot">✦</span>
+      <span>Window Cleaning</span><span class="dot">✦</span><span>Screen Repair</span><span class="dot">✦</span>
+      <span>Pressure Washing</span><span class="dot">✦</span><span>Hard Water Removal</span><span class="dot">✦</span>
     </div>
   </div>
 
@@ -289,16 +354,19 @@
     <div class="container">
       <div class="section-head reveal">
         <span class="kicker">What We Do</span>
-        <h2 class="section-title">Our services</h2>
-        <p class="lead center">Professional cleaning for your home or business, inside and out.</p>
+        <h2 class="section-title">Our services &amp; starting prices</h2>
+        <p class="lead center">Real numbers up front, no pressure. Pigeon proofing, solar panel cleaning and window cleaning for homes and businesses across the High Desert and Inland Empire.</p>
       </div>
 
       <div class="service-grid">
-        <article class="tilt-card reveal" data-tilt>
+        <article class="tilt-card accent reveal" data-tilt>
           <div class="tilt-inner">
-            <div class="svc-ic">🪟</div>
-            <h3>Window Cleaning</h3>
-            <p>Interior and exterior glass cleaned to a clear, streak-free finish.</p>
+            <span class="svc-flag">Most requested</span>
+            <div class="svc-ic">🐦</div>
+            <h3>Pigeon Proofing &amp; Removal</h3>
+            <p>Humane mesh and clips under solar panels, nest and dropping cleanup, full sanitize. Backed by a 2-year pigeon-free warranty.</p>
+            <span class="svc-price">from $450 · free inspection</span>
+            <a href="pigeon-proofing.html" class="link-arrow">See how pigeon proofing works →</a>
           </div>
         </article>
         <article class="tilt-card reveal" data-tilt>
@@ -306,27 +374,31 @@
             <div class="svc-ic">☀️</div>
             <h3>Solar Panel Cleaning</h3>
             <p>Purified-water cleaning that restores efficiency without scratching your panels.</p>
+            <span class="svc-price">from $7 per panel</span>
           </div>
         </article>
         <article class="tilt-card reveal" data-tilt>
           <div class="tilt-inner">
-            <div class="svc-ic">🐦</div>
-            <h3>Pigeon Proofing</h3>
-            <p>Pigeon dropping cleanup, bird-proofing and deterrent installation to protect your roof and solar panels.</p>
+            <div class="svc-ic">🪟</div>
+            <h3>Window Cleaning</h3>
+            <p>Interior and exterior glass cleaned to a clear, streak-free finish.</p>
+            <span class="svc-price">from $179</span>
+          </div>
+        </article>
+        <article class="tilt-card reveal" data-tilt>
+          <div class="tilt-inner">
+            <div class="svc-ic">🧰</div>
+            <h3>Screens, Tracks &amp; Sills</h3>
+            <p>Screens removed, cleaned and reinstalled, with tracks and sills detailed. Torn screens re-meshed.</p>
+            <span class="svc-price">re-mesh from $33.99 per screen</span>
           </div>
         </article>
         <article class="tilt-card reveal" data-tilt>
           <div class="tilt-inner">
             <div class="svc-ic">💦</div>
             <h3>Pressure Washing</h3>
-            <p>Driveways, walkways, patios and siding washed clean.</p>
-          </div>
-        </article>
-        <article class="tilt-card reveal" data-tilt>
-          <div class="tilt-inner">
-            <div class="svc-ic">🗑️</div>
-            <h3>Trash Bin Cleaning</h3>
-            <p>Bins deep-cleaned, deodorized and sanitized.</p>
+            <p>Driveways, walkways, patios, siding and roofs washed clean.</p>
+            <span class="svc-price">free quote</span>
           </div>
         </article>
         <article class="tilt-card reveal" data-tilt>
@@ -334,16 +406,28 @@
             <div class="svc-ic">💎</div>
             <h3>Hard Water Stain Removal</h3>
             <p>Stubborn mineral spots removed to restore clear glass.</p>
+            <span class="svc-price">free quote</span>
           </div>
         </article>
         <article class="tilt-card reveal" data-tilt>
           <div class="tilt-inner">
-            <div class="svc-ic">🧰</div>
-            <h3>Screens, Tracks &amp; Sills</h3>
-            <p>Screens removed, cleaned and reinstalled, with tracks and sills detailed.</p>
+            <div class="svc-ic">🗑️</div>
+            <h3>Trash Bin Cleaning</h3>
+            <p>Bins deep-cleaned, deodorized and sanitized.</p>
+            <span class="svc-price">free quote</span>
+          </div>
+        </article>
+        <article class="tilt-card reveal" data-tilt>
+          <div class="tilt-inner">
+            <div class="svc-ic">🤝</div>
+            <h3>Bundle &amp; Save</h3>
+            <p>Book two or more services on the same visit and we combine them into one trip charge — most customers pair windows with solar.</p>
+            <span class="svc-price">ask about bundle pricing</span>
           </div>
         </article>
       </div>
+
+      <p class="price-note reveal">Starting prices for standard single-story homes in our core service area. Final price depends on panel count, stories and access — every quote is free and firm before we start.</p>
 
       <div class="section-head reveal" style="margin-top:2.5rem;margin-bottom:0">
         <a href="#quote" class="btn btn-blue sm" style="margin-top:0">Need a commercial quote? Get in touch →</a>
@@ -582,6 +666,18 @@
           <p>Yes. We install humane bird deterrent mesh and spikes on roofs, solar panels, eaves and ledges to keep pigeons out for good, plus dropping cleanup. We serve Hesperia, Victorville, Apple Valley, Adelanto and the rest of the High Desert.</p>
         </details>
         <details class="reveal">
+          <summary>How much does pigeon proofing cost?</summary>
+          <p>Most solar array pigeon proofing jobs start at <strong>$450</strong> and are priced by panel count and roof access. That includes removing old nests and mesh, full dropping cleanup and sanitizing, and installing new mesh secured with clips. The inspection is free and the quote is firm before we start. <a href="pigeon-proofing.html">See what's included →</a></p>
+        </details>
+        <details class="reveal">
+          <summary>How much do you charge to clean solar panels?</summary>
+          <p>Solar panel cleaning starts at <strong>$7 per panel</strong>. We use a water-fed pole with purified water — the safe method for High Desert panels baked in sun and dust. Standard rates around here run $10–$12 a panel, so we sit below market for the same professional method.</p>
+        </details>
+        <details class="reveal">
+          <summary>Do you offer a warranty on pigeon proofing?</summary>
+          <p>Yes — a <strong>2-year pigeon-free warranty</strong>. We secure the mesh with clips instead of drilling bolts through it, because bolt-mounted mesh tears loose in High Desert wind (we get called out to fix that job all the time). If pigeons get back under your array within the warranty period, we come back and make it right at no charge.</p>
+        </details>
+        <details class="reveal">
           <summary>Do you clean solar panels?</summary>
           <p>Yes! We use a water-fed pole with purified water for a streak-free, scratch-free clean that helps your panels run at peak efficiency.</p>
         </details>
@@ -626,6 +722,7 @@
       <div class="footer-col">
         <h4>Quick Links</h4>
         <a href="#services">Services</a>
+        <a href="pigeon-proofing.html">Pigeon Proofing</a>
         <a href="#gallery">Gallery</a>
         <a href="#reviews">Reviews</a>
         <a href="#faq">FAQ</a>
