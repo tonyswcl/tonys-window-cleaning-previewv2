@@ -558,3 +558,20 @@ body::after{width:460px;height:460px;background:var(--gold-300);bottom:-160px;le
 @media (max-width:760px){
   .steps,.compare{grid-template-columns:1fr}
 }
+
+/* ===== PHOTO GRID (hub pages, real job photos) ===== */
+.photo-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:1.4rem;margin-top:2.5rem;
+}
+.photo-card{
+  border-radius:var(--radius);overflow:hidden;background:#fff;
+  border:1px solid var(--sky-100);box-shadow:var(--shadow-sm);
+}
+.photo-card img{
+  width:100%;aspect-ratio:4/3;object-fit:cover;display:block;
+}
+.photo-card figcaption{
+  padding:.75rem 1.1rem;font-size:.9rem;font-weight:600;color:var(--ink-soft);
+  border-top:3px solid var(--gold-400);
+}
