@@ -55,7 +55,9 @@
           io.unobserve(en.target);
         }
       });
-    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    // threshold must stay 0: a block taller than ~8x the viewport can never
+    // reach a fractional threshold, so it would stay at opacity 0 forever.
+    }, { threshold: 0, rootMargin: '0px 0px -40px 0px' });
     reveals.forEach((el) => io.observe(el));
   } else {
     reveals.forEach((el) => el.classList.add('in'));
