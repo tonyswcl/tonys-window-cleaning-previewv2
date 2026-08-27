@@ -24,25 +24,27 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
   <link href="style.css" rel="stylesheet">
 
-  <!--
-    ===== META PIXEL SLOT =====
-    There is currently no pixel on the ad account. Create one in
-    Events Manager (business.facebook.com/events_manager), then paste the
-    numeric ID into BOTH placeholders below and delete these comment markers.
-    The same block belongs in index.html.
-
+  <!-- Meta Pixel — dataset "Tonys Pigeon Proofing - Inland Empire" -->
   <script>
     !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
     n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
     n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
     t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
     document,'script','https://connect.facebook.net/en_US/fbevents.js');
-    fbq('init', 'YOUR_PIXEL_ID');
+    fbq('init', '1424363186269397');
     fbq('track', 'PageView');
   </script>
   <noscript><img height="1" width="1" style="display:none"
-    src="https://www.facebook.com/tr?id=YOUR_PIXEL_ID&ev=PageView&noscript=1" /></noscript>
-  -->
+    src="https://www.facebook.com/tr?id=1424363186269397&ev=PageView&noscript=1" alt="" /></noscript>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('a[href^="tel:"]').forEach(function (el) {
+        el.addEventListener('click', function () {
+          if (window.fbq) fbq('track', 'Contact', { content_name: 'Pigeon Proofing' });
+        });
+      });
+    });
+  </script>
 
   <!-- Service structured data — pigeon proofing -->
   <script type="application/ld+json">
