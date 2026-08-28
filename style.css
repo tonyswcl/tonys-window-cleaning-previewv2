@@ -479,6 +479,18 @@ body::after{width:460px;height:460px;background:var(--gold-300);bottom:-160px;le
   font-weight:600;font-size:.95rem;color:var(--navy-800);
   background:var(--sky-50);border:1px solid var(--sky-200);
 }
+/* chips that link to a city page: keep the chip look, not the anchor look */
+a.area-chip{
+  text-decoration:none;display:inline-block;
+  transition:background .2s ease,border-color .2s ease,transform .2s ease;
+}
+a.area-chip:hover{
+  background:var(--gold-100,#fdf3e0);border-color:var(--gold-400,#f0b040);
+  transform:translateY(-2px);
+}
+a.area-chip:focus-visible{
+  outline:2px solid var(--gold-400,#f0b040);outline-offset:2px;
+}
 
 /* ===== ACCESSIBILITY ===== */
 @media (prefers-reduced-motion:reduce){
