@@ -283,33 +283,53 @@
   </section>
 
   <section id="quote" class="section quote">
-    <div class="container narrow">
-      <div class="section-head reveal">
-        <span class="kicker">Free Quote</span>
+    <div class="container quote-grid">
+      <div class="quote-info reveal">
+        <span class="kicker light">Free Quote</span>
         <h2 class="section-title">Get a quote for your Phelan home</h2>
-        <p class="lead center">Tell us what you need and we will get back to you the same day. Or just call, that is usually fastest.</p>
+        <p class="lead">Tell us what you need and we will get back to you the same day. Or just call, that is usually fastest.</p>
+
+        <ul class="contact-list">
+          <li><a href="tel:7145590300"><span class="ci">&#128222;</span> 714-559-0300</a></li>
+          <li><a href="mailto:twindowclean@gmail.com"><span class="ci">&#9993;&#65039;</span> twindowclean@gmail.com</a></li>
+          <li><a href="https://www.facebook.com/tonyswindowcleaninghd" target="_blank" rel="noopener"><span class="ci">&#128216;</span> Facebook</a></li>
+        </ul>
       </div>
-      <form class="quote-form reveal" action="https://formspree.io/f/xpwzgkqv" method="POST">
+
+      <!-- Booking handled by Formspree &rarr; delivers to twindowclean@gmail.com -->
+      <form class="quote-form glass-card reveal" action="https://formspree.io/f/xpwzgkqv" method="POST">
         <input type="hidden" name="_subject" value="Quote request from Phelan page">
         <input type="hidden" name="city_page" value="Phelan">
-        <div class="form-row">
-          <label>Name<input type="text" name="name" required></label>
-          <label>Phone<input type="tel" name="phone" required></label>
+        <div class="field">
+          <label for="q-name">Name</label>
+          <input id="q-name" name="name" type="text" placeholder="Your name" required>
         </div>
-        <div class="form-row">
-          <label>Email<input type="email" name="email"></label>
-          <label>Service
-            <select name="service">
-              <option>Window Cleaning</option>
-              <option>Solar Panel Cleaning</option>
-              <option>Pigeon Proofing</option>
-              <option>Screen Repair</option>
-              <option>Something else</option>
-            </select>
-          </label>
+        <div class="row">
+          <div class="field">
+            <label for="q-phone">Phone</label>
+            <input id="q-phone" name="phone" type="tel" placeholder="(760) 555-0123" required>
+          </div>
+          <div class="field">
+            <label for="q-email">Email</label>
+            <input id="q-email" name="email" type="email" placeholder="you@email.com">
+          </div>
         </div>
-        <label>Tell us about the job<textarea name="details" rows="4" placeholder="How many windows, how many panels, anything we should know"></textarea></label>
-        <button type="submit" class="btn btn-primary">Send Request</button>
+        <div class="field">
+          <label for="q-service">Service Needed</label>
+          <select id="q-service" name="service">
+            <option>Window Cleaning</option>
+            <option>Solar Panel Cleaning</option>
+            <option>Pigeon Proofing</option>
+            <option>Screen Repair</option>
+            <option>Something else</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="q-details">Tell us about the job</label>
+          <textarea id="q-details" name="details" rows="4" placeholder="How many windows, how many panels, anything we should know"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary full">Send Request</button>
+        <p class="form-note">We usually reply the same day. No charge to come look.</p>
       </form>
     </div>
   </section>
