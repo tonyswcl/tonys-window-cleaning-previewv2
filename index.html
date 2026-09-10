@@ -360,7 +360,6 @@
 
   <!-- ===== HERO (3D canvas) ===== -->
   <section id="hero" class="hero">
-    <canvas id="bg" class="hero-canvas" aria-hidden="true"></canvas>
     <div class="hero-overlay"></div>
 
     <div class="hero-content reveal">
@@ -833,16 +832,6 @@
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.8a15.5 15.5 0 006.6 6.6l2.2-2.2a1 1 0 011-.24c1.1.37 2.3.57 3.5.57a1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.2.2 2.4.57 3.5a1 1 0 01-.24 1l-2.23 2.3z"/></svg>
   </a>
 
-  <!-- Three.js via import map -->
-  <script type="importmap">
-  {
-    "imports": {
-      "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
-      "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
-    }
-  }
-  </script>
-  <script type="module" src="scene.js"></script>
   <script src="main.js" defer></script>
 </body>
 </html>
