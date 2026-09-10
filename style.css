@@ -592,3 +592,13 @@ a.area-chip:focus-visible{
   padding:.75rem 1.1rem;font-size:.9rem;font-weight:600;color:var(--ink-soft);
   border-top:3px solid var(--gold-400);
 }
+
+/* ===== CITY NEIGHBOURHOOD CARDS ===== */
+.hood-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(258px,1fr));gap:1.1rem;margin-top:1.9rem}
+.hood{
+  background:var(--sky-50);border:1px solid var(--sky-100);
+  border-left:4px solid var(--gold-500);border-radius:var(--radius-sm);
+  padding:1.15rem 1.3rem;min-width:0;
+}
+.hood h3{font-family:var(--font-head);font-size:1.05rem;color:var(--navy-800);margin-bottom:.35rem}
+.hood p{font-size:.95rem;color:var(--ink-soft);margin:0;line-height:1.6}
