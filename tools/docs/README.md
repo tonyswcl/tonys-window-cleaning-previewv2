@@ -1,7 +1,7 @@
 # Customer document system
 
 Letterhead, quotes, invoices, service agreements and condition reports.
-Same layout used for the Jeanette, Omar and Ana documents.
+One layout across every customer-facing document.
 
 ## Files
 
@@ -17,7 +17,7 @@ Same layout used for the Jeanette, Omar and Ana documents.
 
 Chromium cannot reach `fonts.googleapis.com` in the build environment, so a
 document linking Google Fonts silently renders in DejaVu Sans and Liberation
-Serif instead. The first Jeanette agreement went out that way. Loading the
+Serif instead. A signed agreement went out that way once. Loading the
 faces from `fonts-embedded.css` removes the network entirely.
 
 ## Why fit.js exists
