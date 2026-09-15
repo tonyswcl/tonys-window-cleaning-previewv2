@@ -62,7 +62,7 @@ The full playbook for the junior running this lives in Google Drive under
 | Window cleaning, exterior | from $149 single story, $249 two story |
 | Solar panel cleaning | from $7 per panel |
 | Pigeon proofing | from $450, two year warranty |
-| Screen re-mesh, all weather | $55.99 per screen, $149 job minimum |
+| Screen re-mesh, all weather | $64.99 per screen, $149 job minimum |
 | Hard water restoration | from $12 per pane, free test pane |
 | Commercial storefront | $89 monthly, $79 biweekly, $69 weekly, $119 one off, +$50 interior |
 | Graffiti removal | from $129 single tag, $289 storefront, +$75 emergency, $89 etch assessment |
