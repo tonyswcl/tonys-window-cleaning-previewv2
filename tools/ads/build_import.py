@@ -28,7 +28,7 @@ GROUPS=[
   ["Full cleanout, rust resistant mesh clipped to the frame, sealed. Two year warranty.",
    "Bolted mesh voids panel warranties and tears loose in wind. Ours is clipped. From $450.",
    "Free roof inspection, firm quote in writing, done in one day. Includes a solar panel wash.",
-   "Locally owned in Hesperia, rated 5.0 on Google. Free roof inspection, firm quote in writing."]),
+   "Hesperia based, rated 5.0 on Google. Free roof inspection, firm quote in writing."]),
  (HD,"Screen Repair","screen-repair.html","screens",
   ["window screen repair","screen repair near me","window screen replacement","rescreen windows","rescreen","patio screen door repair","sliding screen door repair","screen door repair near me","window screen replacement near me"],
   ["window screen repair hesperia","window screen repair victorville"],
