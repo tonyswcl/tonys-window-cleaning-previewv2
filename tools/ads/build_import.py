@@ -145,11 +145,11 @@ for c,g,p,u,ph,ex,hs,ds in GROUPS:
     bad+=[(g,"D",len(d),d) for d in ds if len(d)>90]
     if len(hs)<8 or len(ds)<3: bad.append((g,"COUNT",len(hs),len(ds)))
 assert not bad, bad
-cols=["Campaign","Campaign Type","Networks","Budget","Budget type","Bid Strategy Type","Maximum CPC bid limit","Campaign Status","Languages",
+cols=["Account","Campaign","Campaign Type","Networks","Budget","Budget type","Bid Strategy Type","Maximum CPC bid limit","Campaign Status","Languages",
       "Ad Group","Ad Group Status","Max CPC","Keyword","Criterion Type","Status","Ad type"]+[f"Headline {i}" for i in range(1,13)]+[f"Description {i}" for i in range(1,5)]+["Final URL","Path 1","Path 2"]
 rows=[]
 def row(**kw):
-    r={c:"" for c in cols}; r.update(kw); rows.append(r)
+    r={c:"" for c in cols}; r["Account"]="490-972-4123"; r.update(kw); rows.append(r)
 for camp,(budget,utm) in CAMPS.items():
     row(**{"Campaign":camp,"Campaign Type":"Search","Networks":"Google search","Budget":budget,"Budget type":"Daily",
            "Bid Strategy Type":"Maximize clicks","Maximum CPC bid limit":"6.00","Campaign Status":"Paused","Languages":"English"})
