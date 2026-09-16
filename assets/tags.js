@@ -20,7 +20,7 @@
    ========================================================= */
 (function () {
   'use strict';
-  var GA4_ID = '';            // e.g. 'G-XXXXXXXXXX'
+  var GA4_ID = 'G-F97LW93P0P';
   var ADS_ID = 'AW-17238956448';
   var ADS_LABEL_PHONE = 'JBCvCJ2-oeEaEKCzlpxA';
   var ADS_LABEL_FORM = '';    // e.g. 'KlMnOpQrSt'
