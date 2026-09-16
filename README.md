@@ -11,7 +11,7 @@ from this repo. No build step: every `.html` file in the root is a live page.
 | `window-cleaning.html`, `solar-panel-cleaning.html`, `pigeon-proofing.html`, `screen-repair.html`, `hard-water-removal.html`, `post-construction-window-cleaning.html` | Residential service hubs |
 | `commercial-window-cleaning.html`, `graffiti-removal.html`, `adhesive-removal.html` | Commercial service hubs |
 | `commercial-window-cleaning-<city>.html`, `graffiti-removal-victorville.html` | Commercial by city |
-| `<city>.html` | City hubs (hesperia, victorville, apple-valley, adelanto, oak-hills, phelan) |
+| `<city>.html` | City hubs (hesperia, victorville, spring-valley-lake, apple-valley, adelanto, oak-hills, phelan) |
 | `<service>-<city>.html` | Residential service by city, 24 pages |
 | `service-areas.html`, `about.html`, `reviews.html`, `gallery.html`, `contact.html`, `pricing.html`, `privacy.html`, `404.html` | Company pages |
 | `style.css`, `main.js` | One stylesheet, one script, shared by every page |
