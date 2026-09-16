@@ -27,33 +27,37 @@
 
   if (!GA4_ID && !ADS_ID) return;
 
-  var s = document.createElement('script');
-  s.async = true;
-  s.src = 'https://www.googletagmanager.com/gtag/js?id=' + (GA4_ID || ADS_ID);
-  document.head.appendChild(s);
-
   window.dataLayer = window.dataLayer || [];
   function gtag() { window.dataLayer.push(arguments); }
-  window.gtag = gtag;
-  gtag('js', new Date());
-  if (GA4_ID) gtag('config', GA4_ID);
-  if (ADS_ID) gtag('config', ADS_ID);
+  if (typeof window.gtag !== 'function') window.gtag = gtag;
+
+  // The base Google tag is in the <head> of every page so Google's detector sees it.
+  // Only load and configure here if a page is somehow missing it.
+  if (!document.querySelector('script[src*="googletagmanager.com/gtag/js"]')) {
+    var s = document.createElement('script');
+    s.async = true;
+    s.src = 'https://www.googletagmanager.com/gtag/js?id=' + (GA4_ID || ADS_ID);
+    document.head.appendChild(s);
+    gtag('js', new Date());
+    if (GA4_ID) gtag('config', GA4_ID);
+    if (ADS_ID) gtag('config', ADS_ID);
+  }
 
   function conv(label) {
-    if (ADS_ID && label) gtag('event', 'conversion', { send_to: ADS_ID + '/' + label });
+    if (ADS_ID && label) window.gtag('event', 'conversion', { send_to: ADS_ID + '/' + label });
   }
 
   document.addEventListener('click', function (e) {
     var a = e.target.closest && e.target.closest('a[href^="tel:"]');
     if (!a) return;
-    if (GA4_ID) gtag('event', 'phone_click', { link_url: a.getAttribute('href') });
+    if (GA4_ID) window.gtag('event', 'phone_click', { link_url: a.getAttribute('href') });
     conv(ADS_LABEL_PHONE);
   });
 
   document.addEventListener('submit', function (e) {
     var f = e.target;
     if (!f || !f.classList || !f.classList.contains('quote-form')) return;
-    if (GA4_ID) gtag('event', 'generate_lead', { form_page: location.pathname });
+    if (GA4_ID) window.gtag('event', 'generate_lead', { form_page: location.pathname });
     conv(ADS_LABEL_FORM);
   });
 })();
