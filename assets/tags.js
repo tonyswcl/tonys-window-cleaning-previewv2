@@ -21,7 +21,7 @@
 (function () {
   'use strict';
   var GA4_ID = '';            // e.g. 'G-XXXXXXXXXX'
-  var ADS_ID = '';            // e.g. 'AW-123456789'
+  var ADS_ID = 'AW-17238956448';
   var ADS_LABEL_PHONE = '';   // e.g. 'AbCdEfGhIj'
   var ADS_LABEL_FORM = '';    // e.g. 'KlMnOpQrSt'
 
