@@ -23,7 +23,7 @@ Everything below is from this account's actual spend and results. Use it instead
 
 ## Services and real pricing
 
-- **Pigeon proofing — from $450.** 2-year pigeon-free warranty. Rust-resistant mesh secured with **clips, not bolts** (bolts void panel warranties and fail in High Desert wind — this is the #1 differentiator and it converts). Includes nest/dropping removal, hauling, sanitizing, perimeter seal.
+- **Pigeon proofing — from $450.** 2-year pigeon-free warranty. Rust-resistant mesh secured with **clips, not bolts** (bolts void panel warranties and fail in High Desert wind — this is the #1 differentiator and it converts). Includes nest/dropping removal, hauling, sanitizing, perimeter seal. **2 to 3 reflective spinners installed free on every job** (depending on home size; extras $50 each). Use this as added value in pigeon ad copy.
 - **Solar panel cleaning — from $7/panel.** Real invoices run $8/panel. Market rate is $10–12. Never publish a flat minimum that contradicts the per-panel price.
 - **Window cleaning — from $149** single story, **$249** two-story. Screens, tracks, sills included.
 - **Screen re-mesh — $33.99/screen**, pet-proof $46.99, $149 job minimum.
