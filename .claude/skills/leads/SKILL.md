@@ -10,7 +10,7 @@ Tony is knocking doors or on a ladder. He sends a lead in one message, often rou
 ## What this system can and cannot do
 
 - **Cannot send SMS.** There is no texting connector. Every text is a draft Tony copies and sends from his phone. Say this once per session at most, never per lead.
-- **Can** create Google Calendar events on his primary calendar. The calendar is the system of record and the follow up engine: each follow up is its own event with the exact text to send in the description, and a popup reminder. It works on his phone even after this session ends.
+- **Can** create Google Calendar events on his calendar named **Business Calendar** (resolve its id with `list_calendars` by that name; never hardcode the id here, this repo is public). The calendar is the system of record and the follow up engine: each follow up is its own event with the exact text to send in the description, and a popup reminder. It works on his phone even after this session ends.
 - **Can** create QuickBooks estimates and invoices when he asks.
 - **Can** email a customer from Gmail only if the lead includes an email address and Tony says to.
 
