@@ -19,16 +19,22 @@ function track(name,params){try{
 /* ---------- prices, all in one place ---------- */
 var P={win:[0,149,249],more:[0,39,59],covers:[0,"10 to 12","18 to 20"],coverMax:[0,12,20],inside:49,panel:7,
   pig:450,pigUpTo:12,pigPer:50,spinner:50,mesh:[53.99,64.99],meshName:["charcoal fiberglass","all weather"],frame:10,scrMin:149,
+  planFreq:[0,12,6,3],planOff:[0,0,.15,.25],planName:["One time","Once a year","Twice a year","Every 3 months"],
   pane:12,pc:[0,249,349],roof:109,gr:129,ad:129,com:89,early:0.10,
   large:null /* extra labor for large custom homes; null means Tony confirms on site */};
 
 /* ---------- state ---------- */
 var MAIN=["win","sol","pig","scr"], EXTRA=["hw","roof","pc","gut","pw","ad","gr","com"], ALL=MAIN.concat(EXTRA);
-var st={stories:1,more:false,inside:false,large:false,panels:16,spin:0,screens:4,build:0,pet:1,panes:6,day:"",time:-1,plan:0};
+var st={stories:1,more:false,inside:false,large:false,panels:16,arrays:1,arr:[16,8,6],spin:0,screens:4,frames:false,pet:1,panes:6,day:"",time:-1,plan:0,wait:2};
 ALL.forEach(function(k){st[k]=false;});
 (CFG.svc&&CFG.svc.length?CFG.svc:["win"]).forEach(function(k){if(ALL.indexOf(k)>=0)st[k]=true;});
-var LIMIT={stories:[1,2],panels:[1,99],spin:[0,20],screens:[1,40],build:[0,40],pet:[0,1],panes:[1,60],plan:[0,2],time:[-1,1]};
-function clamp(k,v){var L=LIMIT[k];v=L?Math.max(L[0],Math.min(L[1],v)):v;return k==="build"?Math.min(v,st.screens):v;}
+var LIMIT={stories:[1,2],panels:[1,99],arrays:[1,3],arr0:[1,60],arr1:[1,60],arr2:[1,60],spin:[0,20],screens:[1,40],pet:[0,1],panes:[1,60],plan:[0,3],time:[-1,1],wait:[0,3]};
+function clamp(k,v){var L=LIMIT[k];return L?Math.max(L[0],Math.min(L[1],v)):v;}
+/* panels can sit in up to 3 sections; the total is always the sum */
+function setArrays(a){a=clamp("arrays",a);if(a===st.arrays)return;
+  if(a>1&&st.arrays===1){var n=Math.max(a,st.panels);for(var i=0;i<3;i++)st.arr[i]=i<a?Math.floor(n/a)+(i<n%a?1:0):Math.max(1,st.arr[i]);}
+  st.arrays=a;sumPanels();}
+function sumPanels(){if(st.arrays>1){var n=0;for(var i=0;i<st.arrays;i++)n+=st.arr[i];st.panels=clamp("panels",n);}}
 
 function cents(n){return Math.round(n*100)/100;}
 function money(n){n=cents(n);var neg=n<0;n=Math.abs(n);
@@ -51,9 +57,9 @@ function items(){
     add(n+" solar panels washed",0,{note:"Free"});
     add("Roof soft wash",0,{note:"Free"});}
   else if(st.sol)add(n+" solar panel"+pl(n)+" × $"+P.panel,n*P.panel);
-  if(st.scr){var each=P.mesh[st.pet],sub=cents(st.screens*each+st.build*P.frame);
+  if(st.scr){var each=P.mesh[st.pet],sub=cents(st.screens*each+(st.frames?st.screens*P.frame:0));
     add(st.screens+" "+P.meshName[st.pet]+" screen"+pl(st.screens)+" × "+money(each),cents(st.screens*each));
-    if(st.build)add(st.build+" new frame"+pl(st.build)+" built × $"+P.frame,st.build*P.frame);
+    if(st.frames)add("New frames and clips, "+st.screens+" × $"+P.frame,st.screens*P.frame);
     if(!anyOther("scr")&&sub<P.scrMin)add("$"+P.scrMin+" job minimum",cents(P.scrMin-sub));}
   if(st.hw)add("Hard water removal, "+st.panes+" pane"+pl(st.panes)+" × $"+P.pane,st.panes*P.pane,{from:true});
   if(st.roof&&!st.pig)add("Roof soft wash",P.roof,{from:true});
@@ -73,7 +79,7 @@ function totals(){
 function savings(t){
   var a=[];
   if(st.pig){a.push(["Solar wash for your "+st.panels+" panels, free with pigeon proofing",st.panels*P.panel]);a.push(["Roof soft wash, free with pigeon proofing",P.roof]);}
-  if(t.early)a.push(["Early bird, date picked today",t.early]);
+  if(t.early)a.push(["Booked on our website, 10% off",t.early]);
   return a;
 }
 /* what each maintenance visit costs on a plan */
@@ -102,7 +108,8 @@ function setText(id,txt){var el=$(id);if(el)el.textContent=txt;}
 
 /* ---------- delegated controls: data-seg, data-sw, data-step (3D-only controls use data-h*) ---------- */
 function setKey(k,v){
-  if(k==="pet"||k==="stories"||k==="plan"||k==="time")v=clamp(k,+v);
+  if(k==="arrays"){setArrays(+v);track("pick_arrays",{arrays:st.arrays});render();return;}
+  if(k==="pet"||k==="stories"||k==="plan"||k==="time"||k==="wait")v=clamp(k,+v);
   st[k]=v;
   if(k==="plan")track("pick_plan",{plan:v});
   if(k==="time")track("pick_time",{time:v});
@@ -118,8 +125,11 @@ doc.addEventListener("click",function(e){
   var s=t.closest("[data-sw]");
   if(s){var k2=s.getAttribute("data-sw");st[k2]=!st[k2];if(k2==="inside"&&st.inside&&!st.win)st.win=true;track("toggle_"+k2,{on:st[k2]});render();return;}
   var p=t.closest("[data-step] button[data-d]");
-  if(p){var k3=p.parentNode.getAttribute("data-step");st[k3]=clamp(k3,st[k3]+(+p.getAttribute("data-d")));
-    if(k3==="panels"&&!st.sol&&!st.pig)st.sol=true;render();return;}
+  if(p){var k3=p.parentNode.getAttribute("data-step"),d3=+p.getAttribute("data-d");
+    if(/^arr\d$/.test(k3)){var ai=+k3.charAt(3);st.arr[ai]=clamp(k3,st.arr[ai]+d3);sumPanels();}
+    else if(k3==="panels"&&st.arrays>1){st.arr[0]=clamp("arr0",st.arr[0]+d3);sumPanels();}
+    else st[k3]=clamp(k3,st[k3]+d3);
+    if((k3==="panels"||/^arr/.test(k3))&&!st.sol&&!st.pig)st.sol=true;render();return;}
   var tile=t.closest("[data-svc]");
   if(tile){var k4=tile.getAttribute("data-svc");if(ALL.indexOf(k4)<0)return;st[k4]=!st[k4];
     if(st[k4]&&k4==="hw"&&!st.win)st.win=true;
@@ -133,7 +143,6 @@ doc.addEventListener("click",function(e){
 /* ---------- render ---------- */
 var shown=0,anim=null,firstRender=true;
 function render(){
-  st.build=clamp("build",st.build);
   $$("[data-svc]").forEach(function(x){var k=x.getAttribute("data-svc");if(ALL.indexOf(k)>=0)x.setAttribute("aria-pressed",String(st[k]));});
   $$("[data-body]").forEach(function(x){x.hidden=!st[x.getAttribute("data-body")];});
   var anyOn=ALL.some(function(k){return st[k];});
@@ -142,7 +151,11 @@ function render(){
   if(EXTRA.some(function(k){return st[k];})&&$("xtiles").hidden){$("xtiles").hidden=false;$("moreSvc").setAttribute("aria-expanded","true");}
   $$("[data-seg]").forEach(function(g){var k=g.getAttribute("data-seg");$$("button[data-v]",g).forEach(function(b){b.setAttribute("aria-pressed",String(+b.getAttribute("data-v")===st[k]));});});
   $$("[data-sw]").forEach(function(x){x.setAttribute("aria-checked",String(!!st[x.getAttribute("data-sw")]));});
-  $$("[data-step]").forEach(function(g){var o=g.querySelector("output");if(o)o.textContent=st[g.getAttribute("data-step")];});
+  $$("[data-step]").forEach(function(g){var k=g.getAttribute("data-step"),o=g.querySelector("output");if(o)o.textContent=/^arr\d$/.test(k)?st.arr[+k.charAt(3)]:st[k];});
+  /* panel sections: one total, or a count for each section */
+  $$("[data-sec]").forEach(function(r){r.hidden=st.arrays<2||+r.getAttribute("data-sec")>=st.arrays;});
+  $$("[data-step='panels']").forEach(function(g){g.hidden=st.arrays>1;});
+  $$(".ptotal").forEach(function(x){x.hidden=st.arrays<2;x.textContent=st.panels+" total";});
   var s=st.stories;
   setText("winNote",(s===1?"1":"2")+" story price covers "+P.covers[s]+" windows.");
   setText("moreLbl","More than "+P.coverMax[s]+" windows ");
@@ -155,19 +168,19 @@ function render(){
   if(!t.it.length){var e0=doc.createElement("div");e0.className="tline";e0.textContent="Tap a service above to see a price.";tl.appendChild(e0);}
   t.it.forEach(function(x){var d=doc.createElement("div");d.className="tline"+(x.note?" inc":"");var a=doc.createElement("span");a.textContent=x.t;var b2=doc.createElement("b");
     b2.textContent=x.note||((x.from?"from ":"")+money(x.v));d.appendChild(a);d.appendChild(b2);tl.appendChild(d);});
-  if(t.early){var d2=doc.createElement("div");d2.className="tline early-l";var a2=doc.createElement("span");a2.textContent="Early bird, 10% off";var b3=doc.createElement("b");b3.textContent=money(-t.early);d2.appendChild(a2);d2.appendChild(b3);tl.appendChild(d2);}
+  if(t.early){var d2=doc.createElement("div");d2.className="tline early-l";var a2=doc.createElement("span");a2.textContent="Booked on our website, 10% off";var b3=doc.createElement("b");b3.textContent=money(-t.early);d2.appendChild(a2);d2.appendChild(b3);tl.appendChild(d2);}
   var sv=savings(t),box=$("save");box.textContent="";box.hidden=!sv.length;
   if(sv.length){var tot=0;sv.forEach(function(x){tot+=x[1];});var h=doc.createElement("b");h.textContent="You save "+money(tot);box.appendChild(h);
     sv.forEach(function(x){var r=doc.createElement("span");r.textContent=x[0]+": "+money(x[1]);box.appendChild(r);});}
   $("fromNote").hidden=!t.from;
   $("earlyTip").hidden=!!st.day||!anyOn;
   $("early").className="early"+(st.day?" on":"");
-  $("earlyTxt").textContent=st.day?"Early bird locked in: 10% off, "+money(t.early)+" saved.":"Pick your date today and save 10%. Get ahead of everyone else.";
+  $("earlyTxt").textContent=st.day?"Booked on our website: 10% off, "+money(t.early)+" saved.":"Book on our website and save an extra 10%. Pick your day below.";
   var a0=shown,t0=performance.now(),target=t.total;if(anim)cancelAnimationFrame(anim);
   if(firstRender||reduce){shown=target;paint(target,true);firstRender=false;}
   else (function step(now){var q=Math.min(1,(now-t0)/380),v=q>=1?target:a0+(target-a0)*(1-Math.pow(1-q,3));shown=v;paint(q>=1?target:Math.round(v),q>=1);if(q<1)anim=requestAnimationFrame(step);})(t0);
   function paint(v,final){var txt=(t.from&&final?"from ":"")+money(v);$("ttotal").textContent=txt;var dt=$("dockTotal");if(dt)dt.textContent=money(v);}
-  days();planBox(t);msg(t);
+  days();planBox(t);waitBox(t);msg(t);
   if(api)api.sync();
 }
 
@@ -188,22 +201,52 @@ function days(){
   var di=$("dateIn"),inRow=!!dayRow.querySelector('[data-day="'+st.day+'"]');di.value=st.day&&!inRow?st.day:"";
   var pick=$("dayPicked");pick.textContent=st.day?"Your day: "+dayText()+". Tony confirms by text.":"";
 }
-function schedule(t){
-  var freq=[0,6,3][st.plan],per=recurring(),start=parseIso(st.day);
-  if(!freq)return {freq:0,visits:[],per:per,year:t.total};
+function schedule(t,plan){
+  plan=plan===undefined?st.plan:plan;
+  var freq=P.planFreq[plan],off=P.planOff[plan],per=recurring(),each=cents(per*(1-off)),start=parseIso(st.day);
+  if(!freq)return {plan:0,freq:0,visits:[],per:per,each:per,off:0,year:t.total,save:0};
   var n=12/freq,v=[];
-  for(var i=0;i<n;i++)v.push({i:i,date:start?addMonths(start,i*freq):null,amt:i===0?t.total:per,label:i===0?"First visit, everything on your quote":"Maintenance visit"});
-  return {freq:freq,visits:v,per:per,year:cents(t.total+per*(n-1))};
+  for(var i=0;i<n;i++)v.push({i:i,date:start?addMonths(start,i*freq):null,amt:i===0?t.total:each,label:i===0?"First visit, everything on your quote":"Maintenance visit"+(off?", "+Math.round(off*100)+"% off":"")});
+  return {plan:plan,freq:freq,visits:v,per:per,each:each,off:off,n:n,year:cents(t.total+each*(n-1)),save:cents((per-each)*(n-1))};
 }
+/* what each plan does for you, in plain words */
+var PLAN_WHY=["One clean, then it's on you to remember when it's time again.",
+  "Tony texts you once a year when it's time. Regular price, nothing to remember.",
+  "Spring and fall. 15% off every visit after the first, and your price is locked for the year.",
+  "Every season, and the best value. 25% off every visit after the first, price locked for the year. Glass and panels never fall far behind, so hard water and dust never get the chance to set in."];
 function planBox(t){
-  var sc=schedule(t),box=$("planbox"),ol=$("visits");
-  $("pdfBtn").textContent=st.plan?"Download my plan (PDF)":"Download my quote (PDF)";
+  var box=$("planbox"),ol=$("visits"),per=recurring();
+  /* each plan button shows what it costs for this quote */
+  $$("[data-seg='plan'] button[data-v]").forEach(function(b){var v=+b.getAttribute("data-v"),sm=b.querySelector("small");if(!sm)return;
+    var sc=schedule(t,v);sm.textContent=!per?(v?"windows or solar":"just this visit"):v===0?"just this visit":v===1?money(sc.per)+" next year":money(sc.each)+" a visit, "+Math.round(sc.off*100)+"% off";});
+  $("planWhy").textContent=PLAN_WHY[st.plan];
+  $("pdfBtn").textContent="Download my "+(st.plan?"plan":"quote")+" (PDF)";
   if(!st.plan){box.hidden=true;return;}
   box.hidden=false;ol.textContent="";
-  if(!sc.per){$("plantot").textContent="Plans cover window and solar cleaning. Add one of those above to build a plan.";return;}
+  var sc=schedule(t);
+  if(!per){$("plantot").textContent="Plans cover window and solar cleaning. Add one of those above to build a plan.";return;}
   sc.visits.forEach(function(v){var li=doc.createElement("li");var a=doc.createElement("span");a.textContent=(v.date?fmt(v.date,true):(v.i===0?"Your first visit":"Month "+(v.i*sc.freq+1)))+" · "+v.label;
     var b=doc.createElement("b");b.textContent=money(v.amt);li.appendChild(a);li.appendChild(b);ol.appendChild(li);});
-  $("plantot").textContent="About "+money(sc.year)+" for the year. Your price is locked for the year, and Tony writes the plan up before anything is scheduled.";
+  $("plantot").textContent=st.plan===1?"Next year's visit is "+money(sc.per)+". Tony texts you when it's time.":
+    "About "+money(sc.year)+" for the year. That's "+money(sc.save)+" less than booking each visit on its own. Tony writes the plan up before anything is scheduled.";
+}
+
+/* ---------- what happens if you wait ---------- */
+var WAIT={
+  win:["Clear glass now, and hard water never gets a head start.","Dust and sprinkler spots build up. Still a normal clean.","Spots start to bond to the glass. The clean takes longer and some panes may need hard water work.","Hard water can etch the glass for good. Removal runs from $12 a pane, and deep etching can't be undone."],
+  sol:["Panels back to full output from the day we leave.","Dust cuts into what your panels make every day. Up here there's almost no rain to rinse it.","Summer heat bakes the dust on, and any droppings block whole cells.","A year of output you don't get back, and a tougher clean."],
+  pig:["Nests out, mesh on, panels washed and a roof wash free.","More nesting and droppings under the panels. The cleanout is the biggest part of the price.","Pigeons can raise more than one brood a year, so more birds call your roof home.","More birds, bigger nests, more to haul off, and droppings on the wiring and roof tile."],
+  scr:["New mesh, and bugs stay out this season.","UV keeps working on the old mesh. Small tears get bigger.","Brittle mesh tears in the wind, and frames bend.","Bent or missing frames mean new ones, $10 more a screen."],
+  hw:["Spots come off while they're still on the surface.","Minerals keep stacking with every sprinkler cycle.","Spots bond deeper and take more passes to lift.","Etching sets in, and some of it can't be polished out."]};
+var WAIT_WHEN=["Book now","In 3 months","In 6 months","In a year"],WAIT_NAME={win:"Windows",sol:"Solar panels",pig:"Pigeons",scr:"Screens",hw:"Hard water"};
+function waitBox(t){
+  var ul=$("waitList");if(!ul)return;ul.textContent="";
+  var keys=["pig","sol","win","scr","hw"].filter(function(k){return st[k]&&!(k==="sol"&&st.pig);});if(!keys.length)keys=["win","sol"];
+  keys.forEach(function(k){var li=doc.createElement("li");li.className="w"+st.wait;var b=doc.createElement("b");b.textContent=WAIT_NAME[k];li.appendChild(b);
+    var sp=doc.createElement("span");sp.textContent=WAIT[k][st.wait];li.appendChild(sp);ul.appendChild(li);});
+  var q=schedule(t,3),per=recurring();
+  $("waitNote").textContent=st.wait===0?"Book on our website today and the 10% is yours.":
+    (per?"Like landscaping, glass and panels need upkeep, not one visit. Every 3 months keeps you ahead and saves "+money(q.save)+" over the year.":"Like landscaping, upkeep beats catching up. Tony can put you on a reminder so it never gets this far.");
 }
 
 /* ---------- step 3: the text, send, copy ---------- */
@@ -213,8 +256,8 @@ function msg(t){
   t=t||totals();
   var name=$("fname").value.trim(),street=$("fstreet").value.trim(),day=dayText();
   var s="Hi Tony"+(name?", it's "+name:"")+". ";
-  s+=t.it.length?"I'd like "+t.it.map(function(x){return lineText(x).replace(/^./,function(c){return c.toLowerCase();});}).join(", ")+". Total "+(t.from?"from ":"")+money(t.total)+(t.early?" with the early bird 10% off":"")+".":"I'd like a quote.";
-  if(st.plan)s+=" I'd like this on a plan, every "+(st.plan===1?"6":"3")+" months.";
+  s+=t.it.length?"I'd like "+t.it.map(function(x){return lineText(x).replace(/^./,function(c){return c.toLowerCase();});}).join(", ")+". Total "+(t.from?"from ":"")+money(t.total)+(t.early?" with 10% off for booking online":"")+".":"I'd like a quote.";
+  if(st.plan)s+=" I'd like this on a plan: "+P.planName[st.plan].toLowerCase()+(P.planOff[st.plan]?", "+Math.round(P.planOff[st.plan]*100)+"% off the visits after the first":"")+".";
   if(street)s+=" I'm on "+street+".";
   s+=day?" Best day for me is "+day+".":" When's your next opening?";
   $("msg").textContent=s;
@@ -243,7 +286,7 @@ $("sendForm").addEventListener("submit",function(e){
   var t=totals(),sc=schedule(t);
   var data={name:$("fname").value.trim().slice(0,80),phone:ph.slice(0,3)+"-"+ph.slice(3,6)+"-"+ph.slice(6),street:$("fstreet").value.trim().slice(0,120),
     quote:t.it.map(lineText).join("\n"),subtotal:money(t.sub),early_bird:t.early?money(-t.early):"none",total:(t.from?"from ":"")+money(t.total),
-    day:dayText()||"Tony to suggest",plan:st.plan?("Every "+sc.freq+" months, "+sc.visits.length+" visits, about "+money(sc.year)+" a year. Maintenance visits "+money(sc.per)+" each"):"One time",
+    day:dayText()||"Tony to suggest",plan:st.plan?(P.planName[st.plan]+", "+sc.visits.length+" visit"+pl(sc.visits.length)+" this year, about "+money(sc.year)+". Maintenance visits "+money(sc.each)+(sc.off?" ("+Math.round(sc.off*100)+"% off "+money(sc.per)+")":"")):"One time",
     message:msg.text,page:location.pathname,city:CFG.city||"",check_this_quote:shareUrl(),
     _subject:"New quote "+money(t.total)+(t.it.length?" · "+t.it[0].t:""),_gotcha:""};
   function done(ok){
@@ -258,17 +301,19 @@ $("sendForm").addEventListener("submit",function(e){
 $("fphone").addEventListener("input",function(){if(this.getAttribute("aria-invalid")){this.removeAttribute("aria-invalid");$("ferr").textContent="";}});
 
 /* ---------- share: a real twindowclean.com link that reopens this exact quote ---------- */
-var FLAGS=ALL.concat(["more","inside","large"]);
+var FLAGS=ALL.concat(["more","inside","large","frames"]);
 function token(){var f=0;FLAGS.forEach(function(k,i){if(st[k])f|=1<<i;});
-  return "q"+f.toString(36)+"-"+st.stories+st.pet+st.plan+(st.time+1)+"-"+st.panels+"-"+st.spin+"-"+st.screens+"-"+st.panes+(st.scr&&st.build?"-"+st.build:"")+(st.day?"-d"+st.day.replace(/-/g,""):"");}
+  return "q"+f.toString(36)+"-"+st.stories+st.pet+st.plan+(st.time+1)+"-"+st.panels+"-"+st.spin+"-"+st.screens+"-"+st.panes+
+    (st.arrays>1?"-a"+st.arr.slice(0,st.arrays).join("."):"")+(st.day?"-d"+st.day.replace(/-/g,""):"");}
 function loadToken(){
-  var m=/^#q([0-9a-z]{1,4})-([12])([01])([012])([012])-(\d{1,2})-(\d{1,2})-(\d{1,2})-(\d{1,2})(?:-(\d{1,2}))?(?:-d(\d{8}))?$/.exec(location.hash||"");
+  var m=/^#q([0-9a-z]{1,5})-([12])([01])([0-3])([012])-(\d{1,2})-(\d{1,2})-(\d{1,2})-(\d{1,2})(?:-a(\d{1,2}(?:\.\d{1,2}){1,2}))?(?:-d(\d{8}))?$/.exec(location.hash||"");
   if(!m)return false;
   var f=parseInt(m[1],36);if(!(f>=0)||f>=(1<<FLAGS.length))return false;
   FLAGS.forEach(function(k,i){st[k]=!!(f&(1<<i));});
   st.stories=clamp("stories",+m[2]);st.pet=clamp("pet",+m[3]);st.plan=clamp("plan",+m[4]);st.time=clamp("time",+m[5]-1);
-  st.panels=clamp("panels",+m[6]);st.spin=clamp("spin",+m[7]);st.screens=clamp("screens",+m[8]);st.panes=clamp("panes",+m[9]);st.build=clamp("build",+(m[10]||0));
-  /* the picked day comes along only while it's still ahead, so the early bird matches what was shared */
+  st.panels=clamp("panels",+m[6]);st.spin=clamp("spin",+m[7]);st.screens=clamp("screens",+m[8]);st.panes=clamp("panes",+m[9]);
+  if(m[10]){var parts=m[10].split(".");st.arrays=parts.length;parts.forEach(function(x,i){st.arr[i]=clamp("arr"+i,+x);});sumPanels();}
+  /* the picked day comes along only while it's still ahead, so the 10% matches what was shared */
   if(m[11]){var d=parseIso(m[11].slice(0,4)+"-"+m[11].slice(4,6)+"-"+m[11].slice(6)),max=new Date(TODAY.getTime());max.setFullYear(max.getFullYear()+1);
     if(d&&d>TODAY&&d<=max)st.day=iso(d);}
   return true;
@@ -287,42 +332,64 @@ var HV=[278,278,355,556,556,889,667,191,333,333,389,584,278,333,278,278,556,556,
 var HB=[278,333,474,556,556,889,722,238,333,333,389,584,278,333,278,278,556,556,556,556,556,556,556,556,556,556,333,333,584,584,584,611,975,722,722,722,722,667,611,778,722,278,556,722,611,833,722,778,667,778,722,667,611,722,667,944,667,667,611,333,278,333,584,556,333,556,611,556,611,556,333,611,611,278,278,556,278,889,611,611,611,611,389,556,333,611,556,778,556,556,500,389,280,389,584];
 function pdfClean(s){return String(s).replace(/[−–—]/g,"-").replace(/[‘’]/g,"'").replace(/[“”]/g,'"').replace(/…/g,"...").replace(/[^\x20-\x7e\xa0-\xff×·]/g,"");}
 function pdfW(s,size,bold){var w=0,tb=bold?HB:HV;s=pdfClean(s);for(var i=0;i<s.length;i++){var c=s.charCodeAt(i);w+=(c>=32&&c<=126)?tb[c-32]:(c===215?584:c===183?278:556);}return w*size/1000;}
-function makePdf(logo){
-  var ops=[];
+function makePdf(logo,home){
+  var pages=[],ops=null,y=0,gold=[143,93,8],ink=[16,48,80],soft=[68,96,122],green=[27,122,76],rule=[211,230,240];
   function col(c){return (c[0]/255).toFixed(3)+" "+(c[1]/255).toFixed(3)+" "+(c[2]/255).toFixed(3);}
   function esc(s){return pdfClean(s).replace(/\\/g,"\\\\").replace(/\(/g,"\\(").replace(/\)/g,"\\)");}
-  function text(x,y,s,size,bold,c,align){var w=pdfW(s,size,bold);if(align==="r")x-=w;ops.push("BT /"+(bold?"F2":"F1")+" "+size+" Tf "+col(c||[16,48,80])+" rg "+x.toFixed(1)+" "+(792-y).toFixed(1)+" Td ("+esc(s)+") Tj ET");}
-  function rect(x,y,w,h,c){ops.push(col(c)+" rg "+x+" "+(792-y-h)+" "+w+" "+h+" re f");}
-  function line(x1,y,x2,c,w){ops.push(col(c)+" RG "+(w||.7)+" w "+x1+" "+(792-y)+" m "+x2+" "+(792-y)+" l S");}
+  function text(x,yy,s,size,bold,c,align){var w=pdfW(s,size,bold);if(align==="r")x-=w;ops.push("BT /"+(bold?"F2":"F1")+" "+size+" Tf "+col(c||ink)+" rg "+x.toFixed(1)+" "+(792-yy).toFixed(1)+" Td ("+esc(s)+") Tj ET");}
+  function rect(x,yy,w,h,c){ops.push(col(c)+" rg "+x+" "+(792-yy-h).toFixed(1)+" "+w+" "+h.toFixed(1)+" re f");}
+  function line(x1,yy,x2,c,w){ops.push(col(c)+" RG "+(w||.7)+" w "+x1+" "+(792-yy)+" m "+x2+" "+(792-yy)+" l S");}
   function wrap(s,size,maxW,bold){var words=pdfClean(s).split(" "),out=[],cur="";words.forEach(function(w){var tt=cur?cur+" "+w:w;if(pdfW(tt,size,bold)>maxW&&cur){out.push(cur);cur=w;}else cur=tt;});if(cur)out.push(cur);return out;}
-  var t=totals(),sc=schedule(t),name=$("fname").value.trim(),street=$("fstreet").value.trim(),y=0,gold=[143,93,8],ink=[16,48,80],soft=[68,96,122];
+  function page(){ops=[];pages.push(ops);rect(0,742,612,50,[234,246,252]);text(48,772,"Text or call "+PHONE+" · twindowclean.com",11,true,ink);text(564,772,"Hesperia and the High Desert",10,false,soft,"r");
+    if(pages.length>1){text(48,48,"Tony's Window Cleaning",12,true,ink);text(564,48,who||"Your quote",10,false,soft,"r");line(48,58,564,rule);y=84;}}
+  function need(h){if(y+h>724)page();}
+  function head(s){need(40);y+=8;text(48,y,s,11,true,gold);y+=10;line(48,y,564,rule);y+=18;}
+  function para(s,size,c){wrap(s,size||10,516).forEach(function(ln){need(14);text(48,y,ln,size||10,false,c||soft);y+=(size||10)+4;});}
+  var t=totals(),sc=schedule(t),per=recurring(),name=$("fname").value.trim(),street=$("fstreet").value.trim(),who=(name?name:"")+(name&&street?" · ":"")+street;
+  page();
   rect(0,0,612,110,[234,246,252]);rect(0,108,612,3,[240,176,64]);
   if(logo)ops.push("q 64 0 0 64 48 "+(792-94)+" cm /Im1 Do Q");
   text(logo?126:48,52,"Tony's Window Cleaning",22,true,ink);
   text(logo?126:48,74,(st.plan?"Your service plan":"Your quote")+" · "+fmt(TODAY,true),12,false,soft);
   text(564,52,PHONE,14,true,ink,"r");text(564,72,"twindowclean.com",11,false,soft,"r");
-  y=146;
-  if(name||street){text(48,y,(name?name:"")+(name&&street?" · ":"")+(street?street:""),13,true,ink);y+=24;}
-  text(48,y,"What's included",11,true,gold);y+=10;line(48,y,564,[211,230,240]);y+=18;
-  t.it.forEach(function(x){wrap(x.t,11,380).forEach(function(ln,i){text(48,y,ln,11,false,ink);if(i===0)text(564,y,x.note||((x.from?"from ":"")+money(x.v)),11,true,ink,"r");y+=16;});y+=2;});
-  if(t.early){text(48,y,"Early bird, 10% off",11,false,[27,122,76]);text(564,y,money(-t.early),11,true,[27,122,76],"r");y+=18;}
-  line(48,y,564,ink,1.4);y+=24;text(48,y,"Total",13,true,ink);text(564,y,(t.from?"from ":"")+money(t.total),20,true,ink,"r");y+=26;
-  var sv=savings(t);if(sv.length){var tot=0;sv.forEach(function(x){tot+=x[1];});text(564,y,"You save "+money(tot),11,true,[27,122,76],"r");y+=22;}
-  if(st.plan&&sc.per){y+=6;text(48,y,"Your plan: every "+sc.freq+" months",11,true,gold);y+=10;line(48,y,564,[211,230,240]);y+=18;
-    sc.visits.forEach(function(v){text(48,y,(v.date?fmt(v.date,true):(v.i===0?"First visit":"Month "+(v.i*sc.freq+1)))+" · "+v.label,11,false,ink);text(564,y,money(v.amt),11,true,ink,"r");y+=17;});
-    y+=4;text(48,y,"About "+money(sc.year)+" for the year.",11,true,ink);y+=20;}
-  var day=dayText();if(day){text(48,y,"Requested day: "+day,11,false,ink);y+=20;}
-  y+=6;wrap("Tony confirms every job by text before it's scheduled. The price here is firm for what's listed, and anything that changes the scope gets a written price before any work starts. Satisfaction guaranteed: if anything isn't right, we redo it before we leave.",10,516).forEach(function(ln){text(48,y,ln,10,false,soft);y+=14;});
-  rect(0,742,612,50,[234,246,252]);text(48,772,"Text or call "+PHONE+" · twindowclean.com",11,true,ink);text(564,772,"Hesperia and the High Desert",10,false,soft,"r");
-  /* assemble the file */
-  var content=ops.join("\n"),objs=[],parts=[],bin=[];
+  y=140;
+  text(48,y,name?"Prepared for "+name:"Prepared for you",15,true,ink);y+=18;if(street){text(48,y,street,11,false,soft);y+=14;}
+  /* their home, as they set it up in the 3D builder */
+  if(home){var iw=516,ih=Math.min(258,Math.round(iw*home.h/home.w));y+=8;ops.push("q "+iw+" 0 0 "+ih+" 48 "+(792-y-ih)+" cm /Im2 Do Q");y+=ih+14;
+    var hs=home.caption;if(hs){text(48,y,hs,10,false,soft);y+=16;}}
+  head("What's included");
+  t.it.forEach(function(x){wrap(x.t,11,380).forEach(function(ln,i){need(16);text(48,y,ln,11,false,ink);if(i===0)text(564,y,x.note||((x.from?"from ":"")+money(x.v)),11,true,ink,"r");y+=16;});y+=2;});
+  if(st.arrays>1&&(st.sol||st.pig)){need(16);text(60,y,st.arr.slice(0,st.arrays).map(function(n,i){return "Section "+(i+1)+": "+n+" panels";}).join("   "),10,false,soft);y+=18;}
+  if(t.early){need(18);text(48,y,"Booked on our website, 10% off",11,false,green);text(564,y,money(-t.early),11,true,green,"r");y+=18;}
+  need(60);line(48,y,564,ink,1.4);y+=24;text(48,y,"Total",13,true,ink);text(564,y,(t.from?"from ":"")+money(t.total),20,true,ink,"r");y+=26;
+  var sv=savings(t);if(sv.length){var tot=0;sv.forEach(function(x){tot+=x[1];});text(564,y,"You save "+money(tot),11,true,green,"r");y+=22;}
+  var day=dayText();if(day){need(18);text(48,y,"Requested day: "+day,11,true,ink);y+=20;}
+  /* the four ways to keep it up, priced for this home */
+  if(per){head("Keeping it up: your options");
+    need(18);text(48,y,"Plan",9,true,soft);text(240,y,"Visits a year",9,true,soft);text(450,y,"Each visit after the first",9,true,soft,"r");text(564,y,"About a year",9,true,soft,"r");y+=16;
+    [0,1,2,3].forEach(function(v){var q=schedule(t,v);need(18);if(v===st.plan)rect(44,y-12,524,17,[253,244,226]);
+      text(48,y,P.planName[v]+(v===3?"  (best value)":""),11,v===st.plan,ink);text(240,y,v===0?"1":v===1?"1 + reminder":String(q.n),11,false,ink);
+      text(450,y,v===0?"-":v===1?money(q.per)+" next year":money(q.each)+" ("+Math.round(q.off*100)+"% off)",11,false,ink,"r");text(564,y,money(q.year),11,true,ink,"r");y+=18;});
+    var q3=schedule(t,3);y+=2;para("Every 3 months saves "+money(q3.save)+" over the year compared with booking each visit on its own, and the price is locked for the year.",10,green);
+    if(st.plan&&sc.visits.length){head("Your plan: "+P.planName[st.plan].toLowerCase());
+      sc.visits.forEach(function(v){need(17);text(48,y,(v.date?fmt(v.date,true):(v.i===0?"First visit":"Month "+(v.i*sc.freq+1)))+" · "+v.label,11,false,ink);text(564,y,money(v.amt),11,true,ink,"r");y+=17;});}}
+  /* what waiting costs, for the services on this quote */
+  var wk=["pig","sol","win","scr","hw"].filter(function(k){return st[k]&&!(k==="sol"&&st.pig);});
+  if(wk.length){head("What happens if you wait");
+    wk.forEach(function(k){need(30);text(48,y,WAIT_NAME[k],11,true,ink);y+=14;[2,3].forEach(function(l){wrap(WAIT_WHEN[l]+": "+WAIT[k][l],10,500).forEach(function(ln){need(14);text(60,y,ln,10,false,soft);y+=14;});});y+=4;});}
+  y+=6;para("Tony confirms every job by text before it's scheduled. The price here is firm for what's listed, and anything that changes the scope gets a written price before any work starts. Satisfaction guaranteed: if anything isn't right, we redo it before we leave.");
+  /* assemble the file: catalog, pages, 2 fonts, then each page and its content, then images */
+  var np=pages.length,imgs=[],objs=[];
+  if(logo)imgs.push({n:"Im1",img:logo});if(home)imgs.push({n:"Im2",img:home});
+  var firstPage=5,firstImg=firstPage+np*2,xo=imgs.map(function(im,i){return "/"+im.n+" "+(firstImg+i)+" 0 R";}).join(" ");
   objs.push("<< /Type /Catalog /Pages 2 0 R >>");
-  objs.push("<< /Type /Pages /Kids [3 0 R] /Count 1 >>");
-  objs.push("<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 4 0 R /F2 5 0 R >>"+(logo?" /XObject << /Im1 7 0 R >>":"")+" >> /Contents 6 0 R >>");
+  objs.push("<< /Type /Pages /Kids ["+pages.map(function(_,i){return (firstPage+i*2)+" 0 R";}).join(" ")+"] /Count "+np+" >>");
   objs.push("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>");
   objs.push("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>");
-  objs.push("<< /Length "+content.length+" >>\nstream\n"+content+"\nendstream");
-  if(logo)objs.push({img:logo});
+  pages.forEach(function(o,i){var content=o.join("\n");
+    objs.push("<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R /F2 4 0 R >>"+(xo?" /XObject << "+xo+" >>":"")+" >> /Contents "+(firstPage+i*2+1)+" 0 R >>");
+    objs.push("<< /Length "+content.length+" >>\nstream\n"+content+"\nendstream");});
+  imgs.forEach(function(im){objs.push({img:im.img});});
   var out=[],pos=0,offs=[];
   function push(s){for(var i=0;i<s.length;i++){var c=s.charCodeAt(i);out.push(c===215?215:c===183?183:c>255?63:c);}pos+=s.length;}
   push("%PDF-1.4\n");
@@ -335,13 +402,22 @@ function makePdf(logo){
   push("trailer\n<< /Size "+(objs.length+1)+" /Root 1 0 R >>\nstartxref\n"+xref+"\n%%EOF");
   return new Blob([new Uint8Array(out)],{type:"application/pdf"});
 }
+/* a picture of their home from the 3D builder, if it's loaded */
+function homeShot(){
+  if(!api||!api.snap)return null;
+  try{var url=api.snap(900,480,{type:"image/jpeg",q:.86}),b64=url.split(",")[1],bin=atob(b64),u=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);
+    if(u[0]!==0xFF||u[1]!==0xD8)return null;
+    var info=api.state(),A=st.arrays>1?", "+st.arrays+" sections":"";
+    return {bytes:u,w:900,h:480,caption:"Your home as set up in our 3D builder: "+(info.styleName||"your home")+", "+st.stories+" story"+((st.sol||st.pig)?", "+st.panels+" panels"+A:"")+"."};}catch(e){return null;}
+}
 $("pdfBtn").addEventListener("click",function(){
   var note=$("pdfNote");note.textContent="Making your PDF…";
   function finish(logo){
-    var blob;try{blob=makePdf(logo);}catch(e){note.textContent="Couldn't make the PDF on this device. Your quote is still on this page.";return;}
+    var blob;try{blob=makePdf(logo,homeShot());}catch(e){note.textContent="Couldn't make the PDF on this device. Your quote is still on this page.";if(window.console)console.warn(e);return;}
     track("download_plan",{plan:st.plan});
     if(!LIVE){note.textContent="Your PDF is ready. In this preview downloads are blocked, on twindowclean.com it saves to your phone.";window.__tqLastPdf=blob;return;}
-    var url=URL.createObjectURL(blob),a=doc.createElement("a");a.href=url;a.download=st.plan?"Tonys-Window-Cleaning-plan.pdf":"Tonys-Window-Cleaning-quote.pdf";
+    var nm=$("fname").value.trim().replace(/[^A-Za-z0-9]+/g,"-").replace(/^-|-$/g,"");
+    var url=URL.createObjectURL(blob),a=doc.createElement("a");a.href=url;a.download="Tonys-Window-Cleaning-"+(st.plan?"plan":"quote")+(nm?"-"+nm:"")+".pdf";
     doc.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(url);a.remove();},4000);
     note.textContent="Saved. Send it with your quote below and Tony has everything in one place.";
   }

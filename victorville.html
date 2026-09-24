@@ -26,7 +26,7 @@
   <link href="assets/fonts.css" rel="stylesheet">
   <link href="style.css" rel="stylesheet">
   <!-- tq:css -->
-<link href="assets/quote/quote.css?v=1e22e3d4ba" rel="stylesheet">
+<link href="assets/quote/quote.css?v=0285cb9fd1" rel="stylesheet">
 <!-- /tq:css -->
 
   <!-- Google tag (gtag.js): GA4 + Google Ads. Events and conversion labels live in assets/tags.js -->
@@ -528,8 +528,7 @@
           <p class="note" data-mesh-fact="0">The same class of mesh your builder used, installed and tensioned right. Clearest view and good airflow. Fine for shaded windows.</p>
           <p class="note" data-mesh-fact="1">Heavy vinyl coated polyester, 5x stronger and far more UV stable. Takes desert sun, wind and pets without going brittle.</p>
           <div class="opt"><span>How many screens</span><div class="stepper" data-step="screens"><button type="button" data-d="-1" aria-label="Fewer screens">−</button><output class="num">4</output><button type="button" data-d="1" aria-label="More screens">+</button></div></div>
-          <div class="opt"><span>Missing or bent frames</span><div class="stepper" data-step="build"><button type="button" data-d="-1" aria-label="Fewer new frames">−</button><output class="num">0</output><button type="button" data-d="1" aria-label="More new frames">+</button></div></div>
-          <div class="note">No screen, or a frame too bent to save? We build a new one to fit, +$10 a screen with either mesh.</div>
+          <div class="opt"><span>New frames and clips <b class="amt">+$10 a screen</b><small>Bent, missing or loose frames get rebuilt to fit, with new clips. Either mesh.</small></span><button type="button" class="switch" data-sw="frames" role="switch" aria-checked="false" aria-label="New frames and clips, $10 a screen"></button></div>
           <div class="note">Re-meshed on site, same visit. $149 job minimum when screens are the only service. 2 year warranty.</div>
           <p class="now"><b>Now or later?</b> UV runs about nine months a year up here. Builder mesh goes brittle, then the wind finishes it off.</p>
           <button type="button" class="see3d open3d" data-mode="scr">Compare the mesh in 3D →</button>
@@ -569,7 +568,11 @@
           <div class="note">Inside and out, up to ten pane faces, monthly. Biweekly and weekly cost less per visit. <a href="commercial-window-cleaning.html">See storefront plans →</a></div>
         </div></template>
         <div class="svc" id="panelRow">
-          <div class="opt"><span class="l"><b>Solar panels on your roof</b><small>Count them from the street, close is fine</small></span><div class="stepper" data-step="panels"><button type="button" data-d="-1" aria-label="Fewer panels">−</button><output class="num">16</output><button type="button" data-d="1" aria-label="More panels">+</button></div></div>
+          <div class="opt"><span class="l"><b>Solar panels on your roof</b><small>Count them from the street, close is fine</small></span><div class="stepper" data-step="panels"><button type="button" data-d="-1" aria-label="Fewer panels">−</button><output class="num">16</output><button type="button" data-d="1" aria-label="More panels">+</button></div><b class="ptotal num" hidden></b></div>
+          <div class="opt"><span class="l"><b>Sections</b><small>Panels in separate groups? Count each one.</small></span><div class="seg2" data-seg="arrays"><button type="button" data-v="1" aria-pressed="true">1</button><button type="button" data-v="2" aria-pressed="false">2</button><button type="button" data-v="3" aria-pressed="false">3</button></div></div>
+          <div class="opt" data-sec="0" hidden><span>Section 1</span><div class="stepper" data-step="arr0"><button type="button" data-d="-1" aria-label="Fewer panels in section 1">−</button><output class="num">8</output><button type="button" data-d="1" aria-label="More panels in section 1">+</button></div></div>
+          <div class="opt" data-sec="1" hidden><span>Section 2</span><div class="stepper" data-step="arr1"><button type="button" data-d="-1" aria-label="Fewer panels in section 2">−</button><output class="num">8</output><button type="button" data-d="1" aria-label="More panels in section 2">+</button></div></div>
+          <div class="opt" data-sec="2" hidden><span>Section 3</span><div class="stepper" data-step="arr2"><button type="button" data-d="-1" aria-label="Fewer panels in section 3">−</button><output class="num">6</output><button type="button" data-d="1" aria-label="More panels in section 3">+</button></div></div>
         </div>
       </div>
       <div class="card ticket" aria-live="polite">
@@ -577,7 +580,7 @@
         <div class="ttotal"><span>Total</span><b id="ttotal" class="num">$149</b></div>
         <div class="save" id="save" hidden></div>
         <p class="from-note" id="fromNote" hidden>Specialty work is a starting price. Tony confirms it in writing before he starts.</p>
-        <a class="early-tip" id="earlyTip" href="#day">Pick a day and save 10% →</a>
+        <a class="early-tip" id="earlyTip" href="#day">Book online and save 10% →</a>
         <div class="guar"><span aria-hidden="true">✓</span><span><b>Satisfaction guaranteed.</b> If anything isn't right, we redo it before we leave.</span></div>
         <ul class="trust"><li>Free inspection</li><li>No trip fee in the High Desert</li><li>Card, cash or check</li></ul>
         <a class="qb qb-gold" href="#day" style="width:100%;margin-top:14px">Pick a day →</a>
@@ -590,7 +593,7 @@
 <section class="tq-step" id="day" data-nosnippet>
   <div class="wrap">
     <div class="step-head"><span class="step-n">2</span><h2>Pick a day</h2></div>
-    <p class="early" id="early"><span class="early-badge">Early bird</span><span id="earlyTxt">Pick your date today and save 10%. Get ahead of everyone else.</span></p>
+    <p class="early" id="early"><span class="early-badge">Book online</span><span id="earlyTxt">Book on our website and save an extra 10%. Pick your day below.</span></p>
     <div class="pickgrid">
       <div class="card">
         <div class="lab">Day</div>
@@ -603,12 +606,19 @@
       </div>
       <div class="card plan">
         <div class="lab">How often</div>
-        <div class="seg2 wrapok" data-seg="plan"><button type="button" data-v="0" aria-pressed="true">One time</button><button type="button" data-v="1" aria-pressed="false">Every 6 months</button><button type="button" data-v="2" aria-pressed="false">Every 3 months</button></div>
-        <p class="small">Desert dust comes back. On a plan your price is locked for the year and Tony texts you before each visit, so you never have to remember.</p>
+        <div class="plans" data-seg="plan"><button type="button" data-v="0" aria-pressed="true"><b>One time</b><small>just this visit</small></button><button type="button" data-v="1" aria-pressed="false"><b>Once a year</b><small></small></button><button type="button" data-v="2" aria-pressed="false"><b>Twice a year</b><small></small></button><button type="button" data-v="3" aria-pressed="false"><b>Every 3 months</b><i>Best value</i><small></small></button></div>
+        <p class="small strong" id="planWhy"></p>
+        <p class="small">Desert dust and hard water come back, the same as a lawn grows back. On a plan Tony texts you before each visit, so you never have to remember.</p>
         <div class="planbox" id="planbox" hidden><div class="lab">Your plan</div><ol class="visits" id="visits"></ol><p class="plantot" id="plantot"></p></div>
         <button type="button" class="qb qb-ghost qb-sm pdf" id="pdfBtn">Download my quote (PDF)</button>
         <p class="small" id="pdfNote" aria-live="polite"></p>
       </div>
+    </div>
+    <div class="card wait">
+      <div class="lab">What happens if you wait</div>
+      <div class="seg2 wrapok" data-seg="wait"><button type="button" data-v="0" aria-pressed="false">Book now</button><button type="button" data-v="1" aria-pressed="false">3 months</button><button type="button" data-v="2" aria-pressed="true">6 months</button><button type="button" data-v="3" aria-pressed="false">A year</button></div>
+      <ul class="waitlist" id="waitList"></ul>
+      <p class="small strong" id="waitNote"></p>
     </div>
   </div>
 </section>
@@ -980,7 +990,7 @@
       <button type="button" data-zoom="0" aria-label="Reset the view">⟲</button>
     </div>
     <div class="ov-fade" id="ovFade"></div>
-    <div class="ov-msg" id="ovMsg" hidden></div>
+    <div class="ov-msg" id="ovMsg" hidden><div class="mtxt" id="ovMsgT" aria-live="polite"></div><div class="mnav" id="ovNav" hidden><button type="button" data-hact="prev" aria-label="Back one step">‹ Back</button><span id="ovStep"></span><button type="button" data-hact="next" class="nx">Next ›</button></div></div>
   </div>
   <div class="ov-panel">
     <template data-tpl>
@@ -993,8 +1003,11 @@
       <div class="orow"><span>Trim</span><div class="sw" data-hseg="tc"><button type="button" data-v="0" aria-pressed="true" aria-label="White trim" style="background:#f5f3ee"></button><button type="button" data-v="1" aria-pressed="false" aria-label="Cream trim" style="background:#e9dcc0"></button><button type="button" data-v="2" aria-pressed="false" aria-label="Bronze trim" style="background:#5b4a3b"></button></div></div>
       <div class="orow"><span>Window grids</span><button type="button" class="switch" data-hsw="grids" role="switch" aria-checked="false" aria-label="Window grids"></button></div>
       <div class="orow"><span>More windows</span><button type="button" class="switch" data-sw="more" role="switch" aria-checked="false" aria-label="More windows"></button></div>
-      <div class="orow"><span>Solar panels</span><div class="stepper" data-step="panels"><button type="button" data-d="-1" aria-label="Fewer panels">−</button><output class="num">16</output><button type="button" data-d="1" aria-label="More panels">+</button></div></div>
-      <div class="orow"><span>Split into</span><div class="seg2" data-hseg="arrays"><button type="button" data-v="1" aria-pressed="true">1 array</button><button type="button" data-v="2" aria-pressed="false">2</button><button type="button" data-v="3" aria-pressed="false">3</button></div></div>
+      <div class="orow"><span>Solar panels</span><div class="stepper" data-step="panels"><button type="button" data-d="-1" aria-label="Fewer panels">−</button><output class="num">16</output><button type="button" data-d="1" aria-label="More panels">+</button></div><b class="ptotal num" hidden></b></div>
+      <div class="orow"><span>Sections</span><div class="seg2" data-seg="arrays"><button type="button" data-v="1" aria-pressed="true">1</button><button type="button" data-v="2" aria-pressed="false">2</button><button type="button" data-v="3" aria-pressed="false">3</button></div></div>
+      <div class="orow" data-sec="0" hidden><span>Section 1</span><div class="stepper" data-step="arr0"><button type="button" data-d="-1" aria-label="Fewer panels in section 1">−</button><output class="num">8</output><button type="button" data-d="1" aria-label="More panels in section 1">+</button></div></div>
+      <div class="orow" data-sec="1" hidden><span>Section 2</span><div class="stepper" data-step="arr1"><button type="button" data-d="-1" aria-label="Fewer panels in section 2">−</button><output class="num">8</output><button type="button" data-d="1" aria-label="More panels in section 2">+</button></div></div>
+      <div class="orow" data-sec="2" hidden><span>Section 3</span><div class="stepper" data-step="arr2"><button type="button" data-d="-1" aria-label="Fewer panels in section 3">−</button><output class="num">8</output><button type="button" data-d="1" aria-label="More panels in section 3">+</button></div></div>
       <p class="onote">Older home or a big custom home? Ranch, Classic and Lake estate are here so you can see the job on a home like yours.</p>
     </div>
     <div class="ops" data-for="win" hidden>
@@ -1004,8 +1017,11 @@
       <button type="button" class="replay" data-hact="replay">▶ Watch it again</button>
     </div>
     <div class="ops" data-for="sol" hidden>
-      <div class="orow big"><span>Your panel count</span><div class="stepper" data-step="panels"><button type="button" data-d="-1" aria-label="Fewer panels">−</button><output class="num">16</output><button type="button" data-d="1" aria-label="More panels">+</button></div></div>
-      <div class="orow"><span>Split into</span><div class="seg2" data-hseg="arrays"><button type="button" data-v="1" aria-pressed="true">1 array</button><button type="button" data-v="2" aria-pressed="false">2</button><button type="button" data-v="3" aria-pressed="false">3</button></div></div>
+      <div class="orow big"><span>Your panel count</span><div class="stepper" data-step="panels"><button type="button" data-d="-1" aria-label="Fewer panels">−</button><output class="num">16</output><button type="button" data-d="1" aria-label="More panels">+</button></div><b class="ptotal num" hidden></b></div>
+      <div class="orow"><span>Sections</span><div class="seg2" data-seg="arrays"><button type="button" data-v="1" aria-pressed="true">1</button><button type="button" data-v="2" aria-pressed="false">2</button><button type="button" data-v="3" aria-pressed="false">3</button></div></div>
+      <div class="orow" data-sec="0" hidden><span>Section 1</span><div class="stepper" data-step="arr0"><button type="button" data-d="-1" aria-label="Fewer panels in section 1">−</button><output class="num">8</output><button type="button" data-d="1" aria-label="More panels in section 1">+</button></div></div>
+      <div class="orow" data-sec="1" hidden><span>Section 2</span><div class="stepper" data-step="arr1"><button type="button" data-d="-1" aria-label="Fewer panels in section 2">−</button><output class="num">8</output><button type="button" data-d="1" aria-label="More panels in section 2">+</button></div></div>
+      <div class="orow" data-sec="2" hidden><span>Section 3</span><div class="stepper" data-step="arr2"><button type="button" data-d="-1" aria-label="Fewer panels in section 3">−</button><output class="num">8</output><button type="button" data-d="1" aria-label="More panels in section 3">+</button></div></div>
       <button type="button" class="replay" data-hact="replay">▶ Watch it again</button>
     </div>
     <div class="ops" data-for="scr" hidden>
@@ -1013,14 +1029,14 @@
       <p class="onote" data-mesh-fact="0">The same class of mesh your builder used, tensioned right. Clearest view, good airflow, fine for shaded windows.</p>
       <p class="onote" data-mesh-fact="1">Heavy vinyl coated polyester. 5x stronger and far more UV stable, so it takes desert sun, wind and pets without going brittle.</p>
       <div class="orow"><span>Screens</span><div class="stepper" data-step="screens"><button type="button" data-d="-1" aria-label="Fewer screens">−</button><output class="num">4</output><button type="button" data-d="1" aria-label="More screens">+</button></div></div>
-      <div class="orow"><span>New frames built, +$10</span><div class="stepper" data-step="build"><button type="button" data-d="-1" aria-label="Fewer new frames">−</button><output class="num">0</output><button type="button" data-d="1" aria-label="More new frames">+</button></div></div>
+      <div class="orow"><span>New frames and clips <b class="amt">+$10 a screen</b></span><button type="button" class="switch" data-sw="frames" role="switch" aria-checked="false" aria-label="New frames and clips, $10 a screen"></button></div>
       <button type="button" class="replay" data-hact="replay">▶ Watch it again</button>
     </div>
     <div class="ops" data-for="pig" hidden>
       <div class="orow col"><span>The story</span><div class="seg2 wrapok" data-hseg="stage"><button type="button" data-v="0" aria-pressed="false">Today</button><button type="button" data-v="1" aria-pressed="false">Cleanout + mesh</button><button type="button" data-v="2" aria-pressed="true">+ Free spinners</button></div></div>
       <div class="orow"><span>Spinners <button type="button" class="one" data-hact="try1">Try just 1</button></span><div class="stepper" data-hstep="spin"><button type="button" data-d="-1" aria-label="Fewer spinners">−</button><output class="num">3</output><button type="button" data-d="1" aria-label="More spinners">+</button></div></div>
       <div class="orow"><span>Show what each spinner covers</span><button type="button" class="switch" data-hsw="cov" role="switch" aria-checked="true" aria-label="Show spinner coverage"></button></div>
-      <div class="orow"><span>Solar panels</span><div class="stepper" data-step="panels"><button type="button" data-d="-1" aria-label="Fewer panels">−</button><output class="num">16</output><button type="button" data-d="1" aria-label="More panels">+</button></div></div>
+      <div class="orow"><span>Solar panels</span><div class="stepper" data-step="panels"><button type="button" data-d="-1" aria-label="Fewer panels">−</button><output class="num">16</output><button type="button" data-d="1" aria-label="More panels">+</button></div><b class="ptotal num" hidden></b></div>
     </div>
     </template>
     <div class="osum" id="osum"></div>
@@ -1034,7 +1050,7 @@
 </nav>
 </div>
 <script>window.TQ={"svc":["win"],"mode":"home","city":"Victorville","street":"Bear Valley Rd, Victorville"};</script>
-<script src="assets/quote/quote.js?v=784d617c2d" defer></script>
+<script src="assets/quote/quote.js?v=2e2a0d74c8" defer></script>
 <!-- /tq:tail -->
 </body>
 </html>

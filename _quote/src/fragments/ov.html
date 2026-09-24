@@ -20,7 +20,7 @@
       <button type="button" data-zoom="0" aria-label="Reset the view">⟲</button>
     </div>
     <div class="ov-fade" id="ovFade"></div>
-    <div class="ov-msg" id="ovMsg" hidden></div>
+    <div class="ov-msg" id="ovMsg" hidden><div class="mtxt" id="ovMsgT" aria-live="polite"></div><div class="mnav" id="ovNav" hidden><button type="button" data-hact="prev" aria-label="Back one step">‹ Back</button><span id="ovStep"></span><button type="button" data-hact="next" class="nx">Next ›</button></div></div>
   </div>
   <div class="ov-panel">
     <div class="ops" data-for="home">
@@ -32,8 +32,11 @@
       <div class="orow"><span>Trim</span><div class="sw" data-hseg="tc"><button type="button" data-v="0" aria-pressed="true" aria-label="White trim" style="background:#f5f3ee"></button><button type="button" data-v="1" aria-pressed="false" aria-label="Cream trim" style="background:#e9dcc0"></button><button type="button" data-v="2" aria-pressed="false" aria-label="Bronze trim" style="background:#5b4a3b"></button></div></div>
       <div class="orow"><span>Window grids</span><button type="button" class="switch" data-hsw="grids" role="switch" aria-checked="false" aria-label="Window grids"></button></div>
       <div class="orow"><span>More windows</span><button type="button" class="switch" data-sw="more" role="switch" aria-checked="false" aria-label="More windows"></button></div>
-      <div class="orow"><span>Solar panels</span><div class="stepper" data-step="panels"><button type="button" data-d="-1" aria-label="Fewer panels">−</button><output class="num">16</output><button type="button" data-d="1" aria-label="More panels">+</button></div></div>
-      <div class="orow"><span>Split into</span><div class="seg2" data-hseg="arrays"><button type="button" data-v="1" aria-pressed="true">1 array</button><button type="button" data-v="2" aria-pressed="false">2</button><button type="button" data-v="3" aria-pressed="false">3</button></div></div>
+      <div class="orow"><span>Solar panels</span><div class="stepper" data-step="panels"><button type="button" data-d="-1" aria-label="Fewer panels">−</button><output class="num">16</output><button type="button" data-d="1" aria-label="More panels">+</button></div><b class="ptotal num" hidden></b></div>
+      <div class="orow"><span>Sections</span><div class="seg2" data-seg="arrays"><button type="button" data-v="1" aria-pressed="true">1</button><button type="button" data-v="2" aria-pressed="false">2</button><button type="button" data-v="3" aria-pressed="false">3</button></div></div>
+      <div class="orow" data-sec="0" hidden><span>Section 1</span><div class="stepper" data-step="arr0"><button type="button" data-d="-1" aria-label="Fewer panels in section 1">−</button><output class="num">8</output><button type="button" data-d="1" aria-label="More panels in section 1">+</button></div></div>
+      <div class="orow" data-sec="1" hidden><span>Section 2</span><div class="stepper" data-step="arr1"><button type="button" data-d="-1" aria-label="Fewer panels in section 2">−</button><output class="num">8</output><button type="button" data-d="1" aria-label="More panels in section 2">+</button></div></div>
+      <div class="orow" data-sec="2" hidden><span>Section 3</span><div class="stepper" data-step="arr2"><button type="button" data-d="-1" aria-label="Fewer panels in section 3">−</button><output class="num">8</output><button type="button" data-d="1" aria-label="More panels in section 3">+</button></div></div>
       <p class="onote">Older home or a big custom home? Ranch, Classic and Lake estate are here so you can see the job on a home like yours.</p>
     </div>
     <div class="ops" data-for="win" hidden>
@@ -43,8 +46,11 @@
       <button type="button" class="replay" data-hact="replay">▶ Watch it again</button>
     </div>
     <div class="ops" data-for="sol" hidden>
-      <div class="orow big"><span>Your panel count</span><div class="stepper" data-step="panels"><button type="button" data-d="-1" aria-label="Fewer panels">−</button><output class="num">16</output><button type="button" data-d="1" aria-label="More panels">+</button></div></div>
-      <div class="orow"><span>Split into</span><div class="seg2" data-hseg="arrays"><button type="button" data-v="1" aria-pressed="true">1 array</button><button type="button" data-v="2" aria-pressed="false">2</button><button type="button" data-v="3" aria-pressed="false">3</button></div></div>
+      <div class="orow big"><span>Your panel count</span><div class="stepper" data-step="panels"><button type="button" data-d="-1" aria-label="Fewer panels">−</button><output class="num">16</output><button type="button" data-d="1" aria-label="More panels">+</button></div><b class="ptotal num" hidden></b></div>
+      <div class="orow"><span>Sections</span><div class="seg2" data-seg="arrays"><button type="button" data-v="1" aria-pressed="true">1</button><button type="button" data-v="2" aria-pressed="false">2</button><button type="button" data-v="3" aria-pressed="false">3</button></div></div>
+      <div class="orow" data-sec="0" hidden><span>Section 1</span><div class="stepper" data-step="arr0"><button type="button" data-d="-1" aria-label="Fewer panels in section 1">−</button><output class="num">8</output><button type="button" data-d="1" aria-label="More panels in section 1">+</button></div></div>
+      <div class="orow" data-sec="1" hidden><span>Section 2</span><div class="stepper" data-step="arr1"><button type="button" data-d="-1" aria-label="Fewer panels in section 2">−</button><output class="num">8</output><button type="button" data-d="1" aria-label="More panels in section 2">+</button></div></div>
+      <div class="orow" data-sec="2" hidden><span>Section 3</span><div class="stepper" data-step="arr2"><button type="button" data-d="-1" aria-label="Fewer panels in section 3">−</button><output class="num">8</output><button type="button" data-d="1" aria-label="More panels in section 3">+</button></div></div>
       <button type="button" class="replay" data-hact="replay">▶ Watch it again</button>
     </div>
     <div class="ops" data-for="scr" hidden>
@@ -52,14 +58,14 @@
       <p class="onote" data-mesh-fact="0">The same class of mesh your builder used, tensioned right. Clearest view, good airflow, fine for shaded windows.</p>
       <p class="onote" data-mesh-fact="1">Heavy vinyl coated polyester. 5x stronger and far more UV stable, so it takes desert sun, wind and pets without going brittle.</p>
       <div class="orow"><span>Screens</span><div class="stepper" data-step="screens"><button type="button" data-d="-1" aria-label="Fewer screens">−</button><output class="num">4</output><button type="button" data-d="1" aria-label="More screens">+</button></div></div>
-      <div class="orow"><span>New frames built, +$10</span><div class="stepper" data-step="build"><button type="button" data-d="-1" aria-label="Fewer new frames">−</button><output class="num">0</output><button type="button" data-d="1" aria-label="More new frames">+</button></div></div>
+      <div class="orow"><span>New frames and clips <b class="amt">+$10 a screen</b></span><button type="button" class="switch" data-sw="frames" role="switch" aria-checked="false" aria-label="New frames and clips, $10 a screen"></button></div>
       <button type="button" class="replay" data-hact="replay">▶ Watch it again</button>
     </div>
     <div class="ops" data-for="pig" hidden>
       <div class="orow col"><span>The story</span><div class="seg2 wrapok" data-hseg="stage"><button type="button" data-v="0" aria-pressed="false">Today</button><button type="button" data-v="1" aria-pressed="false">Cleanout + mesh</button><button type="button" data-v="2" aria-pressed="true">+ Free spinners</button></div></div>
       <div class="orow"><span>Spinners <button type="button" class="one" data-hact="try1">Try just 1</button></span><div class="stepper" data-hstep="spin"><button type="button" data-d="-1" aria-label="Fewer spinners">−</button><output class="num">3</output><button type="button" data-d="1" aria-label="More spinners">+</button></div></div>
       <div class="orow"><span>Show what each spinner covers</span><button type="button" class="switch" data-hsw="cov" role="switch" aria-checked="true" aria-label="Show spinner coverage"></button></div>
-      <div class="orow"><span>Solar panels</span><div class="stepper" data-step="panels"><button type="button" data-d="-1" aria-label="Fewer panels">−</button><output class="num">16</output><button type="button" data-d="1" aria-label="More panels">+</button></div></div>
+      <div class="orow"><span>Solar panels</span><div class="stepper" data-step="panels"><button type="button" data-d="-1" aria-label="Fewer panels">−</button><output class="num">16</output><button type="button" data-d="1" aria-label="More panels">+</button></div><b class="ptotal num" hidden></b></div>
     </div>
     <div class="osum" id="osum"></div>
     <a class="qb qb-gold ov-cta" href="#quote" id="ovCta">See my price</a>

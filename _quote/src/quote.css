@@ -171,6 +171,23 @@
 .tq .early-badge{background:var(--gold);color:#1b1405;border-radius:999px;padding:3px 10px;font:800 12px var(--display);letter-spacing:.04em;text-transform:uppercase}
 .tq .early.on{background:var(--ok-wash);border-color:#bfe3cf;color:var(--ok)}
 .tq .early.on .early-badge{background:var(--ok);color:#fff}
+/* plans: four cards, each showing what it costs for this quote */
+.tq .plans{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tq .plans button{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;border:2px solid var(--line);background:var(--surface);border-radius:14px;padding:10px 12px;color:var(--ink);min-width:0}
+.tq .plans b{font:800 15px var(--display)}
+.tq .plans small{font-size:12.5px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.tq .plans i{font:800 11px var(--display);font-style:normal;letter-spacing:.06em;text-transform:uppercase;color:var(--ok)}
+.tq .plans button[aria-pressed="true"]{border-color:var(--gold);background:var(--gold-wash)}
+.tq .plans button[aria-pressed="true"]::after{content:"✓";position:absolute;top:8px;right:9px;width:20px;height:20px;border-radius:50%;background:var(--gold);color:#1b1405;display:grid;place-items:center;font:800 11px var(--display)}
+/* what happens if you wait */
+.tq .wait{margin-top:14px}
+.tq .waitlist{list-style:none;padding:0;margin:12px 0 0;display:grid;gap:8px}
+.tq .waitlist li{display:grid;gap:2px;border-left:4px solid var(--ok);background:var(--surface-2);border-radius:10px;padding:9px 12px;font-size:14.5px;color:var(--ink-2)}
+.tq .waitlist li b{font:800 14px var(--display);color:var(--ink)}
+.tq .waitlist li.w1{border-left-color:var(--gold)}
+.tq .waitlist li.w2{border-left-color:#d9822b}
+.tq .waitlist li.w3{border-left-color:var(--no)}
+.tq .ptotal{font:800 18px var(--display);white-space:nowrap}
 .tq .pickgrid{display:grid;gap:14px}
 @media (min-width:900px){.tq .pickgrid{grid-template-columns:1.2fr .8fr}}
 .tq .lab{font:700 13px var(--display);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);margin-bottom:8px}
@@ -252,7 +269,7 @@
 
 /* 3D builder, full screen */
 html.tq-lock,html.tq-lock body{overflow:hidden!important}
-.tq .ov{position:fixed;inset:0;z-index:1000;background:var(--paper);display:grid;grid-template-rows:auto auto minmax(0,1fr) auto}
+.tq .ov{position:fixed;inset:0;z-index:1000;background:var(--paper);display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto minmax(0,1fr) auto}
 @media (min-width:900px){.tq .ov{grid-template-columns:minmax(0,1fr) 380px;grid-template-rows:auto auto minmax(0,1fr)}
   .tq .ov-top,.tq .ov-tabs{grid-column:1/-1}
   .tq .ov-panel{grid-column:2;grid-row:3;max-height:none!important;border-top:0!important;border-left:1px solid var(--line)}}
@@ -274,9 +291,19 @@ html.tq-lock,html.tq-lock body{overflow:hidden!important}
 .tq .ov-msg{position:absolute;left:10px;right:62px;bottom:10px;z-index:3;background:rgba(255,255,255,.96);color:#103050;border-radius:14px;padding:10px 13px;font:500 14px/1.45 var(--body);border-left:4px solid #f0b040;box-shadow:0 8px 20px -10px rgba(0,0,0,.4)}
 @media (min-width:900px){.tq .ov-msg{right:10px;max-width:560px}}
 .tq .ov-msg b{font-family:var(--display);font-weight:800}
+.tq .ov-msg .mtxt{font-size:15px;line-height:1.5}
+@media (max-width:899px){.tq .ov-msg{left:8px;right:56px;bottom:8px;padding:8px 11px}.tq .ov-msg .mtxt{font-size:14.5px;line-height:1.42}.tq .mnav{margin-top:6px;padding-top:6px}.tq .mnav button{min-height:38px;padding:6px 12px}}
+.tq .mnav{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:9px;padding-top:9px;border-top:1px solid #e3edf3}
+.tq .mnav span{font:700 13px var(--display);color:#5b7188;font-variant-numeric:tabular-nums}
+.tq .mnav button{border:0;border-radius:10px;min-height:40px;padding:8px 14px;font:800 15px var(--display);background:#eaf6fc;color:#103050}
+.tq .mnav button:disabled{opacity:.4}
+.tq .mnav .nx{background:#103050;color:#fff}
+.tq .mnav .nx.ready{background:#f0b040;color:#1b1405;animation:tqpulse 1.6s ease-in-out infinite}
+@keyframes tqpulse{50%{box-shadow:0 0 0 6px rgba(240,176,64,.35)}}
+.tq .seclbl{position:absolute;left:0;top:0;z-index:2;background:#103050;color:#fff;font:800 12.5px var(--display);padding:5px 10px;border-radius:999px;white-space:nowrap;pointer-events:none;box-shadow:0 6px 14px -8px rgba(0,0,0,.5)}
 .tq .ov-msg.warn{border-left-color:#c8462b}
 .tq .ov-msg.ok{border-left-color:#1b7a4c}
-.tq .ov-panel{max-height:44vh;overflow:auto;overscroll-behavior:contain;padding:4px 16px calc(12px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);background:var(--surface)}
+.tq .ov-panel{max-height:38vh;overflow:auto;overscroll-behavior:contain;padding:4px 16px calc(12px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);background:var(--surface)}
 .tq .orow{display:flex;align-items:center;justify-content:space-between;gap:10px;padding-block:9px;border-bottom:1px solid var(--line);font:700 14px var(--display)}
 .tq .orow.col{flex-wrap:wrap}
 .tq .orow.big span{font-size:16px}

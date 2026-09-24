@@ -94,7 +94,17 @@ def build_assets():
             shutil.copyfile(src, dst)
         if src.endswith('.quote.src.js'):
             os.remove(src)
-    return {n: short_hash(os.path.join(OUT, n)) for n in ['quote.css', 'quote.js', 'q3d.js']}
+    v = {n: short_hash(os.path.join(OUT, n)) for n in ['quote.css', 'quote.js', 'q3d.js']}
+    # a rigged character, when one has been added, plus the loader it needs
+    tech = os.path.join(OUT, 'tech.glb')
+    if os.path.exists(tech):
+        v['tech'] = short_hash(tech)
+        dst = os.path.join(ROOT, 'assets', 'vendor', 'gltf.min.js')
+        if eb:
+            subprocess.run([eb, os.path.join(SRC, 'vendor', 'GLTFLoader.js'), '--minify', '--target=es2017,safari13', '--legal-comments=none', '--outfile=' + dst], check=True, capture_output=True)
+        else:
+            shutil.copyfile(os.path.join(SRC, 'vendor', 'GLTFLoader.js'), dst)
+    return v
 
 
 def lazy_bodies(html, keep):
@@ -116,7 +126,7 @@ def blocks(conf, v):
     three_card = {'pig': 'card-pig.html', 'win': 'card-win.html', 'sol': 'card-sol.html', 'scr': 'card-scr.html'}.get(conf['mode'], 'card-home.html')
     steps = '\n\n'.join([lazy_bodies(frag('steps.html'), conf['svc']), frag('zip.html'), frag('three-head.html') + '\n' + frag(three_card) + '\n' + frag('three-tail.html')])
     tail = ('<div class="tq" data-nosnippet>\n' + lazy_ov(frag('ov.html')) + '\n' + frag('dock.html') + '\n</div>\n'
-            '<script>window.TQ=' + json.dumps(conf, separators=(',', ':')) + ';</script>\n'
+            '<script>window.TQ=' + json.dumps(dict(conf, **({'tech': v['tech']} if v.get('tech') else {})), separators=(',', ':')) + ';</script>\n'
             '<script src="assets/quote/quote.js?v=' + v['quote.js'] + '" defer></script>')
     return {
         'css': '<link href="assets/quote/quote.css?v=' + v['quote.css'] + '" rel="stylesheet">',
@@ -194,6 +204,8 @@ def main():
     check = '--check' in args
     init = args[args.index('--init') + 1:] if '--init' in args else []
     v = build_assets() if not check else {n: short_hash(os.path.join(OUT, n)) for n in ['quote.css', 'quote.js', 'q3d.js']}
+    if check and os.path.exists(os.path.join(OUT, 'tech.glb')):
+        v['tech'] = short_hash(os.path.join(OUT, 'tech.glb'))
     report, bad = [], 0
     for fn in sorted(os.listdir(ROOT)):
         if not fn.endswith('.html') or fn in SKIP:
