@@ -428,28 +428,34 @@
         <div class="lay r3d open3d" data-lay="r3d" role="button" tabindex="0" aria-label="Open the 3D roof builder">
           <div class="h3host" id="h3host"></div>
           <svg class="r3d-poster" id="r3dPoster" viewBox="0 0 320 320" aria-hidden="true"><path d="M20 170 160 80l140 90Z" fill="#9c5236"/><path d="M45 170h230v90H45Z" fill="#e9dcc6"/><path d="M75 195h40v30H75ZM140 195h40v30h-40ZM205 195h40v30h-40Z" fill="#2c3e50"/><g fill="#1b2d4a" stroke="#6d86a8" stroke-width="1.2"><path d="M110 125l22-12 22 12-22 12Z"/><path d="M136 139l22-12 22 12-22 12Z"/><path d="M162 125l22-12 22 12-22 12Z"/></g></svg>
-          <span class="r3d-go">Tap to build your roof</span>
+          <span class="r3d-go">Tap to build your home</span>
         </div>
-        <div class="lay cmp" data-lay="win" hidden>
-          <img src="assets/quote/win-before.jpg" alt="Sliding glass door with hard water haze before cleaning" width="800" height="600" loading="lazy" decoding="async">
-          <div class="aft"><img src="assets/quote/win-after.jpg" alt="The same sliding door after cleaning, clear glass" width="800" height="600" loading="lazy" decoding="async"></div>
-          <div class="bar"><span aria-hidden="true">‹ ›</span></div>
-          <span class="tagb">Before</span><span class="taga">After</span>
+        <div class="lay car" data-lay="win" hidden>
+          <div class="track">
+            <figure><img src="assets/quote/win-after.jpg" alt="Sliding glass door, clear after cleaning" loading="lazy" decoding="async"><figcaption>Sliding door · clear glass</figcaption></figure>
+            <figure><img src="assets/photos/spring-valley-lake-window-02.jpg" alt="Arched window on a Spring Valley Lake home after cleaning" loading="lazy" decoding="async"><figcaption>Arched window · Spring Valley Lake</figcaption></figure>
+            <figure><img src="assets/photos/apple-valley-window-02.jpg" alt="Large picture window in Apple Valley after cleaning" loading="lazy" decoding="async"><figcaption>Picture window · Apple Valley</figcaption></figure>
+          </div>
+          <div class="dots" aria-hidden="true"></div>
           <div class="done show"><b>Screens, tracks and sills too.</b><span>$149 single story, $249 two story.</span></div>
         </div>
-        <div class="lay cmp" data-lay="sol" hidden>
-          <img src="assets/quote/sol-before.jpg" alt="Solar array covered in dust before cleaning" width="800" height="600" loading="lazy" decoding="async">
-          <div class="aft"><img src="assets/quote/sol-after.jpg" alt="The same solar array after cleaning" width="800" height="600" loading="lazy" decoding="async"></div>
-          <div class="bar"><span aria-hidden="true">‹ ›</span></div>
-          <span class="tagb">Before</span><span class="taga">After</span>
-          <div class="done show"><b>$7 a panel.</b><span>Same array, same day. Purified water and a soft brush.</span></div>
+        <div class="lay car" data-lay="sol" hidden>
+          <div class="track">
+            <figure><img src="assets/quote/sol-after.jpg" alt="Solar array after a purified water wash" loading="lazy" decoding="async"><figcaption>Full array · one visit</figcaption></figure>
+            <figure><img src="assets/photos/adelanto-solar-03.jpg" alt="Clean solar panels on an Adelanto home" loading="lazy" decoding="async"><figcaption>Adelanto array</figcaption></figure>
+            <figure><img src="assets/photos/victorville-solar-01.jpg" alt="Clean solar array on a Victorville two story home" loading="lazy" decoding="async"><figcaption>Victorville two story</figcaption></figure>
+          </div>
+          <div class="dots" aria-hidden="true"></div>
+          <div class="done show"><b>$7 a panel.</b><span>Purified water and a soft brush. Nobody walks on your panels.</span></div>
         </div>
-        <div class="lay cmp" data-lay="pig" hidden>
-          <img src="assets/quote/pig-before.jpg" alt="Solar panels covered in pigeon droppings before pigeon proofing" width="800" height="600" loading="lazy" decoding="async">
-          <div class="aft"><img src="assets/quote/pig-after.jpg" alt="The same array after cleaning with mesh clipped along the edge" width="800" height="600" loading="lazy" decoding="async"></div>
-          <div class="bar"><span aria-hidden="true">‹ ›</span></div>
-          <span class="tagb">Before</span><span class="taga">After</span>
-          <div class="done show"><b>$450 up to 12 panels.</b><span>Cleaned, mesh clipped on, spinners set.</span></div>
+        <div class="lay car" data-lay="pig" hidden>
+          <div class="track">
+            <figure><img src="assets/quote/pig-after.jpg" alt="Solar array with mesh clipped along the edge after pigeon proofing" loading="lazy" decoding="async"><figcaption>Mesh clipped · panels clean</figcaption></figure>
+            <figure><img src="assets/photos/hub-pigeon-proofing-02.jpg" alt="Pigeon mesh running the full edge of a solar array" loading="lazy" decoding="async"><figcaption>Mesh along the full edge</figcaption></figure>
+            <figure><img src="assets/photos/apple-valley-pigeon-05.jpg" alt="Sealed and cleaned solar array in Apple Valley" loading="lazy" decoding="async"><figcaption>Apple Valley · sealed and clean</figcaption></figure>
+          </div>
+          <div class="dots" aria-hidden="true"></div>
+          <div class="done show"><b>$450 up to 12 panels.</b><span>Cleaned out, mesh clipped on, 2 to 3 spinners free.</span></div>
           <button type="button" class="qb qb-gold qb-sm open3d cmp-3d">See your roof in 3D</button>
         </div>
         <span class="lbl" id="wlbl">Windows</span>
@@ -793,17 +799,21 @@
 
 <div class="tq">
 <div class="ov" id="ov" role="dialog" aria-modal="true" aria-labelledby="ovT" hidden>
-  <div class="ov-top"><b id="ovT">Your roof in 3D</b><span class="ov-hint">Drag to turn · pinch to zoom</span><button type="button" class="ov-x" id="ovX" aria-label="Close 3D preview">✕</button></div>
+  <div class="ov-top"><b id="ovT">Your home in 3D</b><span class="ov-hint">Drag to turn · pinch to zoom</span><button type="button" class="ov-x" id="ovX" aria-label="Close 3D preview">✕</button></div>
   <div class="ov-stage" id="stage"><div class="ov-load" id="ovLoad">Loading 3D…</div><div class="ov-msg" id="ovMsg" hidden></div></div>
   <div class="ov-panel">
+    <div class="orow"><span>Service</span><div class="seg2" id="h3v"><button type="button" data-v="0" aria-pressed="true">Pigeons</button><button type="button" data-v="1" aria-pressed="false">Windows</button><button type="button" data-v="2" aria-pressed="false">Solar</button><button type="button" data-v="3" aria-pressed="false">Screens</button></div></div>
     <div class="orow"><span>Home</span><div class="seg2" id="h3s"><button type="button" data-v="1" aria-pressed="true">1 story</button><button type="button" data-v="2" aria-pressed="false">2 story</button></div></div>
-    <div class="orow"><span>Solar panels</span><div class="stepper"><button type="button" id="p3m" aria-label="Fewer panels">−</button><output id="p3n" class="num">16</output><button type="button" id="p3p" aria-label="More panels">+</button></div></div>
-    <div class="orow"><span>Split into</span><div class="seg2" id="h3a"><button type="button" data-v="1" aria-pressed="true">1 array</button><button type="button" data-v="2" aria-pressed="false">2</button><button type="button" data-v="3" aria-pressed="false">3</button></div></div>
+    <div class="orow" data-for="pig sol"><span>Solar panels</span><div class="stepper"><button type="button" id="p3m" aria-label="Fewer panels">−</button><output id="p3n" class="num">16</output><button type="button" id="p3p" aria-label="More panels">+</button></div></div>
+    <div class="orow" data-for="pig sol"><span>Split into</span><div class="seg2" id="h3a"><button type="button" data-v="1" aria-pressed="true">1 array</button><button type="button" data-v="2" aria-pressed="false">2</button><button type="button" data-v="3" aria-pressed="false">3</button></div></div>
     <div class="orow"><span>Roof</span><div class="seg2" id="h3r"><button type="button" data-v="0" aria-pressed="true">S tile</button><button type="button" data-v="1" aria-pressed="false">Flat tile</button><button type="button" data-v="2" aria-pressed="false">Shingle</button></div></div>
     <div class="orow"><span>Color</span><div class="sw" id="h3c"><button type="button" data-v="0" aria-pressed="true" aria-label="Terracotta" style="background:#a9573a"></button><button type="button" data-v="1" aria-pressed="false" aria-label="Brown blend" style="background:#6e5140"></button><button type="button" data-v="2" aria-pressed="false" aria-label="Charcoal" style="background:#46484c"></button><button type="button" data-v="3" aria-pressed="false" aria-label="Sand" style="background:#c2a67c"></button></div></div>
-    <div class="orow"><span>Pigeon proofing</span><div class="seg2" id="tq-ba"><button type="button" data-v="0" aria-pressed="true">Before</button><button type="button" data-v="1" aria-pressed="false">After</button></div></div>
-    <div class="orow"><span>Spinners <button type="button" class="one" id="try1">Try just 1</button></span><div class="stepper"><button type="button" id="s3m" aria-label="Fewer spinners">−</button><output id="s3n" class="num">3</output><button type="button" id="s3p" aria-label="More spinners">+</button></div></div>
-    <div class="orow"><span>Show what each spinner covers</span><button type="button" class="switch" id="cov" role="switch" aria-checked="true" aria-label="Show spinner coverage"></button></div>
+    <div class="orow" data-for="pig"><span>Your home</span><div class="seg2" id="stg"><button type="button" data-v="0" aria-pressed="true">Today</button><button type="button" data-v="1" aria-pressed="false">Cleanout + mesh</button><button type="button" data-v="2" aria-pressed="false">+ Free spinners</button></div></div>
+    <div class="orow" data-for="win sol scr"><span>Before or after</span><div class="seg2" id="tq-ba"><button type="button" data-v="0" aria-pressed="true">Before</button><button type="button" data-v="1" aria-pressed="false">After</button></div></div>
+    <div class="orow" data-for="pig"><span>Spinners <button type="button" class="one" id="try1">Try just 1</button></span><div class="stepper"><button type="button" id="s3m" aria-label="Fewer spinners">−</button><output id="s3n" class="num">3</output><button type="button" id="s3p" aria-label="More spinners">+</button></div></div>
+    <div class="orow" data-for="pig"><span>Show what each spinner covers</span><button type="button" class="switch" id="cov" role="switch" aria-checked="true" aria-label="Show spinner coverage"></button></div>
+    <div class="orow" data-for="win"><span>More than 12 windows</span><button type="button" class="switch" id="w3more" role="switch" aria-checked="false" aria-label="More windows than standard"></button></div>
+    <div class="orow" data-for="scr"><span>Screens to re-mesh</span><div class="stepper"><button type="button" id="c3m" aria-label="Fewer screens">−</button><output id="c3n" class="num">4</output><button type="button" id="c3p" aria-label="More screens">+</button></div></div>
     <div class="osum" id="osum"></div>
   </div>
 </div>

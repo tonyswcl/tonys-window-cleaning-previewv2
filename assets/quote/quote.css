@@ -79,7 +79,15 @@
 .tq .h3host canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 .tq .r3d-poster{position:absolute;inset:12%;width:76%;height:76%}
 .tq .r3d-go{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);white-space:nowrap;background:#f0b040;color:#1b1405;border-radius:14px;padding:12px 18px;font:800 15px var(--display);box-shadow:0 10px 24px -10px rgba(0,0,0,.45)}
-.tq .cmp .cmp-3d{position:absolute;right:12px;top:92px;z-index:3;min-height:38px;padding:8px 12px;font-size:13px}
+.tq .car .track{position:absolute;inset:0;display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.tq .car .track::-webkit-scrollbar{display:none}
+.tq .car figure{flex:0 0 100%;position:relative;margin:0;scroll-snap-align:start}
+.tq .car figure img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.tq .car figcaption{position:absolute;left:12px;top:52px;background:rgba(255,255,255,.94);color:#103050;border-radius:999px;padding:6px 11px;font:700 12px var(--display)}
+.tq .car .dots{position:absolute;right:12px;top:18px;display:flex;gap:6px;z-index:3}
+.tq .car .dots i{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.6);box-shadow:0 0 0 1px rgba(0,0,0,.15)}
+.tq .car .dots i.on{background:#f0b040}
+.tq .car .cmp-3d,.tq .cmp .cmp-3d{position:absolute;right:12px;top:92px;z-index:3;min-height:38px;padding:8px 12px;font-size:13px}
 .tq .split .open3d{position:absolute;right:10px;bottom:10px;z-index:3}
 .tq .split figure:first-child figcaption{top:52px;bottom:auto}
 .tq .wipe-note{font-size:12px;color:var(--ink-3);text-align:center}
@@ -162,6 +170,9 @@
 .tq .sw button{width:34px;height:34px;border-radius:50%;border:3px solid var(--surface);box-shadow:0 0 0 1px var(--line)}
 .tq .sw button[aria-pressed="true"]{box-shadow:0 0 0 3px var(--gold)}
 .tq .one{margin-left:6px;border:0;background:var(--gold-wash);color:var(--gold-text);border-radius:999px;padding:4px 10px;font:700 12px var(--display)}
+.tq .ov .orow[data-for]{display:none}
+.tq .ov[data-svc="pig"] .orow[data-for~="pig"],.tq .ov[data-svc="sol"] .orow[data-for~="sol"],.tq .ov[data-svc="win"] .orow[data-for~="win"],.tq .ov[data-svc="scr"] .orow[data-for~="scr"]{display:flex}
+.tq .orow #h3v button{padding:8px 8px}
 .tq .osum{padding-top:10px;font-size:14px;color:var(--ink-2)}
 .tq .osum b{color:var(--ink);font-family:var(--display)}
 .tq .opt{display:flex;align-items:center;justify-content:space-between;gap:14px;padding-block:10px}
