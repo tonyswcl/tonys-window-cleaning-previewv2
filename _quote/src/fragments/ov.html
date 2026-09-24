@@ -1,0 +1,67 @@
+<div class="ov" id="ov" role="dialog" aria-modal="true" aria-labelledby="ovT" hidden data-mode="home">
+  <div class="ov-top">
+    <b id="ovT">Your home in 3D</b>
+    <span class="ov-hint">Drag to turn · pinch or + to zoom</span>
+    <button type="button" class="ov-x" id="ovX" aria-label="Close the 3D preview">✕</button>
+  </div>
+  <div class="ov-tabs" role="tablist" aria-label="What to show">
+    <button type="button" role="tab" data-hmode="home" aria-selected="true">My home</button>
+    <button type="button" role="tab" data-hmode="win" aria-selected="false">Windows</button>
+    <button type="button" role="tab" data-hmode="sol" aria-selected="false">Solar</button>
+    <button type="button" role="tab" data-hmode="scr" aria-selected="false">Screens</button>
+    <button type="button" role="tab" data-hmode="pig" aria-selected="false">Pigeons</button>
+  </div>
+  <div class="ov-stage" id="stage">
+    <div class="ov-load" id="ovLoad">Loading 3D…</div>
+    <div class="callout" id="ocall" hidden><i></i><span></span></div>
+    <div class="zoom" role="group" aria-label="Zoom">
+      <button type="button" data-zoom="1" aria-label="Zoom in">+</button>
+      <button type="button" data-zoom="-1" aria-label="Zoom out">−</button>
+      <button type="button" data-zoom="0" aria-label="Reset the view">⟲</button>
+    </div>
+    <div class="ov-fade" id="ovFade"></div>
+    <div class="ov-msg" id="ovMsg" hidden></div>
+  </div>
+  <div class="ov-panel">
+    <div class="ops" data-for="home">
+      <div class="orow col"><span>Home style</span><div class="seg2 wrapok styles" data-hseg="style"><button type="button" data-v="0" aria-pressed="true">New build</button><button type="button" data-v="1" aria-pressed="false">Ranch</button><button type="button" data-v="2" aria-pressed="false">Classic</button><button type="button" data-v="3" aria-pressed="false">Lake estate</button></div></div>
+      <div class="orow"><span>Stories</span><div class="seg2" data-seg="stories"><button type="button" data-v="1" aria-pressed="true">1 story</button><button type="button" data-v="2" aria-pressed="false">2 story</button></div></div>
+      <div class="orow"><span>Roof</span><div class="seg2" data-hseg="roof"><button type="button" data-v="0" aria-pressed="true">S tile</button><button type="button" data-v="1" aria-pressed="false">Flat tile</button><button type="button" data-v="2" aria-pressed="false">Shingle</button></div></div>
+      <div class="orow"><span>Roof color</span><div class="sw" data-hseg="rc"><button type="button" data-v="0" aria-pressed="true" aria-label="Terracotta" style="background:#a9573a"></button><button type="button" data-v="1" aria-pressed="false" aria-label="Brown blend" style="background:#6e5140"></button><button type="button" data-v="2" aria-pressed="false" aria-label="Charcoal" style="background:#46484c"></button><button type="button" data-v="3" aria-pressed="false" aria-label="Sand" style="background:#c2a67c"></button></div></div>
+      <div class="orow"><span>Walls</span><div class="sw" data-hseg="wc"><button type="button" data-v="0" aria-pressed="true" aria-label="Desert sand" style="background:#e3d5bb"></button><button type="button" data-v="1" aria-pressed="false" aria-label="White" style="background:#f1eee8"></button><button type="button" data-v="2" aria-pressed="false" aria-label="Warm gray" style="background:#c9c5bd"></button><button type="button" data-v="3" aria-pressed="false" aria-label="Adobe" style="background:#d2ae8c"></button></div></div>
+      <div class="orow"><span>Trim</span><div class="sw" data-hseg="tc"><button type="button" data-v="0" aria-pressed="true" aria-label="White trim" style="background:#f5f3ee"></button><button type="button" data-v="1" aria-pressed="false" aria-label="Cream trim" style="background:#e9dcc0"></button><button type="button" data-v="2" aria-pressed="false" aria-label="Bronze trim" style="background:#5b4a3b"></button></div></div>
+      <div class="orow"><span>Window grids</span><button type="button" class="switch" data-hsw="grids" role="switch" aria-checked="false" aria-label="Window grids"></button></div>
+      <div class="orow"><span>More windows</span><button type="button" class="switch" data-sw="more" role="switch" aria-checked="false" aria-label="More windows"></button></div>
+      <div class="orow"><span>Solar panels</span><div class="stepper" data-step="panels"><button type="button" data-d="-1" aria-label="Fewer panels">−</button><output class="num">16</output><button type="button" data-d="1" aria-label="More panels">+</button></div></div>
+      <div class="orow"><span>Split into</span><div class="seg2" data-hseg="arrays"><button type="button" data-v="1" aria-pressed="true">1 array</button><button type="button" data-v="2" aria-pressed="false">2</button><button type="button" data-v="3" aria-pressed="false">3</button></div></div>
+      <p class="onote">Older home or a big custom home? Ranch, Classic and Lake estate are here so you can see the job on a home like yours.</p>
+    </div>
+    <div class="ops" data-for="win" hidden>
+      <div class="orow"><span>View</span><div class="seg2" data-hseg="view"><button type="button" data-v="0" aria-pressed="true">Outside</button><button type="button" data-v="1" aria-pressed="false">Inside</button></div></div>
+      <div class="orow"><span>Inside windows <b class="amt">+$49</b></span><button type="button" class="switch" data-sw="inside" role="switch" aria-checked="false" aria-label="Add inside windows"></button></div>
+      <div class="orow"><span>Your home</span><div class="seg2" data-seg="stories"><button type="button" data-v="1" aria-pressed="true">1 story</button><button type="button" data-v="2" aria-pressed="false">2 story</button></div></div>
+      <button type="button" class="replay" data-hact="replay">▶ Watch it again</button>
+    </div>
+    <div class="ops" data-for="sol" hidden>
+      <div class="orow big"><span>Your panel count</span><div class="stepper" data-step="panels"><button type="button" data-d="-1" aria-label="Fewer panels">−</button><output class="num">16</output><button type="button" data-d="1" aria-label="More panels">+</button></div></div>
+      <div class="orow"><span>Split into</span><div class="seg2" data-hseg="arrays"><button type="button" data-v="1" aria-pressed="true">1 array</button><button type="button" data-v="2" aria-pressed="false">2</button><button type="button" data-v="3" aria-pressed="false">3</button></div></div>
+      <button type="button" class="replay" data-hact="replay">▶ Watch it again</button>
+    </div>
+    <div class="ops" data-for="scr" hidden>
+      <div class="orow col"><span>Mesh</span><div class="seg2 mesh" data-seg="pet"><button type="button" data-v="0" aria-pressed="false">Charcoal fiberglass<small>$53.99</small></button><button type="button" data-v="1" aria-pressed="true">All weather<small>$64.99</small></button></div></div>
+      <p class="onote" data-mesh-fact="0">The same class of mesh your builder used, tensioned right. Clearest view, good airflow, fine for shaded windows.</p>
+      <p class="onote" data-mesh-fact="1">Heavy vinyl coated polyester. 5x stronger and far more UV stable, so it takes desert sun, wind and pets without going brittle.</p>
+      <div class="orow"><span>Screens</span><div class="stepper" data-step="screens"><button type="button" data-d="-1" aria-label="Fewer screens">−</button><output class="num">4</output><button type="button" data-d="1" aria-label="More screens">+</button></div></div>
+      <div class="orow"><span>New frames built, +$10</span><div class="stepper" data-step="build"><button type="button" data-d="-1" aria-label="Fewer new frames">−</button><output class="num">0</output><button type="button" data-d="1" aria-label="More new frames">+</button></div></div>
+      <button type="button" class="replay" data-hact="replay">▶ Watch it again</button>
+    </div>
+    <div class="ops" data-for="pig" hidden>
+      <div class="orow col"><span>The story</span><div class="seg2 wrapok" data-hseg="stage"><button type="button" data-v="0" aria-pressed="false">Today</button><button type="button" data-v="1" aria-pressed="false">Cleanout + mesh</button><button type="button" data-v="2" aria-pressed="true">+ Free spinners</button></div></div>
+      <div class="orow"><span>Spinners <button type="button" class="one" data-hact="try1">Try just 1</button></span><div class="stepper" data-hstep="spin"><button type="button" data-d="-1" aria-label="Fewer spinners">−</button><output class="num">3</output><button type="button" data-d="1" aria-label="More spinners">+</button></div></div>
+      <div class="orow"><span>Show what each spinner covers</span><button type="button" class="switch" data-hsw="cov" role="switch" aria-checked="true" aria-label="Show spinner coverage"></button></div>
+      <div class="orow"><span>Solar panels</span><div class="stepper" data-step="panels"><button type="button" data-d="-1" aria-label="Fewer panels">−</button><output class="num">16</output><button type="button" data-d="1" aria-label="More panels">+</button></div></div>
+    </div>
+    <div class="osum" id="osum"></div>
+    <a class="qb qb-gold ov-cta" href="#quote" id="ovCta">See my price</a>
+  </div>
+</div>
