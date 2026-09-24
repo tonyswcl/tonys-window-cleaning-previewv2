@@ -79,6 +79,7 @@
 .tq .h3host canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 .tq .r3d-poster{position:absolute;inset:12%;width:76%;height:76%}
 .tq .r3d-go{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);white-space:nowrap;background:#f0b040;color:#1b1405;border-radius:14px;padding:12px 18px;font:800 15px var(--display);box-shadow:0 10px 24px -10px rgba(0,0,0,.45)}
+.tq .cmp .cmp-3d{position:absolute;right:12px;top:92px;z-index:3;min-height:38px;padding:8px 12px;font-size:13px}
 .tq .split .open3d{position:absolute;right:10px;bottom:10px;z-index:3}
 .tq .split figure:first-child figcaption{top:52px;bottom:auto}
 .tq .wipe-note{font-size:12px;color:var(--ink-3);text-align:center}

@@ -450,23 +450,27 @@
           <svg class="r3d-poster" id="r3dPoster" viewBox="0 0 320 320" aria-hidden="true"><path d="M20 170 160 80l140 90Z" fill="#9c5236"/><path d="M45 170h230v90H45Z" fill="#e9dcc6"/><path d="M75 195h40v30H75ZM140 195h40v30h-40ZM205 195h40v30h-40Z" fill="#2c3e50"/><g fill="#1b2d4a" stroke="#6d86a8" stroke-width="1.2"><path d="M110 125l22-12 22 12-22 12Z"/><path d="M136 139l22-12 22 12-22 12Z"/><path d="M162 125l22-12 22 12-22 12Z"/></g></svg>
           <span class="r3d-go">Tap to build your roof</span>
         </div>
-        <div class="lay" data-lay="win" hidden>
-          <img id="wimg" src="assets/quote/win.jpg" alt="Window we cleaned in Apple Valley" width="480" height="640" fetchpriority="high" decoding="async">
-          <canvas id="wcv" aria-label="Dirt layer over the glass. Swipe to clean it."></canvas>
-          <div class="hint"><span>← Swipe to view results →</span></div>
-          <div class="done"><b>Screens, tracks and sills too.</b><span>$149 single story, $249 two story.</span></div>
+        <div class="lay cmp" data-lay="win" hidden>
+          <img src="assets/quote/win-before.jpg" alt="Sliding glass door with hard water haze before cleaning" width="800" height="600" loading="lazy" decoding="async">
+          <div class="aft"><img src="assets/quote/win-after.jpg" alt="The same sliding door after cleaning, clear glass" width="800" height="600" loading="lazy" decoding="async"></div>
+          <div class="bar"><span aria-hidden="true">‹ ›</span></div>
+          <span class="tagb">Before</span><span class="taga">After</span>
+          <div class="done show"><b>Screens, tracks and sills too.</b><span>$149 single story, $249 two story.</span></div>
         </div>
-        <div class="lay cmp" data-lay="sol" id="cmp" hidden>
-          <img src="assets/quote/sol-before.jpg" alt="Solar array covered in dust before cleaning" width="480" height="640" loading="lazy" decoding="async">
-          <div class="aft" id="aft"><img src="assets/quote/sol-after.jpg" alt="The same solar array after cleaning" width="480" height="640" loading="lazy" decoding="async"></div>
-          <div class="bar" id="cbar"><span aria-hidden="true">‹ ›</span></div>
+        <div class="lay cmp" data-lay="sol" hidden>
+          <img src="assets/quote/sol-before.jpg" alt="Solar array covered in dust before cleaning" width="800" height="600" loading="lazy" decoding="async">
+          <div class="aft"><img src="assets/quote/sol-after.jpg" alt="The same solar array after cleaning" width="800" height="600" loading="lazy" decoding="async"></div>
+          <div class="bar"><span aria-hidden="true">‹ ›</span></div>
           <span class="tagb">Before</span><span class="taga">After</span>
           <div class="done show"><b>$7 a panel.</b><span>Same array, same day. Purified water and a soft brush.</span></div>
         </div>
-        <div class="lay split" data-lay="pig" hidden>
-          <figure><img src="assets/quote/pig-before.jpg" alt="Nest debris and droppings packed under a solar panel" width="560" height="300" loading="lazy" decoding="async"><figcaption>Before: nest under the panels</figcaption></figure>
-          <figure><img src="assets/quote/pig-after.jpg" alt="Mesh clipped along the edge of the same solar array" width="560" height="300" loading="lazy" decoding="async"><figcaption>After: cleaned out, mesh clipped on</figcaption></figure>
-          <button type="button" class="qb qb-gold qb-sm open3d">See your roof in 3D</button>
+        <div class="lay cmp" data-lay="pig" hidden>
+          <img src="assets/quote/pig-before.jpg" alt="Solar panels covered in pigeon droppings before pigeon proofing" width="800" height="600" loading="lazy" decoding="async">
+          <div class="aft"><img src="assets/quote/pig-after.jpg" alt="The same array after cleaning with mesh clipped along the edge" width="800" height="600" loading="lazy" decoding="async"></div>
+          <div class="bar"><span aria-hidden="true">‹ ›</span></div>
+          <span class="tagb">Before</span><span class="taga">After</span>
+          <div class="done show"><b>$450 up to 12 panels.</b><span>Cleaned, mesh clipped on, spinners set.</span></div>
+          <button type="button" class="qb qb-gold qb-sm open3d cmp-3d">See your roof in 3D</button>
         </div>
         <span class="lbl" id="wlbl">Windows</span>
         <span class="pct num" id="wpct">0%</span>
@@ -623,7 +627,8 @@
           <div><b class="yes">They do</b>
             <ul><li>Flash sunlight and keep moving in the wind. Pigeons stay away from light and motion they can't predict.</li>
             <li>Keep birds off the open roof, the ridge and the eaves, where they land and walk.</li>
-            <li>Cover the side of the roof they face. The flash travels in a straight line.</li></ul></div>
+            <li>Cover the side of the roof they face. The flash travels in a straight line.</li>
+            <li>Mount on your roof vents with stainless hose clamps. No drilling into the roof.</li></ul></div>
           <div><b class="no">They don't</b>
             <ul><li>Clear a nest that's already under your panels. The mesh does that.</li>
             <li>See over the ridge. One spinner on the front leaves the back side open, and the pigeons just move there.</li>
@@ -1156,6 +1161,8 @@
   <div class="ov-stage" id="stage"><div class="ov-load" id="ovLoad">Loading 3D…</div><div class="ov-msg" id="ovMsg" hidden></div></div>
   <div class="ov-panel">
     <div class="orow"><span>Home</span><div class="seg2" id="h3s"><button type="button" data-v="1" aria-pressed="true">1 story</button><button type="button" data-v="2" aria-pressed="false">2 story</button></div></div>
+    <div class="orow"><span>Solar panels</span><div class="stepper"><button type="button" id="p3m" aria-label="Fewer panels">−</button><output id="p3n" class="num">16</output><button type="button" id="p3p" aria-label="More panels">+</button></div></div>
+    <div class="orow"><span>Split into</span><div class="seg2" id="h3a"><button type="button" data-v="1" aria-pressed="true">1 array</button><button type="button" data-v="2" aria-pressed="false">2</button><button type="button" data-v="3" aria-pressed="false">3</button></div></div>
     <div class="orow"><span>Roof</span><div class="seg2" id="h3r"><button type="button" data-v="0" aria-pressed="true">S tile</button><button type="button" data-v="1" aria-pressed="false">Flat tile</button><button type="button" data-v="2" aria-pressed="false">Shingle</button></div></div>
     <div class="orow"><span>Color</span><div class="sw" id="h3c"><button type="button" data-v="0" aria-pressed="true" aria-label="Terracotta" style="background:#a9573a"></button><button type="button" data-v="1" aria-pressed="false" aria-label="Brown blend" style="background:#6e5140"></button><button type="button" data-v="2" aria-pressed="false" aria-label="Charcoal" style="background:#46484c"></button><button type="button" data-v="3" aria-pressed="false" aria-label="Sand" style="background:#c2a67c"></button></div></div>
     <div class="orow"><span>Pigeon proofing</span><div class="seg2" id="tq-ba"><button type="button" data-v="0" aria-pressed="true">Before</button><button type="button" data-v="1" aria-pressed="false">After</button></div></div>
