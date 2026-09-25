@@ -9,7 +9,7 @@ const files = process.argv.slice(2);
   for (const f of files) {
     const p = await b.newPage();
     await p.setViewportSize({ width: 900, height: 1100 });
-    await p.goto(`file://${SP}/${f}`, { waitUntil: 'load' }).catch(() => {});
+    await p.goto(f.startsWith('/') ? `file://${f}` : `file://${SP}/${f}`, { waitUntil: 'load' }).catch(() => {});
     await p.waitForTimeout(2200);
     const rows = await p.evaluate(() => [...document.querySelectorAll('.page')].map((el, i) => {
       const foot = el.querySelector('.foot');

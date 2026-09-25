@@ -12,7 +12,8 @@ One layout across every customer-facing document.
 | `fit.js` | Checks every `.page` fits one Letter sheet before rendering. |
 | `render.js` | Renders the HTML to PDF plus PNG previews. |
 | `template-quote.html` | Skeleton to copy for a new document. |
-| `template-receipt.html` | Paid receipt: line items, gratuity, total paid, "Your cleaners", upkeep note. |
+| `template-receipt.html` | Paid receipt: line items, gratuity, total paid, "Your cleaners", upkeep note. This is the house receipt layout for every job. |
+| `receipt.py` | Builds a receipt in that layout from a small JSON kept outside the repo, checks the fit and renders the PDF. `python3 receipt.py job.json ~/out` |
 
 ## Why the fonts are embedded
 
@@ -39,3 +40,13 @@ node render.js my-quote.html My-Quote.pdf 1
 This repository is public and serves twindowclean.com. Finished customer
 documents contain names, home addresses, phone numbers and email addresses,
 so they are kept out of it. Only the reusable layout lives here.
+
+## Receipts, every time
+
+Every paid job gets a receipt in the `template-receipt.html` layout: letterhead, the customer,
+"What we did" with a line per item and a free line for anything thrown in, the paid band, "Your cleaners"
+with everyone who was at the home, one callout (upkeep plan, or the balance for a split job), "Good to know",
+the signature block. Numbering is `TWC-YYMM-XXX` where XXX is a short tag for the job or the town
+(`WIN`, `RED`, `MOJ`). The finished PDF and its source HTML go to the Drive folder
+"TWC Customer Documents", and a row goes on "TWC Sales Receipts 2026 (QuickBooks entry)" and
+"TWC Customer Documents Index 2026". The lead desk skill has the steps.

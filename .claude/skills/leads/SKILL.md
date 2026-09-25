@@ -80,6 +80,16 @@ If Tony asks, also create the QuickBooks estimate or invoice with the same line 
 - Move the review ask earlier if he says the customer was clearly happy: send it now, meaning give him the text to paste right away and delete the scheduled event.
 - If he says the customer was not happy, **delete the review ask** and draft a short text offering to come back and redo the problem area. Never ask an unhappy customer for a review.
 
+## Step 3b — Tony says "receipt" (or "make a receipt")
+
+Every paid job gets a receipt in the house layout, the one first used for Eddie Hobbs (`tools/docs/template-receipt.html`, built by `tools/docs/receipt.py`). Do all of it, in this order:
+
+1. Write the job JSON **outside the repo** (the scratchpad), then `python3 tools/docs/receipt.py job.json <scratch dir>`. Number it `TWC-YYMM-XXX` (XXX = a short tag for the town or job). Line per item, a $0.00 line for anything thrown in free, gratuity only if there was a tip, every crew member on the job under "Your cleaners" (default Tony and Dylan). One callout: the upkeep plan prices, or for a split job the balance math (whole job price, minus paid today, plus the trip fee).
+2. Look at `preview-1.png` before sending anything.
+3. Drive folder "TWC Customer Documents": upload the PDF and the source HTML. Recreate "TWC Sales Receipts 2026 (QuickBooks entry)" and "TWC Customer Documents Index 2026" with the new rows (the Drive tool can't edit a sheet in place: create the new CSV with the same title, then trash the old one).
+4. Update the job's Calendar event: title starts `JOB DONE:`, description holds what was done, what was paid, the receipt number, anything agreed for later.
+5. Give Tony the receipt PDF and a text to paste: thanks, what was done and paid, anything agreed for later, the review link if the customer was happy.
+
 ## Step 4 — "what's due?"
 
 List today's and tomorrow's events whose titles start with `Follow up:`, `Confirm:`, `Review ask:` or `JOB:`, in time order, each with the text to paste. That is the whole answer.
