@@ -14,7 +14,7 @@ for(const [url,mode,svc] of [['pigeon-proofing-hesperia.html?see=pig','pig','pig
 await p.goto('http://localhost:8765/pigeon-proofing-hesperia.html?see=pig');await p.waitForFunction(()=>window.__tq&&window.__tq.api,null,{timeout:90000});await p.waitForTimeout(2000);
 await p.click('#ovX');await p.waitForTimeout(400);
 await p.click('[data-svc="win"]');await p.waitForTimeout(300);
-await p.fill('#fname','Test Person');await p.click('[data-hact="obd"]').catch(()=>{});
+await p.fill('#fname','Test Person');
 await p.evaluate(()=>{document.getElementById('mailA').addEventListener('click',e=>e.preventDefault());document.getElementById('mailA').click();});
 const fb=await p.evaluate(()=>window.__fb.map(a=>a[1]+(a[2]&&a[2].method?':'+a[2].method:'')));
 ok('Meta ViewContent fired',fb.includes('ViewContent'),fb.join(','));

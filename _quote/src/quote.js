@@ -130,9 +130,9 @@ function addMonths(d,m){var x=new Date(d.getTime());var day=x.getDate();x.setDat
   var last=new Date(x.getFullYear(),x.getMonth()+1,0).getDate();x.setDate(Math.min(day,last));return x;}
 var TODAY=new Date();TODAY.setHours(12,0,0,0);
 function isWkend(d){return d&&(d.getDay()===0||d.getDay()===6);}
-function dayText(){var d=parseIso(st.day);if(!d)return "";return fmt(d)+(isWkend(d)?", after 3 PM, free quote visit":st.time===0?", morning":st.time===1?", afternoon":"");}
-/* jobs run Monday to Friday; a weekend day is a free quote visit after 3 PM */
-function fixTime(){var d=parseIso(st.day);if(isWkend(d))st.time=2;else if(st.time===2)st.time=-1;}
+/* weekdays are morning or afternoon; a Saturday or Sunday, or no day at all, can simply say "I prefer weekends" */
+function dayText(){var d=parseIso(st.day);if(!d)return st.time===2?"any weekend":"";return fmt(d)+(isWkend(d)?", weekend":st.time===0?", morning":st.time===1?", afternoon":"");}
+function fixTime(){var d=parseIso(st.day);if(isWkend(d))st.time=2;else if(d&&st.time===2)st.time=-1;}
 
 /* ---------- lazy parts: other services' options and the 3D controls wait in <template> until first use ---------- */
 var hydrated=false;
@@ -158,9 +158,6 @@ doc.addEventListener("click",function(e){
   if(!hydrated&&t.closest(".tq"))hydrate();
   /* the little i buttons: why an add on costs what it costs */
   var wy=t.closest("[data-why]");if(wy){var op=wy.closest(".opt,.note"),wb=op&&op.nextElementSibling;if(wb&&wb.classList.contains("why")){var op2=wb.hidden;wb.hidden=!op2;wy.setAttribute("aria-expanded",String(op2));if(op2)track("why_price");}return;}
-  /* do I really need this / how will it help me */
-  var nd=t.closest("[data-need]");if(nd){var nb=nd.closest(".needs"),nk=nd.getAttribute("data-need"),on=nd.getAttribute("aria-pressed")!=="true";
-    $$("[data-need]",nb).forEach(function(x){x.setAttribute("aria-pressed",String(on&&x===nd));});$$(".nans",nb).forEach(function(x){x.hidden=!(on&&x.getAttribute("data-ans")===nk);});if(on)track("need_tab",{tab:nk});return;}
   var b=t.closest("[data-seg] button[data-v]");
   if(b){var k=b.parentNode.getAttribute("data-seg"),v=+b.getAttribute("data-v");
     if(k==="time"&&st.time===v&&v!==2)v=-1; /* tap again to clear */
@@ -240,8 +237,7 @@ var dayRow=$("days");
 (function(){
   for(var i=1;i<=60;i++){var d=new Date(TODAY.getTime());d.setDate(d.getDate()+i);
     var we=isWkend(d),b=doc.createElement("button");b.type="button";b.className="day"+(we?" wk":"");b.setAttribute("data-day",iso(d));b.setAttribute("aria-pressed","false");
-    if(we)b.setAttribute("aria-label",fmt(d)+", free quote visit after 3 PM");
-    var w=doc.createElement("span");w.textContent=WD[d.getDay()];var n=doc.createElement("b");n.textContent=d.getDate();var m=doc.createElement("span");m.textContent=we?"quote":MO[d.getMonth()];
+    var w=doc.createElement("span");w.textContent=WD[d.getDay()];var n=doc.createElement("b");n.textContent=d.getDate();var m=doc.createElement("span");m.textContent=MO[d.getMonth()];
     b.appendChild(w);b.appendChild(n);b.appendChild(m);dayRow.appendChild(b);}
   var min=new Date(TODAY.getTime());min.setDate(min.getDate()+1);var max=new Date(TODAY.getTime());max.setFullYear(max.getFullYear()+1);
   var di=$("dateIn");di.min=iso(min);di.max=iso(max);
@@ -251,8 +247,8 @@ var dayRow=$("days");
 function days(){
   $$(".day",dayRow).forEach(function(b){b.setAttribute("aria-pressed",String(b.getAttribute("data-day")===st.day));});
   var di=$("dateIn"),inRow=!!dayRow.querySelector('[data-day="'+st.day+'"]');di.value=st.day&&!inRow?st.day:"";
-  var pick=$("dayPicked");pick.textContent=st.day?"Your day: "+dayText()+". Tony confirms by text.":"";
-  var we=isWkend(parseIso(st.day));$$("[data-seg='time'] button").forEach(function(b){var v=+b.getAttribute("data-v");b.hidden=we?v!==2:v===2;});
+  var pick=$("dayPicked");pick.textContent=(st.day||st.time===2)?"Your day: "+dayText()+". Tony confirms by text.":"";
+  var d=parseIso(st.day),we=isWkend(d);$$("[data-seg='time'] button").forEach(function(b){var v=+b.getAttribute("data-v");b.hidden=we?v!==2:(d?v===2:false);});
 }
 function schedule(t,plan){
   plan=plan===undefined?st.plan:plan;

@@ -26,7 +26,7 @@ The website repo is **public**. Never write a customer's name, phone, address or
 - Solar panel cleaning from $7 a panel. Purified water, dried spot free.
 - Satisfaction guaranteed: if a window isn't right, it gets redone on the spot.
 - End of season pricing runs through October 31, 2026.
-- Google review link: `REVIEW_LINK` (not yet set — ask Tony for it the first time a review ask is due, then replace it in this file and commit).
+- Google review link: https://g.page/r/CWQH1O3JGKh4EAE/review
 
 Voice: plain, direct, friendly. No dashes, no exclamation stacks, no hype words. Short enough to read on a lock screen. Sign as Tony.
 
@@ -68,7 +68,7 @@ He'll say something like "Maria booked Thursday 10am, two story, inside and out,
 2. **Confirmation event** the evening before at 6:00 PM, title `Confirm: {first} tomorrow`, 15 minutes long, description holds:
    > Hi {first}, Tony here, confirming your {service} tomorrow. I'll arrive between {start} and {start + 1h}. If anything changes just text me here.
 3. **Review ask event** 2 hours after the job's scheduled end, title `Review ask: {first}`, description holds:
-   > Thanks again {first}. If you're happy with how the {windows/panels} came out, a quick Google review helps a small local business more than anything: REVIEW_LINK
+   > Thanks again {first}. If you're happy with how the {windows/panels} came out, a quick Google review helps a small local business more than anything: https://g.page/r/CWQH1O3JGKh4EAE/review
 4. Delete the Step 1 follow up event for this lead if it still exists.
 5. Reply to Tony with a three line summary: the job, the confirm time, the review time. Nothing else.
 

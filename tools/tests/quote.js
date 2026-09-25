@@ -15,16 +15,22 @@ ok('package line on ticket',/A year of cleanings/.test(await p.$eval('#tlines',e
 ok('total stays $650 today',await T()==='$650');
 const vis=await p.$$eval('#visits li b',l=>l.map(x=>x.textContent));ok('plan auto every 3 months, visits $112 at $7 a panel',vis.length===4&&vis[1]==='$112',vis.join(','));
 ok('pigeon upkeep counted by panels',/16 × \$7 = \$112 a visit/.test(await p.$eval('#plantot',e=>e.textContent)));
-/* info and need tabs */
+/* info buttons, and the questions stay out of the flow */
 await p.click('[data-body="pig"] [data-why] >> nth=0');ok('info opens why',await p.$eval('[data-body="pig"] .why',e=>!e.hidden));
-await p.click('[data-body="pig"] [data-need="0"]');ok('need tab opens',await p.$eval('[data-body="pig"] .nans[data-ans="0"]',e=>!e.hidden));
+ok('no need tabs in the steps',(await p.$$('[data-need], .ntabs')).length===0&&!/Do I really need this|Not sure I need it|Now or later/.test(await p.$eval('#quote',e=>e.innerText)+await p.$eval('#day',e=>e.innerText)));
+ok('what you get lines on the pigeon card',/What you get\./.test(await p.$eval('[data-body="pig"] .get',e=>e.textContent)));
+ok('signs tucked under step 3, closed',await p.$eval('#signs',e=>!e.open&&e.closest('#tq-send')!==null&&/How to tell it's time/.test(e.querySelector('summary').textContent)));
 /* weekend */
+const tb0=await p.$$eval('[data-seg="time"] button',l=>l.filter(x=>!x.hidden).map(x=>x.textContent));ok('no day yet: morning, afternoon, I prefer weekends',tb0.join(',')==='Morning,Afternoon,I prefer weekends',tb0.join(','));
+ok('day strip never says quote',!/quote/i.test(await p.$eval('#days',e=>e.innerText)));
+await p.click('[data-seg="time"] [data-v="2"]');await p.waitForTimeout(200);ok('weekends with no day reads any weekend',/Your day: any weekend/.test(await p.$eval('#dayPicked',e=>e.textContent))&&/Day: any weekend/.test(await p.$eval('#msg',e=>e.textContent)));
 const wk=await p.$('.days .day.wk');await wk.click();await p.waitForTimeout(200);
 const tb=await p.$$eval('[data-seg="time"] button',l=>l.filter(x=>!x.hidden).map(x=>x.textContent));
-ok('weekend shows only After 3 PM',tb.length===1&&tb[0]==='After 3 PM',tb.join(','));
-ok('weekend day text',/after 3 PM, free quote visit/.test(await p.$eval('#dayPicked',e=>e.textContent)));
+ok('weekend shows only I prefer weekends',tb.length===1&&tb[0]==='I prefer weekends',tb.join(','));
+ok('weekend day text',/, weekend\. Tony confirms by text/.test(await p.$eval('#dayPicked',e=>e.textContent))&&!/quote|3 PM/.test(await p.$eval('#dayPicked',e=>e.textContent)),await p.$eval('#dayPicked',e=>e.textContent));
 const wd=await p.$('.days .day:not(.wk)');await wd.click();await p.waitForTimeout(200);
 const tb2=await p.$$eval('[data-seg="time"] button',l=>l.filter(x=>!x.hidden).map(x=>x.textContent));ok('weekday shows morning and afternoon',tb2.join(',')==='Morning,Afternoon',tb2.join(','));
+ok('weekday clears the weekend preference',await p.evaluate(()=>window.__tq.st.time===-1));
 /* ZIP */
 for(const [z,re] of [['92505',/down the hill to Riverside/],['92335',/down the hill to Fontana/],['91739',/down the hill to Etiwanda/],['92356',/Lucerne Valley is on our High Desert route/],['92345',/Yes, we come to Hesperia/],['90210',/We go where the work is/],['10001',/Southern California crew/]]){
   await p.fill('#zipIn',z);await p.dispatchEvent('#zipIn','input');const t=await p.$eval('#zres',e=>e.innerText);ok('ZIP '+z,re.test(t),t);}

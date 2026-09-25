@@ -1035,6 +1035,7 @@ function setMode(m,keepT){
   $$(".ov-tabs [data-hmode]").forEach(function(b){b.setAttribute("aria-selected",String(b.getAttribute("data-hmode")===m));});
   $$(".ov-panel .ops").forEach(function(p){p.hidden=p.getAttribute("data-for")!==m;});
   $("ovT").textContent={show:"Your home in 3D",home:"Your home in 3D",win:"Window cleaning in 3D",sol:"Solar cleaning in 3D",scr:"Screen repair in 3D",pig:"Pigeon proofing in 3D",com:st.ctype?"Your building in 3D":"Your storefront in 3D"}[m];
+  grabLabel();
   if(!keepT)user=false;goal=preset();if(!keepT){cur=null;}
   syncControls();summary();
 }
@@ -1671,7 +1672,8 @@ obd.addEventListener("click",function(e){var t=e.target;if(!t.closest)return;
   else if(act==="back"){pages[0].hidden=false;pages[1].hidden=true;}
   else if(act==="skip"||act==="build"){
     if(act==="build"){var any=false;$$(".obd-pc input",obd).forEach(function(c){st[c.value]=c.checked;any=any||c.checked;});if(st.hw)st.win=true;if(!any)st.win=true;
-      track("onboard_build",{win:st.win,hw:st.hw,sol:st.sol,pig:st.pig,scr:st.scr,hood:h3.hood,style:h3.style});}
+      track("onboard_build",{win:st.win,hw:st.hw,sol:st.sol,pig:st.pig,scr:st.scr,hood:h3.hood,style:h3.style});
+      panelMin(true); /* the welcome already shaped the home, so the tour gets the whole screen; the bar under it opens the rest */}
     obdDone=true;obdShow(false);tl=0;user=false;focusShot=null;C.render();}});
 
 /* ---------- render loop ---------- */
@@ -1700,6 +1702,9 @@ doc.addEventListener("visibilitychange",function(){if(!doc.hidden)start();});
 if("ResizeObserver" in window){var ro=new ResizeObserver(function(){msgH=-1;size();});ro.observe(stageEl);ro.observe(heroHost);}
 
 /* ---------- controls in the builder ---------- */
+/* on a phone the controls fold under one bar; the bar says what's inside for the module that's open */
+function grabLabel(){var g=$("ovGrab");if(!g)return;var s=g.querySelector("span"),txt={home:"Customize my home",com:st.ctype?"Set up my building":"Set up my storefront",win:"Inside or outside, stories",sol:"Panel count and sections",scr:"Mesh and screen count",pig:"Spinners and the story"}[mode]||"Options";if(s&&s.textContent!==txt)s.textContent=txt;}
+function panelMin(on){ov.classList.toggle("min",on);var g=$("ovGrab");if(g)g.setAttribute("aria-expanded",String(!on));}
 function syncControls(){
   $$("#ov [data-hseg]").forEach(function(g){var k=g.getAttribute("data-hseg");$$("button[data-v]",g).forEach(function(b){b.setAttribute("aria-pressed",String(+b.getAttribute("data-v")===h3[k]));});});
   $$("#ov [data-hsw]").forEach(function(x){x.setAttribute("aria-checked",String(!!h3[x.getAttribute("data-hsw")]));});
@@ -1708,6 +1713,8 @@ function syncControls(){
 ov.addEventListener("click",function(e){
   var t=e.target;
   if(t.closest("#wxChip")){var order=["today","sun","wind","cloud"];WX.mode=order[(order.indexOf(WX.mode)+1)%order.length];applyWx();track("weather_3d",{mode:WX.mode});return;}
+  if(t.closest("#ovGrab")){var was=ov.classList.contains("min");panelMin(!was);track("panel_toggle",{open:was});return;}
+  var ot=t.closest("[data-otab]");if(ot){var og=ot.closest(".ops"),oid=ot.getAttribute("data-otab");$$("[data-otab]",og).forEach(function(b){b.setAttribute("aria-selected",String(b===ot));});$$("[data-og]",og).forEach(function(g){g.hidden=g.getAttribute("data-og")!==oid;});track("ops_tab",{tab:oid});return;}
   var mb=t.closest("[data-hmode]");if(mb){var nm=mb.getAttribute("data-hmode");if(nm===mode){replay();return;}fade(function(){setMode(nm);});track("view_3d_service",{mode:nm});return;}
   var z=t.closest("[data-zoom]");if(z&&goal){var d=+z.getAttribute("data-zoom");if(d===0){user=false;focusShot=null;flyTo(preset());}else{user=true;flight=null;goal.dist*=d>0?.8:1.25;limits();}return;}
   var hb=t.closest("[data-hseg] button[data-v]");
@@ -1750,7 +1757,7 @@ function sync(){
 buildMe();
 return {
   open:function(m){overlay=true;perf.hold=performance.now()+1500;perf.n=0;wxFetch();wxChip();$("ovLoad").hidden=true;attach(stageEl);var tour=m==="tour";if(tour)m=pageMode==="com"?"com":"home";if(["home","win","sol","scr","pig","com"].indexOf(m)<0)m="home";setMode(m);if(tour&&!obdDone&&m==="home")obdShow(true);start();},
-  close:function(){if(ED)edStop();overlay=false;obdShow(false);say("");secEl.forEach(function(d){d.hidden=true;});Object.keys(hsEl).forEach(function(k){hsEl[k].hidden=true;});h3.spinOv=null;if(h3.view===1)h3.view=0;setMode("show");attach(heroHost);$("ocall").hidden=true;},
+  close:function(){if(ED)edStop();overlay=false;obdShow(false);panelMin(false);say("");secEl.forEach(function(d){d.hidden=true;});Object.keys(hsEl).forEach(function(k){hsEl[k].hidden=true;});h3.spinOv=null;if(h3.view===1)h3.view=0;setMode("show");attach(heroHost);$("ocall").hidden=true;},
   hero:function(on){heroOn=on;if(on&&!overlay){if(mode!=="show")setMode("show");else ensureScene();attach(heroHost);start();}},
   sync:sync,
   pref:function(m){pageMode=m;},

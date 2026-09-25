@@ -22,25 +22,28 @@ Written at the end of the build session on September 25, 2026. Read this top to 
 - Office buildings: **$10 a pane inside and out on the ground floor, $10 more a pane for each story up** (story 2 is $20 a pane, story 3 is $30). Every pane checked for hard water staining, existing tint left alone. Free walkthrough confirms the count, then the price is firm in writing.
 - Home plans: once a year, twice a year 15% off, every 3 months 25% off. Booking online takes 10% off the first visit.
 - Large custom homes: Tony confirms on site ($499 to $599 inside and out on some).
-- Jobs run Monday to Friday. Weekends are free quote visits after 3 PM only.
+- Step 2 days: weekdays offer morning or afternoon. Saturday and Sunday just read "I prefer weekends" (Tony's words, September 25). Never mention a quote visit or 3 PM.
 - Google rating 5.0, 25 reviews. Review link: https://g.page/r/CWQH1O3JGKh4EAE/review
 
 All prices live in one object `P` at the top of `_quote/src/quote.js`. Page body copy also states prices by hand, so a price change means grepping the pages too.
 
 ## Where things stand
 
-Branch head is the uniform commit (`3D tech in the crew uniform`). Recent commits, newest first:
+**Live.** Tony gave the go ahead on September 25 ("publish to main") and the branch was merged into main that day. Recent commits, newest first:
 
-1. Crew uniform on the 3D tech (gray polo, black work pants, black cap).
-2. Storefronts $149 with plan discounts, four storefront styles with the business name on the sign, the window and storefront editors, flat $39 more windows, watermarked customer PDF.
-3. Inland Empire page (value first, city list lower for search), IE link in every footer, sitemap, smell point on pigeon copy, "book online, save 10%" in 45 descriptions.
-4. Live neighborhoods, bright sky and mountains, problems shown on the home with Fix it steps, picture cards, wind and weather, adaptive quality.
+1. Launch pass: the "Do I really need this?" tabs left the quote flow (each service card says what you get and why now, the signs it's time fold under step 3), step 2 ends on "What happens next", weekdays morning or afternoon and weekends "I prefer weekends", the 3D controls grouped into tabs with a fold away bar on phones, one zoom pill, lighter stage chips, desktop side panel with the summary pinned at the bottom.
+2. Leafy trees, fuller palms and pines, mountains in three lines, rounded tech body with boots, window wash from Tony's footage, cards and posters rerendered.
+3. Storefront terms and $50 past 10, office buildings $10 a pane by story, deep links into the 3D, Meta event map, WebSite and Service schema, view transitions, pigeon clip copy.
+4. Crew uniform on the 3D tech, storefronts $149 with plan discounts and the editors, flat $39 more windows, watermarked customer PDF, Inland Empire page, live neighborhoods, weather, adaptive quality.
+
+Next round, already approved by Tony ("certainly"): the 24 new pages in the masterplan artifact (https://claude.ai/artifact/HD7hioXQZVXvkx61rjRDkq). Re-export Search Console in about a month and adjust. The Meta plan waits on Tony ("I'll get back to you on the ad").
 
 Private preview of every page (only Tony can open it until he shares it): https://claude.ai/artifact/ToeLTekjZgCYmKzMYDGrA8
 
 ### What the 3D does now
 
-- "See it on my home" opens the welcome: picture cards for home style, stories and street (Desert yards, Lawns and trees, On the lake, Acreage), then the problems as picture check cards (dirty windows, pigeons, dusty panels, torn screens, hard water).
+- "See it on my home" opens the welcome: picture cards for home style, stories and street (Desert yards, Lawns and trees, On the lake, Acreage), then the problems as picture check cards (dirty windows, pigeons, dusty panels, torn screens, hard water). After "Build my home" the control panel folds away on phones (class `min` on `#ov`, the `#ovGrab` bar reopens it) so the tour gets the whole screen. Skip leaves it open.
+- The controls are grouped with `data-otab` tabs and `data-og` groups (home: Home, Colors, Solar, Street; storefront: My storefront, Glass, Schedule). Tests that tap a control inside a group tap its tab first.
 - The home appears in that community with the checked problems on it: grime on the glass, dirty or torn and hanging screens, dust on the panels, pigeons with white droppings and nests. Numbered dots explain each problem (including the smell). The tour button reads "Fix it" and each problem clears.
 - "Edit my windows": tap a wall to add a window, drag to move, pick pane or with screen, small, standard or large, on all four walls. On Done the counts go into the quote (more windows flag, screen count).
 - Storefront tab and commercial pages: strip center, cafe with patio, tall glass, or standalone. Name on the sign, wall and sign colors. "Build my storefront" adds, moves and resizes panes and doors, stickers, wider or narrower; the counts feed the quote. Office building mode by square feet, stories and windows.
@@ -76,8 +79,8 @@ Made in the browser (`makePdf` in `quote.js`), downloaded or shared as a file. E
 4. Measurement: GA4 `G-F97LW93P0P`, Google Ads `AW-17238956448`, Meta pixel `1424363186269397`. Events are in `assets/tags.js`. Make sure a sent quote fires the lead events on the live site.
 5. The form posts to Formspree (`FORM` in `quote.js`). Previews set `live:false` so nothing is sent. After launch, send one real test lead and delete it.
 6. Look at the preview on a real phone: welcome, problem cards, Fix it steps, Edit my windows, the storefront builder, the PDF.
-7. When Tony says "move to main": pull request from the branch into main, merge, open twindowclean.com and spot check the home page, a pigeon page, a commercial page and the Inland Empire page. Submit `sitemap.xml` in Search Console.
-8. The `/leads` skill still has `REVIEW_LINK` as a placeholder; the real link is above.
+7. When Tony says "move to main": pull request from the branch into main, merge, open twindowclean.com and spot check the home page, a pigeon page, a commercial page and the Inland Empire page. Submit `sitemap.xml` in Search Console. (Done September 25.)
+8. The `/leads` skill has the real review link. (Done.)
 
 ## How the site is built
 
@@ -104,8 +107,9 @@ Run each from an empty temp directory (they write screenshots there): `cd $(mkte
 | Script | What it proves | Pass looks like |
 | --- | --- | --- |
 | `pages.js` | Every page on phone and desktop: no JS errors, tool hydrates (12 bodies, 6 3D panels) | `ALL PAGES CLEAN` |
-| `quote.js` | Prices, plans, pigeon package, weekend rules, ZIP answers, message, email and text links, PDF name, form payload | 26 PASS |
-| `modes3d.js` | Welcome, tour, pigeon story steps, neighborhoods, solar | `no errors` |
+| `quote.js` | Prices, plans, pigeon package, no need tabs, signs folded under step 3, weekday and weekend rules, ZIP answers, message, email and text links, PDF name, form payload | 33 PASS |
+| `deeplink.js` | `?see=` and `#see-` links open the right module, Meta events fire | 10 PASS |
+| `modes3d.js` | Welcome, tour, folded panel, pigeon story steps, neighborhoods, solar | `no errors` |
 | `home-flow.js 390 844` | Welcome to Fix it on a phone, damage dots, weather chip | `errors []` |
 | `storefront-flow.js 1280 800` | Storefront tour, stickers, building mode, price lines | `errors []` |
 | `editors.js 390 844` | Add, change, drag windows on the house; storefront add, widen, sticker; counts reach the quote | `errors []` |
@@ -116,4 +120,4 @@ Run each from an empty temp directory (they write screenshots there): `cd $(mkte
 
 Tests set `window.__tqFixedQ=true` so the quality watcher doesn't lower detail in screenshots. The 3D in headless Chromium runs on SwiftShader at a few frames a second, so tests call `window.__tq.api.settle()` to skip camera flights.
 
-Preview: `python3 tools/tests/mkpreview.py` builds `/tmp/twc-preview/site` (every page with `live:false`, `index.html` renamed `home.html`, a landing page from `tools/tests/preview-landing.html`; edit its "New this round" list by hand) and `files-v3.json` for publishing to the preview artifact above with the Artifact tool's `files` map and `root` set to that site folder.
+Preview: `PREVIEW_OUT=<scratchpad>/preview python3 tools/tests/mkpreview.py` builds `<scratchpad>/preview/site` (every page with `live:false`, `index.html` renamed `home.html`, a landing page from `tools/tests/preview-landing.html`; edit its "New this round" list by hand) and `files-v3.json` for publishing to the preview artifact above with the Artifact tool's `files` map and `root` set to that site folder. The Artifact tool only accepts a `root` inside the repo or the session scratchpad, so don't build it under `/tmp`.

@@ -10,10 +10,12 @@ await p.click('.obd [data-o="hood"] [data-v="1"]');await p.click('.obd [data-obd
 await p.click('.obd input[value="sol"]');await p.click('.obd input[value="pig"]');await p.click('.obd [data-obd="build"]');await shot('03-tour-over',3500);
 const hs=await p.$$eval('.hs',l=>l.filter(x=>!x.hidden).map(x=>x.textContent));console.log('labels',hs.join(','));
 for(let i=4;i<=8;i++){await p.click('#ovNav .nx');await shot('0'+i+'-tour',3200);}
+console.log('panel folded after the welcome',await p.$eval('#ov',e=>e.classList.contains('min')));
 await p.click('.ov-tabs [data-hmode="pig"]');await p.waitForTimeout(1500);
-await p.click('[data-hact="reach"]');await shot('10-reach',4500);
+await p.click('#ovGrab');await p.waitForTimeout(300);console.log('grab label',await p.$eval('#ovGrab span',e=>e.textContent));
+await p.click('[data-hseg="stage"] [data-v="3"]');await shot('10-reach',4500);
 await p.click('#ovNav .nx');await shot('11-nextdoor',5500);
-await p.click('.ov-tabs [data-hmode="home"]');await p.waitForTimeout(800);await p.click('[data-hseg="hood"] [data-v="2"]');await shot('12-acreage',4000);
+await p.click('.ov-tabs [data-hmode="home"]');await p.waitForTimeout(800);await p.click('[data-otab="street"]');await p.click('[data-hseg="hood"] [data-v="2"]');await shot('12-acreage',4000);
 await p.click('[data-hseg="hood"] [data-v="0"]');await shot('13-desert',3500);
 await p.click('.ov-tabs [data-hmode="sol"]');await p.evaluate(()=>window.__tq.api.seek(4));await shot('14-solar',2500);
 console.log(errs.join(' | ')||'no errors');await b.close();})();
