@@ -300,7 +300,10 @@ html.tq-lock,html.tq-lock body{overflow:hidden!important}
 .tq .mnav .nx{background:#103050;color:#fff}
 .tq .mnav .nx.ready{background:#f0b040;color:#1b1405;animation:tqpulse 1.6s ease-in-out infinite}
 @keyframes tqpulse{50%{box-shadow:0 0 0 6px rgba(240,176,64,.35)}}
-.tq .seclbl{position:absolute;left:0;top:0;z-index:2;background:#103050;color:#fff;font:800 12.5px var(--display);padding:5px 10px;border-radius:999px;white-space:nowrap;pointer-events:none;box-shadow:0 6px 14px -8px rgba(0,0,0,.5)}
+.tq .seclbl,.tq .hs{position:absolute;left:0;top:0;z-index:2;border:0;background:#103050;color:#fff;font:800 12.5px var(--display);padding:6px 11px;border-radius:999px;white-space:nowrap;box-shadow:0 6px 14px -8px rgba(0,0,0,.5);cursor:pointer;transition:opacity .2s}
+.tq .hs{background:#fff;color:#103050;border:2px solid #f0b040}
+.tq .hs::after{content:" ›";color:#b8760d}
+.tq .seclbl.dim,.tq .hs.dim{opacity:.55}
 .tq .ov-msg.warn{border-left-color:#c8462b}
 .tq .ov-msg.ok{border-left-color:#1b7a4c}
 .tq .ov-panel{max-height:38vh;overflow:auto;overscroll-behavior:contain;padding:4px 16px calc(12px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);background:var(--surface)}
@@ -363,3 +366,30 @@ html.tq-lock,html.tq-lock body{overflow:hidden!important}
 /* weekends are free quote visits */
 .tq .day.wk{background:var(--surface-2);border-style:dashed}
 .tq .day.wk span:last-child{color:var(--gold-text);font-weight:800}
+
+/* welcome inside the 3D: get the home right, then the problems */
+.tq .obd{position:absolute;inset:0;z-index:4;display:grid;place-items:start center;padding:10px;background:linear-gradient(180deg,rgba(16,48,80,.08),rgba(16,48,80,.28));overflow:auto}
+.tq .obd-in{width:min(460px,100%);background:rgba(255,255,255,.97);color:#103050;border-radius:18px;padding:16px 16px 14px;box-shadow:0 18px 40px -18px rgba(0,0,0,.55);border-top:5px solid #f0b040}
+.tq .obd-h{display:block;font:800 19px/1.2 var(--display)}
+.tq .obd-in p{font-size:14px;color:#44607a;margin:4px 0 8px}
+.tq .obd-l{font:800 12px var(--display);letter-spacing:.08em;text-transform:uppercase;color:#7890a5;margin:10px 0 6px}
+.tq .obd-row{display:flex;flex-wrap:wrap;gap:6px}
+.tq .obd-row button{border:2px solid #d3e6f0;background:#fff;border-radius:999px;padding:7px 12px;font:700 14px var(--display);color:#44607a}
+.tq .obd-row button[aria-pressed="true"]{border-color:#f0b040;background:#fdf4e2;color:#103050}
+.tq .obd-ck{display:flex;align-items:center;gap:10px;border:2px solid #d3e6f0;border-radius:12px;padding:10px 12px;margin-top:6px;font:700 14.5px var(--display);cursor:pointer}
+.tq .obd-ck input{width:20px;height:20px;accent-color:#1b7a4c;flex:0 0 auto}
+.tq .obd-ck:has(input:checked){border-color:#1b7a4c;background:#e5f4ec}
+.tq .obd-act{display:flex;justify-content:space-between;gap:10px;margin-top:14px}
+.tq .obd-act button{border:0;border-radius:12px;min-height:42px;padding:8px 16px;font:800 15px var(--display);background:#eaf6fc;color:#103050}
+.tq .obd-act .go{background:#f0b040;color:#1b1405;flex:1}
+.tq .ov.obd-on .ov-panel,.tq .ov.obd-on .ov-msg,.tq .ov.obd-on .zoom{display:none}
+.tq .ov.obd-on{grid-template-rows:auto auto minmax(0,1fr)}
+@media (max-width:899px){.tq .obd-in{padding:13px 13px 12px}.tq .obd-h{font-size:18px}.tq .obd-l{margin:8px 0 5px}.tq .obd-row button{padding:6px 11px;font-size:13.5px}.tq .obd-ck{padding:8px 11px;margin-top:5px;font-size:14px}}
+.tq .obd-row.pics{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.tq .obd-row.pics[data-o="hood"]{grid-template-columns:repeat(3,1fr)}
+.tq .obd-row.pics button{display:flex;flex-direction:column;align-items:stretch;text-align:left;border-radius:12px;padding:5px 5px 7px;gap:2px}
+.tq .obd-row.pics img{width:100%;height:auto;aspect-ratio:3/2;object-fit:cover;border-radius:8px;display:block;background:#eaf6fc}
+.tq .obd-row.pics b{font:800 13.5px var(--display);color:#103050;margin-top:3px}
+.tq .obd-row.pics span{font:500 11.5px/1.3 var(--body);color:#5b7188}
+.tq .obd-row.pics button[aria-pressed="true"]{box-shadow:0 0 0 2px #f0b040}
+@media (min-width:900px){.tq .obd-row.pics[data-o="style"]{grid-template-columns:repeat(4,1fr)}.tq .obd-in{width:min(640px,100%)}}

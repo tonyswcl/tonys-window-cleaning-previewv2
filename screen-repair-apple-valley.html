@@ -47,7 +47,7 @@
 
   <link href="style.css" rel="stylesheet">
   <!-- tq:css -->
-<link href="assets/quote/quote.css?v=0aff7c88bb" rel="stylesheet">
+<link href="assets/quote/quote.css?v=112b9de537" rel="stylesheet">
 <!-- /tq:css -->
 
   <script type="application/ld+json">
@@ -384,7 +384,7 @@
       </div>
       <div class="go">
         <a class="qb qb-gold" href="#quote">Get my price</a>
-        <button type="button" class="qb qb-ghost open3d">See it on my home</button>
+        <button type="button" class="qb qb-ghost open3d" data-mode="tour">See it on my home</button>
       </div>
       <p class="rate"><b>★★★★★</b> 5.0 on Google · Free inspection · Satisfaction guaranteed</p>
 <!-- /tq:cta -->
@@ -398,7 +398,7 @@
         <button type="button" data-m="pig" aria-pressed="false">Pigeons</button>
       </div>
       <div class="wipe" id="wipe">
-        <div class="lay r3d open3d" data-lay="r3d" role="button" tabindex="0" aria-label="Open the 3D preview of your home">
+        <div class="lay r3d open3d" data-mode="tour" data-lay="r3d" role="button" tabindex="0" aria-label="Open the 3D preview of your home">
           <img class="r3d-poster" id="r3dPoster" src="assets/quote/home-4x5.webp" alt="3D model of a High Desert home with clean windows, washed solar panels, pigeon mesh and spinners" width="800" height="1000" fetchpriority="high" decoding="async">
           <div class="h3host" id="h3host"></div>
           <div class="callout" id="hcall" hidden><i></i><span></span></div>
@@ -685,7 +685,7 @@
     <div class="sec-h"><h2>See it on your home in 3D</h2><p>Pick your home. Watch the job get done.</p></div>
     <div class="t3grid">
       <div class="p3">
-        <button type="button" class="p3-img open3d" aria-label="Open the 3D preview"><img src="assets/quote/home-16x10.webp" alt="3D model of a High Desert home with clean windows, washed solar panels and pigeon mesh" width="960" height="600" loading="lazy" decoding="async"><span class="r3d-go">Open the 3D preview</span></button>
+        <button type="button" class="p3-img open3d" data-mode="tour" aria-label="Open the 3D preview"><img src="assets/quote/home-16x10.webp" alt="3D model of a High Desert home with clean windows, washed solar panels and pigeon mesh" width="960" height="600" loading="lazy" decoding="async"><span class="r3d-go">Open the 3D preview</span></button>
         <div class="p3-btns">
           <button type="button" class="qb qb-ghost qb-sm open3d" data-mode="win">Windows</button>
           <button type="button" class="qb qb-ghost qb-sm open3d" data-mode="sol">Solar</button>
@@ -916,6 +916,8 @@
       <div class="orow" data-sec="0" hidden><span>Section 1</span><div class="stepper" data-step="arr0"><button type="button" data-d="-1" aria-label="Fewer panels in section 1">−</button><output class="num">8</output><button type="button" data-d="1" aria-label="More panels in section 1">+</button></div></div>
       <div class="orow" data-sec="1" hidden><span>Section 2</span><div class="stepper" data-step="arr1"><button type="button" data-d="-1" aria-label="Fewer panels in section 2">−</button><output class="num">8</output><button type="button" data-d="1" aria-label="More panels in section 2">+</button></div></div>
       <div class="orow" data-sec="2" hidden><span>Section 3</span><div class="stepper" data-step="arr2"><button type="button" data-d="-1" aria-label="Fewer panels in section 3">−</button><output class="num">8</output><button type="button" data-d="1" aria-label="More panels in section 3">+</button></div></div>
+      <div class="orow"><span>Neighborhood</span><div class="seg2 wrapok" data-hseg="hood"><button type="button" data-v="0" aria-pressed="false">Desert lot</button><button type="button" data-v="1" aria-pressed="true">Yards</button><button type="button" data-v="2" aria-pressed="false">Acreage</button></div></div>
+      <button type="button" class="replay" data-hact="obd">Change my home and problems</button>
       <p class="onote">Older home or a big custom home? Ranch, Classic and Lake estate are here so you can see the job on a home like yours.</p>
     </div>
     <div class="ops" data-for="win" hidden>
@@ -941,8 +943,8 @@
       <button type="button" class="replay" data-hact="replay">▶ Watch it again</button>
     </div>
     <div class="ops" data-for="pig" hidden>
-      <div class="orow col"><span>The story</span><div class="seg2 wrapok" data-hseg="stage"><button type="button" data-v="0" aria-pressed="false">Today</button><button type="button" data-v="1" aria-pressed="false">Cleanout + mesh</button><button type="button" data-v="2" aria-pressed="true">+ Free spinners</button></div></div>
-      <div class="orow"><span>Spinners <button type="button" class="one" data-hact="try1">Try just 1</button></span><div class="stepper" data-hstep="spin"><button type="button" data-d="-1" aria-label="Fewer spinners">−</button><output class="num">3</output><button type="button" data-d="1" aria-label="More spinners">+</button></div></div>
+      <div class="orow col"><span>The story</span><div class="seg2 wrapok" data-hseg="stage"><button type="button" data-v="0" aria-pressed="false">Today</button><button type="button" data-v="1" aria-pressed="false">Cleanout + mesh</button><button type="button" data-v="2" aria-pressed="true">+ Free spinners</button><button type="button" data-v="3" aria-pressed="false">What 1 spinner covers</button><button type="button" data-v="4" aria-pressed="false">Next door</button></div></div>
+      <div class="orow"><span>Spinners <button type="button" class="one" data-hact="try1">Try just 1</button> <button type="button" class="one" data-hact="reach">See what 1 covers</button></span><div class="stepper" data-hstep="spin"><button type="button" data-d="-1" aria-label="Fewer spinners">−</button><output class="num">3</output><button type="button" data-d="1" aria-label="More spinners">+</button></div></div>
       <div class="orow"><span>Show what each spinner covers</span><button type="button" class="switch" data-hsw="cov" role="switch" aria-checked="true" aria-label="Show spinner coverage"></button></div>
       <div class="orow"><span>Solar panels</span><div class="stepper" data-step="panels"><button type="button" data-d="-1" aria-label="Fewer panels">−</button><output class="num">16</output><button type="button" data-d="1" aria-label="More panels">+</button></div><b class="ptotal num" hidden></b></div>
     </div>
@@ -958,7 +960,7 @@
 </nav>
 </div>
 <script>window.TQ={"svc":["scr"],"mode":"scr","city":"Apple Valley","street":"Kiowa Rd, Apple Valley"};</script>
-<script src="assets/quote/quote.js?v=4fccb26694" defer></script>
+<script src="assets/quote/quote.js?v=15b69ca069" defer></script>
 <!-- /tq:tail -->
 </body>
 </html>

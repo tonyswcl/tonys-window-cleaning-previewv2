@@ -523,7 +523,7 @@ function setTab(m){
   if(api)api.hero(m==="r3d");
 }
 $("modes").addEventListener("click",function(e){var b=e.target.closest("button");if(b)setTab(b.getAttribute("data-m"));});
-$$(".r3d",box).forEach(function(r){r.addEventListener("keydown",function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();open3d(core.mode);}});});
+$$(".r3d",box).forEach(function(r){r.addEventListener("keydown",function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();open3d("tour");}});});
 
 /* ---------- 3D: load on demand, full screen builder ---------- */
 var api=null,loading=false,pend=[],ov=$("ov"),lastFocus=null;

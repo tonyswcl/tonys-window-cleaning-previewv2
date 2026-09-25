@@ -116,7 +116,7 @@ var M={
   pframe:Std({color:0x1c1e21,metalness:.7,roughness:.35}),cell:Std({map:TX.cells,metalness:.3,roughness:.1,envMapIntensity:1.4}),rail:Std({color:0xa3a9b0,metalness:.8,roughness:.4}),
   pmesh:Std({map:TX.pmesh,transparent:true,alphaTest:.35,side:T.DoubleSide,metalness:.4,roughness:.6}),clip:Std({color:0x2a2c30,metalness:.5,roughness:.5}),
   bird:Std({color:0x7d8693,roughness:.8}),wing:Std({color:0x626b77,roughness:.85}),neck:Std({color:0x5b7f70,metalness:.45,roughness:.35}),head:Std({color:0x4c5461,roughness:.7}),beak:Std({color:0x2a2a2a}),leg:Std({color:0xc4767a}),
-  blade:Std({color:0xffffff,metalness:1,roughness:.04}),bladeR:Std({color:0xd23a2c,metalness:.6,roughness:.2}),pole:Std({color:0x9aa0a8,metalness:.7,roughness:.35}),
+  blade:Std({color:0xffffff,metalness:1,roughness:.04}),chrome:Std({color:0xf4f6f8,metalness:1,roughness:.06,envMapIntensity:1.8,side:T.DoubleSide}),reach:new T.MeshBasicMaterial({color:0xf0b040,transparent:true,opacity:.26,depthWrite:false,side:T.DoubleSide}),reachLine:new T.MeshBasicMaterial({color:0xf0b040,transparent:true,opacity:.9,depthWrite:false,side:T.DoubleSide}),bladeR:Std({color:0xd23a2c,metalness:.6,roughness:.2}),pole:Std({color:0x9aa0a8,metalness:.7,roughness:.35}),
   vent:Std({color:0x2e3135,roughness:.6}),flash:Std({color:0x8c9096,metalness:.5,roughness:.5}),clampM:Std({color:0xd9dde2,metalness:1,roughness:.2}),
   sframe:Std({color:0xb9bec4,metalness:.6,roughness:.4}),sframeOld:Std({color:0xa39d92,metalness:.3,roughness:.7}),
   scrOld:Std({map:TX.scrOld,transparent:true,roughness:.9,depthWrite:false,side:T.DoubleSide}),
@@ -134,8 +134,12 @@ var M={
   iglass:Std({color:0xdfeef7,metalness:.1,roughness:.05,transparent:true,opacity:.14,envMapIntensity:1.2,depthWrite:false}),
   alum:Std({color:0xb8bcc0,metalness:.8,roughness:.35})
 };
+TX.grass=tx(cv(256,256,function(g,w,h){var r=rng(41);g.fillStyle="#6a8a3c";g.fillRect(0,0,w,h);dots(g,w,h,r,9000,"52,86,34",.25,.6,1,2.2);dots(g,w,h,r,6000,"150,178,88",.2,.45,1,1.8);
+  for(var i=0;i<2400;i++){var x=r()*w,y=r()*h;g.strokeStyle="rgba("+(r()<.5?"74,110,44":"126,158,72")+","+(.35+r()*.4)+")";g.lineWidth=1;g.beginPath();g.moveTo(x,y);g.lineTo(x+(r()-.5)*2,y-2-r()*3);g.stroke();}}),true);TX.grass.repeat.set(4,3);
+M.grass=Std({map:TX.grass,roughness:1});M.tree=Std({color:0x4d6e34,roughness:1,flatShading:true});M.tree2=Std({color:0x5f8240,roughness:1,flatShading:true});M.fence=Std({color:0x8a6f52,roughness:.95});
 M.dust=Std({map:TX.dust,transparent:true,depthWrite:false,roughness:1});
 M.ground=Std({map:TX.gravel,bumpMap:TX.gravelB,bumpScale:.02,roughness:1});
+M.ground.polygonOffset=true;M.ground.polygonOffsetFactor=2;M.ground.polygonOffsetUnits=8;
 var ground=new T.Mesh(new T.PlaneGeometry(2400,2400),M.ground);ground.rotation.x=-Math.PI/2;ground.receiveShadow=true;scene.add(ground);
 var matCache={};
 function houseMats(cfg){
@@ -157,7 +161,7 @@ function lumpy(detail,amt,seed){var g=new T.IcosahedronGeometry(1,detail),p=g.at
   g.computeVertexNormals();return g;}
 var G={rock:[lumpy(1,.26,11),lumpy(1,.3,23),lumpy(1,.22,37)],bush:[lumpy(2,.16,5),lumpy(2,.2,9)],box:new T.BoxGeometry(1,1,1),cyl:new T.CylinderGeometry(1,1,1,14),ball:new T.SphereGeometry(1,16,12),plane:new T.PlaneGeometry(1,1),
   frame:new T.BoxGeometry(1,.045,1.7),cell:new T.PlaneGeometry(.95,1.64),clip:new T.BoxGeometry(.06,.07,.04),
-  blade:new T.BoxGeometry(.5,.012,.14),vent:new T.CylinderGeometry(.06,.06,.36,14),flash:new T.CylinderGeometry(.2,.24,.02,16),clamp:new T.TorusGeometry(.075,.011,6,18),
+  blade:new T.BoxGeometry(.5,.012,.14),cup:new T.SphereGeometry(.075,18,10,0,Math.PI*2,0,Math.PI/2),vent:new T.CylinderGeometry(.06,.06,.36,14),flash:new T.CylinderGeometry(.2,.24,.02,16),clamp:new T.TorusGeometry(.075,.011,6,18),
   beak:new T.ConeGeometry(.018,.05,6),tail:new T.BoxGeometry(.1,.02,.15),leg:new T.CylinderGeometry(.008,.008,.08,5),cone:new T.ConeGeometry(1,1,6)};
 G.cell.rotateX(-Math.PI/2);
 var sT=new T.CylinderGeometry(.14,.14,.44,12,1,true,0,Math.PI);sT.rotateZ(Math.PI/2);sT.rotateY(Math.PI/2);
@@ -178,7 +182,7 @@ var STY=[
   {id:"estate",roof:"hip",pitch:.36,story:3.2,minW:19,siding:false,front:["win","win","entry","win","gar2","gar1"],big:true}
 ];
 var PW=1.02,PD=1.72,H=.2,TOP=.07,OV=.5,RAKE=.35;
-var h3={style:0,roof:0,rc:0,wc:0,tc:0,grids:false,view:0,stage:2,cov:true,spinOv:null,estateLarge:false};
+var h3={hood:1,style:0,roof:0,rc:0,wc:0,tc:0,grids:false,view:0,stage:2,cov:true,spinOv:null,estateLarge:false};
 var ORDER=[[1,0],[-1,0],[1,-.32],[-1,.32],[1,.32],[-1,-.32],[1,-.44],[-1,.44],[1,.16],[-1,-.16]];
 
 function makeHouse(cfg,main){
@@ -272,6 +276,7 @@ function makeHouse(cfg,main){
   var zTop=-L/2+(S.roof==="hip"?1.2:1.35);h.zTop=zTop;
   groups.forEach(function(gp2){
     var par=gp2.face>0?h.F:h.B,ox=gp2.cx-(gp2.cols-1)/2*PW,occ={},py=h.TT+H,k;
+    if(cfg.pv===false){gp2.center=[gp2.cx,zTop+gp2.rows*PD/2];gp2.bottom=zTop+gp2.rows*PD;return;}
     for(k=0;k<gp2.n;k++)occ[(k%gp2.cols)+","+Math.floor(k/gp2.cols)]=1;
     for(var rw=0;rw<gp2.rows;rw++){var inRow=Math.min(gp2.cols,gp2.n-rw*gp2.cols),rz=zTop+rw*PD+PD/2;[-.55,.55].forEach(function(dz){box(inRow*PW,.04,.05,M.rail,ox+(inRow-1)*PW/2,h.TT+H/2,rz+dz,par);});}
     for(k=0;k<gp2.n;k++){var c=k%gp2.cols,rw2=Math.floor(k/gp2.cols),px=ox+c*PW,pz=zTop+rw2*PD+PD/2;
@@ -307,9 +312,9 @@ function makeHouse(cfg,main){
   if(main){
     for(i=0;i<3;i++){var ag=new T.Group(),axx=(i===1?1:-1)*(W/2-.8-i*.6),azz=fz+3.4+i*.5;for(var l=0;l<11;l++){var lf=new T.Mesh(G.cone,M.agave);lf.scale.set(.05,.55,.05);var an=l/11*Math.PI*2;lf.position.set(Math.cos(an)*.12,.24,Math.sin(an)*.12);lf.rotation.set(Math.sin(an)*.7,0,-Math.cos(an)*.7);lf.castShadow=true;ag.add(lf);}ag.position.set(axx,0,azz);g.add(ag);}
     joshua(g,-W/2-2.4,fz+3.2,r);
-    var wx=W/2+3.4,wz0=0,wz1=-D/2-4.6,wh=1.6;
+    var wx=W/2+3.4,wz0=0,wz1=-D/2-4.6,wh=1.6;if(cfg.hood!==2){
     [1,-1].forEach(function(sx){box(.2,wh,wz0-wz1,M.cmu,sx*wx,wh/2,(wz0+wz1)/2,g);box(.28,.06,wz0-wz1,M.cap,sx*wx,wh+.03,(wz0+wz1)/2,g);});
-    box(2*wx,wh,.2,M.cmu,0,wh/2,wz1,g);box(2*wx+.28,.06,.28,M.cap,0,wh+.03,wz1,g);
+    box(2*wx,wh,.2,M.cmu,0,wh/2,wz1,g);box(2*wx+.28,.06,.28,M.cap,0,wh+.03,wz1,g);}
   }
   batch(h);
   return h;
@@ -337,8 +342,9 @@ function joshua(par,x,z,r){
 /* ---------- world: my house, street, neighbors ---------- */
 var world=new T.Group();scene.add(world);
 var me=null,street=null,nbs=[],birds=[],spinners=[],cover={},builtKey="",nbKey="";
-function cfgMe(){return {style:h3.style,stories:st.stories,roof:h3.roof,rc:h3.rc,wc:h3.wc,tc:h3.tc,grids:h3.grids,more:st.more,n:st.panels,arrays:st.arrays,sizes:st.arrays>1?st.arr.slice(0,st.arrays):null};}
-function keyOf(c){return [c.style,c.stories,c.roof,c.rc,c.wc,c.tc,c.grids,c.more,c.n,c.arrays,c.sizes?c.sizes.join("."):""].join("-");}
+function showPanels(){return st.sol||st.pig||mode==="sol"||mode==="pig";}
+function cfgMe(){return {pv:showPanels(),hood:h3.hood,style:h3.style,stories:st.stories,roof:h3.roof,rc:h3.rc,wc:h3.wc,tc:h3.tc,grids:h3.grids,more:st.more,n:st.panels,arrays:st.arrays,sizes:st.arrays>1?st.arr.slice(0,st.arrays):null};}
+function keyOf(c){return [c.pv,c.hood,c.style,c.stories,c.roof,c.rc,c.wc,c.tc,c.grids,c.more,c.n,c.arrays,c.sizes?c.sizes.join("."):""].join("-");}
 function buildMe(){
   if(me){world.remove(me.g);disposeGroup(me.g);}
   birds.forEach(function(b){world.remove(b.m);});birds=[];
@@ -346,25 +352,45 @@ function buildMe(){
   builtKey=keyOf(me.cfg);
   if(street){world.remove(street);disposeGroup(street);}
   street=new T.Group();world.add(street);var fz=me.D/2;
-  box(900,.02,7,M.asphalt,0,.01,fz+12.3,street,true);box(900,.12,.25,M.curb,0,.06,fz+8.7,street,true);box(900,.03,1.6,M.concrete,0,.015,fz+7.8,street,true);
+  box(420,.04,7,M.asphalt,0,.02,fz+12.3,street,true);box(420,.13,.25,M.curb,0,.065,fz+8.7,street,true);box(420,.05,1.6,M.concrete,0,.025,fz+7.8,street,true);
   me.front=fz;
   demoWin=me.front1[0]||me.wins[0];scrWin=me.front1[me.front1.length-1]||demoWin;
   prepDemo();
   nbKey="";clearNeighbors();birds=[];
   spinners=[];buildSpinners();
-  fitShadow(false);
+  if(h3.hood===1)buildNeighbors();else fitShadow(false);
+  buildHood();
   anchors();
 }
 function disposeGroup(g){g.traverse(function(o){if(o.geometry&&o.geometry!==G.box&&o.geometry!==G.cyl&&o.geometry!==G.ball&&o.geometry!==G.plane&&o.geometry.dispose&&!o.geometry.userData.shared)o.geometry.dispose();});}
-[G.box,G.cyl,G.ball,G.plane,G.frame,G.cell,G.clip,G.blade,G.vent,G.flash,G.clamp,G.beak,G.tail,G.leg,G.cone,sT].concat(TILE.map(function(t){return t.geo;})).forEach(function(gg){gg.userData.shared=true;});
+[G.box,G.cyl,G.ball,G.plane,G.frame,G.cell,G.clip,G.blade,G.cup,G.vent,G.flash,G.clamp,G.beak,G.tail,G.leg,G.cone,sT].concat(TILE.map(function(t){return t.geo;})).forEach(function(gg){gg.userData.shared=true;});
 function clearNeighbors(){nbs.forEach(function(n){world.remove(n.g);disposeGroup(n.g);});nbs=[];}
 function buildNeighbors(){
-  var key=builtKey;if(nbKey===key&&nbs.length)return;clearNeighbors();
-  var cfgs=[{style:0,stories:2,roof:1,rc:1,wc:2,tc:0,grids:false,more:false,n:12,arrays:1},{style:1,stories:1,roof:0,rc:3,wc:0,tc:1,grids:true,more:false,n:10,arrays:1}];
-  var gap=7.5,L=makeHouse(cfgs[0],false),Rn=makeHouse(cfgs[1],false);
+  var key=builtKey+"|"+h3.hood;if(nbKey===key&&nbs.length)return;clearNeighbors();
+  var cfgs=[{pv:true,style:0,stories:2,roof:1,rc:1,wc:2,tc:0,grids:false,more:false,n:12,arrays:1,hood:h3.hood},{pv:true,style:1,stories:1,roof:0,rc:3,wc:0,tc:1,grids:true,more:false,n:10,arrays:1,hood:h3.hood}];
+  var gap=h3.hood===2?26:h3.hood===1?6:7.5,L=makeHouse(cfgs[0],false),Rn=makeHouse(cfgs[1],false);
   L.g.position.set(-(me.W/2+gap+L.W/2),0,me.front-L.D/2);Rn.g.position.set(me.W/2+gap+Rn.W/2,0,me.front-Rn.D/2);
+  if(h3.hood===1)[L,Rn].forEach(function(nh,i){lawn(nh.g,0,nh.W+4,nh.D/2+.4,nh.D/2+7);tree(nh.g,(i?1:-1)*(nh.W/2-1),nh.D/2+5.4,.95);});
   world.add(L.g);world.add(Rn.g);L.g.updateMatrixWorld(true);Rn.g.updateMatrixWorld(true);nbs=[L,Rn];nbKey=key;
-  buildBirds();fitShadow(true);
+  fitShadow(true);
+}
+/* ---------- the neighborhood around the house: open desert, a landscaped community, or acreage ---------- */
+var hoodG=null;
+function lawn(par,cx,w,z0,z1){var gm=new T.Mesh(G.plane,M.grass);gm.rotation.x=-Math.PI/2;gm.scale.set(w,z1-z0,1);gm.position.set(cx,.012,(z0+z1)/2);gm.receiveShadow=true;par.add(gm);return gm;}
+function tree(par,x,z,sc){var t=new T.Group();t.position.set(x,0,z);par.add(t);cylBetween(V(0,0,0),V(.05,2*sc,0),.13*sc,M.jtrunk,t);
+  for(var i=0;i<8;i++){var an=i/8*6.28,rr=i?.8*sc:0,bl=new T.Mesh(G.bush[i%2],i%3?M.tree:M.tree2),bs=(.72+(i%3)*.14)*sc;bl.scale.set(bs,bs*.82,bs);
+    bl.position.set(Math.cos(an)*rr,2.55*sc+(i?(i%2?.28:-.12)*sc:.5*sc),Math.sin(an)*rr);bl.castShadow=true;t.add(bl);}return t;}
+function buildHood(){
+  if(hoodG){world.remove(hoodG);disposeGroup(hoodG);}hoodG=new T.Group();world.add(hoodG);var fz=me.front,W=me.W,r=rng(91);
+  if(street)street.children.forEach(function(c,i){c.visible=i===0||h3.hood!==2;});
+  if(h3.hood===1){lawn(hoodG,0,W+5,fz+.4,fz+7);tree(hoodG,-(W/2+1.3),fz+5.3,1);tree(hoodG,W/2+1.6,fz+5.8,.9);}
+  else if(h3.hood===2){
+    var x0=-19,x1=19,z0=-me.D/2-15,z1=fz+6.6,post=function(x,z){box(.14,1.25,.14,M.fence,x,.62,z,hoodG);};
+    for(var x=x0;x<=x1;x+=3){post(x,z0);if(Math.abs(x)>3.5)post(x,z1);}for(var z=z0+3;z<z1;z+=3){post(x0,z);post(x1,z);}
+    [.5,1.02].forEach(function(y){box(x1-x0,.09,.06,M.fence,0,y,z0,hoodG);box(x1-3.5,.09,.06,M.fence,(x0-3.5)/2,y,z1,hoodG);box(x1-3.5,.09,.06,M.fence,(x1+3.5)/2,y,z1,hoodG);
+      box(.06,.09,z1-z0,M.fence,x0,y,(z0+z1)/2,hoodG);box(.06,.09,z1-z0,M.fence,x1,y,(z0+z1)/2,hoodG);});
+    joshua(hoodG,-13,fz+1.5,r);joshua(hoodG,14,-3,r);joshua(hoodG,-15,-me.D/2-6,r);joshua(hoodG,11,fz+4.5,r);}
+  batch({g:hoodG});
 }
 function fitShadow(wide){
   var c=sun.shadow.camera,S2=wide?(me.W/2+30):(Math.max(me.W,me.D)*.75+7);
@@ -375,14 +401,20 @@ function fitShadow(wide){
 /* ---------- spinners on the vents, two hose clamps each ---------- */
 function spinCount(){return h3.spinOv!==null?h3.spinOv:C.free()+st.spin;}
 function buildSpinners(){
-  spinners.forEach(function(s){s.par.remove(s.g);});spinners=[];
+  spinners.forEach(function(s){s.par.remove(s.g);if(s.disc){s.par.remove(s.disc);s.par.remove(s.edge);s.disc.geometry.dispose();s.edge.geometry.dispose();}});spinners=[];
   var n=Math.min(spinCount(),me.vents.length);
   for(var i=0;i<n;i++){var v=me.vents[i],g=new T.Group();g.position.set(v.x,me.TT,v.z);
     var pl=new T.Mesh(G.cyl,M.pole);pl.scale.set(.018,.9,.018);pl.position.set(.085,.46,0);pl.castShadow=true;g.add(pl);
     [.1,.27].forEach(function(y){var cl=new T.Mesh(G.clamp,M.clampM);cl.rotation.x=Math.PI/2;cl.scale.set(1.45,1,1);cl.position.set(.035,y,0);g.add(cl);});
     var rot=new T.Group();rot.position.set(.085,.86,0);var hub=new T.Mesh(G.ball,M.pole);hub.scale.setScalar(.05);rot.add(hub);
-    for(var b=0;b<3;b++){var m=new T.Mesh(G.blade,b===1?M.bladeR:M.blade);m.position.x=.25;m.rotation.x=.55;m.castShadow=true;var arm=new T.Group();arm.rotation.y=b*Math.PI*2/3;arm.add(m);rot.add(arm);}
-    g.add(rot);v.par.add(g);spinners.push({g:g,rot:rot,face:v.face,x:v.x,z:v.z,par:v.par,s:0});}
+    /* four mirrored cups on chrome arms, the way real reflective spinners are built */
+    for(var b=0;b<4;b++){var arm=new T.Group();arm.rotation.y=b*Math.PI/2;var rod=new T.Mesh(G.cyl,M.chrome);rod.scale.set(.008,.2,.008);rod.rotation.z=Math.PI/2;rod.position.x=.1;arm.add(rod);
+      var cup=new T.Mesh(G.cup,b%2?M.chrome:M.bladeR);cup.rotation.x=Math.PI/2;cup.position.set(.2,0,.0);cup.scale.set(1,1.15,1);cup.castShadow=true;arm.add(cup);rot.add(arm);}
+    var cap=new T.Mesh(G.ball,M.chrome);cap.scale.set(.035,.05,.035);cap.position.y=.02;rot.add(cap);
+    /* how far one spinner's flash reaches on the side of the roof it faces */
+    var R2=me.L*1.1,disc=new T.Mesh(new T.CircleGeometry(R2,40,Math.PI,Math.PI),M.reach.clone()),edge=new T.Mesh(new T.RingGeometry(R2-.07,R2,48,1,Math.PI,Math.PI),M.reachLine.clone());
+    [disc,edge].forEach(function(o){o.rotation.x=-Math.PI/2;o.position.set(v.x,me.TT+H+.12,v.z);o.visible=false;o.renderOrder=4;v.par.add(o);});
+    g.add(rot);v.par.add(g);spinners.push({g:g,rot:rot,face:v.face,x:v.x,z:v.z,par:v.par,s:0,disc:disc,edge:edge});}
   paintCover();
 }
 function paintCover(){
@@ -440,7 +472,7 @@ function buildBirds(){
 }
 function birdTargets(snap){
   var stg=h3.stage;
-  birds.forEach(function(b){if(b.kind==="N"){b.kt=0;return;}b.kt=stg>=1&&b.kind==="U"?1:stg===2&&covered(b)?1:0;if(snap)b.k=b.kt;});
+  birds.forEach(function(b){if(b.kind==="N"){b.kt=0;return;}b.kt=stg>=1&&b.kind==="U"?1:stg>=2&&covered(b)?1:0;if(snap)b.k=b.kt;});
 }
 
 /* ---------- demo pieces: dirty glass, screens, dusty panels ---------- */
@@ -637,7 +669,10 @@ var story={win:[],sol:[],scr:[]};
 function setMode(m,keepT){
   if(!me)buildMe();
   mode=m;if(!keepT)tl=0;auto=true;say("");
-  if(m==="pig"){buildNeighbors();h3.stage=0;birdTargets(true);}else{if(nbs.length){clearNeighbors();nbKey="";}birds.forEach(function(b){world.remove(b.m);});birds=[];fitShadow(false);}
+  flight=null;focusShot=null;
+  if(keyOf(cfgMe())!==builtKey)buildMe();
+  if(m==="pig"){buildNeighbors();buildBirds();h3.stage=0;birdTargets(true);}
+  else{birds.forEach(function(b){world.remove(b.m);});birds=[];if(h3.hood===1)buildNeighbors();else{if(nbs.length){clearNeighbors();nbKey="";}fitShadow(false);}}
   if((m==="win"||m==="sol"||m==="scr")&&!worker)makeWorker();
   if(m==="win"&&h3.view===1&&!room)buildRoom();
   if(m==="win"){resetHaze();if(room)resetRoom();}
@@ -656,12 +691,15 @@ function replay(){tl=0;user=false;if(mode==="win"){resetHaze();if(room)resetRoom
 function frame(dt){
   var pristine=mode==="show"||mode==="home";
   /* pigeon mesh, clips, spinners, coverage */
-  var meshOn=mode==="pig"?h3.stage>=1:true,spinOn=mode==="pig"?h3.stage>=2:true;
+  var meshOn=mode==="pig"?h3.stage>=1:!!st.pig,spinOn=mode==="pig"?h3.stage>=2:!!st.pig;
   me.ms=me.ms===undefined?1:me.ms;var msT=meshOn?1:0;me.ms+=(msT-me.ms)*Math.min(1,dt*2.4);if(Math.abs(me.ms-msT)<.003)me.ms=msT;
   me.skirt.forEach(function(s){s.visible=me.ms>.02;s.scale.y=H*Math.min(1,me.ms*1.4);s.position.y=s.userData.y0+s.scale.y/2;});
   if(me.clipIM)me.clipIM.visible=me.ms>.75;
   spinners.forEach(function(s,i){s.s+=((spinOn?1:0)-s.s)*Math.min(1,dt*3);s.g.visible=s.s>.02;s.g.scale.setScalar(Math.max(.001,s.s));s.rot.rotation.y+=dt*(3.2+i*.3);});
-  [1,-1].forEach(function(k){if(cover[k]&&cover[k].m)cover[k].m.visible=mode==="pig"&&h3.stage===2&&h3.cov;});
+  [1,-1].forEach(function(k){if(cover[k]&&cover[k].m)cover[k].m.visible=false;});
+  /* one spinner's reach: the first spinner pulses in step 4, every spinner shows when coverage is switched on */
+  var pulse=.18+.12*Math.sin(tl*4);
+  spinners.forEach(function(sp,i){var on=mode==="pig"&&h3.stage>=2&&((h3.stage===3&&i===0)||(h3.cov&&h3.stage===2));if(!sp.disc)return;sp.disc.visible=sp.edge.visible=on&&sp.s>.5;if(on){sp.disc.material.opacity=h3.stage===3?pulse+.08:.2;}});
   /* birds fly between your roof and the roofs next door */
   birds.forEach(function(b){b.m.visible=mode==="pig";if(mode!=="pig")return;
     if(b.k!==b.kt){b.k+=(b.kt>b.k?1:-1)*dt*.55;b.k=clamp01(b.k);if(Math.abs(b.k-b.kt)<.01)b.k=b.kt;}
@@ -682,6 +720,7 @@ function frame(dt){
   else if(mode==="sol")solar();
   else if(mode==="scr")screensDemo();
   else if(mode==="pig")pigAuto();
+  else if(mode==="home"&&overlay){if(obdOpen)say("");else tourSay();}
   if(pristine&&mode==="show"){}
 }
 function msgAt(list){var s="";for(var i=0;i<list.length;i++)if(tl>=list[i][0])s=list[i][1];return s;}
@@ -692,7 +731,8 @@ function steps(){
   if(mode==="win")return h3.view===1?[0,1.2,5.0,8.4]:[0,1.4,6.4,7.8,9.3];
   if(mode==="sol"){var n=me.panels.filter(function(p){return p.face>0;}).length,per=Math.min(.55,11/Math.max(1,n));return [0,1.4,1.4+n*per+.6];}
   if(mode==="scr")return [0,1,3.6];
-  if(mode==="pig")return [0,2.2,5.6];
+  if(mode==="pig")return [0,2.2,5.6,9,12.4];
+  if(mode==="home"&&overlay&&!obdOpen)return tourStops().map(function(x,i){return i;});
   return null;
 }
 function stepAt(S){var i=0;for(var k=0;k<S.length;k++)if(tl>=S[k]-1e-4)i=k;return i;}
@@ -751,14 +791,16 @@ function solar(){
   list.sort(function(a,b){return a.row-b.row||(a.row%2?b.x-a.x:a.x-b.x);});
   var n=list.length,per=Math.min(.55,11/Math.max(1,n)),start=1.4,end=start+n*per;
   me.panels.forEach(function(p){p.dust.visible=true;});
-  list.forEach(function(p,i){var th=start+i*per+per*.5;p.dust.material.opacity=1-smooth((t-th)/.45);});
+  /* the brush glides along one continuous path, and each panel clears as the brush passes over it */
+  var u=clamp01((t-start)/(end-start))*Math.max(0,n-1);
+  list.forEach(function(p,i){p.dust.material.opacity=t<start?1:1-smooth((u-i+.35)/.7);});
   back.forEach(function(p){p.dust.material.opacity=1-smooth((t-end)/.8);});
   var gp=me.groups.filter(function(g){return g.face>0;})[0];
   if(gp){worker.visible=true;
     var feet=toWorld(me.F,gp.cx,me.TT-.02,Math.min(me.L/2-.35,gp.bottom+.7));placeWorker(feet,V(0,0,-1));
     tools.cart.visible=true;tools.cart.position.set(gp.cx+2.2,0,me.front+2.2);hose(worker.localToWorld(V(.1,.95,-.05)),toWorld(me.F,gp.cx+.6,me.TT,me.L/2+OV*.6),tools.cart.position.clone().add(V(0,.9,0)));
-    var i2=Math.min(n-1,Math.max(0,Math.floor((t-start)/per))),pp=list[i2],fr=clamp01((t-start)/per-i2),dir=pp.row%2?-1:1;
-    var bx=t<start?list[0].x:(t>end?pp.x:pp.x+dir*(-.38+.76*fr)),bz=t<start?list[0].z:pp.z;
+    var ia=Math.min(n-1,Math.floor(u)),ib=Math.min(n-1,ia+1),fr=u-ia,pa=list[ia],pb=list[ib],same=pa.row===pb.row,ef=same?fr:smooth(fr);
+    var bx=lerp(pa.x,pb.x,ef),bz=lerp(pa.z,pb.z,ef)+(t>start&&t<end?Math.sin(tl*9)*.12:0);
     var B=toWorld(me.F,bx,me.TT+H+.08,bz),chest=worker.localToWorld(V(0,1.25,.32)),d=B.clone().sub(chest).normalize();
     tools.pole.visible=true;setBone(tools.pole,chest.clone().addScaledVector(d,-.55),B);tools.pole.scale.x=tools.pole.scale.z=.022;
     reach("L",chest.clone().addScaledVector(d,-.1));reach("R",chest.clone().addScaledVector(d,.45));
@@ -791,11 +833,13 @@ function screensDemo(){
   say(msgAt([[0,"<b>Old builder mesh</b> after a few High Desert summers: faded, brittle, torn."],[1,"<b>Stripped and re-meshed on site.</b> About 15 to 20 minutes a screen, same visit."],[3.6,fact]]),t>=3.6?"ok":"");
 }
 function pigAuto(){
-  if(auto){var s=tl<2.2?0:tl<5.6?1:2;if(s!==h3.stage){h3.stage=s;birdTargets(false);syncControls();}}
+  if(auto){var s=tl<2.2?0:tl<5.6?1:tl<9?2:tl<12.4?3:4;if(s!==h3.stage){h3.stage=s;birdTargets(false);syncControls();}}
   var mine={1:0,"-1":0,0:0},nbN=0,U=0;
   birds.forEach(function(b){if(b.kind==="N"){nbN++;return;}if(!b.kt){if(b.kind==="U")U++;else mine[b.face]++;}else nbN++;});
   var left=mine[1]+mine[-1]+mine[0]+U,sb=0,sf=0,sc=spinners.length;spinners.forEach(function(s){if(s.face>0)sf++;else sb++;});
   var all=birds.filter(function(b){return b.kind!=="N";}).length;
+  if(h3.stage===3){say("<b>What one spinner covers.</b> Its mirrored cups throw flashes of light across the side of the roof it faces, about this far. The ridge blocks it from the other side, so a roof with birds on both sides needs at least 2. That's why 2 to 3 come free.","ok");return;}
+  if(h3.stage===4){say("<b>What happens next door.</b> With your roof closed off, the flock moves to the roofs around you: "+nbN+" pigeons next door now. The first home on the block to get protected stays clear, and that's usually when the neighbors start asking who did yours.","ok");return;}
   if(h3.stage===0)say("<b>Today:</b> every roof on the block has pigeons. "+all+" on yours, nesting under the panels and resting on the ridge.");
   else if(h3.stage===1)say("<b>Cleanout and mesh.</b> Nests out, panels cleaned, mesh clipped to the frame. Nothing gets under your panels again, but "+left+" pigeons still land on your open roof. That's the job of the free spinners.","warn");
   else if(!left)say("<b>Your roof is clear.</b> The free spinners keep them from coming back after the cleanout, so they settle on the roofs next door. "+nbN+" pigeons next door now. The first house on the block to protect wins.","ok");
@@ -803,6 +847,26 @@ function pigAuto(){
   else if(!sb&&mine[-1])say("<b>"+sc+(sc>1?" spinners only watch":" spinner only watches")+" the front.</b> The ridge blocks the flash, so "+mine[-1]+" pigeons stay on your back side. Add one facing the back.","warn");
   else say("<b>"+left+" pigeon"+(left>1?"s":"")+" still outside the flash</b> at the corners. Add another spinner.","warn");
 }
+
+/* ---------- the guided tour of your home: overview, then each thing on your list ---------- */
+function tourStops(){var s=[{k:"over"},{k:"win"}];if(showPanels()&&me.panels.length)s.push({k:"sol"});if(st.pig){if(me.skirt.length)s.push({k:"mesh"});if(spinners.length)s.push({k:"spin"});}if(st.scr)s.push({k:"scr"});s.push({k:"end"});return s;}
+function tourShot(k){var tall=me.wallH+me.rise,rad=.5*Math.sqrt(me.W*me.W+me.D*me.D),c;
+  if(k==="win"){c=toWorld(demoWin.g,0,0,0);return {tx:c.x,ty:c.y,tz:c.z,yaw:demoWin.ang+.35,tilt:.12,dist:fitWH(1.9,1.4)};}
+  if(k==="scr"){c=toWorld(scrWin.g,.2,0,0);return {tx:c.x,ty:c.y,tz:c.z,yaw:scrWin.ang-.35,tilt:.12,dist:fitWH(1.7,1.3)};}
+  if(k==="sol"){var gp=me.groups.filter(function(g){return g.face>0;})[0]||me.groups[0];c=toWorld(gp.face>0?me.F:me.B,gp.center[0],me.TT,gp.center[1]);return {tx:c.x,ty:c.y,tz:c.z,yaw:gp.face>0?.3:Math.PI+.3,tilt:.72,dist:fitWH(gp.cols*PW/2+1.6,gp.rows*PD/2+1.8)};}
+  if(k==="mesh"&&anc.mesh){c=anc.mesh.p;return {tx:c.x,ty:c.y,tz:c.z,yaw:.25,tilt:.4,dist:fitWH(1.9,1.3)};}
+  if(k==="spin"&&spinners[0]){var sp=spinners[0];c=toWorld(sp.par,sp.x+.08,me.TT+.75,sp.z);return {tx:c.x,ty:c.y,tz:c.z,yaw:sp.face>0?.45:Math.PI+.45,tilt:.25,dist:fitWH(.9,.75)};}
+  return {tx:0,ty:tall*.36,tz:me.D*.08,yaw:.55,tilt:.3,dist:fitWH(rad*1.02,tall*.95)};}
+function tourSay(){var TS=tourStops(),i=Math.min(stepAt(steps()),TS.length-1),k=TS[i].k,t=C.totals(),n=st.panels;
+  var txt={over:"<b>Here's your home.</b> Tap Next for a quick tour of what we'd do, or drag to look around.",
+    win:"<b>Windows.</b> Purified water and a squeegee, with screens, tracks and sills included. "+(st.stories===1?"$149 single story.":"$249 two story."),
+    sol:"<b>Solar panels.</b> "+n+" panels washed with purified water and a soft brush, dried spot free. "+(st.pig?"Free with your pigeon proofing.":money(n*P.panel)+" at $7 a panel."),
+    mesh:"<b>Mesh clipped to the frame.</b> Birds can't get under your panels again, and nothing is drilled or bolted, so your panel warranty stays safe.",
+    spin:"<b>Reflective spinners.</b> Mirrored cups catch the sun and flash across the roof so pigeons don't settle. "+C.free()+" come free. Tap Pigeons above to see what one covers.",
+    scr:"<b>Screens.</b> "+st.screens+" screens re-meshed on site with "+P.meshName[st.pet]+" mesh, on the half of each window that opens.",
+    end:"<b>That's your home.</b> Your quote right now: "+(t.from?"from ":"")+money(t.total)+". Tap Windows, Solar, Screens or Pigeons above to watch each job, or See my price below."}[k];
+  say(txt,k==="end"?"ok":"");}
+function homeDesc(){return ["new build","ranch","classic","lake estate"][h3.style]+" home, "+["open desert lot","neighborhood with yards","acreage"][h3.hood];}
 
 /* ---------- summary under the controls ---------- */
 function summary(){
@@ -822,7 +886,11 @@ function fitWH(hw,hh){var vf=cam.fov*Math.PI/360,hf=Math.atan(Math.tan(vf)*cam.a
 function preset(){
   if(!me)return {tx:0,ty:2,tz:0,yaw:.55,tilt:.32,dist:24};
   var tall=me.wallH+me.rise,rad=.5*Math.sqrt(me.W*me.W+me.D*me.D),cy=tall*.45,p;
-  if(mode==="pig")p={tx:0,ty:cy,tz:0,yaw:.5,tilt:.44,dist:fitWH(rad*2.1,tall*1.3)};
+  if(overlay&&focusShot)return focusShot;
+  if(mode==="home"&&overlay&&!obdOpen){var TS=tourStops(),ti=Math.min(stepAt(steps()),TS.length-1);return tourShot(TS[ti].k);}
+  if(mode==="pig"&&h3.stage===3&&spinners[0]){var sp=spinners[0],sc3=toWorld(sp.par,sp.x,me.TT,sp.z+me.L*.5);p={tx:sc3.x,ty:sc3.y,tz:sc3.z,yaw:sp.face>0?.35:Math.PI+.35,tilt:.7,dist:fitWH(me.L*1.25,me.L*.9)};}
+  else if(mode==="pig"&&h3.stage===4)p={tx:0,ty:cy,tz:-2,yaw:.45,tilt:.52,dist:fitWH(rad*2.6+(h3.hood===2?18:0),tall*1.4)};
+  else if(mode==="pig")p={tx:0,ty:cy,tz:0,yaw:.5,tilt:.44,dist:fitWH(rad*2.1,tall*1.3)};
   else if(mode==="win"&&h3.view===1&&room)p=tl>=5.0&&tl<9.4&&!user?{tx:room.center.x+.1,ty:room.y0,tz:room.Z+.02,yaw:.25,tilt:.9,dist:fitWH(.75,.45)} /* look down into the track */
     :{tx:room.center.x,ty:room.center.y-.1,tz:room.center.z,yaw:.42,tilt:.1,dist:fitWH(1.25,.95)};
   else if(mode==="win"){var c=toWorld(demoWin.g,0,0,0);p={tx:c.x,ty:c.y-.15,tz:c.z,yaw:demoWin.ang+.5,tilt:.1,dist:fitWH(1.55,1.15)};}
@@ -832,21 +900,31 @@ function preset(){
   else p={tx:0,ty:cy*.8,tz:me.D*.08,yaw:.55,tilt:.3,dist:fitWH(rad*1.02,tall*.95)*(mode==="show"?1.04:1)};
   return p;
 }
+var flight=null,focusShot=null;
+function easeIO(x){x=clamp01(x);return x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2;}
+function shotDiff(a,b){return Math.hypot(a.tx-b.tx,a.ty-b.ty,a.tz-b.tz)>.35||Math.abs(a.dist-b.dist)>.6||Math.abs(a.yaw-b.yaw)>.18||Math.abs(a.tilt-b.tilt)>.12;}
+function flyTo(p){if(!cur){cur={};for(var k in p)cur[k]=p[k];goal=p;return;}
+  var from={};for(var k2 in cur)from[k2]=cur[k2];var far=Math.hypot(p.tx-from.tx,p.ty-from.ty,p.tz-from.tz);
+  flight={from:from,to:p,t:0,dur:far>3?1.6:1.05,bump:far>3?Math.min(14,far*.55):0};goal=p;}
 function camStep(dt,t){
   if(!goal)goal=preset();
-  if(mode==="show"&&!reduce)goal.yaw=.5+Math.sin(t*.11)*.55;
-  if(mode==="win"&&h3.view===1&&!user)goal=preset();
+  if((mode==="show"||(mode==="home"&&obdOpen))&&!reduce){goal=preset();goal.yaw=.5+Math.sin(t*.11)*.55;}
+  else if(overlay&&!user){var p=preset();if(shotDiff(p,flight?flight.to:goal))flyTo(p);}
   if(!cur){cur={};for(var k in goal)cur[k]=goal[k];}
+  if(flight){flight.t+=dt;var q=easeIO(flight.t/flight.dur);for(var k3 in flight.to)cur[k3]=lerp(flight.from[k3],flight.to[k3],q);cur.dist+=flight.bump*Math.sin(Math.PI*q);
+    if(flight.t>=flight.dur)flight=null;placeCam(cur);return;}
   var a=1-Math.exp(-dt*3.2);for(var k2 in goal)cur[k2]+=(goal[k2]-cur[k2])*a;
   placeCam(cur);
 }
-function placeCam(c){cam.position.set(c.tx+Math.sin(c.yaw)*Math.cos(c.tilt)*c.dist,c.ty+Math.sin(c.tilt)*c.dist,c.tz+Math.cos(c.yaw)*Math.cos(c.tilt)*c.dist);cam.lookAt(c.tx,c.ty,c.tz);}
-function limits(){var p=preset();goal.dist=Math.max(p.dist*.35,Math.min(p.dist*2.4,goal.dist));goal.tilt=Math.max(.02,Math.min(1.35,goal.tilt));
-  if(mode==="win"&&h3.view===1){goal.yaw=Math.max(p.yaw-.9,Math.min(p.yaw+.9,goal.yaw));goal.dist=Math.min(goal.dist,3.4);goal.tilt=Math.min(goal.tilt,.6);}}
+function placeCam(c){var nr=Math.max(.05,Math.min(1.2,c.dist*.02));if(Math.abs(cam.near-nr)>.02){cam.near=nr;cam.updateProjectionMatrix();}
+  cam.position.set(c.tx+Math.sin(c.yaw)*Math.cos(c.tilt)*c.dist,c.ty+Math.sin(c.tilt)*c.dist,c.tz+Math.cos(c.yaw)*Math.cos(c.tilt)*c.dist);cam.lookAt(c.tx,c.ty,c.tz);}
+function limits(){var p=preset();goal.dist=Math.max(p.dist*.55,Math.min(p.dist*1.7,goal.dist));goal.tilt=Math.max(Math.max(.05,p.tilt-.3),Math.min(Math.min(1.25,p.tilt+.4),goal.tilt));
+  goal.yaw=Math.max(p.yaw-1.3,Math.min(p.yaw+1.3,goal.yaw));
+  if(mode==="win"&&h3.view===1){goal.yaw=Math.max(p.yaw-.9,Math.min(p.yaw+.9,goal.yaw));goal.dist=Math.min(goal.dist,3.4);goal.tilt=Math.min(goal.tilt,.9);}}
 var ptrs={},pinch=0,el=R.domElement;
-el.addEventListener("pointerdown",function(e){if(!overlay)return;ptrs[e.pointerId]=[e.clientX,e.clientY];user=true;try{el.setPointerCapture(e.pointerId);}catch(x){}});
+el.addEventListener("pointerdown",function(e){if(!overlay)return;ptrs[e.pointerId]=[e.clientX,e.clientY];user=true;flight=null;focusShot=null;try{el.setPointerCapture(e.pointerId);}catch(x){}});
 el.addEventListener("pointermove",function(e){var p=ptrs[e.pointerId];if(!p||!goal)return;var ids=Object.keys(ptrs);
-  if(ids.length===1){goal.yaw-=(e.clientX-p[0])*.008;goal.tilt+=(e.clientY-p[1])*.005;}
+  if(ids.length===1){goal.yaw-=(e.clientX-p[0])*.0065;goal.tilt+=(e.clientY-p[1])*.004;}
   ptrs[e.pointerId]=[e.clientX,e.clientY];
   if(ids.length===2){var a=ptrs[ids[0]],b=ptrs[ids[1]],d=Math.hypot(a[0]-b[0],a[1]-b[1]);if(pinch)goal.dist*=pinch/d;pinch=d;}limits();});
 function up(e){delete ptrs[e.pointerId];pinch=0;}
@@ -870,7 +948,7 @@ function anchors(){
 var callI=0,callT=0,callEl=null,callKey="";
 function callouts(dt,host){
   var elC=overlay?$("ocall"):$("hcall");var other=overlay?$("hcall"):$("ocall");if(other)other.hidden=true;
-  if(!elC)return;if(!(mode==="show"||mode==="home")){elC.hidden=true;return;}
+  if(!elC)return;if(!(mode==="show"||mode==="home")||overlay){elC.hidden=true;return;}
   var ord=ORDERS[pageMode]||ORDERS.home,keys=ord.filter(function(k){return anc[k];});if(!keys.length){elC.hidden=true;return;}
   callT+=dt;if(callT>3.4){callT=0;callI=(callI+1)%keys.length;}
   var k=keys[callI%keys.length],a=anc[k],v=a.p.clone().project(cam),w=host.clientWidth,h=host.clientHeight;
@@ -882,16 +960,59 @@ function callouts(dt,host){
   elC.style.transform="translate("+(flip?x-elC.offsetWidth+7:x-7)+"px,"+(y-elC.offsetHeight/2)+"px)";
 }
 
-/* ---------- section labels over each group of panels ---------- */
-var secEl=[0,1,2].map(function(i){var d=doc.createElement("div");d.className="seclbl";d.hidden=true;stageEl.appendChild(d);return d;});
+/* ---------- labels you can tap: panel sections, and the things on the tour ---------- */
+var secEl=[0,1,2].map(function(i){var d=doc.createElement("button");d.type="button";d.className="seclbl";d.hidden=true;d.setAttribute("data-sec3",i);stageEl.appendChild(d);return d;});
+var HS={win:"Windows",sol:"Solar",mesh:"Mesh",spin:"Spinners",scr:"Screens"},hsEl={};
+Object.keys(HS).forEach(function(k){var d=doc.createElement("button");d.type="button";d.className="hs";d.hidden=true;d.setAttribute("data-hs",k);d.textContent=HS[k];stageEl.appendChild(d);hsEl[k]=d;});
+function place(d,p,nrm){var v=p.clone().project(cam),on=v.z<1&&Math.abs(v.x)<.96&&Math.abs(v.y)<.94;d.hidden=!on;if(!on)return;
+  var back=nrm&&cam.position.clone().sub(p).dot(nrm)<0;d.classList.toggle("dim",!!back);
+  d.style.transform="translate("+((v.x+1)/2*stageEl.clientWidth)+"px,"+((1-v.y)/2*stageEl.clientHeight)+"px) translate(-50%,-100%)";}
 function secLabels(){
-  var on=overlay&&st.arrays>1&&(mode==="home"||mode==="sol"||mode==="pig")&&me;
-  secEl.forEach(function(d,i){var gp=on&&me.groups.filter(function(g){return g.idx===i;})[0];if(!gp){d.hidden=true;return;}
+  var on=overlay&&st.arrays>1&&(mode==="home"||mode==="sol"||mode==="pig")&&me&&!obdOpen;
+  secEl.forEach(function(d,i){var gp=on&&me.groups.filter(function(g){return g.idx===i;})[0];if(!gp||!me.panels.length){d.hidden=true;return;}
     var par=gp.face>0?me.F:me.B,p=toWorld(par,gp.center[0],me.TT+H+.35,gp.center[1]),nrm=par.localToWorld(V(0,1,0)).sub(par.localToWorld(V(0,0,0))).normalize();
-    var v=p.clone().project(cam),seen=cam.position.clone().sub(p).dot(nrm)>0&&v.z<1&&Math.abs(v.x)<.95&&Math.abs(v.y)<.95;
-    d.hidden=!seen;if(!seen)return;var txt="Section "+(i+1)+" · "+gp.n+" panels";if(d.textContent!==txt)d.textContent=txt;
-    d.style.transform="translate("+((v.x+1)/2*stageEl.clientWidth)+"px,"+((1-v.y)/2*stageEl.clientHeight)+"px) translate(-50%,-100%)";});
+    var txt="Section "+(i+1)+" · "+gp.n+" panels";if(d.textContent!==txt)d.textContent=txt;place(d,p,nrm);});
+  var hon=overlay&&mode==="home"&&!obdOpen&&me,have={win:!!demoWin,sol:me&&me.panels.length>0,mesh:st.pig&&me&&me.skirt.length>0,spin:st.pig&&spinners.length>0,scr:st.scr&&!!scrWin};
+  Object.keys(hsEl).forEach(function(k){var d=hsEl[k];if(!hon||!have[k]||(k==="sol"&&st.arrays>1)){d.hidden=true;return;}
+    var p=k==="win"?toWorld(demoWin.g,0,demoWin.gh/2+.25,.15):k==="scr"?toWorld(scrWin.g,.3,scrWin.gh/2+.25,.15):k==="sol"?anc.panel&&anc.panel.p:k==="mesh"?anc.mesh&&anc.mesh.p:anc.spin&&anc.spin.p.clone().add(V(0,.25,0));
+    if(!p){d.hidden=true;return;}place(d,p,null);});
 }
+/* tap a label: fly there, and in the tour, jump to that stop */
+stageEl.addEventListener("click",function(e){var t=e.target;if(!t.closest)return;
+  var hs=t.closest("[data-hs]");if(hs){var k=hs.getAttribute("data-hs"),TS=tourStops();for(var i=0;i<TS.length;i++)if(TS[i].k===k){tl=i;break;}user=false;focusShot=null;track("tap_label",{what:k});return;}
+  var sl=t.closest("[data-sec3]");if(sl&&me){var gi=+sl.getAttribute("data-sec3"),gp=me.groups.filter(function(g){return g.idx===gi;})[0];if(!gp)return;
+    var par=gp.face>0?me.F:me.B,c=toWorld(par,gp.center[0],me.TT,gp.center[1]);focusShot={tx:c.x,ty:c.y,tz:c.z,yaw:gp.face>0?.3:Math.PI+.3,tilt:.75,dist:fitWH(gp.cols*PW/2+1.4,gp.rows*PD/2+1.6)};user=false;
+    say("<b>Section "+(gi+1)+":</b> "+gp.n+" panels"+(st.pig?", meshed and washed with the rest.":", "+money(gp.n*P.panel)+" at $7 a panel."),"");track("tap_section",{section:gi+1});}});
+
+/* ---------- welcome: get the home right, then the problems, then the build ---------- */
+var obdOpen=false,obdDone=false,obd=doc.createElement("div");obd.className="obd";obd.hidden=true;
+/* picture cards, so nobody has to know what a "ranch" is */
+function pics(o,list,cur){return '<div class="obd-row pics" data-o="'+o+'">'+list.map(function(x,i){return '<button type="button" data-v="'+i+'" aria-pressed="'+(i===cur)+'"><img src="assets/quote/'+o+'-'+i+'.webp" alt="" width="300" height="200" loading="lazy" decoding="async"><b>'+x[0]+'</b><span>'+x[1]+'</span></button>';}).join("")+"</div>";}
+function chips(o,list,cur){return '<div class="obd-row" data-o="'+o+'">'+list.map(function(x,i){return '<button type="button" data-v="'+(o==="stories"?i+1:i)+'" aria-pressed="'+((o==="stories"?i+1:i)===cur)+'">'+x+'</button>';}).join("")+"</div>";}
+function obdRender(){
+  var P1='<div class="obd-in" data-p="1"><b class="obd-h">Let\'s get your home right</b><p>Three taps and the model looks like your place.</p>'+
+    '<div class="obd-l">Which looks most like your home?</div>'+pics("style",[["New build","Stucco, tile roof, garage up front"],["Ranch","Single story, long and low"],["Classic","Siding, porch, window grids"],["Lake estate","Big two story, arched windows"]],h3.style)+
+    '<div class="obd-l">Stories</div>'+chips("stories",["1 story","2 story"],st.stories)+
+    '<div class="obd-l">And your street?</div>'+pics("hood",[["Desert lot","Gravel yard, open space"],["Yards and neighbors","Lawns, trees, homes next door"],["Acreage","Big lot, fence, room to spread out"]],h3.hood)+
+    '<div class="obd-act"><button type="button" data-obd="skip">Skip</button><button type="button" class="go" data-obd="next">Next</button></div></div>';
+  var PB=[["win","Dirty or spotty windows"],["hw","Hard water spots on the glass"],["sol","Dusty solar panels"],["pig","Pigeons on the roof or under the panels"],["scr","Torn or worn out screens"]];
+  var P2='<div class="obd-in" data-p="2" hidden><b class="obd-h">What seems to be the problem?</b><p>Check everything that applies. We\'ll build the rest around it.</p>'+
+    PB.map(function(x){return '<label class="obd-ck"><input type="checkbox" value="'+x[0]+'"'+(st[x[0]]?" checked":"")+'><span>'+x[1]+'</span></label>';}).join("")+
+    '<div class="obd-act"><button type="button" data-obd="back">Back</button><button type="button" class="go" data-obd="build">Build my home</button></div></div>';
+  obd.innerHTML=P1+P2;}
+stageEl.appendChild(obd);
+function obdShow(on){obdOpen=on;obd.hidden=!on;ov.classList.toggle("obd-on",on);if(on){obdRender();say("");track("onboard_open");}secLabels();}
+obd.addEventListener("click",function(e){var t=e.target;if(!t.closest)return;
+  var b=t.closest(".obd-row button");if(b){var o=b.parentNode.getAttribute("data-o"),v=+b.getAttribute("data-v");if(o==="stories")v=+b.getAttribute("data-v");
+    if(o==="stories")st.stories=v;else if(o==="style"){h3.style=v;if(v===3){st.stories=2;st.large=true;h3.estateLarge=true;}else if(h3.estateLarge){st.large=false;h3.estateLarge=false;}if(v===1)st.stories=1;h3.grids=v===2;}else h3[o]=v;
+    $$("button",b.parentNode).forEach(function(x){x.setAttribute("aria-pressed",String(x===b));});    $$('[data-o="stories"] button',obd).forEach(function(x){x.setAttribute("aria-pressed",String(+x.getAttribute("data-v")===st.stories));});C.render();return;}
+  var a=t.closest("[data-obd]");if(!a)return;var act=a.getAttribute("data-obd"),pages=$$(".obd-in",obd);
+  if(act==="next"){pages[0].hidden=true;pages[1].hidden=false;}
+  else if(act==="back"){pages[0].hidden=false;pages[1].hidden=true;}
+  else if(act==="skip"||act==="build"){
+    if(act==="build"){var any=false;$$(".obd-ck input",obd).forEach(function(c){st[c.value]=c.checked;any=any||c.checked;});if(st.hw)st.win=true;if(!any)st.win=true;
+      track("onboard_build",{win:st.win,hw:st.hw,sol:st.sol,pig:st.pig,scr:st.scr,hood:h3.hood,style:h3.style});}
+    obdDone=true;obdShow(false);tl=0;user=false;focusShot=null;C.render();}});
 
 /* ---------- render loop ---------- */
 var raf=0,last=0,acc=0,host=heroHost,first=true;
@@ -920,10 +1041,10 @@ function syncControls(){
 ov.addEventListener("click",function(e){
   var t=e.target;
   var mb=t.closest("[data-hmode]");if(mb){var nm=mb.getAttribute("data-hmode");if(nm===mode){replay();return;}fade(function(){setMode(nm);});track("view_3d_service",{mode:nm});return;}
-  var z=t.closest("[data-zoom]");if(z&&goal){var d=+z.getAttribute("data-zoom");if(d===0){user=false;goal=preset();}else{user=true;goal.dist*=d>0?.78:1.28;limits();}return;}
+  var z=t.closest("[data-zoom]");if(z&&goal){var d=+z.getAttribute("data-zoom");if(d===0){user=false;focusShot=null;flyTo(preset());}else{user=true;flight=null;goal.dist*=d>0?.8:1.25;limits();}return;}
   var hb=t.closest("[data-hseg] button[data-v]");
   if(hb){var k=hb.parentNode.getAttribute("data-hseg"),v=+hb.getAttribute("data-v");
-    if(k==="stage"){auto=false;h3.stage=v;birdTargets(false);track("pigeon_stage",{stage:v});}
+    if(k==="stage"){tl=[0,2.2,5.6,9,12.4][v];auto=true;user=false;focusShot=null;h3.stage=v;birdTargets(false);track("pigeon_stage",{stage:v});}
     else if(k==="view"){if(h3.view!==v){h3.view=v;if(v===1&&!room)buildRoom();fade(function(){tl=0;user=false;resetHaze();if(room)resetRoom();goal=preset();cur=null;});track("window_view",{inside:v});}}
     else if(k==="style"){h3.style=v;if(v===3){if(st.stories!==2)st.stories=2;if(!st.large){st.large=true;h3.estateLarge=true;}}else{if(h3.estateLarge){st.large=false;h3.estateLarge=false;}if(v===1&&st.stories!==1)st.stories=1;h3.grids=v===2?true:h3.grids;}
       track("home_style",{style:STY[v].id});C.render();return;}
@@ -937,8 +1058,10 @@ ov.addEventListener("click",function(e){
     buildSpinners();birdTargets(false);C.render();return;}
   var ha=t.closest("[data-hact]");if(ha){var a=ha.getAttribute("data-hact");
     if(a==="replay")replay();
-    else if(a==="next"||a==="prev"){var S=steps();if(!S)return;var i=stepAt(S);if(mode==="pig"){auto=true;h3.spinOv=null;}
+    else if(a==="next"||a==="prev"){var S=steps();if(!S)return;var i=stepAt(S);user=false;focusShot=null;if(mode==="pig"){auto=true;h3.spinOv=null;}
       if(a==="next"){if(i+1<S.length){tl=S[i+1];track("note_next",{mode:mode,step:i+2});}else replay();}else rewind(S[Math.max(0,i-1)]);}
+    else if(a==="obd"){fade(function(){setMode("home");obdShow(true);});}
+    else if(a==="reach"){tl=9;auto=true;user=false;focusShot=null;h3.spinOv=null;h3.stage=3;birdTargets(false);track("spinner_reach");}
     else if(a==="try1"){auto=false;h3.stage=2;h3.cov=true;h3.spinOv=1;buildSpinners();birdTargets(false);C.render();goal.yaw=Math.round((cur.yaw-2.6)/(Math.PI*2))*Math.PI*2+2.6;track("try_one_spinner");}
     return;}
 });
@@ -949,23 +1072,27 @@ function fade(mid){var f=$("ovFade");if(fading||reduce){mid();return;}fading=tru
 function sync(){
   if(!me)return;
   var k=keyOf(cfgMe());
-  if(k!==builtKey){var keepStage=h3.stage;buildMe();if(mode==="pig"){buildNeighbors();h3.stage=keepStage;birdTargets(true);}
+  if(k!==builtKey){var keepStage=h3.stage;buildMe();if(mode==="pig"){buildNeighbors();buildBirds();h3.stage=keepStage;birdTargets(true);}
     if(mode!=="show"&&mode!=="home"&&mode!=="pig"){tl=0;if(mode==="win"){resetHaze();}}goal=preset();}
   else if(spinners.length!==Math.min(spinCount(),me.vents.length)){buildSpinners();birdTargets(false);anchors();}
   syncControls();summary();
 }
 buildMe();
 return {
-  open:function(m){overlay=true;$("ovLoad").hidden=true;attach(stageEl);if(["home","win","sol","scr","pig"].indexOf(m)<0)m="home";setMode(m);start();},
-  close:function(){overlay=false;say("");h3.spinOv=null;if(h3.view===1)h3.view=0;setMode("show");attach(heroHost);$("ocall").hidden=true;},
+  open:function(m){overlay=true;$("ovLoad").hidden=true;attach(stageEl);var tour=m==="tour";if(tour)m="home";if(["home","win","sol","scr","pig"].indexOf(m)<0)m="home";setMode(m);if(tour&&!obdDone)obdShow(true);start();},
+  close:function(){overlay=false;obdShow(false);say("");secEl.forEach(function(d){d.hidden=true;});Object.keys(hsEl).forEach(function(k){hsEl[k].hidden=true;});h3.spinOv=null;if(h3.view===1)h3.view=0;setMode("show");attach(heroHost);$("ocall").hidden=true;},
   hero:function(on){heroOn=on;if(on&&!overlay){if(mode!=="show")setMode("show");attach(heroHost);start();}},
   sync:sync,
   pref:function(m){pageMode=m;},
+  homeDesc:homeDesc,
   /* a still frame of the model home, used to make the poster images */
   snap:function(w,h,o){o=o||{};if(mode!=="show")setMode("show");R.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix();
     var p=preset();if(o.yaw!=null)p.yaw=o.yaw;if(o.tilt!=null)p.tilt=o.tilt;if(o.dist)p.dist*=o.dist;if(o.ty)p.ty+=o.ty;
     frame(0);placeCam(p);R.render(scene,cam);var url=R.domElement.toDataURL(o.type||"image/png",o.q||.9);cur=null;goal=null;size();return url;},
   seek:function(t){tl=t;},
+  /* picture cards for the welcome: set the look, then snap it */
+  look:function(o){if(o.style!=null)h3.style=o.style;if(o.hood!=null)h3.hood=o.hood;if(o.stories)st.stories=o.stories;if(o.grids!=null)h3.grids=o.grids;sync();},
+  settle:function(){var p=preset();flight=null;goal=p;cur={};for(var k in p)cur[k]=p[k];placeCam(cur);},
   state:function(){return {styleName:["New build","Ranch","Classic","Lake estate"][h3.style],mode:mode,tl:tl,h3:JSON.parse(JSON.stringify(h3)),spinners:spinners.length,birds:birds.length,nbs:nbs.length,W:me&&me.W,style:me&&me.S.id};}
 };
 };
