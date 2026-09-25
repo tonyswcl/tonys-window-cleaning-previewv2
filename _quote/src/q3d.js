@@ -159,8 +159,9 @@ var M={
   shadow:new T.MeshBasicMaterial({map:TX.shadow,transparent:true,depthWrite:false}),
   water:new T.PointsMaterial({color:0xcfeaff,size:.035,transparent:true,opacity:.85,depthWrite:false}),
   tank:Std({color:0x2f6fb0,roughness:.5}),cart:Std({color:0x3a3d42,roughness:.6}),hose:Std({color:0x2b2b2e,roughness:.7}),
-  shirt:Std({color:0x2f5f9f,roughness:.85}),pants:Std({color:0x4a4f57,roughness:.9}),skin:Std({color:0xb98262,roughness:.7}),
-  hat:Std({color:0xd9c08a,roughness:.95}),band:Std({color:0x6b4f2a,roughness:.8}),shoe:Std({color:0x2a2a2a,roughness:.8}),
+  /* the crew uniform: gray polo, black work pants, black cap */
+  shirt:Std({color:0x3c4045,roughness:.92}),pants:Std({color:0x0c0d0f,roughness:.85}),skin:Std({color:0xb98262,roughness:.7}),
+  hat:Std({color:0x0b0c0e,roughness:.8}),band:Std({color:0xf0b040,roughness:.6}),shoe:Std({color:0x1a1a1a,roughness:.8}),collar:Std({color:0x2c2f33,roughness:.9}),
   rubber:Std({color:0x111111,roughness:.9}),chan:Std({color:0xc7ccd2,metalness:.8,roughness:.3}),towel:Std({color:0x3d7fd1,roughness:1}),
   iwall:Std({color:0xefe9df,roughness:.95}),ifloor:Std({map:TX.wood,roughness:.6}),vinyl:Std({color:0xf7f7f4,roughness:.5}),
   iglass:Std({color:0xdfeef7,metalness:.1,roughness:.05,transparent:true,opacity:.14,envMapIntensity:1.2,depthWrite:false}),
@@ -828,13 +829,15 @@ function makeWorker(){
   part(G.ball,M.shirt,.2,.09,.148,0,1.56,0);
   part(G.cyl,M.shoe,.178,.045,.132,0,.975,0);part(G.box,M.chan,.05,.035,.012,0,.975,.13);
   part(G.ball,M.shirt,.075,.075,.07,-.21,1.5,0);part(G.ball,M.shirt,.075,.075,.07,.21,1.5,0);
-  /* head: neck, ears, nose, mouth, sunglasses, straw hat, all turning together */
+  /* polo collar and a small gold crest on the chest */
+  part(G.cyl,M.collar,.105,.035,.09,0,1.585,.01);part(G.box,M.band,.05,.04,.01,-.09,1.4,.132);
+  /* head: neck, ears, nose, mouth, sunglasses, cap, all turning together */
   part(G.cyl,M.skin,.05,.1,.05,0,0,0,head);part(G.ball,M.skin,.108,.125,.115,0,.14,.01,head);part(G.ball,M.skin,.07,.05,.07,0,.06,.035,head);
   part(G.ball,M.hair,.113,.106,.112,0,.162,-.022,head);
   [-1,1].forEach(function(sd){part(G.ball,M.skin,.02,.036,.028,sd*.108,.135,0,head);});
   part(G.ball,M.skin,.017,.026,.022,0,.128,.123,head);part(G.box,M.lip,.045,.009,.01,0,.085,.108,head);
   part(G.box,M.shades,.16,.036,.014,0,.162,.1,head);[-1,1].forEach(function(sd){part(G.box,M.shades,.008,.01,.1,sd*.098,.166,.05,head);});
-  part(G.cyl,M.hat,.28,.018,.28,0,.23,0,head);part(G.cyl,M.hat,.12,.11,.12,0,.29,0,head);part(G.cyl,M.band,.125,.03,.125,0,.255,0,head);
+  var cr=part(G.cup,M.hat,1.55,1.25,1.6,0,.2,-.005,head);cr.rotation.x=0;part(G.box,M.hat,.17,.012,.12,0,.2,.14,head);part(G.box,M.band,.04,.028,.004,0,.245,.112,head);
   /* arms: short sleeve over a bare arm, a round elbow, and a hand with four fingers and a thumb */
   function arm(sd){var u=new T.Mesh(G.cyl,M.skin),sl=new T.Mesh(G.cyl,M.shirt),f=new T.Mesh(G.cyl,M.skin),el=new T.Mesh(G.ball,M.skin),hd=new T.Group();
     u.scale.x=u.scale.z=.045;sl.scale.x=sl.scale.z=.062;f.scale.x=f.scale.z=.038;el.scale.setScalar(.043);
