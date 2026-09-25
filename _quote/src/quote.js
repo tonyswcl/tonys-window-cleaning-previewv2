@@ -17,18 +17,23 @@ function track(name,params){try{
 }catch(e){}}
 
 /* ---------- prices, all in one place ---------- */
-var P={win:[0,149,249],more:[0,39,59],covers:[0,"10 to 12","18 to 20"],coverMax:[0,12,20],inside:49,panel:7,
+var P={win:[0,149,249],more:[0,39,39],covers:[0,"10 to 12","18 to 20"],coverMax:[0,12,20],inside:49,panel:7,
   pig:450,pigUpTo:12,pigPer:50,spinner:50,mesh:[53.99,64.99],meshName:["charcoal fiberglass","all weather"],frame:10,scrMin:149,
   planFreq:[0,12,6,3],planOff:[0,0,.15,.25],planName:["One time","Once a year","Twice a year","Every 3 months"],
-  pane:12,pc:[0,249,349],roof:599,gr:129,ad:129,com:89,early:0.10,
+  pane:12,pc:[0,249,349],roof:599,gr:129,ad:129,early:0.10,
+  /* storefronts: a flat $149 for 8 to 10 panes inside and out (doors count), then the same 15% and 25% plan discounts as homes.
+     comPane and bldg are null until Tony sets a rate; until then those lines read "Tony confirms" */
+  com:149,comOff:[0,.15,.25],comFName:["one time","monthly","every 2 weeks"],comUpTo:10,comPane:null,comIn:50,stk:10,bldg:null,
   large:null /* extra labor for large custom homes; null means Tony confirms on site */};
 
 /* ---------- state ---------- */
 var MAIN=["win","sol","pig","scr"], EXTRA=["hw","roof","pc","gut","pw","ad","gr","com"], ALL=MAIN.concat(EXTRA);
-var st={stories:1,more:false,inside:false,large:false,pkg:0,panels:16,arrays:1,arr:[16,8,6],spin:0,screens:4,frames:false,pet:1,panes:6,day:"",time:-1,plan:0,wait:2};
+var st={stories:1,more:false,inside:false,large:false,pkg:0,panels:16,arrays:1,arr:[16,8,6],spin:0,screens:4,frames:false,pet:1,panes:6,day:"",time:-1,plan:0,wait:2,
+  ctype:0,cfreq:0,cin:false,cpanes:8,cdoors:2,cstk:0,bsq:12,bst:2,bwin:48};
 ALL.forEach(function(k){st[k]=false;});
 (CFG.svc&&CFG.svc.length?CFG.svc:["win"]).forEach(function(k){if(ALL.indexOf(k)>=0)st[k]=true;});
-var LIMIT={stories:[1,2],panels:[1,99],arrays:[1,3],arr0:[1,60],arr1:[1,60],arr2:[1,60],spin:[0,20],screens:[1,40],pet:[0,1],panes:[1,60],plan:[0,3],time:[-1,2],wait:[0,3],pkg:[0,1]};
+var LIMIT={stories:[1,2],panels:[1,99],arrays:[1,3],arr0:[1,60],arr1:[1,60],arr2:[1,60],spin:[0,20],screens:[1,40],pet:[0,1],panes:[1,60],plan:[0,3],time:[-1,2],wait:[0,3],pkg:[0,1],
+  ctype:[0,1],cfreq:[0,2],cpanes:[1,60],cdoors:[0,12],cstk:[0,40],bsq:[1,300],bst:[1,20],bwin:[4,990]};
 function clamp(k,v){var L=LIMIT[k];return L?Math.max(L[0],Math.min(L[1],v)):v;}
 /* panels can sit in up to 3 sections; the total is always the sum */
 function setArrays(a){a=clamp("arrays",a);if(a===st.arrays)return;
@@ -69,9 +74,15 @@ function items(){
   if(st.pw)add("Driveway and patio wash",0,{note:"Quoted on site"});
   if(st.ad)add("Decal and vinyl removal",P.ad,{from:true});
   if(st.gr)add("Graffiti removal",P.gr,{from:true});
-  if(st.com)add("Storefront glass, per visit",P.com,{from:true});
+  if(st.com){if(st.ctype===0){var gl=st.cpanes+st.cdoors,ov=Math.max(0,gl-P.comUpTo);
+      add("Storefront glass inside and out, 8 to "+P.comUpTo+" panes, "+P.comFName[st.cfreq]+(st.cfreq?", "+Math.round(P.comOff[st.cfreq]*100)+"% off, per visit":""),comVisit());
+      if(ov)add(ov+" more pane"+pl(ov)+" and door"+(ov>1?"s":""),P.comPane?ov*P.comPane:0,P.comPane?{}:{note:"Tony confirms"});
+      if(st.cin)add("Interior partitions and mirrors",P.comIn);
+      if(st.cstk)add(st.cstk+" vinyl sticker"+pl(st.cstk)+" changed out × $"+P.stk,st.cstk*P.stk);}
+    else add("Office building, "+st.bst+" stor"+(st.bst>1?"ies":"y")+", about "+(st.bsq*1000).toLocaleString("en-US")+" sq ft, "+st.bwin+" windows",P.bldg||0,P.bldg?{from:true}:{note:"Free walkthrough"});}
   return a;
 }
+function comVisit(){return cents(P.com*(1-P.comOff[st.cfreq]));}
 function totals(){
   var it=items(),sub=0;it.forEach(function(x){sub+=x.v;});sub=cents(sub);
   var early=st.day&&sub>0?cents(sub*P.early):0;
@@ -114,7 +125,8 @@ function setText(id,txt){var el=$(id);if(el)el.textContent=txt;}
 /* ---------- delegated controls: data-seg, data-sw, data-step (3D-only controls use data-h*) ---------- */
 function setKey(k,v){
   if(k==="arrays"){setArrays(+v);track("pick_arrays",{arrays:st.arrays});render();return;}
-  if(k==="pet"||k==="stories"||k==="plan"||k==="time"||k==="wait"||k==="pkg")v=clamp(k,+v);
+  if(k==="pet"||k==="stories"||k==="plan"||k==="time"||k==="wait"||k==="pkg"||k==="ctype"||k==="cfreq")v=clamp(k,+v);
+  if(k==="ctype")track("pick_commercial",{type:v?"building":"storefront"});
   if(k==="pkg"){if(v&&!st.plan)st.plan=3;track("pick_pigeon_package",{year:v});}
   st[k]=v;
   if(k==="plan")track("pick_plan",{plan:v});
@@ -178,6 +190,8 @@ function render(){
   setText("pkgNote",st.pkg?"Your year: "+money(pp)+" now, then 3 washes every 3 months at "+money(pn*P.panel)+" each ("+pn+" panels × $"+P.panel+"). Panels need it out here anyway, and every visit is the right time to check the spinners, clips and mesh. It's on the calendar, so there's nothing to remember.":
     "Today includes a free solar wash and a roof soft wash. Add a year of cleanings and every visit doubles as a spinner, clip and mesh check.");
   var hwWin=$("hwWin");if(hwWin)hwWin.hidden=!st.hw;
+  $$("[data-cg]").forEach(function(g){g.hidden=+g.getAttribute("data-cg")!==st.ctype;});
+  var cgl=st.cpanes+st.cdoors;setText("comNote",cgl>P.comUpTo&&!P.comPane?"That's "+cgl+" panes counting doors. The first "+P.comUpTo+" are in the price, and Tony confirms the other "+(cgl-P.comUpTo)+" before the first visit.":"$"+P.com+" flat for 8 to "+P.comUpTo+" panes inside and out, doors included. Monthly takes 15% off every visit, every 2 weeks takes 25% off.");
 
   var t=totals(),tl=$("tlines");tl.textContent="";
   if(!t.it.length){var e0=doc.createElement("div");e0.className="tline";e0.textContent="Tap a service above to see a price.";tl.appendChild(e0);}
@@ -194,7 +208,8 @@ function render(){
   var a0=shown,t0=performance.now(),target=t.total;if(anim)cancelAnimationFrame(anim);
   if(firstRender||reduce){shown=target;paint(target,true);firstRender=false;}
   else (function step(now){var q=Math.min(1,(now-t0)/380),v=q>=1?target:a0+(target-a0)*(1-Math.pow(1-q,3));shown=v;paint(q>=1?target:Math.round(v),q>=1);if(q<1)anim=requestAnimationFrame(step);})(t0);
-  function paint(v,final){var txt=(t.from&&final?"from ":"")+money(v);$("ttotal").textContent=txt;var dt=$("dockTotal");if(dt)dt.textContent=money(v);}
+  /* a quote with nothing priced yet, like an office building, reads as a free walkthrough instead of $0 */
+  function paint(v,final){var walk=final&&target===0&&t.it.length>0,txt=walk?"Free walkthrough":(t.from&&final?"from ":"")+money(v);$("ttotal").textContent=txt;var dt=$("dockTotal");if(dt)dt.textContent=walk?"Quote":money(v);}
   days();planBox(t);waitBox(t);msg(t);
   if(api)api.sync();
 }
@@ -274,7 +289,12 @@ function lineText(x){return x.t+" ("+(x.note?x.note.toLowerCase():(x.from?"from 
 function fld(id){var e=$(id);return e?e.value.trim():"";}
 function cityOf(){var parts=fld("fstreet").split(","),c=parts.length>1?parts[parts.length-1]:"";c=c.replace(/\b(CA|California)\b/gi,"").replace(/\d{5}(-\d{4})?/g,"").trim();
   if(!c&&parts.length>2)c=parts[parts.length-2].trim();return c||zipCity||CFG.city||"";}
-function homeLine(){var b=[st.stories+" story"];
+/* a storefront or building quote describes the business, not a home */
+function comOnly(){return st.com&&!ALL.some(function(k){return k!=="com"&&k!=="gr"&&k!=="ad"&&st[k];});}
+function comLine(){var bn=api&&api.bizName?pdfClean(api.bizName()||""):"";return st.ctype===0?"Storefront"+(bn?" ("+bn+")":"")+", "+st.cpanes+" pane"+pl(st.cpanes)+" and "+st.cdoors+" glass door"+pl(st.cdoors)+(st.cstk?", "+st.cstk+" vinyl sticker"+pl(st.cstk):"")+(st.cin?", partitions and mirrors too":"")+", "+P.comFName[st.cfreq]
+  :"Office building, "+st.bst+" stor"+(st.bst>1?"ies":"y")+", about "+(st.bsq*1000).toLocaleString("en-US")+" sq ft, "+st.bwin+" windows";}
+function propLabel(){return comOnly()?"Business":"Home";}
+function homeLine(){if(comOnly())return comLine();var b=[st.stories+" story"];
   if(api&&api.homeDesc)b.push(api.homeDesc());
   if(st.sol||st.pig)b.push(st.panels+" solar panels"+(st.arrays>1?" in "+st.arrays+" sections ("+st.arr.slice(0,st.arrays).join(", ")+")":""));
   if(st.scr)b.push(st.screens+" screens, "+P.meshName[st.pet]+(st.frames?", new frames and clips":""));
@@ -288,7 +308,7 @@ function msg(t){
   L.push("Total: "+(t.from?"from ":"")+money(t.total));
   if(st.plan&&recurring()){var sc=schedule(t);L.push("Plan: "+P.planName[st.plan]+(st.plan>1?", "+money(sc.each)+" a visit after the first":""));}
   L.push("Day: "+(day||"your next opening"));
-  L.push("Home: "+homeLine());
+  L.push(propLabel()+": "+homeLine());
   if(addr)L.push("Address: "+addr);
   if(phone)L.push("Phone: "+phone);
   if(email)L.push("Email: "+email);
@@ -341,17 +361,20 @@ $("fphone").addEventListener("input",function(){if(this.getAttribute("aria-inval
 var FLAGS=ALL.concat(["more","inside","large","frames","pkg"]);
 function token(){var f=0;FLAGS.forEach(function(k,i){if(st[k])f|=1<<i;});
   return "q"+f.toString(36)+"-"+st.stories+st.pet+st.plan+(st.time+1)+"-"+st.panels+"-"+st.spin+"-"+st.screens+"-"+st.panes+
-    (st.arrays>1?"-a"+st.arr.slice(0,st.arrays).join("."):"")+(st.day?"-d"+st.day.replace(/-/g,""):"");}
+    (st.arrays>1?"-a"+st.arr.slice(0,st.arrays).join("."):"")+
+    (st.com?"-c"+st.ctype+st.cfreq+(st.cin?1:0)+"."+[st.cpanes,st.cdoors,st.cstk,st.bsq,st.bst,st.bwin].join("."):"")+(st.day?"-d"+st.day.replace(/-/g,""):"");}
 function loadToken(){
-  var m=/^#q([0-9a-z]{1,5})-([12])([01])([0-3])([0-3])-(\d{1,2})-(\d{1,2})-(\d{1,2})-(\d{1,2})(?:-a(\d{1,2}(?:\.\d{1,2}){1,2}))?(?:-d(\d{8}))?$/.exec(location.hash||"");
+  var m=/^#q([0-9a-z]{1,5})-([12])([01])([0-3])([0-3])-(\d{1,2})-(\d{1,2})-(\d{1,2})-(\d{1,2})(?:-a(\d{1,2}(?:\.\d{1,2}){1,2}))?(?:-c([01])([0-2])([01])\.(\d{1,2})\.(\d{1,2})\.(\d{1,2})\.(\d{1,3})\.(\d{1,2})\.(\d{1,3}))?(?:-d(\d{8}))?$/.exec(location.hash||"");
   if(!m)return false;
   var f=parseInt(m[1],36);if(!(f>=0)||f>=(1<<FLAGS.length))return false;
   FLAGS.forEach(function(k,i){st[k]=!!(f&(1<<i));});
   st.stories=clamp("stories",+m[2]);st.pet=clamp("pet",+m[3]);st.plan=clamp("plan",+m[4]);st.time=clamp("time",+m[5]-1);
   st.panels=clamp("panels",+m[6]);st.spin=clamp("spin",+m[7]);st.screens=clamp("screens",+m[8]);st.panes=clamp("panes",+m[9]);
   if(m[10]){var parts=m[10].split(".");st.arrays=parts.length;parts.forEach(function(x,i){st.arr[i]=clamp("arr"+i,+x);});sumPanels();}
+  if(m[11]){st.ctype=clamp("ctype",+m[11]);st.cfreq=clamp("cfreq",+m[12]);st.cin=m[13]==="1";st.cpanes=clamp("cpanes",+m[14]);st.cdoors=clamp("cdoors",+m[15]);st.cstk=clamp("cstk",+m[16]);
+    st.bsq=clamp("bsq",+m[17]);st.bst=clamp("bst",+m[18]);st.bwin=clamp("bwin",+m[19]);}
   /* the picked day comes along only while it's still ahead, so the 10% matches what was shared */
-  if(m[11]){var d=parseIso(m[11].slice(0,4)+"-"+m[11].slice(4,6)+"-"+m[11].slice(6)),max=new Date(TODAY.getTime());max.setFullYear(max.getFullYear()+1);
+  if(m[20]){var d=parseIso(m[20].slice(0,4)+"-"+m[20].slice(4,6)+"-"+m[20].slice(6)),max=new Date(TODAY.getTime());max.setFullYear(max.getFullYear()+1);
     if(d&&d>TODAY&&d<=max)st.day=iso(d);}
   st.pkg=st.pkg?1:0;fixTime();
   return true;
@@ -374,6 +397,11 @@ function makePdf(logo,home){
   function page(){ops=[];pages.push(ops);rect(0,742,612,50,[234,246,252]);text(48,772,"Text or call "+PHONE+" · twindowclean.com",11,true,ink);text(564,772,"Hesperia and the High Desert",10,false,soft,"r");
     if(pages.length>1){text(48,48,"Tony's Window Cleaning",12,true,ink);text(564,48,who||"Your quote",10,false,soft,"r");line(48,58,564,rule);y=84;}}
   function need(h){if(y+h>724)page();}
+  /* every downloaded copy carries a light watermark with who it was made for; the signed original is printed */
+  function mark(o){var nm=pdfClean(name||"you").toUpperCase(),big="CUSTOMER COPY",small="PREPARED FOR "+nm+" · "+fmt(TODAY,true).toUpperCase()+" · TONY'S WINDOW CLEANING";
+    o.push("q /GS1 gs");[[70,120],[70,390],[70,660]].forEach(function(p){o.push("BT /F2 54 Tf "+col(ink)+" rg 0.866 0.5 -0.5 0.866 "+p[0]+" "+p[1]+" Tm ("+esc(big)+") Tj ET");
+      o.push("BT /F2 11 Tf "+col(ink)+" rg 0.866 0.5 -0.5 0.866 "+(p[0]+10)+" "+(p[1]-22)+" Tm ("+esc(small)+") Tj ET");});o.push("Q");
+    o.push("BT /F1 8 Tf "+col(soft)+" rg 48 56 Td ("+esc("Customer copy for "+(name||"you")+". Tony brings the printed original to your visit for signatures. Not for reuse.")+") Tj ET");}
   function head(s){need(40);y+=8;text(48,y,s,11,true,gold);y+=10;line(48,y,564,rule);y+=18;}
   function para(s,size,c){wrap(s,size||10,516).forEach(function(ln){need(14);text(48,y,ln,size||10,false,c||soft);y+=(size||10)+4;});}
   var t=totals(),sc=schedule(t),per=recurring(),name=$("fname").value.trim(),street=$("fstreet").value.trim(),who=(name?name:"")+(name&&street?" · ":"")+street;
@@ -395,7 +423,7 @@ function makePdf(logo,home){
   need(60);line(48,y,564,ink,1.4);y+=24;text(48,y,"Total",13,true,ink);text(564,y,(t.from?"from ":"")+money(t.total),20,true,ink,"r");y+=26;
   var sv=savings(t);if(sv.length){var tot=0;sv.forEach(function(x){tot+=x[1];});text(564,y,"You save "+money(tot),11,true,green,"r");y+=22;}
   var day=dayText();if(day){need(18);text(48,y,"Requested day: "+day,11,true,ink);y+=20;}
-  var hl=homeLine();need(16);text(48,y,"Home: "+hl,10,false,soft);y+=16;
+  var hl=homeLine();need(16);text(48,y,propLabel()+": "+hl,10,false,soft);y+=16;
   var nt=fld("fnotes");if(nt){wrap("Notes: "+nt,10,516).forEach(function(ln){need(14);text(48,y,ln,10,false,soft);y+=14;});y+=4;}
   /* what the free parts of pigeon proofing would cost on their own */
   if(st.pig){head("If you booked these on their own");
@@ -412,23 +440,32 @@ function makePdf(logo,home){
     var q3=schedule(t,3);y+=2;para("Every 3 months saves "+money(q3.save)+" over the year compared with booking each visit on its own, and the price is locked for the year.",10,green);
     if(st.plan&&sc.visits.length){head("Your plan: "+P.planName[st.plan].toLowerCase());
       sc.visits.forEach(function(v){need(17);text(48,y,(v.date?fmt(v.date,true):(v.i===0?"First visit":"Month "+(v.i*sc.freq+1)))+" · "+v.label,11,false,ink);text(564,y,money(v.amt),11,true,ink,"r");y+=17;});}}
+  /* storefront schedules, priced for this storefront */
+  if(st.com&&st.ctype===0){head("Storefront schedules");
+    need(18);text(48,y,"Schedule",9,true,soft);text(300,y,"Each visit",9,true,soft,"r");text(420,y,"Visits a year",9,true,soft,"r");text(564,y,"About a year",9,true,soft,"r");y+=16;
+    var extra=(st.cin?P.comIn:0)+st.cstk*P.stk;[[0,1],[1,12],[2,26]].forEach(function(r){var v=cents(P.com*(1-P.comOff[r[0]]))+extra;need(18);if(r[0]===st.cfreq)rect(44,y-12,524,17,[253,244,226]);
+      text(48,y,P.comFName[r[0]].charAt(0).toUpperCase()+P.comFName[r[0]].slice(1)+(r[0]?"  ("+Math.round(P.comOff[r[0]]*100)+"% off)":""),11,r[0]===st.cfreq,ink);text(300,y,money(v),11,false,ink,"r");text(420,y,String(r[1]),11,false,ink,"r");text(564,y,money(v*r[1]),11,true,ink,"r");y+=18;});
+    if(st.cpanes+st.cdoors>P.comUpTo)para("Your storefront has "+(st.cpanes+st.cdoors)+" panes counting doors. The price covers 8 to "+P.comUpTo+", and Tony confirms the rest before the first visit.",10,soft);}
+  if(st.com&&st.ctype===1){head("Your building");para("Office building, "+st.bst+" stor"+(st.bst>1?"ies":"y")+", about "+(st.bsq*1000).toLocaleString("en-US")+" square feet, "+st.bwin+" windows. Tony walks it with you for free and gives you a firm written price before any work starts. Worked after hours, one invoice a month.",10,ink);}
   /* what waiting costs, for the services on this quote */
   var wk=["pig","sol","win","scr","hw"].filter(function(k){return st[k]&&!(k==="sol"&&st.pig);});
   if(wk.length){head("What happens if you wait");
     wk.forEach(function(k){need(30);text(48,y,WAIT_NAME[k],11,true,ink);y+=14;[2,3].forEach(function(l){wrap(WAIT_WHEN[l]+": "+WAIT[k][l],10,500).forEach(function(ln){need(14);text(60,y,ln,10,false,soft);y+=14;});});y+=4;});}
   y+=6;para("Tony confirms every job by text before it's scheduled. The price here is firm for what's listed, and anything that changes the scope gets a written price before any work starts. Satisfaction guaranteed: if anything isn't right, we redo it before we leave.");
-  /* assemble the file: catalog, pages, 2 fonts, then each page and its content, then images */
+  pages.forEach(mark);
+  /* assemble the file: catalog, pages, 2 fonts, then each page and its content, then images, then the watermark's transparency */
   var np=pages.length,imgs=[],objs=[];
   if(logo)imgs.push({n:"Im1",img:logo});if(home)imgs.push({n:"Im2",img:home});
-  var firstPage=5,firstImg=firstPage+np*2,xo=imgs.map(function(im,i){return "/"+im.n+" "+(firstImg+i)+" 0 R";}).join(" ");
+  var firstPage=5,firstImg=firstPage+np*2,gsObj=firstImg+imgs.length,xo=imgs.map(function(im,i){return "/"+im.n+" "+(firstImg+i)+" 0 R";}).join(" ");
   objs.push("<< /Type /Catalog /Pages 2 0 R >>");
   objs.push("<< /Type /Pages /Kids ["+pages.map(function(_,i){return (firstPage+i*2)+" 0 R";}).join(" ")+"] /Count "+np+" >>");
   objs.push("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>");
   objs.push("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>");
   pages.forEach(function(o,i){var content=o.join("\n");
-    objs.push("<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R /F2 4 0 R >>"+(xo?" /XObject << "+xo+" >>":"")+" >> /Contents "+(firstPage+i*2+1)+" 0 R >>");
+    objs.push("<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> /ExtGState << /GS1 "+gsObj+" 0 R >>"+(xo?" /XObject << "+xo+" >>":"")+" >> /Contents "+(firstPage+i*2+1)+" 0 R >>");
     objs.push("<< /Length "+content.length+" >>\nstream\n"+content+"\nendstream");});
   imgs.forEach(function(im){objs.push({img:im.img});});
+  objs.push("<< /Type /ExtGState /ca 0.07 /CA 0.07 >>");
   var out=[],pos=0,offs=[];
   function push(s){for(var i=0;i<s.length;i++){var c=s.charCodeAt(i);out.push(c===215?215:c===183?183:c>255?63:c);}pos+=s.length;}
   push("%PDF-1.4\n");
@@ -444,9 +481,11 @@ function makePdf(logo,home){
 /* a picture of their home from the 3D builder, if it's loaded */
 function homeShot(){
   if(!api||!api.snap)return null;
-  try{var url=api.snap(900,480,{type:"image/jpeg",q:.86}),b64=url.split(",")[1],bin=atob(b64),u=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);
+  var biz=comOnly();
+  try{var url=api.snap(900,480,{type:"image/jpeg",q:.86,com:biz}),b64=url.split(",")[1],bin=atob(b64),u=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);
     if(u[0]!==0xFF||u[1]!==0xD8)return null;
     var info=api.state(),A=st.arrays>1?", "+st.arrays+" sections":"";
+    if(biz)return {bytes:u,w:900,h:480,caption:(st.ctype?"Your building as set up in our 3D builder: ":"Your storefront as set up in our 3D builder: ")+comLine()+"."};
     return {bytes:u,w:900,h:480,caption:"Your home as set up in our 3D builder: "+(info.styleName||"your home")+", "+st.stories+" story"+((st.sol||st.pig)?", "+st.panels+" panels"+A:"")+"."};}catch(e){return null;}
 }
 /* simple names people aren't scared of: Date-Customer-City.pdf */
@@ -529,7 +568,7 @@ $$(".r3d",box).forEach(function(r){r.addEventListener("keydown",function(e){if(e
 var api=null,loading=false,pend=[],ov=$("ov"),lastFocus=null;
 var core={st:st,CFG:CFG,P:P,$:$,$$:$$,reduce:reduce,money:money,track:track,free:free,render:render,totals:totals,
   mode:CFG.mode||"home",close:function(){close3d();},
-  ie:function(){var v=zi&&zi.value;return !!(v&&v.length===5&&ieCity(v));}};
+  ie:function(){var v=zi&&zi.value;return !!(v&&v.length===5&&ieCity(v));},comVisit:function(){return comVisit();}};
 function script(src,ok,bad){var s=doc.createElement("script");s.src=src;s.async=true;s.onload=ok;s.onerror=bad;doc.head.appendChild(s);}
 function load3d(cb){
   if(api){if(cb)cb();return;}if(cb)pend.push(cb);if(loading)return;loading=true;

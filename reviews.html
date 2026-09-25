@@ -26,7 +26,7 @@
   <link href="assets/fonts.css" rel="stylesheet">
   <link href="style.css" rel="stylesheet">
   <!-- tq:css -->
-<link href="assets/quote/quote.css?v=2e93166524" rel="stylesheet">
+<link href="assets/quote/quote.css?v=75d66d0f05" rel="stylesheet">
 <!-- /tq:css -->
 
   <script type="application/ld+json">
@@ -406,7 +406,7 @@
       <button type="button" class="xtile" data-svc="pw" aria-pressed="false"><b>Driveway and patio wash</b><span>quoted on site</span></button>
       <button type="button" class="xtile" data-svc="ad" aria-pressed="false"><b>Decal and vinyl removal</b><span>from $129</span></button>
       <button type="button" class="xtile" data-svc="gr" aria-pressed="false"><b>Graffiti removal</b><span>from $129</span></button>
-      <button type="button" class="xtile" data-svc="com" aria-pressed="false"><b>Storefront glass</b><span>from $89 a visit</span></button>
+      <button type="button" class="xtile" data-svc="com" aria-pressed="false"><b>Storefronts and buildings</b><span>$149 inside and out</span></button>
     </div>
 
     <div class="price-grid" id="price">
@@ -417,7 +417,7 @@
           <div class="opt"><span>Your home</span><div class="seg2" data-seg="stories"><button type="button" data-v="1" aria-pressed="true">1 story</button><button type="button" data-v="2" aria-pressed="false">2 story</button></div></div>
           <div class="note" id="winNote"></div>
           <div class="opt"><span><span id="moreLbl">More than 12 windows </span><b class="amt" id="moreAmt">+$39</b> <button type="button" class="info" data-why aria-expanded="false" aria-label="Why this price">i</button></span><button type="button" class="switch" data-sw="more" role="switch" aria-checked="false" aria-label="More windows than standard"></button></div>
-          <p class="why" hidden>The base price covers 10 to 12 windows on a single story or 18 to 20 on a two story. Past that it's more glass, more screens and more tracks to do right, so $39 covers the extra time on a single story and $59 on a two story, where it's ladder work.</p>
+          <p class="why" hidden>The base price covers 10 to 12 windows on a single story or 18 to 20 on a two story. Past that it's more glass, more screens and more tracks to do right, so it's a flat $39 more, single or two story.</p>
           <div class="opt"><span>Inside windows too <b class="amt">+$49</b> <button type="button" class="info" data-why aria-expanded="false" aria-label="Why this price">i</button><small>Every window in the house, tracks vacuumed and wiped dry</small></span><button type="button" class="switch" data-sw="inside" role="switch" aria-checked="false" aria-label="Add inside windows"></button></div>
           <p class="why" hidden>One flat $49 for every window inside the house, with the tracks vacuumed and wiped dry. Most companies charge by the window for inside work. We're already there with the water and the tools, so doing the inside costs you far less than a separate visit.</p>
           <div class="opt"><span>Large or custom home <button type="button" class="info" data-why aria-expanded="false" aria-label="Why this price">i</button><small>Lake homes, tall glass and lots of it. Tony confirms the price after a look.</small></span><button type="button" class="switch" data-sw="large" role="switch" aria-checked="false" aria-label="Large or custom home"></button></div>
@@ -493,8 +493,24 @@
           <div class="note">A single tag on one pane. Etched glass starts with an $89 assessment, credited if you go ahead.</div>
         </div></template>
         <template data-tpl><div class="svc" data-body="com">
-          <h3>Storefront glass <small>from $89 a visit</small></h3>
-          <div class="note">Inside and out, up to ten pane faces, monthly. Biweekly and weekly cost less per visit. <a href="commercial-window-cleaning.html">See storefront plans →</a></div>
+          <h3>Storefronts and buildings <small>$149 inside and out</small></h3>
+          <div class="opt"><span class="l"><b>What are we cleaning?</b></span><div class="seg2" data-seg="ctype"><button type="button" data-v="0" aria-pressed="true">Storefront</button><button type="button" data-v="1" aria-pressed="false">Office building</button></div></div>
+          <div class="cgrp" data-cg="0">
+            <div class="opt"><span class="l"><b>Glass panes</b><small>Every pane facing out, big or small</small></span><div class="stepper" data-step="cpanes"><button type="button" data-d="-1" aria-label="Fewer panes">−</button><output class="num">8</output><button type="button" data-d="1" aria-label="More panes">+</button></div></div>
+            <div class="opt"><span class="l"><b>Glass doors</b><small>Each door counts as a pane</small></span><div class="stepper" data-step="cdoors"><button type="button" data-d="-1" aria-label="Fewer doors">−</button><output class="num">2</output><button type="button" data-d="1" aria-label="More doors">+</button></div></div>
+            <div class="opt"><span class="l"><b>How often</b></span><div class="seg2 wrapok" data-seg="cfreq"><button type="button" data-v="0" aria-pressed="true">One time $149</button><button type="button" data-v="1" aria-pressed="false">Monthly 15% off</button><button type="button" data-v="2" aria-pressed="false">Every 2 weeks 25% off</button></div></div>
+            <div class="opt"><span>Interior partitions and mirrors <b class="amt">+$50</b></span><button type="button" class="switch" data-sw="cin" role="switch" aria-checked="false" aria-label="Add interior partitions and mirrors"></button></div>
+            <div class="opt"><span class="l"><b>Rotating vinyl stickers <b class="amt">+$10 each</b> <button type="button" class="info" data-why aria-expanded="false" aria-label="What this covers">i</button></b><small>Hours, sales and promos you swap out</small></span><div class="stepper" data-step="cstk"><button type="button" data-d="-1" aria-label="Fewer stickers">−</button><output class="num">0</output><button type="button" data-d="1" aria-label="More stickers">+</button></div></div>
+            <p class="why" hidden>When your promos change, we take the old sticker off clean and put the new one up straight while we're there, $10 a sticker. You bring the stickers, we handle the glass.</p>
+            <div class="note" id="comNote">$149 flat for 8 to 10 panes inside and out, doors included. Monthly takes 15% off every visit, every 2 weeks takes 25% off.</div>
+          </div>
+          <div class="cgrp" data-cg="1" hidden>
+            <div class="opt"><span class="l"><b>Building size</b><small>Thousands of square feet, close is fine</small></span><div class="stepper" data-step="bsq"><button type="button" data-d="-1" aria-label="Smaller building">−</button><output class="num">12</output><button type="button" data-d="1" aria-label="Bigger building">+</button></div></div>
+            <div class="opt"><span class="l"><b>Stories</b></span><div class="stepper" data-step="bst"><button type="button" data-d="-1" aria-label="Fewer stories">−</button><output class="num">2</output><button type="button" data-d="1" aria-label="More stories">+</button></div></div>
+            <div class="opt"><span class="l"><b>Windows</b><small>Count one side and multiply, close is fine</small></span><div class="stepper" data-step="bwin"><button type="button" data-d="-4" aria-label="Fewer windows">−</button><output class="num">48</output><button type="button" data-d="4" aria-label="More windows">+</button></div></div>
+            <div class="note">Buildings get a free walkthrough and a firm price in writing before we start. Worked after hours, one invoice a month.</div>
+          </div>
+          <div class="note"><a href="commercial-window-cleaning.html">See storefront plans →</a> · <button type="button" class="linkish open3d" data-mode="com">See it in 3D</button></div>
         </div></template>
         <div class="svc" id="panelRow">
           <div class="opt"><span class="l"><b>Solar panels on your roof</b><small>Count them from the street, close is fine</small></span><div class="stepper" data-step="panels"><button type="button" data-d="-1" aria-label="Fewer panels">−</button><output class="num">16</output><button type="button" data-d="1" aria-label="More panels">+</button></div><b class="ptotal num" hidden></b></div>
@@ -899,6 +915,7 @@
     <button type="button" role="tab" data-hmode="sol" aria-selected="false">Solar</button>
     <button type="button" role="tab" data-hmode="scr" aria-selected="false">Screens</button>
     <button type="button" role="tab" data-hmode="pig" aria-selected="false">Pigeons</button>
+    <button type="button" role="tab" data-hmode="com" aria-selected="false">Storefront</button>
   </div>
   <div class="ov-stage" id="stage">
     <div class="ov-load" id="ovLoad">Loading 3D…</div>
@@ -954,6 +971,27 @@
       <div class="orow"><span>New frames and clips <b class="amt">+$10 a screen</b></span><button type="button" class="switch" data-sw="frames" role="switch" aria-checked="false" aria-label="New frames and clips, $10 a screen"></button></div>
       <button type="button" class="replay" data-hact="replay">▶ Watch it again</button>
     </div>
+    <div class="ops" data-for="com" hidden>
+      <div class="orow"><span>Cleaning</span><div class="seg2" data-seg="ctype"><button type="button" data-v="0" aria-pressed="true">Storefront</button><button type="button" data-v="1" aria-pressed="false">Office building</button></div></div>
+      <div class="cgrp" data-cg="0">
+        <div class="orow col"><span>Storefront style</span><div class="seg2 wrapok" data-hseg="cst"><button type="button" data-v="0" aria-pressed="true">Strip center</button><button type="button" data-v="1" aria-pressed="false">Cafe with patio</button><button type="button" data-v="2" aria-pressed="false">Tall glass</button><button type="button" data-v="3" aria-pressed="false">Standalone</button></div></div>
+        <div class="orow"><label for="cname">Name on the sign</label><input id="cname" class="cname" type="text" maxlength="18" placeholder="Your business" autocomplete="organization"></div>
+        <div class="orow"><span>Walls</span><div class="sw" data-hseg="cwc"><button type="button" data-v="0" aria-pressed="true" aria-label="Warm gray" style="background:#c9c5bd"></button><button type="button" data-v="1" aria-pressed="false" aria-label="Sand" style="background:#e3d5bb"></button><button type="button" data-v="2" aria-pressed="false" aria-label="Stone" style="background:#bfb29c"></button><button type="button" data-v="3" aria-pressed="false" aria-label="Adobe" style="background:#cfae8a"></button></div></div>
+        <div class="orow"><span>Sign color</span><div class="sw" data-hseg="cac"><button type="button" data-v="0" aria-pressed="true" aria-label="Navy" style="background:#103050"></button><button type="button" data-v="1" aria-pressed="false" aria-label="Green" style="background:#1b7a4c"></button><button type="button" data-v="2" aria-pressed="false" aria-label="Red" style="background:#9a2a22"></button><button type="button" data-v="3" aria-pressed="false" aria-label="Blue" style="background:#2b4f8c"></button></div></div>
+        <div class="orow"><span>Glass panes</span><div class="stepper" data-step="cpanes"><button type="button" data-d="-1" aria-label="Fewer panes">−</button><output class="num">8</output><button type="button" data-d="1" aria-label="More panes">+</button></div></div>
+        <div class="orow"><span>Glass doors</span><div class="stepper" data-step="cdoors"><button type="button" data-d="-1" aria-label="Fewer doors">−</button><output class="num">2</output><button type="button" data-d="1" aria-label="More doors">+</button></div></div>
+        <div class="orow"><span>Vinyl stickers <b class="amt">+$10 each</b></span><div class="stepper" data-step="cstk"><button type="button" data-d="-1" aria-label="Fewer stickers">−</button><output class="num">0</output><button type="button" data-d="1" aria-label="More stickers">+</button></div></div>
+        <div class="orow col"><span>How often</span><div class="seg2 wrapok" data-seg="cfreq"><button type="button" data-v="0" aria-pressed="true">One time $149</button><button type="button" data-v="1" aria-pressed="false">Monthly 15% off</button><button type="button" data-v="2" aria-pressed="false">Every 2 weeks 25% off</button></div></div>
+        <div class="orow"><span>Partitions and mirrors <b class="amt">+$50</b></span><button type="button" class="switch" data-sw="cin" role="switch" aria-checked="false" aria-label="Add interior partitions and mirrors"></button></div>
+      </div>
+      <div class="cgrp" data-cg="1" hidden>
+        <div class="orow"><span>Size, thousand sq ft</span><div class="stepper" data-step="bsq"><button type="button" data-d="-1" aria-label="Smaller building">−</button><output class="num">12</output><button type="button" data-d="1" aria-label="Bigger building">+</button></div></div>
+        <div class="orow"><span>Stories</span><div class="stepper" data-step="bst"><button type="button" data-d="-1" aria-label="Fewer stories">−</button><output class="num">2</output><button type="button" data-d="1" aria-label="More stories">+</button></div></div>
+        <div class="orow"><span>Windows</span><div class="stepper" data-step="bwin"><button type="button" data-d="-4" aria-label="Fewer windows">−</button><output class="num">48</output><button type="button" data-d="4" aria-label="More windows">+</button></div></div>
+      </div>
+      <button type="button" class="replay" data-hact="replay">▶ Watch it again</button>
+      <p class="onote">Walking a business owner through it? Set their panes, doors and stickers here and the price below updates as you go.</p>
+    </div>
     <div class="ops" data-for="pig" hidden>
       <div class="orow col"><span>The story</span><div class="seg2 wrapok" data-hseg="stage"><button type="button" data-v="0" aria-pressed="false">Today</button><button type="button" data-v="1" aria-pressed="false">Cleanout + mesh</button><button type="button" data-v="2" aria-pressed="true">+ Free spinners</button><button type="button" data-v="3" aria-pressed="false">What 1 spinner covers</button><button type="button" data-v="4" aria-pressed="false">Next door</button></div></div>
       <div class="orow"><span>Spinners <button type="button" class="one" data-hact="try1">Try just 1</button> <button type="button" class="one" data-hact="reach">See what 1 covers</button></span><div class="stepper" data-hstep="spin"><button type="button" data-d="-1" aria-label="Fewer spinners">−</button><output class="num">3</output><button type="button" data-d="1" aria-label="More spinners">+</button></div></div>
@@ -972,7 +1010,7 @@
 </nav>
 </div>
 <script>window.TQ={"svc":["win"],"mode":"home"};</script>
-<script src="assets/quote/quote.js?v=39cea89302" defer></script>
+<script src="assets/quote/quote.js?v=ca74291e8d" defer></script>
 <!-- /tq:tail -->
 </body>
 </html>

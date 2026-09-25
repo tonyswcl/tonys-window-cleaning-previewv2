@@ -46,7 +46,7 @@ def page_config(fn):
     elif base.startswith('graffiti'):
         svc, mode = ['gr'], 'win'
     elif base.startswith('commercial'):
-        svc, mode = ['com'], 'win'
+        svc, mode = ['com'], 'com'
     elif base.startswith('window-cleaning'):
         svc, mode = ['win'], 'win'
     elif base == 'inland-empire':
@@ -125,16 +125,39 @@ def lazy_ov(html):
     return html[:a] + '    <template data-tpl>\n' + html[a:b] + '    </template>\n' + html[b:]
 
 
+def com_swap(html):
+    """Commercial pages open on the storefront: its poster, its words."""
+    return (html.replace('assets/quote/home-4x5.webp', 'assets/quote/com-4x5.webp').replace('assets/quote/home-16x10.webp', 'assets/quote/com-16x10.webp')
+            .replace('alt="3D model of a High Desert home with clean windows, washed solar panels, pigeon mesh and spinners"', 'alt="3D model of a storefront with clean glass doors, panes and window stickers"')
+            .replace('alt="3D model of a High Desert home with clean windows, washed solar panels and pigeon mesh"', 'alt="3D model of a storefront with clean glass doors and panes"')
+            .replace('aria-label="Open the 3D preview of your home"', 'aria-label="Open the 3D preview of your storefront"')
+            .replace('See it on my home', 'See it on my storefront'))
+
+
 def blocks(conf, v):
-    three_card = {'pig': 'card-pig.html', 'win': 'card-win.html', 'sol': 'card-sol.html', 'scr': 'card-scr.html'}.get(conf['mode'], 'card-home.html')
-    steps = '\n\n'.join([lazy_bodies(frag('steps.html'), conf['svc']), frag('zip.html'), frag('three-head.html') + '\n' + frag(three_card) + '\n' + frag('three-tail.html')])
+    three_card = {'pig': 'card-pig.html', 'win': 'card-win.html', 'sol': 'card-sol.html', 'scr': 'card-scr.html', 'com': 'card-com.html'}.get(conf['mode'], 'card-home.html')
+    head, media, cta = frag('three-head.html'), frag('media.html'), frag('cta.html')
+    if conf['mode'] == 'com':
+        head = com_swap(head).replace('<h2>See it on your home in 3D</h2><p>Pick your home. Watch the job get done.</p>', '<h2>See it on your storefront in 3D</h2><p>Set your panes, doors and stickers. Watch the glass get done.</p>')
+        media = com_swap(media).replace('>3D home</button>', '>3D storefront</button>')
+        cta = com_swap(cta).replace('''        <span class="chip">Windows <b>$149</b></span>
+        <span class="chip">Two story <b>$249</b></span>
+        <span class="chip">Inside <b>+$49</b></span>
+        <span class="chip">Solar <b>$7</b>/panel</span>
+        <span class="chip">Pigeon proofing <b>$450</b></span>
+        <span class="chip">Screens <b>$53.99</b></span>''', '''        <span class="chip">Storefront <b>$149</b></span>
+        <span class="chip">Monthly <b>15% off</b></span>
+        <span class="chip">Every 2 weeks <b>25% off</b></span>
+        <span class="chip">Partitions and mirrors <b>+$50</b></span>
+        <span class="chip">Vinyl stickers <b>$10</b> each</span>''')
+    steps = '\n\n'.join([lazy_bodies(frag('steps.html'), conf['svc']), frag('zip.html'), head + '\n' + frag(three_card) + '\n' + frag('three-tail.html')])
     tail = ('<div class="tq" data-nosnippet>\n' + lazy_ov(frag('ov.html')) + '\n' + frag('dock.html') + '\n</div>\n'
             '<script>window.TQ=' + json.dumps(dict(conf, **({'tech': v['tech']} if v.get('tech') else {})), separators=(',', ':')) + ';</script>\n'
             '<script src="assets/quote/quote.js?v=' + v['quote.js'] + '" defer></script>')
     return {
         'css': '<link href="assets/quote/quote.css?v=' + v['quote.css'] + '" rel="stylesheet">',
-        'cta': frag('cta.html'),
-        'media': frag('media.html'),
+        'cta': cta,
+        'media': media,
         'steps': steps,
         'tail': tail,
     }
