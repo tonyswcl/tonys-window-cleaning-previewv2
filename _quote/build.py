@@ -21,7 +21,8 @@ SKIP = {'privacy.html', '404.html'}
 CITIES = [('spring-valley-lake', 'Spring Valley Lake', 'Spring Valley Pkwy'), ('apple-valley', 'Apple Valley', 'Kiowa Rd, Apple Valley'),
           ('oak-hills', 'Oak Hills', 'Oak Hill Rd, Oak Hills'), ('hesperia', 'Hesperia', 'Main St, Hesperia'),
           ('victorville', 'Victorville', 'Bear Valley Rd, Victorville'), ('adelanto', 'Adelanto', 'Bartlett Ave, Adelanto'),
-          ('phelan', 'Phelan', 'Phelan Rd, Phelan'), ('silverwood', 'Silverwood', 'Camp Creek, Silverwood')]
+          ('phelan', 'Phelan', 'Phelan Rd, Phelan'), ('silverwood', 'Silverwood', 'Camp Creek, Silverwood'),
+          ('inland-empire', 'Inland Empire', 'Base Line Rd, Rancho Cucamonga')]
 
 
 def page_config(fn):
@@ -48,6 +49,8 @@ def page_config(fn):
         svc, mode = ['com'], 'win'
     elif base.startswith('window-cleaning'):
         svc, mode = ['win'], 'win'
+    elif base == 'inland-empire':
+        svc, mode = ['pig'], 'home'
     else:
         svc, mode = ['win'], 'home'
     conf = {'svc': svc, 'mode': mode}
