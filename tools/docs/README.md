@@ -12,6 +12,7 @@ One layout across every customer-facing document.
 | `fit.js` | Checks every `.page` fits one Letter sheet before rendering. |
 | `render.js` | Renders the HTML to PDF plus PNG previews. |
 | `template-quote.html` | Skeleton to copy for a new document. |
+| `template-receipt.html` | Paid receipt: line items, gratuity, total paid, "Your cleaners", upkeep note. |
 
 ## Why the fonts are embedded
 
