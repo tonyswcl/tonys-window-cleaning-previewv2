@@ -119,8 +119,7 @@
           <div class="cgrp" data-cg="0">
             <div class="opt"><span class="l"><b>Glass panes</b><small>Every pane facing out, big or small</small></span><div class="stepper" data-step="cpanes"><button type="button" data-d="-1" aria-label="Fewer panes">−</button><output class="num">8</output><button type="button" data-d="1" aria-label="More panes">+</button></div></div>
             <div class="opt"><span class="l"><b>Glass doors</b><small>Each door counts as a pane</small></span><div class="stepper" data-step="cdoors"><button type="button" data-d="-1" aria-label="Fewer doors">−</button><output class="num">2</output><button type="button" data-d="1" aria-label="More doors">+</button></div></div>
-            <div class="opt"><span class="l"><b>How often</b></span><div class="seg2 wrapok" data-seg="cfreq"><button type="button" data-v="0" aria-pressed="true">One time $149</button><button type="button" data-v="1" aria-pressed="false">Monthly 15% off</button><button type="button" data-v="2" aria-pressed="false">Every 2 weeks 25% off</button></div></div>
-            <div class="opt"><span class="l"><b>Sign for longer, pay less</b><small>Locks the price and the schedule</small></span><div class="seg2 wrapok" data-seg="cterm"><button type="button" data-v="0" aria-pressed="true">Month to month</button><button type="button" data-v="1" aria-pressed="false">Quarterly 20% off</button><button type="button" data-v="2" aria-pressed="false">Yearly 40% off</button></div></div>
+            <div class="opt stack"><span class="l"><b>Schedule</b><small>Agreements lock the price. The better discount applies, never both.</small></span><div class="seg2 wrapok" data-seg="csched"><button type="button" data-v="0" aria-pressed="true">One time $149</button><button type="button" data-v="1" aria-pressed="false">Monthly 15% off</button><button type="button" data-v="2" aria-pressed="false">Every 2 weeks 25% off</button><button type="button" data-v="3" aria-pressed="false">Quarterly agreement 20% off</button><button type="button" data-v="4" aria-pressed="false">Yearly agreement 40% off</button></div></div>
             <div class="opt"><span>Interior partitions and mirrors <b class="amt">+$50</b></span><button type="button" class="switch" data-sw="cin" role="switch" aria-checked="false" aria-label="Add interior partitions and mirrors"></button></div>
             <div class="opt"><span class="l"><b>Rotating vinyl stickers <b class="amt">+$10 each</b> <button type="button" class="info" data-why aria-expanded="false" aria-label="What this covers">i</button></b><small>Hours, sales and promos you swap out</small></span><div class="stepper" data-step="cstk"><button type="button" data-d="-1" aria-label="Fewer stickers">−</button><output class="num">0</output><button type="button" data-d="1" aria-label="More stickers">+</button></div></div>
             <p class="why" hidden>When your promos change, we take the old sticker off clean and put the new one up straight while we're there, $10 a sticker. You bring the stickers, we handle the glass.</p>
@@ -147,6 +146,7 @@
         <div class="ttotal"><span>Total</span><b id="ttotal" class="num">$149</b></div>
         <div class="save" id="save" hidden></div>
         <p class="from-note" id="fromNote" hidden>Specialty work is a starting price. Tony confirms it in writing before he starts.</p>
+        <p class="proof" id="proof" hidden></p>
         <a class="early-tip" id="earlyTip" href="#day">Book online and save 10% →</a>
         <div class="guar"><span aria-hidden="true">✓</span><span><b>Satisfaction guaranteed.</b> If anything isn't right, we redo it before we leave.</span></div>
         <ul class="trust"><li>Free inspection</li><li>No trip fee in the High Desert</li><li>Card, cash or check</li></ul>
@@ -189,7 +189,7 @@
         <p><b>Nothing to pay now.</b> Card, cash or check once the work is done and you've looked it over.</p>
       </div>
       <div class="lab" style="margin-top:14px">What happens if you wait</div>
-      <div class="seg2 wrapok" data-seg="wait"><button type="button" data-v="0" aria-pressed="false">Book now</button><button type="button" data-v="1" aria-pressed="false">3 months</button><button type="button" data-v="2" aria-pressed="true">6 months</button><button type="button" data-v="3" aria-pressed="false">A year</button></div>
+      <div class="seg2 wrapok" data-seg="wait"><button type="button" data-v="0" aria-pressed="true">Book now</button><button type="button" data-v="1" aria-pressed="false">3 months</button><button type="button" data-v="2" aria-pressed="false">6 months</button><button type="button" data-v="3" aria-pressed="false">A year</button></div>
       <ul class="waitlist" id="waitList"></ul>
       <p class="small strong" id="waitNote"></p>
       <a class="qb qb-gold qb-sm" href="#day" id="waitGo" style="margin-top:10px">Pick my day and save 10% →</a>

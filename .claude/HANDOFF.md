@@ -29,8 +29,9 @@ All prices live in one object `P` at the top of `_quote/src/quote.js`. Page body
 
 ## Where things stand
 
-**Live.** Tony gave the go ahead on September 25 ("publish to main") and the branch was merged into main that day. Recent commits, newest first:
+**Live.** Tony gave the go ahead on September 25 ("publish to main") and the branch was merged into main that day. Round two the same day, on his "take full control": recent commits, newest first:
 
+0. Round two: 30 new English pages (the 24 from the masterplan, the mountain communities hub and Crestline, Lake Arrowhead, Running Springs, Big Bear Lake, Wrightwood and the Cajon Pass), 4 Spanish pages with the whole quote tool and 3D in Spanish, a public review line under the ticket total, the wait timeline opening on Book now, the storefront schedule in one row of five, shorter 3D notes, the hose routed down the pole. 89 pages. Pages are generated from `tools/pages/specs_*.py` by `tools/pages/make.py` (see below).
 1. Launch pass: the "Do I really need this?" tabs left the quote flow (each service card says what you get and why now, the signs it's time fold under step 3), step 2 ends on "What happens next", weekdays morning or afternoon and weekends "I prefer weekends", the 3D controls grouped into tabs with a fold away bar on phones, one zoom pill, lighter stage chips, desktop side panel with the summary pinned at the bottom.
 2. Leafy trees, fuller palms and pines, mountains in three lines, rounded tech body with boots, window wash from Tony's footage, cards and posters rerendered.
 3. Storefront terms and $50 past 10, office buildings $10 a pane by story, deep links into the 3D, Meta event map, WebSite and Service schema, view transitions, pigeon clip copy.
@@ -84,7 +85,10 @@ Made in the browser (`makePdf` in `quote.js`), downloaded or shared as a file. E
 
 ## How the site is built
 
-- 55 static pages in the repo root. `style.css` and `main.js` are shared.
+- 89 static pages in the repo root. `style.css` and `main.js` are shared.
+- New pages since launch are written as Python specs in `tools/pages/specs_en*.py` and `tools/pages/specs_es.py` and rendered by `python3 tools/pages/make.py` (nav, footer and the business schema are copied from `pigeon-proofing-hesperia.html` at run time so they never drift; the script also adds the footer links, the hreflang pairs and rewrites `sitemap.xml`). Then run `_quote/build.py`. `make.py --check` enforces title under 60, description 140 to 158, no dashes. Edit the spec, not the generated page.
+- Spanish: `espanol.html`, `control-de-palomas.html`, `limpieza-de-ventanas.html`, `limpieza-de-paneles-solares.html`. `build.py` maps them in `SPANISH`, uses the fragments in `_quote/src/fragments/es/`, and sets `window.TQ.lang="es"`. In `quote.js` the `L(en,es)` and `ix(en,es)` helpers switch the ticket, notes, plans, days and ZIP answers; the message to Tony, the form payload and the PDF stay English (`totals("en")`). In `q3d.js` the `L()` helper does the same for the welcome, tour, step notes, panel summary and editor. Tested by `tools/tests/spanish.js` (20 checks).
+- Mountain pages carry `mountain: true` in `window.TQ` (unused by the scripts today; there if a pine street ever gets built in the 3D).
 - The quote tool and 3D are injected into every page by `python3 _quote/build.py` between marker comments `<!-- tq:css -->`, `tq:cta`, `tq:media`, `tq:steps`, `tq:tail`. Never edit inside those markers by hand. Edit `_quote/src/` and rebuild. The build needs `esbuild` on the PATH (`npm i -g esbuild`) and prints one line per page.
 - `build.py` `page_config()` picks services and 3D mode from the file name (`pigeon-proofing*` pig, `solar-panel-cleaning*` sol, `screen-repair*` scr, `window-cleaning*` win, `commercial*` com with storefront posters and wording, `inland-empire` pig, everything else home). City names come from `CITIES`.
 - `_quote/src/quote.js`: prices `P`, state `st`, limits `LIMIT`, `items()` line items, `totals()`, plan schedules, the message to Tony, the share link token (`#q...`, includes an optional `-c` storefront segment), ZIP answers (High Desert, extra High Desert places, Inland Empire ranges), PDF, hydration of the lazy templates.
@@ -106,8 +110,9 @@ Run each from an empty temp directory (they write screenshots there): `cd $(mkte
 
 | Script | What it proves | Pass looks like |
 | --- | --- | --- |
-| `pages.js` | Every page on phone and desktop: no JS errors, tool hydrates (12 bodies, 6 3D panels) | `ALL PAGES CLEAN` |
-| `quote.js` | Prices, plans, pigeon package, no need tabs, signs folded under step 3, weekday and weekend rules, ZIP answers, message, email and text links, PDF name, form payload | 33 PASS |
+| `pages.js` | Every page on phone and desktop: no JS errors, tool hydrates (12 bodies, 6 3D panels). 89 pages, about 4 minutes | `ALL PAGES CLEAN` |
+| `quote.js` | Prices, plans, pigeon package, no need tabs, signs folded under step 3, weekday and weekend rules, ZIP answers, message, email and text links, PDF name, form payload | 32 PASS |
+| `spanish.js` | Spanish page: ticket, plans, days, ZIP, welcome, tour, panel in Spanish; message to Tony in English | 20 PASS |
 | `deeplink.js` | `?see=` and `#see-` links open the right module, Meta events fire | 10 PASS |
 | `modes3d.js` | Welcome, tour, folded panel, pigeon story steps, neighborhoods, solar | `no errors` |
 | `home-flow.js 390 844` | Welcome to Fix it on a phone, damage dots, weather chip | `errors []` |

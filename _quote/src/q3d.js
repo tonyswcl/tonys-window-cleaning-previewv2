@@ -6,6 +6,8 @@
 (function(){
 "use strict";
 window.__tq3dInit=function(C){
+/* Spanish pages: every note the tech, the welcome and the panel say has a Spanish twin; the quote sent to Tony stays English */
+var ES=!!(C.CFG&&C.CFG.lang==="es");function L(en,es){return ES?es:en;}
 var T=window.THREE,doc=document,$=C.$,$$=C.$$,st=C.st,P=C.P,money=C.money,track=C.track,reduce=C.reduce;
 if(!T)throw new Error("three.js missing");
 var ov=$("ov"),stageEl=$("stage"),heroHost=$("h3host"),heroLay=heroHost.parentNode;
@@ -821,7 +823,7 @@ function applyBefore(dt){
   poop.concat(nests).forEach(function(m){m.visible=pigNow&&bef.pig<.5;});
 }
 /* where to tap for what each problem does */
-var DM={win:["Dust and sprinkler spots bake on in the sun and dull the light coming in.","Gray, dusty screens block more light than most people think, and the dirt washes back onto clean glass."],
+var DM=ES?{win:["El polvo y las manchas de los aspersores se hornean con el sol y opacan la luz que entra.","Los mosquiteros grises y polvosos tapan más luz de lo que la gente cree, y la tierra se regresa al vidrio limpio."],hw:"Las manchas blancas son minerales que deja el agua de riego. Si se dejan, marcan el vidrio.",scr:["Las rasgaduras dejan entrar bichos y polvo, y solo crecen con el viento.","El sol pone quebradiza la malla del constructor, así que se cuelga y se suelta del marco."],sol:["Una capa de polvo bloquea el sol de las celdas, y aquí casi no llueve para quitarla.","Tu app solar lo muestra: la producción baja entre lavados."],pig:["El excremento mancha la teja y los paneles, y se junta rápido donde se paran las aves.","Los nidos debajo de los paneles guardan ramitas secas y basura pegadas al cableado.","El olor. El excremento y los nidos viejos sueltan un olor fuerte a amoniaco que empeora con el calor del verano. Limpiamos todo y desinfectamos, para que el olor se vaya con ellas.","Las palomas regresan al mismo techo, y una pareja se vuelve una parvada."]}:{win:["Dust and sprinkler spots bake on in the sun and dull the light coming in.","Gray, dusty screens block more light than most people think, and the dirt washes back onto clean glass."],
   hw:"White spots are minerals left by sprinkler water. Left alone, they etch into the glass.",
   scr:["Tears let bugs and dust in, and they only get bigger in the wind.","Sun makes builder mesh brittle, so it sags and pulls loose from the frame."],
   sol:["A film of dust blocks sunlight from the cells, and we get little rain to wash it off.","Your solar app shows it: output drifts down between washes."],
@@ -902,6 +904,7 @@ function makeWorker(){
   var hd=new T.Mesh(G.cyl,M.pole);hd.scale.x=hd.scale.z=.014;hd.visible=false;scene.add(hd);tools.handle=hd;
   var tw=new T.Mesh(G.box,M.towel);tw.scale.set(.16,.05,.1);tw.visible=false;scene.add(tw);tools.towel=tw;
   var pole=new T.Mesh(G.cyl,M.pole);pole.scale.x=pole.scale.z=.022;pole.visible=false;scene.add(pole);tools.pole=pole;
+  var hu=new T.Mesh(G.cyl,M.hose);hu.scale.x=hu.scale.z=.018;hu.visible=false;scene.add(hu);tools.hoseUp=hu; /* the hose along the pole, down to the roof */
   var br=new T.Group();box(.52,.05,.11,M.cart,0,.06,0,br,true);box(.5,.05,.09,M.rubber,0,.025,0,br,true);br.visible=false;scene.add(br);tools.brush=br;
   var wg=new T.BufferGeometry(),wp=new Float32Array(60*3);wg.setAttribute("position",new T.BufferAttribute(wp,3));var water=new T.Points(wg,M.water);water.visible=false;water.frustumCulled=false;scene.add(water);tools.water=water;
   var cart=new T.Group(),tk=new T.Mesh(G.cyl,M.tank);tk.scale.set(.28,.8,.28);tk.position.y=.55;tk.castShadow=true;cart.add(tk);box(.7,.08,.5,M.cart,0,.12,0,cart);
@@ -1034,7 +1037,7 @@ function setMode(m,keepT){
   ov.setAttribute("data-mode",m);
   $$(".ov-tabs [data-hmode]").forEach(function(b){b.setAttribute("aria-selected",String(b.getAttribute("data-hmode")===m));});
   $$(".ov-panel .ops").forEach(function(p){p.hidden=p.getAttribute("data-for")!==m;});
-  $("ovT").textContent={show:"Your home in 3D",home:"Your home in 3D",win:"Window cleaning in 3D",sol:"Solar cleaning in 3D",scr:"Screen repair in 3D",pig:"Pigeon proofing in 3D",com:st.ctype?"Your building in 3D":"Your storefront in 3D"}[m];
+  $("ovT").textContent=(ES?{show:"Tu casa en 3D",home:"Tu casa en 3D",win:"Limpieza de ventanas en 3D",sol:"Limpieza solar en 3D",scr:"Mosquiteros en 3D",pig:"Control de palomas en 3D",com:st.ctype?"Tu edificio en 3D":"Tu local en 3D"}:{show:"Your home in 3D",home:"Your home in 3D",win:"Window cleaning in 3D",sol:"Solar cleaning in 3D",scr:"Screen repair in 3D",pig:"Pigeon proofing in 3D",com:st.ctype?"Your building in 3D":"Your storefront in 3D"})[m];
   grabLabel();
   if(!keepT)user=false;goal=preset();if(!keepT){cur=null;}
   syncControls();summary();
@@ -1065,7 +1068,7 @@ function applyWx(){var w=wxNow(),cov=w.cover,dust=clamp01((w.wind-14)/18);WX.cov
   dustFx.m.visible=w.wind>=12;dustFx.u.uOp.value=.25+dust*.55;rainFx.m.visible=WX.rain;wxChip();}
 function wxChip(){var b=$("wxChip");if(!b)return;var w=wxNow(),live=WX.mode==="today"&&WX.live;
   var sky=WX.rain?"rain":w.cover>.7?"cloudy":w.cover>.4?"partly cloudy":"clear";
-  b.textContent=(WX.mode==="today"?(live?"Today in "+WX.live.name+": ":"A typical day: "):{sun:"Sunny: ",wind:"Windy: ",cloud:"Cloudy: "}[WX.mode])+sky+", "+Math.round(w.wind)+" mph wind";}
+  if(ES)sky={rain:"lluvia",cloudy:"nublado","partly cloudy":"medio nublado",clear:"despejado"}[sky];b.textContent=(WX.mode==="today"?(live?L("Today in ","Hoy en ")+WX.live.name+": ":L("A typical day: ","Un día típico: ")):(ES?{sun:"Soleado: ",wind:"Con viento: ",cloud:"Nublado: "}:{sun:"Sunny: ",wind:"Windy: ",cloud:"Cloudy: "})[WX.mode])+sky+", "+L(Math.round(w.wind)+" mph wind","viento de "+Math.round(w.wind)+" mph");}
 /* blowing dust, carried by the wind and wrapped around the house */
 var dustFx=(function(){var n=small||lowMem?260:520,pos=new Float32Array(n*3),ar=new Float32Array(n),r=rng(101);for(var i=0;i<n;i++){pos[i*3]=(r()-.5)*90;pos[i*3+1]=.1+Math.pow(r(),2)*6;pos[i*3+2]=(r()-.5)*90;ar[i]=r();}
   var g=new T.BufferGeometry();g.setAttribute("position",new T.BufferAttribute(pos,3));g.setAttribute("aR",new T.BufferAttribute(ar,1));
@@ -1157,8 +1160,8 @@ function stepAt(S){var i=0;for(var k=0;k<S.length;k++)if(tl>=S[k]-1e-4)i=k;retur
 function advance(dt){var S=overlay&&steps();if(!S){tl+=dt;return;}var i=stepAt(S),hold=i+1<S.length?S[i+1]-.001:Infinity;if(tl<hold)tl=Math.min(hold,tl+dt);}
 function rewind(t){tl=t;if(mode==="win"){resetHaze();if(room)resetRoom();}if(mode==="pig")auto=true;}
 function stepNav(){var nav=$("ovNav");if(!nav)return;var S=overlay&&steps();nav.hidden=!S;if(!S)return;var i=stepAt(S),last=i===S.length-1,holding=!last&&tl>=S[i+1]-.0015;
-  var c=(i+1)+" of "+S.length;if($("ovStep").textContent!==c)$("ovStep").textContent=c;
-  var nx=nav.querySelector(".nx"),lbl=last?"Watch again":"Next ›";if(mode==="home"&&!obdOpen||mode==="com"){var cs=(mode==="com"?comStops():tourStops())[i];if(cs&&cs.ph===0)lbl="Fix it ›";else if(last)lbl="Start over";}if(nx.textContent!==lbl)nx.textContent=lbl;nx.classList.toggle("ready",holding);
+  var c=(i+1)+L(" of "," de ")+S.length;if($("ovStep").textContent!==c)$("ovStep").textContent=c;
+  var nx=nav.querySelector(".nx"),lbl=last?L("Watch again","Ver otra vez"):L("Next ›","Siguiente ›");if(mode==="home"&&!obdOpen||mode==="com"){var cs=(mode==="com"?comStops():tourStops())[i];if(cs&&cs.ph===0)lbl=L("Fix it ›","Arreglarlo ›");else if(last)lbl=L("Start over","Empezar de nuevo");}if(nx.textContent!==lbl)nx.textContent=lbl;nx.classList.toggle("ready",holding);
   nav.querySelector("[data-hact='prev']").disabled=i===0;}
 
 function winOutside(){
@@ -1185,10 +1188,10 @@ function winOutside(){
   if(t<6.7)w.sillM.color.copy(sillDust);
   if(t>=6.7&&!haze.clear){haze.c.getContext("2d").clearRect(0,0,256,212);haze.t.needsUpdate=true;haze.clear=true;}
   var one=st.stories===1;
-  say(msgAt([[0,"<b>1.</b> Screens come off first and get scrubbed."],[1.4,"<b>2.</b> Purified water on with the applicator, worked in so the dirt lets go of the glass."],
-    [3.3,"<b>3.</b> Squeegee pulled in fanned strokes from the top corner. No streaks, and purified water leaves nothing behind to spot."],
+  say(msgAt(ES?[[0,"<b>1.</b> Primero se quitan los mosquiteros y se tallan."],[1.4,"<b>2.</b> Agua purificada con el aplicador, trabajada hasta que la tierra se suelta."],[3.3,"<b>3.</b> Jalador en pasadas en abanico desde la esquina de arriba. El agua purificada no deja nada que manche."],[6.7,"<b>4.</b> Bordes, repisas y rieles limpios. Incluido, no es extra."],[7.9,"<b>5.</b> Mosquitero de vuelta. Vidrio que seca claro y se queda claro más tiempo."],[9.3,"<b>Listo.</b> "+(one?"$149 un piso":"$249 dos pisos")+", mosquiteros, rieles y repisas incluidos. Toca <b>Por dentro</b> para ver la parte que casi todos se saltan."]]:[[0,"<b>1.</b> Screens come off first and get scrubbed."],[1.4,"<b>2.</b> Purified water on with the applicator, worked in until the dirt lets go."],
+    [3.3,"<b>3.</b> Squeegee in fanned strokes from the top corner. Purified water leaves nothing behind to spot."],
     [6.7,"<b>4.</b> Edges, sills and tracks wiped out. Included, not an add on."],[7.9,"<b>5.</b> Screen back in. Glass that dries clear and stays clear longer."],
-    [9.3,"<b>Done.</b> "+(one?"$149 single story":"$249 two story")+", screens, tracks and sills included. Tap <b>Inside</b> to see the part most crews skip."]]),t>9.3?"ok":"");
+    [9.3,"<b>Done.</b> "+(one?"$149 single story":"$249 two story")+", screens, tracks and sills included. Tap <b>Inside</b> for the part most crews skip."]]),t>9.3?"ok":"");
 }
 function winInside(){
   var t=tl,rm=room;worker.visible=true;
@@ -1203,8 +1206,8 @@ function winInside(){
   else{rest("L");rest("R");}
   if(t>=4.8&&!rm.haze.clear){rm.haze.c.getContext("2d").clearRect(0,0,256,212);rm.haze.t.needsUpdate=true;rm.haze.clear=true;}
   if(t>=8.4){var pg2=rm.puddle.c.getContext("2d");pg2.clearRect(0,0,256,32);rm.puddle.t.needsUpdate=true;}
-  say(msgAt([[0,"<b>Inside.</b> Every window in the house for $49."],[1.2,"Same purified water and squeegee on the inside glass."],
-    [5.0,"<b>The track.</b> After most crews clean the outside, the water runs down into the track and sits there as a muddy puddle. You open the window and the gunk is still there."],
+  say(msgAt(ES?[[0,"<b>Por dentro.</b> Todas las ventanas de la casa por $49."],[1.2,"La misma agua purificada y el mismo jalador en el vidrio de adentro."],[5.0,"<b>El riel.</b> Casi todos dejan el agua del lavado ahí como un charco de lodo. Abres la ventana y la mugre sigue."],[8.4,"<b>Aspiramos y secamos cada riel.</b> Abre tus ventanas y corren limpias. "+(st.inside?"Las ventanas por dentro ya están en tu cotización.":"Agrega las ventanas por dentro por $49 abajo.")]]:[[0,"<b>Inside.</b> Every window in the house for $49."],[1.2,"Same purified water and squeegee on the inside glass."],
+    [5.0,"<b>The track.</b> Most crews leave the wash water sitting in it as a muddy puddle. Open the window and the gunk is still there."],
     [8.4,"<b>We vacuum and wipe every track dry.</b> Open your windows and they slide clean. "+(st.inside?"Inside windows are on your quote.":"Add inside windows for $49 below.")]]),t>=8.4?"ok":"");
 }
 function solar(){
@@ -1219,19 +1222,22 @@ function solar(){
   var gp=me.groups.filter(function(g){return g.face>0;})[0];
   if(gp){worker.visible=true;
     var feet=toWorld(me.F,gp.cx,me.TT-.02,Math.min(me.L/2-.35,gp.bottom+.7));placeWorker(feet,V(0,0,-1));
-    tools.cart.visible=true;tools.cart.position.set(gp.cx+2.2,0,me.front+2.2);hose(worker.localToWorld(V(.1,.95,-.05)),toWorld(me.F,gp.cx+.6,me.TT,me.L/2+OV*.6),tools.cart.position.clone().add(V(0,.9,0)));
+    tools.cart.visible=true;tools.cart.position.set(gp.cx+2.2,0,me.front+2.2);
     var ia=Math.min(n-1,Math.floor(u)),ib=Math.min(n-1,ia+1),fr=u-ia,pa=list[ia],pb=list[ib],same=pa.row===pb.row,ef=same?fr:smooth(fr);
     var bx=lerp(pa.x,pb.x,ef),bz=lerp(pa.z,pb.z,ef)+(t>start&&t<end?Math.sin(tl*9)*.12:0);
-    var B=toWorld(me.F,bx,me.TT+H+.08,bz),chest=worker.localToWorld(V(0,1.25,.32)),d=B.clone().sub(chest).normalize();
-    tools.pole.visible=true;setBone(tools.pole,chest.clone().addScaledVector(d,-.55),B);tools.pole.scale.x=tools.pole.scale.z=.022;
+    var B=toWorld(me.F,bx,me.TT+H+.08,bz),chest=worker.localToWorld(V(0,1.25,.32)),d=B.clone().sub(chest).normalize(),poleBot=chest.clone().addScaledVector(d,-.55);
+    tools.pole.visible=true;setBone(tools.pole,poleBot,B);tools.pole.scale.x=tools.pole.scale.z=.022;
+    /* the hose follows the pole down to the roof beside his right boot, then runs over the eave to the cart. Never through him. */
+    var drop=worker.localToWorld(V(.32,.04,.12));tools.hoseUp.visible=true;setBone(tools.hoseUp,poleBot,drop);tools.hoseUp.scale.x=tools.hoseUp.scale.z=.018;
+    hose(drop,toWorld(me.F,gp.cx+.6,me.TT,me.L/2+OV*.6),tools.cart.position.clone().add(V(0,.9,0)));
     reach("L",chest.clone().addScaledVector(d,-.1));reach("R",chest.clone().addScaledVector(d,.45));
     lookAtW(B);tools.brush.visible=true;tools.brush.position.copy(B);tools.brush.quaternion.copy(me.F.getWorldQuaternion(new T.Quaternion()));
     var wa=tools.water.geometry.attributes.position.array,on=t>=start&&t<end;tools.water.visible=on;
     if(on){for(var k=0;k<60;k++){var ph=(tl*3+k*.37)%1;wa[k*3]=B.x+Math.sin(k*12.9)*.28;wa[k*3+1]=B.y+.05+ph*.25-ph*ph*.35;wa[k*3+2]=B.z+Math.cos(k*7.1)*.14+ph*.1;}tools.water.geometry.attributes.position.needsUpdate=true;}
   }
-  var price=st.pig?"free with your pigeon proofing":money(st.panels*P.panel);
-  var secTxt=st.arrays>1?" In "+st.arrays+" sections: "+st.arr.slice(0,st.arrays).join(", ")+" panels.":"";
-  say(msgAt([[0,"<b>Your "+st.panels+" panels</b> under a layer of desert dust."+secTxt+" Up here there's almost no rain to rinse it off."],
+  var price=st.pig?L("free with your pigeon proofing","gratis con tu control de palomas"):money(st.panels*P.panel);
+  var secTxt=st.arrays>1?L(" In "+st.arrays+" sections: "," En "+st.arrays+" secciones: ")+st.arr.slice(0,st.arrays).join(", ")+L(" panels."," paneles."):"";
+  say(msgAt(ES?[[0,"<b>Tus "+st.panels+" paneles</b> bajo una capa de polvo del desierto."+secTxt+" Aquí casi no llueve para enjuagarlos."],[start,"<b>Agua purificada por un cepillo suave</b> en una pértiga, fila por fila. Nadie camina sobre tus paneles."],[end+.6,"<b>Secan sin manchas ni rayas.</b> Tus "+st.panels+" paneles: "+price+". Revisión de todo el arreglo incluida."]]:[[0,"<b>Your "+st.panels+" panels</b> under a layer of desert dust."+secTxt+" Up here there's almost no rain to rinse it off."],
     [start,"<b>Purified water through a soft brush</b> on a water fed pole, row by row. Nobody walks on your panels."],
     [end+.6,"<b>Dries spot free, no streaks.</b> Your "+st.panels+" panels: "+price+". Full array inspection included."]]),t>end+.6?"ok":"");
 }
@@ -1249,9 +1255,9 @@ function screensDemo(){
   var out=smooth((t-1.0)/1.1),inn=smooth((t-2.5)/1.1),k=t<2.3?out:1-inn,dx=w.gw/2-sc.x0;
   screenLook(sc,t<2.3);sc.g.position.set(sc.x0+dx*k,-.2*k,.14+.3*k);sc.g.rotation.set(0,-.35*k,0);
   if(t>=.9&&t<3.8){reach("L",toWorld(sc.g,-sc.gw/2+.28,-.12,.02));reach("R",toWorld(sc.g,sc.gw/2-.04,.08,.02));}else{rest("L");rest("R");}
-  var fact=st.pet?"<b>All weather, $64.99.</b> Heavy vinyl coated polyester, 5x stronger and far more UV stable. Takes sun, wind and pets.":"<b>Charcoal fiberglass, $53.99.</b> Clearest view and good airflow. Fine for shaded windows.";
-  if(st.frames)fact+=" New frames and clips on all "+st.screens+", $10 more a screen.";
-  say(msgAt([[0,"<b>Old builder mesh</b> after a few High Desert summers: faded, brittle, torn."],[1,"<b>Stripped and re-meshed on site.</b> About 15 to 20 minutes a screen, same visit."],[3.6,fact]]),t>=3.6?"ok":"");
+  var fact=ES?(st.pet?"<b>Todo clima, $64.99.</b> Poliéster recubierto de vinil, 5 veces más fuerte y mucho más resistente al sol. Aguanta sol, viento y mascotas.":"<b>Fibra de vidrio gris, $53.99.</b> La vista más clara y buen paso de aire. Bien para ventanas con sombra."):(st.pet?"<b>All weather, $64.99.</b> Heavy vinyl coated polyester, 5x stronger and far more UV stable. Takes sun, wind and pets.":"<b>Charcoal fiberglass, $53.99.</b> Clearest view and good airflow. Fine for shaded windows.");
+  if(st.frames)fact+=L(" New frames and clips on all "+st.screens+", $10 more a screen."," Marcos y clips nuevos en los "+st.screens+", $10 más por mosquitero.");
+  say(msgAt(ES?[[0,"<b>Malla vieja del constructor</b> después de unos veranos del High Desert: decolorada, quebradiza, rota."],[1,"<b>Se quita y se pone malla nueva en el momento.</b> Unos 15 a 20 minutos por mosquitero, en la misma visita."],[3.6,fact]]:[[0,"<b>Old builder mesh</b> after a few High Desert summers: faded, brittle, torn."],[1,"<b>Stripped and re-meshed on site.</b> About 15 to 20 minutes a screen, same visit."],[3.6,fact]]),t>=3.6?"ok":"");
 }
 function pigAuto(){
   if(auto){var s=tl<2.2?0:tl<5.6?1:tl<9?2:tl<12.4?3:4;if(s!==h3.stage){h3.stage=s;birdTargets(false);syncControls();}}
@@ -1259,14 +1265,14 @@ function pigAuto(){
   birds.forEach(function(b){if(b.kind==="N"){nbN++;return;}if(!b.kt){if(b.kind==="U")U++;else mine[b.face]++;}else nbN++;});
   var left=mine[1]+mine[-1]+mine[0]+U,sb=0,sf=0,sc=spinners.length;spinners.forEach(function(s){if(s.face>0)sf++;else sb++;});
   var all=birds.filter(function(b){return b.kind!=="N";}).length;
-  if(h3.stage===3){say("<b>What one spinner covers.</b> Its mirrored cups throw flashes of light across the side of the roof it faces, about this far. The ridge blocks it from the other side, so a roof with birds on both sides needs at least 2. That's why 2 to 3 come free.","ok");return;}
-  if(h3.stage===4){say("<b>What happens next door.</b> With your roof closed off, the flock moves to the roofs around you: "+nbN+" pigeons next door now. The first home on the block to get protected stays clear, and that's usually when the neighbors start asking who did yours.","ok");return;}
-  if(h3.stage===0)say("<b>Today:</b> every roof on the block has pigeons. "+all+" on yours, nesting under the panels and resting on the ridge.");
-  else if(h3.stage===1)say("<b>Cleanout and mesh.</b> Nests out, panels cleaned, mesh clipped to the frame. Nothing gets under your panels again, but "+left+" pigeons still land on your open roof. That's the job of the free spinners.","warn");
-  else if(!left)say("<b>Your roof is clear.</b> The free spinners keep them from coming back after the cleanout, so they settle on the roofs next door. "+nbN+" pigeons next door now. The first house on the block to protect wins.","ok");
-  else if(!sc)say("<b>Mesh only.</b> "+left+" pigeons still sit on your open roof. Add spinners.","warn");
-  else if(!sb&&mine[-1])say("<b>"+sc+(sc>1?" spinners only watch":" spinner only watches")+" the front.</b> The ridge blocks the flash, so "+mine[-1]+" pigeons stay on your back side. Add one facing the back.","warn");
-  else say("<b>"+left+" pigeon"+(left>1?"s":"")+" still outside the flash</b> at the corners. Add another spinner.","warn");
+  if(h3.stage===3){say(L("<b>What one spinner covers.</b> Its flashes reach the side of the roof it faces, about this far. The ridge blocks the other side, so most roofs need 2. That's why 2 to 3 come free.","<b>Lo que cubre un espantapájaros.</b> Sus destellos llegan al lado del techo al que mira, más o menos hasta aquí. La cumbrera tapa el otro lado, así que casi todos los techos necesitan 2. Por eso vienen 2 a 3 gratis."),"ok");return;}
+  if(h3.stage===4){say(L("<b>Next door.</b> With your roof closed off the flock moves on: ","<b>El vecino.</b> Con tu techo cerrado la parvada se muda: ")+nbN+L(" pigeons next door now. The first home on the block to get protected stays clear."," palomas en la casa de al lado. La primera casa de la cuadra que se protege queda limpia."),"ok");return;}
+  if(h3.stage===0)say(L("<b>Today:</b> every roof on the block has pigeons. ","<b>Hoy:</b> todos los techos de la cuadra tienen palomas. ")+all+L(" on yours, nesting under the panels and resting on the ridge."," en el tuyo, anidando debajo de los paneles y descansando en la cumbrera."));
+  else if(h3.stage===1)say(L("<b>Cleanout and mesh.</b> Nests out, panels washed, mesh clipped to the frame. Nothing gets under again, but ","<b>Limpieza y malla.</b> Nidos fuera, paneles lavados, malla sujeta al marco. Nada vuelve a meterse, pero ")+left+L(" pigeons still land on the open roof. That's what the free spinners are for."," palomas siguen parándose en el techo abierto. Para eso son los espantapájaros gratis."),"warn");
+  else if(!left)say(L("<b>Your roof is clear.</b> The spinners keep them from settling again, so they move next door: ","<b>Tu techo está limpio.</b> Los espantapájaros evitan que se vuelvan a acomodar, así que se van con el vecino: ")+nbN+L(" pigeons there now."," palomas allá ahora."),"ok");
+  else if(!sc)say(L("<b>Mesh only.</b> ","<b>Solo malla.</b> ")+left+L(" pigeons still sit on your open roof. Add spinners."," palomas siguen en tu techo abierto. Agrega espantapájaros."),"warn");
+  else if(!sb&&mine[-1])say(ES?"<b>"+sc+(sc>1?" espantapájaros solo cuidan":" espantapájaros solo cuida")+" el frente.</b> La cumbrera tapa el destello, así que "+mine[-1]+" palomas se quedan atrás. Agrega uno mirando hacia atrás.":"<b>"+sc+(sc>1?" spinners only watch":" spinner only watches")+" the front.</b> The ridge blocks the flash, so "+mine[-1]+" pigeons stay on your back side. Add one facing the back.","warn");
+  else say(ES?"<b>"+left+" paloma"+(left>1?"s":"")+" todavía fuera del destello</b> en las esquinas. Agrega otro espantapájaros.":"<b>"+left+" pigeon"+(left>1?"s":"")+" still outside the flash</b> at the corners. Add another spinner.","warn");
 }
 
 /* ---------- storefronts and office buildings: the commercial side, and the crew's walk up sales tool ---------- */
@@ -1386,19 +1392,19 @@ function comShot(k){var c=com,W=c.W,H=c.H,front=st.ctype===0?0:c.D/2;
   if(k==="cglass")return {tx:0,ty:st.ctype===0?1.9:3,tz:front,yaw:.3,tilt:.08,dist:fitWH(Math.min(W*.4,7),2.6)};
   return {tx:0,ty:c.cy,tz:front-(st.ctype===0?2:c.D*.2),yaw:.42,tilt:st.ctype===0?.2:.28,dist:fitWH(W*.62+3,H*.8+1)};}
 function comSay(){if(edNote&&performance.now()-edNote.t<4500){say(edNote.txt,"ok");return;}var S=comStops(),i=Math.min(stepAt(steps()),S.length-1),cs=S[i],t=C.totals(),shop=st.ctype===0,gl=st.cpanes+st.cdoors,txt,cls="";
-  if(cs.k==="cover")txt=shop?"<b>Your storefront today.</b> "+st.cpanes+" pane"+(st.cpanes>1?"s":"")+" and "+st.cdoors+" glass door"+(st.cdoors===1?"":"s")+" collecting dust, fingerprints and sprinkler spots. Tap Next to see it done.":"<b>Your building today.</b> "+st.bst+" stor"+(st.bst>1?"ies":"y")+" and "+st.bwin+" panes under a film of desert dust, with hard water spots where the sprinklers reach. Tap Next to see it done.";
-  else if(cs.k==="cglass"&&!cs.ph){cls="warn";txt=shop?"<b>First impressions.</b> Customers see the glass before they see the shelves. Out here it only takes a couple of windy weeks to look neglected.":"<b>Dusty glass.</b> Tenants and visitors notice it from the parking lot, and the wind keeps bringing more.";}
-  else if(cs.k==="cglass"){cls="ok";txt=shop?"<b>Clean, inside and out.</b> Purified water, frames and doors wiped, handprints gone. "+(st.cfreq?money(C.comVisit())+" a visit, "+C.comOffName():"$"+P.com+" flat for 8 to "+P.comUpTo+" panes")+(gl>P.comUpTo?", plus a flat $"+P.comOver+" for the other "+(gl-P.comUpTo):"")+".":"<b>Clean, top to bottom.</b> $"+P.bPane+" a pane inside and out on the ground floor, $"+P.bPane+" more a pane for each story up. Every pane checked for hard water staining, existing tint left alone. Worked after hours.";}
-  else if(cs.k==="cstk"&&!cs.ph){cls="warn";txt="<b>Old stickers.</b> Faded promos and peeling corners make a shop look closed. "+st.cstk+" on your glass.";}
-  else if(cs.k==="cstk"){cls="ok";txt="<b>Swapped and straight.</b> Old ones off clean, new ones up level, $10 a sticker while we're there.";}
-  else{cls="ok";txt="<b>That's your "+(shop?"storefront":"building")+" done right.</b> "+(t.total>0?"Your quote: "+(t.from?"from ":"")+money(t.total)+(shop?" a visit.":"."):"Tony walks it with you for free and gives you a firm written price.")+" One invoice a month, worked around your hours.";}
+  if(cs.k==="cover")txt=ES?(shop?"<b>Tu local hoy.</b> "+st.cpanes+" vidrio"+(st.cpanes>1?"s":"")+" y "+st.cdoors+" puerta"+(st.cdoors===1?"":"s")+" de vidrio juntando polvo, huellas y manchas de aspersores. Toca Siguiente para verlo terminado.":"<b>Tu edificio hoy.</b> "+st.bst+" piso"+(st.bst>1?"s":"")+" y "+st.bwin+" vidrios bajo una capa de polvo del desierto, con manchas de agua dura donde llegan los aspersores. Toca Siguiente para verlo terminado."):shop?"<b>Your storefront today.</b> "+st.cpanes+" pane"+(st.cpanes>1?"s":"")+" and "+st.cdoors+" glass door"+(st.cdoors===1?"":"s")+" collecting dust, fingerprints and sprinkler spots. Tap Next to see it done.":"<b>Your building today.</b> "+st.bst+" stor"+(st.bst>1?"ies":"y")+" and "+st.bwin+" panes under a film of desert dust, with hard water spots where the sprinklers reach. Tap Next to see it done.";
+  else if(cs.k==="cglass"&&!cs.ph){cls="warn";txt=ES?(shop?"<b>La primera impresión.</b> Los clientes ven el vidrio antes que los estantes. Aquí bastan un par de semanas de viento para que se vea descuidado.":"<b>Vidrio con polvo.</b> Los inquilinos y las visitas lo notan desde el estacionamiento, y el viento sigue trayendo más."):shop?"<b>First impressions.</b> Customers see the glass before they see the shelves. Out here it only takes a couple of windy weeks to look neglected.":"<b>Dusty glass.</b> Tenants and visitors notice it from the parking lot, and the wind keeps bringing more.";}
+  else if(cs.k==="cglass"){cls="ok";txt=ES?(shop?"<b>Limpio, por dentro y por fuera.</b> Agua purificada, marcos y puertas limpios, sin huellas. "+(st.cfreq?money(C.comVisit())+" por visita, "+C.comOffName():"$"+P.com+" fijos por 8 a "+P.comUpTo+" vidrios")+(gl>P.comUpTo?", más $"+P.comOver+" fijos por los otros "+(gl-P.comUpTo):"")+".":"<b>Limpio, de arriba abajo.</b> $"+P.bPane+" por vidrio por dentro y por fuera en la planta baja, $"+P.bPane+" más por vidrio por cada piso. Cada vidrio revisado por agua dura, el polarizado se respeta. Fuera de horario."):shop?"<b>Clean, inside and out.</b> Purified water, frames and doors wiped, handprints gone. "+(st.cfreq?money(C.comVisit())+" a visit, "+C.comOffName():"$"+P.com+" flat for 8 to "+P.comUpTo+" panes")+(gl>P.comUpTo?", plus a flat $"+P.comOver+" for the other "+(gl-P.comUpTo):"")+".":"<b>Clean, top to bottom.</b> $"+P.bPane+" a pane inside and out on the ground floor, $"+P.bPane+" more a pane for each story up. Every pane checked for hard water staining, existing tint left alone. Worked after hours.";}
+  else if(cs.k==="cstk"&&!cs.ph){cls="warn";txt=L("<b>Old stickers.</b> Faded promos and peeling corners make a shop look closed. ","<b>Calcomanías viejas.</b> Promociones decoloradas y esquinas despegadas hacen que un negocio se vea cerrado. ")+st.cstk+L(" on your glass."," en tu vidrio.");}
+  else if(cs.k==="cstk"){cls="ok";txt=L("<b>Swapped and straight.</b> Old ones off clean, new ones up level, $10 a sticker while we're there.","<b>Cambiadas y derechas.</b> Las viejas fuera limpio, las nuevas niveladas, $10 por calcomanía mientras estamos ahí.");}
+  else{cls="ok";txt=ES?"<b>Así queda tu "+(shop?"local":"edificio")+" bien hecho.</b> "+(t.total>0?"Tu cotización: "+(t.from?"desde ":"")+money(t.total)+(shop?" por visita.":"."):"Tony lo recorre contigo gratis y te da un precio firme por escrito.")+" Una factura al mes, alrededor de tu horario.":"<b>That's your "+(shop?"storefront":"building")+" done right.</b> "+(t.total>0?"Your quote: "+(t.from?"from ":"")+money(t.total)+(shop?" a visit.":"."):"Tony walks it with you for free and gives you a firm written price.")+" One invoice a month, worked around your hours.";}
   say(txt,cls);}
 
 /* ---------- make it yours: tap to add a window, drag to move it, pick pane or with screen. Storefronts too. ---------- */
 var edbar=doc.createElement("div");edbar.className="edbar";edbar.hidden=true;stageEl.appendChild(edbar);
 var edBtn=doc.createElement("button");edBtn.type="button";edBtn.className="edgo";edBtn.hidden=true;stageEl.appendChild(edBtn);
 var edNote=null,edRay=new T.Raycaster(),edV=new T.Vector2(),edSel=null,edScr=[];
-var FACE=["Front of the house","Back of the house","Right side","Left side"];
+var FACE=ES?["Frente de la casa","Parte de atrás","Lado derecho","Lado izquierdo"]:["Front of the house","Back of the house","Right side","Left side"];
 function checkCustom(){if(h3.custom&&h3.customSig!==h3.style+"-"+st.stories){h3.custom=null;h3.cv++;}}
 /* the layout as it stands, so editing starts from what's on screen */
 function autoLayout(){var L={0:[],1:[],2:[],3:[]};me.wins.forEach(function(w){if(w.f===undefined)return;var sz=w.gw>1.6?2:w.gw<1.05?0:1;L[w.f].push({u:w.u,v:w.v,sz:sz,s:w.s===undefined?1:w.s});});return L;}
@@ -1440,18 +1446,18 @@ function edHide(on){if(hoodG)hoodG.visible=!on;nbs.forEach(function(n){n.g.visib
 function edStop(){if(!ED)return;var t=ED.t;edSelect(null);edSave();ED=null;edHide(false);h3.cv++;h3.sv++;ov.classList.remove("ed-on");edbar.hidden=true;edScr=[];
   if(t==="home"){buildMe();var n=0,sc=0;me.wins.forEach(function(w){n++;if(w.s)sc++;});
     if(st.win)st.more=n>P.coverMax[st.stories];if(sc)st.screens=Math.max(1,Math.min(40,sc));
-    edNote={t:performance.now(),txt:"<b>Saved.</b> Your home has "+n+" windows, "+sc+" with screens. Your quote uses these counts now."};}
-  else{buildCom(true);edNote={t:performance.now(),txt:"<b>Saved.</b> "+st.cpanes+" panes, "+st.cdoors+" doors"+(st.cstk?", "+st.cstk+" stickers":"")+". Your quote is updated."};}
+    edNote={t:performance.now(),txt:L("<b>Saved.</b> Your home has "+n+" windows, "+sc+" with screens. Your quote uses these counts now.","<b>Guardado.</b> Tu casa tiene "+n+" ventanas, "+sc+" con mosquitero. Tu cotización ya usa estas cantidades.")};}
+  else{buildCom(true);edNote={t:performance.now(),txt:L("<b>Saved.</b> "+st.cpanes+" panes, "+st.cdoors+" doors"+(st.cstk?", "+st.cstk+" stickers":"")+". Your quote is updated.","<b>Guardado.</b> "+st.cpanes+" vidrios, "+st.cdoors+" puertas"+(st.cstk?", "+st.cstk+" calcomanías":"")+". Tu cotización está actualizada.")};}
   C.render();tl=0;goal=preset();track("edit_done",{what:t});}
-function edCounts(){if(ED.t==="home"){var n=0,sc=0,here=0;me.wins.forEach(function(w){n++;if(w.s)sc++;if(w.f===ED.f)here++;});return here+" on this side · "+n+" windows in all, "+sc+" with screens";}
-  var p=com.panes.filter(function(x){return !x.door;}).length,d=com.panes.length-p,k=com.panes.filter(function(x){return x.stk;}).length;return p+" panes, "+d+" doors"+(k?", "+k+" stickers":"");}
+function edCounts(){if(ED.t==="home"){var n=0,sc=0,here=0;me.wins.forEach(function(w){n++;if(w.s)sc++;if(w.f===ED.f)here++;});return ES?here+" en este lado · "+n+" ventanas en total, "+sc+" con mosquitero":here+" on this side · "+n+" windows in all, "+sc+" with screens";}
+  var p=com.panes.filter(function(x){return !x.door;}).length,d=com.panes.length-p,k=com.panes.filter(function(x){return x.stk;}).length;return ES?p+" vidrios, "+d+" puertas"+(k?", "+k+" calcomanías":""):p+" panes, "+d+" doors"+(k?", "+k+" stickers":"");}
 function edRender(){if(!ED){edbar.hidden=true;return;}edbar.hidden=false;edH=-1;var home=ED.t==="home";
   var seg=function(k,list){return '<div class="seg2" data-edseg="'+k+'">'+list.map(function(x,i){return '<button type="button" data-v="'+i+'" aria-pressed="'+(ED[k]===i)+'">'+x+'</button>';}).join("")+"</div>";};
-  edbar.innerHTML='<div class="ed-top">'+(home?'<button type="button" data-ed="prev" aria-label="Previous side">‹</button><b>'+FACE[ED.f]+'</b><button type="button" data-ed="next" aria-label="Next side">›</button>':'<b>Your storefront</b>')+'<span>'+edCounts()+'</span></div>'+
-    '<div class="ed-row">'+seg("type",home?["Pane","With screen"]:["Pane","Door"])+seg("sz",["S","M","L"])+
-    (home?"":'<button type="button" data-ed="stk" aria-pressed="'+!!(edSel&&edSel.stk)+'">Sticker</button><button type="button" data-ed="wider">Wider</button><button type="button" data-ed="narrower">Narrower</button>')+
-    '<button type="button" data-ed="del"'+(edSel?"":" disabled")+'>Remove</button><button type="button" class="go" data-ed="done">Done</button></div>'+
-    '<p class="ed-hint">'+(edSel?"Drag it to move it, change it above, or tap it again to let go.":"Tap the wall to add a "+(home?"window":ED.type?"door":"pane")+". Tap one to change it.")+'</p>';}
+  edbar.innerHTML='<div class="ed-top">'+(home?'<button type="button" data-ed="prev" aria-label="Previous side">‹</button><b>'+FACE[ED.f]+'</b><button type="button" data-ed="next" aria-label="Next side">›</button>':'<b>'+L("Your storefront","Tu local")+'</b>')+'<span>'+edCounts()+'</span></div>'+
+    '<div class="ed-row">'+seg("type",home?[L("Pane","Vidrio"),L("With screen","Con mosquitero")]:[L("Pane","Vidrio"),L("Door","Puerta")])+seg("sz",["S","M","L"])+
+    (home?"":'<button type="button" data-ed="stk" aria-pressed="'+!!(edSel&&edSel.stk)+'">'+L("Sticker","Calcomanía")+'</button><button type="button" data-ed="wider">'+L("Wider","Más ancho")+'</button><button type="button" data-ed="narrower">'+L("Narrower","Más angosto")+'</button>')+
+    '<button type="button" data-ed="del"'+(edSel?"":" disabled")+'>'+L("Remove","Quitar")+'</button><button type="button" class="go" data-ed="done">'+L("Done","Listo")+'</button></div>'+
+    '<p class="ed-hint">'+(edSel?L("Drag it to move it, change it above, or tap it again to let go.","Arrástralo para moverlo, cámbialo arriba, o tócalo otra vez para soltarlo."):L("Tap the wall to add a "+(home?"window":ED.type?"door":"pane")+". Tap one to change it.","Toca la pared para agregar "+(home?"una ventana":ED.type?"una puerta":"un vidrio")+". Toca uno para cambiarlo."))+'</p>';}
 edbar.addEventListener("click",function(e){var t=e.target;if(!t.closest||!ED)return;var sg=t.closest("[data-edseg] button");
   if(sg){var k=sg.parentNode.getAttribute("data-edseg"),v=+sg.getAttribute("data-v");ED[k]=v;
     if(edSel){if(ED.t==="home"){if(k==="type")edSel.s=v;else edSel.sz=v;}else{if(k==="type")edSel.door=!!v;else{edSel.sz=v;var ps=PSZ[v];edSel.w=ps[0];edSel.h=ps[1];}}
@@ -1459,7 +1465,7 @@ edbar.addEventListener("click",function(e){var t=e.target;if(!t.closest||!ED)ret
   var b=t.closest("[data-ed]");if(!b)return;var a=b.getAttribute("data-ed");
   if(a==="done")edStop();
   else if(a==="prev"||a==="next"){edSelect(null);ED.f=(ED.f+(a==="next"?1:3))%4;flyTo(edShot());edRender();}
-  else if(a==="del"&&edSel){if(ED.t==="home"&&me.wins.length<2){edNoteNow("Keep at least one window.");return;}if(ED.t!=="home"&&com.panes.length<2)return;
+  else if(a==="del"&&edSel){if(ED.t==="home"&&me.wins.length<2){edNoteNow(L("Keep at least one window.","Deja por lo menos una ventana."));return;}if(ED.t!=="home"&&com.panes.length<2)return;
     var L=ED.t==="home"?me.wins:com.panes,i=L.indexOf(edSel);if(i>=0)L.splice(i,1);edSel=null;edRebuild(false);}
   else if(a==="stk"&&edSel&&!edSel.door){edSel.stk=edSel.stk?0:1;edRebuild(true);}
   else if(a==="wider"||a==="narrower"){var nw=Math.max(6,Math.min(24,com.W+(a==="wider"?1.6:-1.6)));if(nw===com.W)return;com.W=nw;
@@ -1472,7 +1478,7 @@ function edDown(e){var h=edHit(e);if(!h)return;var w=edPick(h.u,h.v);
   var fits=Math.abs(cl[0]-h.u)<=1.2&&Math.abs(cl[1]-h.v)<=1.6&&edFree(it,cl[0],cl[1]);
   if(!fits&&ED.t==="shop"&&Math.abs(h.u)>com.W/2-2.2&&com.W<24){var extra=(it.door?1.05:it.w)+.2,side=h.u>=0?1:-1;extra=Math.min(extra,24-com.W);
     com.panes.forEach(function(p){p.x-=side*extra/2;});com.W+=extra;var ew=it.door?1.05:it.w;cl=edClamp(it,side*(com.W/2-.3-ew/2),h.v);fits=edFree(it,cl[0],cl[1]);}
-  if(!fits){edNoteNow("No room there. Try an open spot on the wall"+(ED.t==="shop"?", or tap near an end to make the storefront wider.":"."));return;}
+  if(!fits){edNoteNow(L("No room there. Try an open spot on the wall"+(ED.t==="shop"?", or tap near an end to make the storefront wider.":"."),"Ahí no cabe. Prueba un espacio libre en la pared"+(ED.t==="shop"?", o toca cerca de una orilla para hacer el local más ancho.":".")));return;}
   if(ED.t==="home"){it.f=ED.f;it.u=cl[0];it.v=cl[1];me.wins.push({f:ED.f,u:cl[0],v:cl[1],sz:it.sz,s:it.s});}
   else com.panes.push({x:cl[0],y:cl[1],sz:it.sz,door:it.door,w:it.w,h:it.h,stk:false});
   track("edit_add",{what:ED.t});edSel={u:cl[0],v:cl[1],x:cl[0],y:cl[1]};edRebuild(true);}
@@ -1482,7 +1488,7 @@ function edMove(e){var d=ED.drag;if(!d||d.id!==e.pointerId||!edSel)return;var h=
   else{edSel.x=cl[0];edSel.y=cl[1];edSel.g.position.set(cl[0],cl[1],0);}}
 function edUp(e){var d=ED.drag;if(!d||d.id!==e.pointerId)return;ED.drag=null;if(d.moved){edSave();h3.cv++;h3.sv++;edRender();}else if(d.was)edSelect(null);}
 /* the button that opens the editor: on your home, or on your storefront */
-function edButton(){var show=overlay&&!ED&&!obdOpen&&(mode==="home"||(mode==="com"&&st.ctype===0));edBtn.hidden=!show;if(!show)return;var txt=mode==="home"?"Edit my windows":"Build my storefront";if(edBtn.textContent!==txt)edBtn.textContent=txt;}
+function edButton(){var show=overlay&&!ED&&!obdOpen&&(mode==="home"||(mode==="com"&&st.ctype===0));edBtn.hidden=!show;if(!show)return;var txt=mode==="home"?L("Edit my windows","Editar mis ventanas"):L("Build my storefront","Armar mi local");if(edBtn.textContent!==txt)edBtn.textContent=txt;}
 edBtn.addEventListener("click",function(){edStart(mode==="home"?"home":"shop");});
 
 /* ---------- the guided tour of your home: overview, then each thing on your list ---------- */
@@ -1495,23 +1501,23 @@ function tourShot(k,ph){var tall=me.wallH+me.rise,rad=.5*Math.sqrt(me.W*me.W+me.
   if(k==="pig"&&ph===1&&anc.mesh){c=anc.mesh.p;return {tx:c.x,ty:c.y,tz:c.z,yaw:.25,tilt:.4,dist:fitWH(2.2,1.5)};}
   if(k==="pig"&&ph===2&&spinners[0]){var sp=spinners[0];c=toWorld(sp.par,sp.x+.08,me.TT+.75,sp.z);return {tx:c.x,ty:c.y,tz:c.z,yaw:sp.face>0?.45:Math.PI+.45,tilt:.3,dist:fitWH(1.3,1)};}
   return {tx:0,ty:tall*.36,tz:me.D*.08,yaw:.55,tilt:.38,dist:fitWH(rad*1.5,tall*1.4)};}
-function probName(k,fixed){if(fixed)return {win:"Clean windows",scr:"New screens",sol:"Clean panels",pig:"Pigeon proofed"}[k];return {win:st.hw?"Hard water spots":"Dirty windows",scr:"Torn screens",sol:"Dusty panels",pig:"Pigeons"}[k];}
+function probName(k,fixed){if(ES){if(fixed)return {win:"Ventanas limpias",scr:"Mosquiteros nuevos",sol:"Paneles limpios",pig:"Sin palomas"}[k];return {win:st.hw?"Manchas de agua dura":"Ventanas sucias",scr:"Mosquiteros rotos",sol:"Paneles con polvo",pig:"Palomas"}[k];}if(fixed)return {win:"Clean windows",scr:"New screens",sol:"Clean panels",pig:"Pigeon proofed"}[k];return {win:st.hw?"Hard water spots":"Dirty windows",scr:"Torn screens",sol:"Dusty panels",pig:"Pigeons"}[k];}
 function listText(a){return a.length<2?a.join(""):a.slice(0,-1).join(", ")+" and "+a[a.length-1];}
 function tourSay(){if(edNote&&performance.now()-edNote.t<4500){say(edNote.txt,"ok");return;}var TS=tourStops(),i=tourAt(),cs=TS[i],k=cs.k,ph=cs.ph||0,t=C.totals(),n=st.panels,P2=probs();
   if(i!==dmgStop){dmgStop=i;dmgSel=0;}
-  var nb=birds.filter(function(b){return b.kind!=="N";}).length,dl=dmgList(k),tapHint=dl.length?" Tap "+(dl.length>1?"1 to "+dl.length:"1")+" on the house to see what it does.":"";
+  var nb=birds.filter(function(b){return b.kind!=="N";}).length,dl=dmgList(k),tapHint=dl.length?L(" Tap the number"+(dl.length>1?"s":"")+" on the house to see each one."," Toca los números en la casa para ver cada uno."):"";
   var txt,cls="";
-  if(k==="over")txt=P2.length?"<b>Here's your home today.</b> "+listText(P2.map(function(q){return probName(q).toLowerCase();})).replace(/^./,function(c){return c.toUpperCase();})+". Tap Next and we'll take them one at a time.":"<b>Here's your home.</b> Tap Next for a quick tour, or drag to look around.";
-  else if(k==="end"){txt="<b>All fixed.</b> That's your home the way we leave it. Your quote right now: "+(t.from?"from ":"")+money(t.total)+". Tap Windows, Solar, Screens or Pigeons above to watch a job, or See my price below.";cls="ok";}
-  else if(ph===0&&dmgSel){txt="<b>"+probName(k)+", "+dmgSel+" of "+dl.length+".</b> "+dl[dmgSel-1];cls="warn";}
-  else if(ph===0){cls="warn";txt={win:"<b>"+probName("win")+".</b> Dust, sprinkler spots and gray screens. Out here it builds up fast."+(WX.wind>=15?" Wind like today's keeps blowing more on.":"")+tapHint,
+  if(k==="over")txt=P2.length?L("<b>Here's your home today.</b> ","<b>Así está tu casa hoy.</b> ")+listText(P2.map(function(q){return probName(q).toLowerCase();})).replace(/^./,function(c){return c.toUpperCase();})+L(". Tap Next and we'll take them one at a time.",". Toca Siguiente y los vemos uno por uno."):L("<b>Here's your home.</b> Tap Next for a quick tour, or drag to look around.","<b>Esta es tu casa.</b> Toca Siguiente para un recorrido rápido, o arrastra para mirar.");
+  else if(k==="end"){txt=L("<b>All fixed.</b> That's your home the way we leave it. Your quote right now: ","<b>Todo arreglado.</b> Así dejamos tu casa. Tu cotización ahora mismo: ")+(t.from?L("from ","desde "):"")+money(t.total)+L(". See my price below, or tap a service above to watch the job.",". Toca Ver mi precio abajo, o un servicio arriba para ver el trabajo.");cls="ok";}
+  else if(ph===0&&dmgSel){txt="<b>"+probName(k)+", "+dmgSel+L(" of "," de ")+dl.length+".</b> "+dl[dmgSel-1];cls="warn";}
+  else if(ph===0){cls="warn";var windy=WX.wind>=15?L(" Wind like today's keeps blowing more on."," Con viento como el de hoy sigue llegando más."):"";txt=ES?{win:"<b>"+probName("win")+".</b> Polvo, manchas de aspersores y mosquiteros grises. Aquí se acumula rápido."+windy+tapHint,scr:"<b>Mosquiteros rotos.</b> Unos veranos de sol y viento, y la malla del constructor se rasga, se cuelga y se suelta."+tapHint,sol:"<b>Paneles con polvo.</b> "+n+" paneles bajo una capa de polvo del desierto."+windy+tapHint,pig:"<b>Palomas.</b> "+nb+" en tu techo, nidos debajo de los paneles y excremento en la teja."+tapHint}[k]:{win:"<b>"+probName("win")+".</b> Dust, sprinkler spots and gray screens. Out here it builds up fast."+windy+tapHint,
       scr:"<b>Torn screens.</b> A few summers of sun and wind, and builder mesh rips, sags and hangs loose."+tapHint,
-      sol:"<b>Dusty panels.</b> "+n+" panels under a film of desert dust."+(WX.wind>=15?" Wind like today's keeps blowing more on.":"")+tapHint,
+      sol:"<b>Dusty panels.</b> "+n+" panels under a film of desert dust."+windy+tapHint,
       pig:"<b>Pigeons.</b> "+nb+" on your roof, nests under the panels, and droppings on the tile."+tapHint}[k];}
-  else{cls="ok";txt={win:"<b>Clean.</b> Purified water and a squeegee, screens washed, tracks and sills wiped, dried spot free. "+(st.stories===1?"$149 single story.":"$249 two story.")+(st.hw?" Hard water spots treated pane by pane.":""),
+  else{cls="ok";txt=ES?{win:"<b>Limpias.</b> Agua purificada y jalador, mosquiteros lavados, rieles y repisas limpios, seca sin manchas. "+(st.stories===1?"$149 un piso.":"$249 dos pisos.")+(st.hw?" Manchas de agua dura tratadas vidrio por vidrio.":""),scr:"<b>Mosquiteros nuevos.</b> "+st.screens+" con malla nueva en el momento, "+["fibra de vidrio gris","todo clima"][st.pet]+", en la mitad de cada ventana que abre.",sol:"<b>Lavados.</b> Agua purificada y cepillo suave, secan sin manchas. "+money(n*P.panel)+" a $7 por panel.",pig:ph===1?"<b>Limpio y cerrado.</b> Nidos y excremento fuera, el área desinfectada para que el olor también se vaya, paneles lavados gratis, malla rígida de acero sujeta al marco del panel. Sin tornillos ni perforaciones, tu garantía queda intacta.":"<b>Espantapájaros reflectantes.</b> Sus espejos destellan sobre el techo para que las aves no se vuelvan a acomodar. "+C.free()+" vienen gratis. La parvada se va."}[k]:{win:"<b>Clean.</b> Purified water and a squeegee, screens washed, tracks and sills wiped, dried spot free. "+(st.stories===1?"$149 single story.":"$249 two story.")+(st.hw?" Hard water spots treated pane by pane.":""),
       scr:"<b>New screens.</b> "+st.screens+" re-meshed on site with "+P.meshName[st.pet]+" mesh, on the half of each window that opens.",
       sol:"<b>Washed.</b> Purified water and a soft brush, dried spot free. "+money(n*P.panel)+" at $7 a panel.",
-      pig:ph===1?"<b>Cleaned out and closed off.</b> Nests, droppings and debris hauled away, the area sanitized so the smell goes with them, panels washed free, and rigid steel mesh clipped to the lip of the panel frame. No screws, no drilling, no chicken wire, so your panel warranty stays intact."
+      pig:ph===1?"<b>Cleaned out and closed off.</b> Nests and droppings hauled away, the area sanitized so the smell goes too, panels washed free, rigid steel mesh clipped to the panel frame. No screws, no drilling, so your warranty stays intact."
         :"<b>Reflective spinners.</b> Mirrored cups flash across the roof so the birds don't settle again. "+C.free()+" come free. The flock moves on."}[k];}
   say(txt,cls);}
 function homeDesc(){return ["new build","ranch","classic","lake estate"][h3.style]+" home, "+["street with desert yards","neighborhood with lawns","acreage","on the lake"][h3.hood];}
@@ -1519,13 +1525,14 @@ function homeDesc(){return ["new build","ranch","classic","lake estate"][h3.styl
 /* ---------- summary under the controls ---------- */
 function summary(){
   var el=$("osum"),s=st.stories,t=C.totals();if(!el)return;
-  var txt={home:"<b>"+["New build","Ranch","Classic","Lake estate"][h3.style]+" · "+s+" story · "+st.panels+" panels</b><br>Tap Windows, Solar, Screens or Pigeons above to watch the job on this home.",
-    win:"<b>"+(s===1?"Single":"Two")+" story windows · "+money(P.win[s]+(st.more?P.more[s]:0)+(st.inside?P.inside:0))+"</b><br>Screens, tracks and sills included."+(st.inside?" Inside windows included.":" Inside every window +$49."),
+  var scrP=money(Math.max(st.screens*(P.mesh[st.pet]+(st.frames?P.frame:0)),P.scrMin)),pigP=money(P.pig+Math.max(0,st.panels-P.pigUpTo)*P.pigPer+st.spin*P.spinner),winP=money(P.win[s]+(st.more?P.more[s]:0)+(st.inside?P.inside:0));
+  var txt=ES?{home:"<b>"+["Nueva","Rancho","Clásica","Casa de lago"][h3.style]+" · "+s+(s>1?" pisos":" piso")+" · "+st.panels+" paneles</b><br>Toca Ventanas, Solar, Mosquiteros o Palomas arriba para ver el trabajo en esta casa.",win:"<b>Ventanas de "+(s===1?"un piso":"dos pisos")+" · "+winP+"</b><br>Mosquiteros, rieles y repisas incluidos."+(st.inside?" Ventanas por dentro incluidas.":" Por dentro, todas las ventanas +$49."),sol:"<b>"+st.panels+" paneles · "+(st.pig?"gratis con el control de palomas":money(st.panels*P.panel))+"</b><br>$7 por panel, agua purificada, secan sin manchas.",scr:"<b>"+st.screens+" mosquitero"+(st.screens>1?"s":"")+", "+["fibra de vidrio gris","todo clima"][st.pet]+(st.frames?" · marcos nuevos":"")+" · "+scrP+"</b><br>Los mosquiteros cubren la mitad de la ventana que abre. Marcos y clips nuevos son $10 más por mosquitero. Mínimo de $149 cuando los mosquiteros son el único servicio.",pig:"<b>"+st.panels+" paneles · "+spinCount()+" espantapájaros · "+pigP+"</b><br>"+C.free()+" vienen gratis. Los extra son $50 cada uno. Lavado solar y de techo gratis."}:{home:"<b>"+["New build","Ranch","Classic","Lake estate"][h3.style]+" · "+s+" story · "+st.panels+" panels</b><br>Tap Windows, Solar, Screens or Pigeons above to watch the job on this home.",
+    win:"<b>"+(s===1?"Single":"Two")+" story windows · "+winP+"</b><br>Screens, tracks and sills included."+(st.inside?" Inside windows included.":" Inside every window +$49."),
     sol:"<b>"+st.panels+" panels · "+(st.pig?"free with pigeon proofing":money(st.panels*P.panel))+"</b><br>$7 a panel, purified water, dries spot free.",
-    scr:"<b>"+st.screens+" "+P.meshName[st.pet]+" screen"+(st.screens>1?"s":"")+(st.frames?" · new frames":"")+" · "+money(Math.max(st.screens*(P.mesh[st.pet]+(st.frames?P.frame:0)),P.scrMin))+"</b><br>Screens cover the half of the window that opens. New frames and clips are $10 more a screen. $149 job minimum when screens are the only service.",
-    pig:"<b>"+st.panels+" panels · "+spinCount()+" spinner"+(spinCount()===1?"":"s")+" · "+money(P.pig+Math.max(0,st.panels-P.pigUpTo)*P.pigPer+st.spin*P.spinner)+"</b><br>"+C.free()+" spinners come free. Extras are $50 each. Solar wash and roof wash free."};
-  txt.com=st.ctype?"<b>Office building · "+st.bst+" stor"+(st.bst>1?"ies":"y")+" · "+st.bwin+" panes</b><br>"+money(C.bldgPrice().total)+" inside and out, $"+P.bPane+" a pane and $"+P.bPane+" more a pane per story up. Free walkthrough, firm price in writing.":"<b>Storefront · "+(st.cpanes+st.cdoors)+" panes and doors"+(st.cstk?" · "+st.cstk+" stickers":"")+"</b><br>"+(st.cfreq?money(C.comVisit())+" a visit, "+C.comOffName():"$"+P.com+" one time")+", inside and out.";
-  el.innerHTML=(txt[mode]||txt.home)+"<br><span class=\"small\">Your quote right now: "+(t.from?"from ":"")+money(t.total)+"</span>";
+    scr:"<b>"+st.screens+" "+P.meshName[st.pet]+" screen"+(st.screens>1?"s":"")+(st.frames?" · new frames":"")+" · "+scrP+"</b><br>Screens cover the half of the window that opens. New frames and clips are $10 more a screen. $149 job minimum when screens are the only service.",
+    pig:"<b>"+st.panels+" panels · "+spinCount()+" spinner"+(spinCount()===1?"":"s")+" · "+pigP+"</b><br>"+C.free()+" spinners come free. Extras are $50 each. Solar wash and roof wash free."};
+  txt.com=ES?(st.ctype?"<b>Edificio de oficinas · "+st.bst+" piso"+(st.bst>1?"s":"")+" · "+st.bwin+" vidrios</b><br>"+money(C.bldgPrice().total)+" por dentro y por fuera, $"+P.bPane+" por vidrio y $"+P.bPane+" más por vidrio por cada piso. Recorrido gratis, precio firme por escrito.":"<b>Local · "+(st.cpanes+st.cdoors)+" vidrios y puertas"+(st.cstk?" · "+st.cstk+" calcomanías":"")+"</b><br>"+(st.cfreq?money(C.comVisit())+" por visita, "+C.comOffName():"$"+P.com+" una vez")+", por dentro y por fuera."):(st.ctype?"<b>Office building · "+st.bst+" stor"+(st.bst>1?"ies":"y")+" · "+st.bwin+" panes</b><br>"+money(C.bldgPrice().total)+" inside and out, $"+P.bPane+" a pane and $"+P.bPane+" more a pane per story up. Free walkthrough, firm price in writing.":"<b>Storefront · "+(st.cpanes+st.cdoors)+" panes and doors"+(st.cstk?" · "+st.cstk+" stickers":"")+"</b><br>"+(st.cfreq?money(C.comVisit())+" a visit, "+C.comOffName():"$"+P.com+" one time")+", inside and out.");
+  el.innerHTML=(txt[mode]||txt.home)+"<br><span class=\"small\">"+L("Your quote right now: ","Tu cotización ahora mismo: ")+(t.from?L("from ","desde "):"")+money(t.total)+"</span>";
 }
 
 /* ---------- camera ---------- */
@@ -1587,7 +1594,7 @@ el.addEventListener("webglcontextlost",function(e){e.preventDefault();lost=true;
 el.addEventListener("webglcontextrestored",function(){lost=false;$("ovLoad").hidden=true;first=true;if(quality>1)setQuality(quality-1);start();});
 
 /* ---------- callouts that point at the details ---------- */
-var CALL={glass:"Purified water, dries spot free",panel:"Panels washed streak free, $7 each",mesh:"Rigid steel mesh, frame clips, nothing drilled",spin:"Spinners on the vents, held with hose clamps",tile:"Roof soft wash, free with pigeon proofing"};
+var CALL=ES?{glass:"Agua purificada, seca sin manchas",panel:"Paneles lavados sin rayas, $7 cada uno",mesh:"Malla rígida de acero, clips al marco, nada perforado",spin:"Espantapájaros en las ventilas, con abrazaderas",tile:"Lavado suave de techo, gratis con el control de palomas"}:{glass:"Purified water, dries spot free",panel:"Panels washed streak free, $7 each",mesh:"Rigid steel mesh, frame clips, nothing drilled",spin:"Spinners on the vents, held with hose clamps",tile:"Roof soft wash, free with pigeon proofing"};
 var ORDERS={pig:["mesh","spin","panel","glass"],win:["glass","panel","mesh","spin"],sol:["panel","mesh","glass","spin"],scr:["glass","mesh","panel","spin"],home:["glass","panel","mesh","spin"]};
 var anc={};
 function anchors(){
@@ -1616,7 +1623,7 @@ function callouts(dt,host){
 
 /* ---------- labels you can tap: panel sections, and the things on the tour ---------- */
 var secEl=[0,1,2].map(function(i){var d=doc.createElement("button");d.type="button";d.className="seclbl";d.hidden=true;d.setAttribute("data-sec3",i);stageEl.appendChild(d);return d;});
-var HS={win:"Windows",scr:"Screens",sol:"Solar",pig:"Pigeons"},hsEl={};
+var HS=ES?{win:"Ventanas",scr:"Mosquiteros",sol:"Solar",pig:"Palomas"}:{win:"Windows",scr:"Screens",sol:"Solar",pig:"Pigeons"},hsEl={};
 /* numbered dots on the problem: tap one to read what it does */
 var dmgEl=[0,1,2,3].map(function(i){var d=doc.createElement("button");d.type="button";d.className="dmg";d.hidden=true;d.setAttribute("data-dmg",i+1);d.setAttribute("aria-label","What this does, point "+(i+1));d.textContent=i+1;stageEl.appendChild(d);return d;});
 Object.keys(HS).forEach(function(k){var d=doc.createElement("button");d.type="button";d.className="hs";d.hidden=true;d.setAttribute("data-hs",k);d.textContent=HS[k];stageEl.appendChild(d);hsEl[k]=d;});
@@ -1627,7 +1634,7 @@ function secLabels(){
   var on=overlay&&st.arrays>1&&(mode==="home"||mode==="sol"||mode==="pig")&&me&&!obdOpen&&!ED;
   secEl.forEach(function(d,i){var gp=on&&me.groups.filter(function(g){return g.idx===i;})[0];if(!gp||!me.panels.length){d.hidden=true;return;}
     var par=gp.face>0?me.F:me.B,p=toWorld(par,gp.center[0],me.TT+H+.35,gp.center[1]),nrm=par.localToWorld(V(0,1,0)).sub(par.localToWorld(V(0,0,0))).normalize();
-    var txt="Section "+(i+1)+" · "+gp.n+" panels";if(d.textContent!==txt)d.textContent=txt;place(d,p,nrm);});
+    var txt=L("Section ","Sección ")+(i+1)+" · "+gp.n+L(" panels"," paneles");if(d.textContent!==txt)d.textContent=txt;place(d,p,nrm);});
   var hon=overlay&&mode==="home"&&!obdOpen&&me&&!ED,TS=hon?tourStops():[],ti=hon?tourAt():0,cs=TS[ti]||{},P2=hon?probs():[],atEnds=cs.k==="over"||cs.k==="end";
   Object.keys(hsEl).forEach(function(k){var d=hsEl[k];if(!hon||!atEnds||P2.indexOf(k)<0||(k==="sol"&&st.arrays>1)){d.hidden=true;return;}
     var fx=!broken(k),txt=probName(k,fx);if(d.textContent!==txt)d.textContent=txt;d.classList.toggle("bad",!fx);
@@ -1642,7 +1649,7 @@ stageEl.addEventListener("click",function(e){var t=e.target;if(!t.closest)return
   var dm=t.closest("[data-dmg]");if(dm){var nsel=+dm.getAttribute("data-dmg");dmgSel=dmgSel===nsel?0:nsel;track("tap_damage",{what:(tourStops()[tourAt()]||{}).k,point:nsel});return;}
   var sl=t.closest("[data-sec3]");if(sl&&me){var gi=+sl.getAttribute("data-sec3"),gp=me.groups.filter(function(g){return g.idx===gi;})[0];if(!gp)return;
     var par=gp.face>0?me.F:me.B,c=toWorld(par,gp.center[0],me.TT,gp.center[1]);focusShot={tx:c.x,ty:c.y,tz:c.z,yaw:gp.face>0?.3:Math.PI+.3,tilt:.75,dist:fitWH(gp.cols*PW/2+1.4,gp.rows*PD/2+1.6)};user=false;
-    say("<b>Section "+(gi+1)+":</b> "+gp.n+" panels"+(st.pig?", meshed and washed with the rest.":", "+money(gp.n*P.panel)+" at $7 a panel."),"");track("tap_section",{section:gi+1});}});
+    say(L("<b>Section ","<b>Sección ")+(gi+1)+":</b> "+gp.n+L(" panels"," paneles")+(st.pig?L(", meshed and washed with the rest.",", con malla y lavados con el resto."):", "+money(gp.n*P.panel)+L(" at $7 a panel."," a $7 por panel.")),"");track("tap_section",{section:gi+1});}});
 
 /* ---------- welcome: get the home right, then the problems, then the build ---------- */
 var obdOpen=false,obdDone=false,obd=doc.createElement("div");obd.className="obd";obd.hidden=true;
@@ -1650,16 +1657,16 @@ var obdOpen=false,obdDone=false,obd=doc.createElement("div");obd.className="obd"
 function pics(o,list,cur){return '<div class="obd-row pics" data-o="'+o+'">'+list.map(function(x,i){var v=x[2]!==undefined?x[2]:i;return '<button type="button" data-v="'+v+'" aria-pressed="'+(v===cur)+'"><img src="assets/quote/'+o+'-'+v+'.webp" alt="" width="300" height="200" loading="lazy" decoding="async"><b>'+x[0]+'</b><span>'+x[1]+'</span></button>';}).join("")+"</div>";}
 function chips(o,list,cur){return '<div class="obd-row" data-o="'+o+'">'+list.map(function(x,i){return '<button type="button" data-v="'+(o==="stories"?i+1:i)+'" aria-pressed="'+((o==="stories"?i+1:i)===cur)+'">'+x+'</button>';}).join("")+"</div>";}
 function obdRender(){
-  var P1='<div class="obd-in" data-p="1"><b class="obd-h">Let\'s get your home right</b><p>Three taps and the model looks like your place.</p>'+
-    '<div class="obd-l">Which looks most like your home?</div>'+pics("style",[["New build","Stucco, tile roof, garage up front"],["Ranch","Single story, long and low"],["Classic","Siding, porch, window grids"],["Lake estate","Big two story, arched windows"]],h3.style)+
-    '<div class="obd-l">Stories</div>'+chips("stories",["1 story","2 story"],st.stories)+
-    '<div class="obd-l">And your street?</div>'+pics("hood",[["Desert yards","Rock yards, block walls. Like newer Victorville tracts",0],["Lawns and trees","Green yards, shade trees. Like Jess Ranch",1],["On the lake","Backyard on the water. Like Spring Valley Lake",3],["Acreage","Big lots, room to spread out. Like Oak Hills",2]],h3.hood)+
-    '<div class="obd-act"><button type="button" data-obd="skip">Skip</button><button type="button" class="go" data-obd="next">Next</button></div></div>';
+  var P1='<div class="obd-in" data-p="1"><b class="obd-h">'+L("Let\'s get your home right","Vamos a armar tu casa")+'</b><p>'+L("Three taps and the model looks like your place.","Tres toques y el modelo se parece a tu casa.")+'</p>'+
+    '<div class="obd-l">'+L("Which looks most like your home?","¿Cuál se parece más a tu casa?")+'</div>'+pics("style",ES?[["Nueva","Estuco, teja, cochera al frente"],["Rancho","Un piso, larga y baja"],["Clásica","Tablilla, porche, ventanas con cuadrícula"],["Casa de lago","Dos pisos grandes, ventanas en arco"]]:[["New build","Stucco, tile roof, garage up front"],["Ranch","Single story, long and low"],["Classic","Siding, porch, window grids"],["Lake estate","Big two story, arched windows"]],h3.style)+
+    '<div class="obd-l">'+L("Stories","Pisos")+'</div>'+chips("stories",ES?["1 piso","2 pisos"]:["1 story","2 story"],st.stories)+
+    '<div class="obd-l">'+L("And your street?","¿Y tu calle?")+'</div>'+pics("hood",ES?[["Patios de desierto","Piedra y bardas de bloque. Como las colonias nuevas de Victorville",0],["Pasto y árboles","Patios verdes, árboles de sombra. Como Jess Ranch",1],["En el lago","Patio trasero al agua. Como Spring Valley Lake",3],["Terreno grande","Lotes amplios, espacio de sobra. Como Oak Hills",2]]:[["Desert yards","Rock yards, block walls. Like newer Victorville tracts",0],["Lawns and trees","Green yards, shade trees. Like Jess Ranch",1],["On the lake","Backyard on the water. Like Spring Valley Lake",3],["Acreage","Big lots, room to spread out. Like Oak Hills",2]],h3.hood)+
+    '<div class="obd-act"><button type="button" data-obd="skip">'+L("Skip","Saltar")+'</button><button type="button" class="go" data-obd="next">'+L("Next","Siguiente")+'</button></div></div>';
   /* the problems, as pictures you check off */
-  var PB=[["win","Dirty windows","Dust, spots, gray screens"],["pig","Pigeons","On the roof or under panels"],["sol","Dusty solar panels","A film of desert dust"],["scr","Torn screens","Ripped, sagging or loose"],["hw","Hard water spots","White spots from sprinklers"]];
-  var P2='<div class="obd-in" data-p="2" hidden><b class="obd-h">What seems to be the problem?</b><p>Check everything that applies. Next you\'ll see it on your home.</p><div class="obd-row pics pc">'+
+  var PB=ES?[["win","Ventanas sucias","Polvo, manchas, mosquiteros grises"],["pig","Palomas","En el techo o debajo de los paneles"],["sol","Paneles con polvo","Una capa de polvo del desierto"],["scr","Mosquiteros rotos","Rasgados, colgados o flojos"],["hw","Manchas de agua dura","Manchas blancas de los aspersores"]]:[["win","Dirty windows","Dust, spots, gray screens"],["pig","Pigeons","On the roof or under panels"],["sol","Dusty solar panels","A film of desert dust"],["scr","Torn screens","Ripped, sagging or loose"],["hw","Hard water spots","White spots from sprinklers"]];
+  var P2='<div class="obd-in" data-p="2" hidden><b class="obd-h">'+L("What seems to be the problem?","¿Cuál es el problema?")+'</b><p>'+L("Check everything that applies. Next you\'ll see it on your home.","Marca todo lo que aplique. Enseguida lo ves en tu casa.")+'</p><div class="obd-row pics pc">'+
     PB.map(function(x){return '<label class="obd-pc"><input type="checkbox" value="'+x[0]+'"'+(st[x[0]]?" checked":"")+'><img src="assets/quote/prob-'+x[0]+'.webp" alt="" width="300" height="200" loading="lazy" decoding="async"><b>'+x[1]+'</b><span>'+x[2]+'</span><i aria-hidden="true"></i></label>';}).join("")+'</div>'+
-    '<div class="obd-act"><button type="button" data-obd="back">Back</button><button type="button" class="go" data-obd="build">Build my home</button></div></div>';
+    '<div class="obd-act"><button type="button" data-obd="back">'+L("Back","Atrás")+'</button><button type="button" class="go" data-obd="build">'+L("Build my home","Armar mi casa")+'</button></div></div>';
   obd.innerHTML=P1+P2;}
 stageEl.appendChild(obd);
 function obdShow(on){obdOpen=on;obd.hidden=!on;ov.classList.toggle("obd-on",on);if(on){obdRender();say("");track("onboard_open");}secLabels();}
@@ -1703,7 +1710,7 @@ if("ResizeObserver" in window){var ro=new ResizeObserver(function(){msgH=-1;size
 
 /* ---------- controls in the builder ---------- */
 /* on a phone the controls fold under one bar; the bar says what's inside for the module that's open */
-function grabLabel(){var g=$("ovGrab");if(!g)return;var s=g.querySelector("span"),txt={home:"Customize my home",com:st.ctype?"Set up my building":"Set up my storefront",win:"Inside or outside, stories",sol:"Panel count and sections",scr:"Mesh and screen count",pig:"Spinners and the story"}[mode]||"Options";if(s&&s.textContent!==txt)s.textContent=txt;}
+function grabLabel(){var g=$("ovGrab");if(!g)return;var s=g.querySelector("span"),txt=(ES?{home:"Personalizar mi casa",com:st.ctype?"Armar mi edificio":"Armar mi local",win:"Por dentro o por fuera, pisos",sol:"Paneles y secciones",scr:"Malla y cantidad",pig:"Espantapájaros y la historia"}:{home:"Customize my home",com:st.ctype?"Set up my building":"Set up my storefront",win:"Inside or outside, stories",sol:"Panel count and sections",scr:"Mesh and screen count",pig:"Spinners and the story"})[mode]||L("Options","Opciones");if(s&&s.textContent!==txt)s.textContent=txt;}
 function panelMin(on){ov.classList.toggle("min",on);var g=$("ovGrab");if(g)g.setAttribute("aria-expanded",String(!on));}
 function syncControls(){
   $$("#ov [data-hseg]").forEach(function(g){var k=g.getAttribute("data-hseg");$$("button[data-v]",g).forEach(function(b){b.setAttribute("aria-pressed",String(+b.getAttribute("data-v")===h3[k]));});});
@@ -1748,7 +1755,7 @@ function fade(mid){var f=$("ovFade");if(fading||reduce){mid();return;}fading=tru
 function sync(){
   if(!me)return;checkCustom();
   var k=keyOf(cfgMe());
-  if(comG&&comKeyOf()!==comKey){buildCom();if(comOn())comShadow();else comG.visible=false;if(mode==="com")$("ovT").textContent=st.ctype?"Your building in 3D":"Your storefront in 3D";}
+  if(comG&&comKeyOf()!==comKey){buildCom();if(comOn())comShadow();else comG.visible=false;if(mode==="com")$("ovT").textContent=st.ctype?L("Your building in 3D","Tu edificio en 3D"):L("Your storefront in 3D","Tu local en 3D");}
   if(k!==builtKey){var keepStage=h3.stage;buildMe();if(mode==="pig"){buildNeighbors();buildBirds();h3.stage=keepStage;birdTargets(true);}
     if(mode!=="show"&&mode!=="home"&&mode!=="pig"){tl=0;if(mode==="win"){resetHaze();}}goal=preset();}
   else if(spinners.length!==Math.min(spinCount(),me.vents.length)){buildSpinners();birdTargets(false);anchors();}
