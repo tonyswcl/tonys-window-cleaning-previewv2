@@ -1019,10 +1019,15 @@ function placeWorker(pos,faceDir,walk){worker.position.copy(pos);worker.rotation
    The same reach and crouch logic drives its arm and leg bones, so every scene works with either body. */
 var rigAsked=false;
 function loadRig(ver){if(rigAsked)return;rigAsked=true;
+  function need(src,cb){var sc=doc.createElement("script");sc.src=src;sc.onload=cb;doc.head.appendChild(sc);}
   function go(){var ld=new T.GLTFLoader();
     ld.register(function(parser){parser.textureLoader=new T.TextureLoader(parser.options.manager);return {name:"img_textures"};});
-    ld.load("assets/quote/tech.glb?v="+ver,function(g){try{buildRig(g);}catch(e){if(window.console)console.warn("tech rig",e);}},undefined,function(){});}
-  if(T.GLTFLoader)go();else{var sc=doc.createElement("script");sc.src="assets/vendor/gltf.min.js?v="+ver;sc.onload=go;doc.head.appendChild(sc);}
+    ld.load(window.TQ_TECH_URL||("assets/quote/tech.glb?v="+ver),function(g){try{buildRig(g);}catch(e){if(window.console)console.warn("tech rig",e);}},undefined,function(){});}
+  function gl(){if(T.GLTFLoader)go();else need("assets/vendor/gltf.min.js?v="+ver,go);}
+  /* The private preview host serves no .glb files, so the preview build (tools/tests/mkpreview.py) packs the same
+     model into a script and names it in TQ.techjs. The live site never sets it and loads tech.glb as is. */
+  var pj=C.CFG.techjs;
+  if(typeof pj==="string"&&/^assets\/quote\/[\w-]+\.js(\?v=\w+)?$/.test(pj)&&!window.TQ_TECH_URL)need(pj,gl);else gl();
 }
 function buildRig(g){
   var u=worker.userData,root=g.scene,B={},want=["Hips","Spine","Spine1","Spine2","Neck","Head","HeadTop_End","LeftShoulder","RightShoulder","LeftArm","LeftForeArm","LeftHand","RightArm","RightForeArm","RightHand","LeftUpLeg","LeftLeg","LeftFoot","RightUpLeg","RightLeg","RightFoot"];

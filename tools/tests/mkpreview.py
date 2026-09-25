@@ -7,6 +7,14 @@ if os.path.exists(S):shutil.rmtree(S)
 os.makedirs(S)
 pages=sorted(f for f in os.listdir(R) if f.endswith('.html'))
 need=set();rows=[]
+# The private preview host serves no .glb files. The preview gets the same character packed into a script,
+# named in each page's TQ.techjs; q3d.js loads it only when it asks for the character. The live site is untouched.
+GLB=os.path.join(R,'assets/quote/tech.glb');TJ=''
+if os.path.exists(GLB):
+    import base64,hashlib
+    raw=open(GLB,'rb').read();os.makedirs(S+'/assets/quote',exist_ok=True)
+    open(S+'/assets/quote/tech-glb.js','w').write('window.TQ_TECH_URL="data:model/gltf-binary;base64,'+base64.b64encode(raw).decode()+'";\n')
+    TJ='"techjs":"assets/quote/tech-glb.js?v=%s",'%hashlib.sha1(raw).hexdigest()[:10]
 def local(u):
     u=u.split('#')[0].split('?')[0]
     if not u or u.startswith(('http','mailto:','tel:','sms:','data:','javascript','//')):return None
@@ -16,7 +24,7 @@ for f in pages:
     out='home.html' if f=='index.html' else f
     s=s.replace('href="/"','href="home.html"').replace('href="/#','href="home.html#').replace('href="index.html"','href="home.html"').replace('href="index.html#','href="home.html#')
     s=re.sub(r'(src|href)="/(?!/)',r'\1="',s)
-    s=s.replace('<script>window.TQ={','<script>window.TQ={"live":false,',1)
+    s=s.replace('<script>window.TQ={','<script>window.TQ={"live":false,'+TJ,1)
     s=s.replace('</body>','<script>try{history.scrollRestoration="manual"}catch(e){}addEventListener("load",function(){if(!location.hash)scrollTo(0,0)});</script>\n</body>',1)
     for u in re.findall(r'(?:src|href|srcset)="([^"]+)"',s):
         for part in u.split(','):
@@ -33,7 +41,7 @@ for css in ['style.css','assets/fonts.css']:
             l=local(u);
             if l:need.add(os.path.normpath(os.path.join(base,l)))
 need|={'assets/quote/q3d.js','assets/vendor/three.min.js','assets/quote/logo-pdf.jpg','assets/quote/home-4x5.webp','assets/quote/home-16x10.webp','assets/quote/com-4x5.webp','assets/quote/com-16x10.webp'}
-need|={'assets/quote/%s-%s.webp'%(a,b) for a,bs in [('style','01234'),('hood','01234')] for b in bs}|{'assets/quote/prob-%s.webp'%k for k in ['win','hw','sol','pig','scr','large']}|{'assets/quote/tony-192.jpg','assets/quote/tech.glb','assets/vendor/gltf.min.js'}
+need|={'assets/quote/%s-%s.webp'%(a,b) for a,bs in [('style','01234'),('hood','01234')] for b in bs}|{'assets/quote/prob-%s.webp'%k for k in ['win','hw','sol','pig','scr','large']}|{'assets/quote/tony-192.jpg','assets/vendor/gltf.min.js'}
 miss=[n for n in need if not os.path.exists(os.path.join(R,n))]
 for n in sorted(need):
     if n in miss:continue
