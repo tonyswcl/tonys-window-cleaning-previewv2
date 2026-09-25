@@ -47,7 +47,7 @@
 
   <link href="style.css" rel="stylesheet">
   <!-- tq:css -->
-<link href="assets/quote/quote.css?v=0285cb9fd1" rel="stylesheet">
+<link href="assets/quote/quote.css?v=0aff7c88bb" rel="stylesheet">
 <!-- /tq:css -->
 
   <script type="application/ld+json">
@@ -464,7 +464,7 @@
     <button type="button" class="more-svc" id="moreSvc" aria-expanded="false" aria-controls="xtiles"><b>Find our other services</b><span>Hard water, roof wash, new construction and more</span></button>
     <div class="xtiles" id="xtiles" hidden>
       <button type="button" class="xtile" data-svc="hw" aria-pressed="false"><b>Hard water removal</b><span>from $12 a pane</span></button>
-      <button type="button" class="xtile" data-svc="roof" aria-pressed="false"><b>Roof soft wash</b><span>from $109, free with pigeon proofing</span></button>
+      <button type="button" class="xtile" data-svc="roof" aria-pressed="false"><b>Roof soft wash</b><span>from $599, included with pigeon proofing</span></button>
       <button type="button" class="xtile" data-svc="pc" aria-pressed="false"><b>New construction clean</b><span>from $249 inside and out</span></button>
       <button type="button" class="xtile" data-svc="gut" aria-pressed="false"><b>Gutter cleanout</b><span>quoted on site</span></button>
       <button type="button" class="xtile" data-svc="pw" aria-pressed="false"><b>Driveway and patio wash</b><span>quoted on site</span></button>
@@ -480,23 +480,35 @@
           <h3>Window cleaning <small>$149 / $249</small></h3>
           <div class="opt"><span>Your home</span><div class="seg2" data-seg="stories"><button type="button" data-v="1" aria-pressed="true">1 story</button><button type="button" data-v="2" aria-pressed="false">2 story</button></div></div>
           <div class="note" id="winNote"></div>
-          <div class="opt"><span><span id="moreLbl">More than 12 windows </span><b class="amt" id="moreAmt">+$39</b></span><button type="button" class="switch" data-sw="more" role="switch" aria-checked="false" aria-label="More windows than standard"></button></div>
-          <div class="opt"><span>Inside windows too <b class="amt">+$49</b><small>Every window in the house, tracks vacuumed and wiped dry</small></span><button type="button" class="switch" data-sw="inside" role="switch" aria-checked="false" aria-label="Add inside windows"></button></div>
-          <div class="opt"><span>Large or custom home<small>Lake homes, tall glass and lots of it. Tony adds a small labor adjustment after a look.</small></span><button type="button" class="switch" data-sw="large" role="switch" aria-checked="false" aria-label="Large or custom home"></button></div>
+          <div class="opt"><span><span id="moreLbl">More than 12 windows </span><b class="amt" id="moreAmt">+$39</b> <button type="button" class="info" data-why aria-expanded="false" aria-label="Why this price">i</button></span><button type="button" class="switch" data-sw="more" role="switch" aria-checked="false" aria-label="More windows than standard"></button></div>
+          <p class="why" hidden>The base price covers 10 to 12 windows on a single story or 18 to 20 on a two story. Past that it's more glass, more screens and more tracks to do right, so $39 covers the extra time on a single story and $59 on a two story, where it's ladder work.</p>
+          <div class="opt"><span>Inside windows too <b class="amt">+$49</b> <button type="button" class="info" data-why aria-expanded="false" aria-label="Why this price">i</button><small>Every window in the house, tracks vacuumed and wiped dry</small></span><button type="button" class="switch" data-sw="inside" role="switch" aria-checked="false" aria-label="Add inside windows"></button></div>
+          <p class="why" hidden>One flat $49 for every window inside the house, with the tracks vacuumed and wiped dry. Most companies charge by the window for inside work. We're already there with the water and the tools, so doing the inside costs you far less than a separate visit.</p>
+          <div class="opt"><span>Large or custom home <button type="button" class="info" data-why aria-expanded="false" aria-label="Why this price">i</button><small>Lake homes, tall glass and lots of it. Tony confirms the price after a look.</small></span><button type="button" class="switch" data-sw="large" role="switch" aria-checked="false" aria-label="Large or custom home"></button></div>
+          <p class="why" hidden>Big custom homes vary a lot. Extra panes and screens are counted on site or from a satellite view, and inside and out can run $499 to $599 on some homes. You get the exact price from Tony before anything starts, so there are no surprises on the day.</p>
           <p class="now"><b>Now or later?</b> Dust and sprinkler overspray build up fast up here. A cleaning every 3 to 6 months keeps hard water from setting into the glass.</p>
+          <div class="needs"><div class="ntabs"><button type="button" data-need="0" aria-pressed="false">Do I really need this?</button><button type="button" data-need="1" aria-pressed="false">How will it help me?</button></div><p class="nans" data-ans="0" hidden>If you see spots when the sun hits the glass, or the screens look gray, yes. Sprinkler overspray and desert dust bake onto glass quickly. If it's been more than 6 months, it's due.</p><p class="nans" data-ans="1" hidden>More light in every room, a clear view, screens and tracks that slide the way they should, and glass that lasts because hard water never gets the chance to etch it.</p></div>
           <button type="button" class="see3d open3d" data-mode="win">Watch a window get cleaned in 3D →</button>
         </div></template>
         <template data-tpl><div class="svc" data-body="pig">
           <h3>Pigeon proofing <small>$450+</small></h3>
           <div class="note">$450 covers up to 12 panels. Each panel over 12 is +$50 for the mesh, labor and cleaning that panel. Mesh is clipped to the panel frame, never bolted. 2 to 3 spinners free, plus a free solar wash and roof wash.</div>
-          <div class="opt"><span>Extra spinners <b class="amt">$50 each</b></span><div class="stepper" data-step="spin"><button type="button" data-d="-1" aria-label="Fewer spinners">−</button><output class="num">0</output><button type="button" data-d="1" aria-label="More spinners">+</button></div></div>
+          <div class="opt stack"><span>Your package</span><div class="seg2 mesh" data-seg="pkg"><button type="button" data-v="0" aria-pressed="true">Pigeon proofing<small id="pkgA">$450</small></button><button type="button" data-v="1" aria-pressed="false">+ a year of cleanings<small id="pkgB"></small></button></div></div>
+          <p class="note" id="pkgNote"></p>
+          <div class="opt"><span>Panels over 12 <b class="amt">+$50 each</b> <button type="button" class="info" data-why aria-expanded="false" aria-label="Why this price">i</button></span></div>
+          <p class="why" hidden>$450 covers up to 12 panels. Each panel past that means more mesh, more clips, more cleanout under the array and one more panel to wash, so it's $50 a panel. Set your count in the panel box below.</p>
+          <div class="opt"><span>Extra spinners <b class="amt">$50 each</b> <button type="button" class="info" data-why aria-expanded="false" aria-label="Why this price">i</button></span><div class="stepper" data-step="spin"><button type="button" data-d="-1" aria-label="Fewer spinners">−</button><output class="num">0</output><button type="button" data-d="1" aria-label="More spinners">+</button></div></div>
+          <p class="why" hidden>2 to 3 spinners come free. A spinner's flash covers the side of the roof it faces, and a ridge blocks it, so bigger roofs or roofs with birds on both sides usually need one more. Tap "See what the spinners do" to watch it in 3D.</p>
           <p class="now"><b>Now or later?</b> Nests only get bigger. The longer the birds stay, the more there is to clean out and haul off, and that's the biggest swing in the price.</p>
-          <button type="button" class="see3d open3d" data-mode="pig">See what the free spinners do in 3D →</button>
+          <div class="needs"><div class="ntabs"><button type="button" data-need="0" aria-pressed="false">Do I really need this?</button><button type="button" data-need="1" aria-pressed="false">How will it help me?</button></div><p class="nans" data-ans="0" hidden>If you see birds on the roof, droppings on the tile or the driveway, or hear cooing under the panels, they're nesting. Pigeons don't leave on their own, and every month adds to the cleanout.</p><p class="nans" data-ans="1" hidden>Birds out for good, panels and roof cleaned, mesh clipped to the frame so nothing voids your panel warranty, and a 2 year pigeon free warranty in writing.</p></div>
+          <button type="button" class="see3d open3d" data-mode="pig">See what the spinners do in 3D →</button>
         </div></template>
         <template data-tpl><div class="svc" data-body="sol">
           <h3>Solar panel cleaning <small>$7 a panel</small></h3>
           <div class="note" id="solNote"></div>
           <p class="now"><b>Now or later?</b> There's almost no rain up here to rinse panels, so the dust stacks up and your output drops a little more every month.</p>
+          <div class="needs"><div class="ntabs"><button type="button" data-need="0" aria-pressed="false">Do I really need this?</button><button type="button" data-need="1" aria-pressed="false">How will it help me?</button></div><p class="nans" data-ans="0" hidden>If they haven't been washed in the last 6 months, there's a layer of dust on them. Open your solar app and compare a sunny day now with one after a wash. That gap is what dust is taking.</p><p class="nans" data-ans="1" hidden>Your panels make what they're rated for, and we look over the whole array for damage, loose wiring and birds while we're up there. $7 a panel, dried spot free.</p></div>
+
           <button type="button" class="see3d open3d" data-mode="sol">See your panels cleaned in 3D →</button>
         </div></template>
         <div class="svc" data-body="scr">
@@ -505,19 +517,23 @@
           <p class="note" data-mesh-fact="0">The same class of mesh your builder used, installed and tensioned right. Clearest view and good airflow. Fine for shaded windows.</p>
           <p class="note" data-mesh-fact="1">Heavy vinyl coated polyester, 5x stronger and far more UV stable. Takes desert sun, wind and pets without going brittle.</p>
           <div class="opt"><span>How many screens</span><div class="stepper" data-step="screens"><button type="button" data-d="-1" aria-label="Fewer screens">−</button><output class="num">4</output><button type="button" data-d="1" aria-label="More screens">+</button></div></div>
-          <div class="opt"><span>New frames and clips <b class="amt">+$10 a screen</b><small>Bent, missing or loose frames get rebuilt to fit, with new clips. Either mesh.</small></span><button type="button" class="switch" data-sw="frames" role="switch" aria-checked="false" aria-label="New frames and clips, $10 a screen"></button></div>
+          <div class="opt"><span>New frames and clips <b class="amt">+$10 a screen</b> <button type="button" class="info" data-why aria-expanded="false" aria-label="Why this price">i</button><small>Bent, missing or loose frames get rebuilt to fit, with new clips. Either mesh.</small></span><button type="button" class="switch" data-sw="frames" role="switch" aria-checked="false" aria-label="New frames and clips, $10 a screen"></button></div>
+          <p class="why" hidden>When a frame is bent, loose or missing corners, new mesh won't sit tight in it. We rebuild the frame to fit your window with new corners and clips, so the screen snaps in and stays. $10 a screen, with either mesh.</p>
           <div class="note">Re-meshed on site, same visit. $149 job minimum when screens are the only service. 2 year warranty.</div>
           <p class="now"><b>Now or later?</b> UV runs about nine months a year up here. Builder mesh goes brittle, then the wind finishes it off.</p>
+          <div class="needs"><div class="ntabs"><button type="button" data-need="0" aria-pressed="false">Do I really need this?</button><button type="button" data-need="1" aria-pressed="false">How will it help me?</button></div><p class="nans" data-ans="0" hidden>Tears, holes, mesh that bows out of the frame or crumbles when you press it. If your windows face the afternoon sun, builder mesh usually gives out within a few summers.</p><p class="nans" data-ans="1" hidden>Air in and bugs out, a clearer view from inside, screens that pop in and out easily, and a 2 year warranty on the mesh.</p></div>
+
           <button type="button" class="see3d open3d" data-mode="scr">Compare the mesh in 3D →</button>
         </div>
         <template data-tpl><div class="svc" data-body="hw">
           <h3>Hard water removal <small>from $12 a pane</small></h3>
-          <div class="opt"><span>Panes with spots</span><div class="stepper" data-step="panes"><button type="button" data-d="-1" aria-label="Fewer panes">−</button><output class="num">6</output><button type="button" data-d="1" aria-label="More panes">+</button></div></div>
+          <div class="opt"><span>Panes with spots <button type="button" class="info" data-why aria-expanded="false" aria-label="Why this price">i</button></span><div class="stepper" data-step="panes"><button type="button" data-d="-1" aria-label="Fewer panes">−</button><output class="num">6</output><button type="button" data-d="1" aria-label="More panes">+</button></div></div>
+          <p class="why" hidden>Hard water is minerals bonded to the glass, so each pane is treated and polished by hand, pane by pane. We test one pane free first so you see the result before you decide on the rest.</p>
           <div class="note">Added to an exterior window clean, so window cleaning is on your quote too. One pane tested free first so you see the result before you pay for the rest.</div>
         </div></template>
         <template data-tpl><div class="svc" data-body="roof">
-          <h3>Roof soft wash <small>from $109</small></h3>
-          <div class="note">Low pressure soft wash, safe for tile and shingle. Free with pigeon proofing.</div>
+          <h3>Roof soft wash <small>from $599</small></h3>
+          <div class="note">Part of our pressure washing. Low pressure soft wash, safe for tile and shingle, priced by the size of the roof. Included with pigeon proofing.</div>
         </div></template>
         <template data-tpl><div class="svc" data-body="pc">
           <h3>New construction clean <small>from $249</small></h3>
@@ -577,9 +593,9 @@
         <div class="days" id="days" role="group" aria-label="Pick a day"></div>
         <label class="other-date"><span>Or pick another date</span><input type="date" id="dateIn"></label>
         <div class="lab" style="margin-top:14px">Time</div>
-        <div class="seg2" data-seg="time"><button type="button" data-v="0" aria-pressed="false">Morning</button><button type="button" data-v="1" aria-pressed="false">Afternoon</button></div>
+        <div class="seg2" data-seg="time"><button type="button" data-v="0" aria-pressed="false">Morning</button><button type="button" data-v="1" aria-pressed="false">Afternoon</button><button type="button" data-v="2" aria-pressed="false" hidden>After 3 PM</button></div>
         <p class="small strong" id="dayPicked"></p>
-        <p class="small">Pick any day that works for you. Tony confirms by text, and if that day fills up he'll offer the closest one.</p>
+        <p class="small" id="dayRule">Jobs run Monday to Friday. Weekends are for free quote visits after 3 PM. Tony confirms by text, and if your day fills up he'll offer the closest one.</p>
       </div>
       <div class="card plan">
         <div class="lab">How often</div>
@@ -592,10 +608,17 @@
       </div>
     </div>
     <div class="card wait">
-      <div class="lab">What happens if you wait</div>
+      <div class="lab">We know why you're waiting</div>
+      <div class="reasons">
+        <p><b>"I'll see what it costs first."</b> It's right above, and it doesn't change on the day.</p>
+        <p><b>"I don't have time for this."</b> You pick the day. We bring everything, and you don't lift a finger.</p>
+        <p><b>"Not sure I need it."</b> Tap "Do I really need this?" on any service above for a straight answer.</p>
+      </div>
+      <div class="lab" style="margin-top:14px">What happens if you wait</div>
       <div class="seg2 wrapok" data-seg="wait"><button type="button" data-v="0" aria-pressed="false">Book now</button><button type="button" data-v="1" aria-pressed="false">3 months</button><button type="button" data-v="2" aria-pressed="true">6 months</button><button type="button" data-v="3" aria-pressed="false">A year</button></div>
       <ul class="waitlist" id="waitList"></ul>
       <p class="small strong" id="waitNote"></p>
+      <a class="qb qb-gold qb-sm" href="#day" id="waitGo" style="margin-top:10px">Pick my day and save 10% →</a>
     </div>
   </div>
 </section>
@@ -603,37 +626,40 @@
 <!-- STEP 3: send -->
 <section class="tq-step" id="tq-send" data-nosnippet>
   <div class="wrap">
-    <div class="step-head"><span class="step-n">3</span><h2>Send it. Tony texts back.</h2></div>
-    <p class="step-sub">Nothing to pay now. Tony confirms your price and your day by text.</p>
+    <div class="step-head"><span class="step-n">3</span><h2>Send it your way</h2></div>
+    <p class="step-sub">Nothing to pay now. Fill in your details once, then text, email or send the form. Everything Tony needs is already written for you.</p>
     <form class="send" id="sendForm" novalidate>
       <div class="card">
-        <div class="fld"><label for="fname">First name</label><input id="fname" name="name" autocomplete="given-name" maxlength="80" placeholder="Maria"></div>
-        <div class="fld" style="margin-top:12px"><label for="fphone">Mobile number</label><input id="fphone" name="phone" type="tel" inputmode="tel" autocomplete="tel-national" maxlength="20" placeholder="760-555-0123" aria-describedby="ferr"></div>
+        <div class="fld"><label for="fname">Your name</label><input id="fname" name="name" autocomplete="name" maxlength="80" placeholder="Maria Lopez"></div>
+        <div class="fld"><label for="fstreet">Address</label><input id="fstreet" name="street" autocomplete="street-address" maxlength="140" placeholder="Street, city"></div>
+        <div class="fld"><label for="fphone">Mobile number</label><input id="fphone" name="phone" type="tel" inputmode="tel" autocomplete="tel-national" maxlength="20" placeholder="760-555-0123" aria-describedby="ferr"></div>
+        <div class="fld"><label for="femail">Email <small>optional</small></label><input id="femail" name="email" type="email" inputmode="email" autocomplete="email" maxlength="120" placeholder="you@email.com"></div>
+        <div class="fld"><label for="fnotes">Anything we should know? <small>optional</small></label><textarea id="fnotes" name="notes" maxlength="400" rows="2" placeholder="Gate code, dogs in the yard, best time to call"></textarea></div>
         <div class="err" id="ferr" role="alert"></div>
-        <div class="fld"><label for="fstreet">Street or neighborhood</label><input id="fstreet" name="street" autocomplete="address-line1" maxlength="120" placeholder="Main St, Hesperia"></div>
         <div class="hp" aria-hidden="true"><label for="hp">Leave this empty</label><input id="hp" name="company" tabindex="-1" autocomplete="off"></div>
-        <button type="submit" class="qb qb-gold" id="sendBtn" style="width:100%;margin-top:16px">Send my quote</button>
+        <div class="lab" style="margin-top:14px">How do you want to send it?</div>
+        <div class="ways">
+          <a class="way" id="smsA" href="sms:+17145590300"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12Z"/></svg><b>Text Tony</b><span>Opens your messages, all filled in</span></a>
+          <a class="way" id="mailA" href="mailto:twindowclean@gmail.com"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg><b>Email Tony</b><span>Opens your email, all filled in</span></a>
+          <button type="submit" class="way" id="sendBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4Z"/></svg><b>Send the form</b><span>Straight to Tony from here</span></button>
+        </div>
+        <p class="small" id="wayNote">Texting works from a phone. On a computer, email or the form is easiest.</p>
         <div id="sent" class="sent" hidden>
           <b>Sent. Tony has your quote.</b>
           <p>He'll text you back from 714-559-0300. Save the number so you know it's him.</p>
-          <p>Want to add a photo of your roof or windows? Text it to 714-559-0300 and he can size the job before he drives out.</p>
           <div class="prev" id="prevNote" hidden>Preview only, nothing was sent. On the live site this lands in Tony's inbox with the full breakdown.</div>
         </div>
       </div>
       <div class="card">
-        <div class="msg-h">Your quote</div>
+        <div class="msg-h">What Tony gets</div>
         <div class="msg" id="msg"></div>
         <div class="acts">
-          <a class="qb qb-ghost" id="smsA" href="sms:+17145590300">Text Tony instead</a>
-          <button type="button" class="qb qb-ghost" id="copyBtn">Copy</button>
+          <button type="button" class="qb qb-ghost qb-sm" id="copyBtn">Copy</button>
+          <button type="button" class="qb qb-ghost qb-sm" id="shareBtn">Save or share as PDF</button>
         </div>
-        <div class="tip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="6" width="18" height="14" rx="2"/><circle cx="12" cy="13" r="3.5"/><path d="M8 6l1.5-2h5L16 6"/></svg><span>Texting? Attach a photo of your roof or windows. Tony can size the job before he drives out.</span></div>
-        <div class="numline"><span>Or text or call</span><b>714-559-0300</b></div>
         <div class="toast" id="toast" role="status"></div>
-        <div class="share">
-          <button type="button" class="qb qb-ghost qb-sm" id="shareBtn">Share this quote</button>
-          <span class="linkout" id="linkout">Send your spouse or landlord a twindowclean.com link that opens this exact quote.</span>
-        </div>
+        <div class="tip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="6" width="18" height="14" rx="2"/><circle cx="12" cy="13" r="3.5"/><path d="M8 6l1.5-2h5L16 6"/></svg><span>Texting? Add a photo of your roof or windows. Tony can size the job before he drives out.</span></div>
+        <div class="numline"><span>Or call</span><b>714-559-0300</b></div>
       </div>
     </form>
   </div>
@@ -932,7 +958,7 @@
 </nav>
 </div>
 <script>window.TQ={"svc":["scr"],"mode":"scr","city":"Oak Hills","street":"Oak Hill Rd, Oak Hills"};</script>
-<script src="assets/quote/quote.js?v=2e2a0d74c8" defer></script>
+<script src="assets/quote/quote.js?v=4fccb26694" defer></script>
 <!-- /tq:tail -->
 </body>
 </html>
