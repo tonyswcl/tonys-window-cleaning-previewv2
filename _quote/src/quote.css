@@ -479,3 +479,18 @@ html.tq-lock,html.tq-lock body{overflow:hidden!important}
 .tq .obd-cnt{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding-block:4px;font:700 14px var(--display);color:#103050}
 .tq .obd-cnt .obd-hint{flex:1 1 100%;font:500 12.5px/1.35 var(--body);color:#5b7188}
 .tq .obd-det [data-sec]{display:flex;align-items:center;justify-content:space-between;gap:10px;padding-block:4px;font:700 13px var(--display);color:#44607a}
+
+/* the note on a phone: Tony's badge rides the top edge, Ask Tony sits in the button row, the chips stay small */
+.tq .mnav .askb{margin:0;min-height:0;padding:6px 4px;background:transparent;color:#8f5d08;font:800 13px var(--display);text-decoration:underline;text-underline-offset:3px}
+.tq .mnav .askb[hidden]{display:none}
+@media (max-width:899px){
+  .tq .ov-msg{padding-top:15px}
+  .tq .mtag{position:absolute;top:-14px;left:12px;margin:0;background:#fff;border-radius:999px;padding:2px 10px 2px 2px;box-shadow:0 4px 10px -5px rgba(0,0,0,.4);font-size:10.5px}
+  .tq .mtag img{width:24px;height:24px}
+  .tq .ov-msg .mtxt{font-size:14px;line-height:1.38}
+  .tq .mnav{gap:4px}
+  .tq .mnav button{padding:6px 11px}
+  .tq .try{top:40px;gap:5px;max-width:74%}
+  .tq .try button{font-size:11.5px;padding:6px 10px 6px 24px}
+  .tq .try button::before{left:8px;width:9px;height:9px;margin-top:-4.5px}
+}

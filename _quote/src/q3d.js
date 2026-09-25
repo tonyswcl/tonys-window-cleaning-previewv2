@@ -84,7 +84,9 @@ function envFace(kind,sun){var c=doc.createElement("canvas");c.width=c.height=64
     if(sun){var sg=g.createRadialGradient(20,14,0,20,14,12);sg.addColorStop(0,"#fff");sg.addColorStop(1,"rgba(255,255,255,0)");g.fillStyle=sg;g.fillRect(0,0,64,64);}}
   return c;}
 var cube=new T.CubeTexture([envFace("side"),envFace("side",true),envFace("top"),envFace("bot"),envFace("side",true),envFace("side")]);
-cube.encoding=T.sRGBEncoding;cube.needsUpdate=true;scene.environment=cube;
+cube.encoding=T.sRGBEncoding;cube.needsUpdate=true;
+var envTex=cube;try{var pmg=new T.PMREMGenerator(R);envTex=pmg.fromCubemap(cube).texture;pmg.dispose();}catch(e){envTex=cube;}
+scene.environment=envTex;
 scene.fog=new T.Fog(HOR,110,520);
 var HEMI=new T.HemisphereLight(0xdcebff,0x8d8466,.62);scene.add(HEMI);
 var sun=new T.DirectionalLight(0xfff0d6,2.2);sun.position.set(-14,22,16);sun.castShadow=true;
@@ -517,7 +519,11 @@ function pine(par,x,z,ht){var t=new T.Group();t.position.set(x,0,z);par.add(t);v
   for(var i=0;i<7;i++){var f=i/6,rad=(2.6-f*2.0)*(ht/7),y=ht*(.3+f*.66);
     for(var k=0;k<4;k++){var c=new T.Mesh(G.frondCard,M.pine);c.scale.set(rad*.55,rad,1);c.position.set(0,y,0);c.rotation.set(-Math.PI/2-.35-f*.15,k*Math.PI/2+f*.5+(r()-.5)*.4,0,"YXZ");c.castShadow=castOn;t.add(c);}}
   var tip=new T.Mesh(G.frondCard,M.pine);tip.scale.set(.5,ht*.12,1);tip.position.set(0,ht*.94,0);t.add(tip);return t;}
-var castOn=true;
+var castOn=true,yardTrees=[];
+/* a yard tree between the camera and what it's looking at hides for the close ups */
+function clearView(){var close=overlay&&(mode==="win"||mode==="scr"||(mode==="home"&&!obdOpen)),c=cam.position,g=goal;
+  yardTrees.forEach(function(t){if(!close||!g){t.visible=true;return;}var ax=c.x,az=c.z,bx=g.tx,bz=g.tz,dx=bx-ax,dz=bz-az,L2=dx*dx+dz*dz||1,
+    k=Math.max(0,Math.min(1,((t.position.x-ax)*dx+(t.position.z-az)*dz)/L2)),px=ax+dx*k-t.position.x,pz=az+dz*k-t.position.z;t.visible=px*px+pz*pz>2.6*2.6||k>.93;});}
 function bx(w,h,d,m,x,y,z,par){return box(w,h,d,m,x,y,z,par,!castOn);}
 /* a fan palm: tall trunk, a skirt of old fronds, a round crown */
 function palm(par,x,z,ht,r){var t=new T.Group();t.position.set(x,0,z);par.add(t);var top=V((r()-.5)*.7,ht,(r()-.5)*.7);cylBetween(V(0,0,0),top,.2,M.palmT,t);
@@ -606,7 +612,8 @@ function buildTown(){
   function cutZ(x,m){if(!LK)return null;var ex=x/(LK.A+m);if(Math.abs(ex)>=1)return null;var dz=(LK.B+m)*Math.sqrt(1-ex*ex);return [LK.zc-dz,Math.min(LK.zc+dz,LK.zsh-1.5+m)];}
   function nearLK(x,z,d){for(var i=0;i<LKH.length;i++)if(Math.hypot(LKH[i][0]-x,LKH[i][1]-z)<d)return true;return false;}
   /* your own front yard */
-  if(hood===1||hood===3){lawn(hoodG,0,W0+5,fz+.4,fz+7);tree(hoodG,-(W0/2+1.3),fz+5.3,1);tree(hoodG,W0/2+1.6,fz+5.8,.9);}
+  /* your own yard trees stay separate from the batched town, so they can step aside when they block the view of Tony at work */
+  yardTrees=[];if(hood===1||hood===3){lawn(hoodG,0,W0+5,fz+.4,fz+7);var yg=new T.Group();yg.userData.dyn=true;hoodG.add(yg);yardTrees=[tree(yg,-(W0/2+1.3),fz+5.3,1),tree(yg,W0/2+1.6,fz+5.8,.9)];}
   if(hood===3){/* your backyard runs down to the water: lawn, a low view fence, your own dock */
     lawn(hoodG,0,W0+6,LK.zsh+.1,-me.D/2-.2);dock(hoodG,W0/2-3,LK.zsh,r,true);
     bx(W0+6,.05,.05,M.pframe,0,1.05,LK.zsh+.3,hoodG);bx(W0+6,.05,.05,M.pframe,0,.35,LK.zsh+.3,hoodG);for(var fx0=-W0/2-3;fx0<=W0/2+3;fx0+=1.6)if(Math.abs(fx0-(W0/2-3))>1.2)bx(.05,1.1,.05,M.pframe,fx0,.55,LK.zsh+.3,hoodG);
@@ -968,7 +975,7 @@ function makeWorker(){
   [-1,1].forEach(function(s){var wh=new T.Mesh(G.cyl,M.rubber);wh.scale.set(.1,.05,.1);wh.rotation.z=Math.PI/2;wh.position.set(s*.37,.1,0);cart.add(wh);});
   cart.visible=false;scene.add(cart);tools.cart=cart;
   worker=w;
-  if(C.CFG.tech)loadRig(C.CFG.tech);
+  if(C.CFG.tech){if(overlay)loadRig(C.CFG.tech);else setTimeout(function(){loadRig(C.CFG.tech);},2500);}
 }
 var SHL={L:V(-.22,1.5,0),R:V(.22,1.5,0)},UA=.3,FA=.29,POLE={L:V(-1,-.9,-.5),R:V(1,-.9,-.5)},TH=.45,SH=.45;
 /* two joint reach: from a root toward a target, with the middle joint pushed toward a hint direction */
@@ -977,7 +984,7 @@ function ik2(s,t,l1,l2,hint){var d=t.clone().sub(s),len=d.length(),mx=l1+l2-.002
   return [s.clone().addScaledVector(u,l1*ca).addScaledVector(pv,l1*sa),s.clone().add(d)];}
 function shoulder(side){var b=worker.userData.body;b.updateMatrix();return SHL[side].clone().applyMatrix4(b.matrix);}
 function reach(side,targetW,noLook){
-  if(worker.userData.rig)return rigReach(side,targetW);
+  if(worker.userData.rig){var ro=rigReach(side,targetW);if(!noLook&&side==="R")rigLook(targetW);return ro;}
   var w=worker,a=w.userData[side],s=shoulder(side),j=ik2(s,w.worldToLocal(targetW.clone()),UA,FA,POLE[side]),E=j[0],Hn=j[1];
   setBone(a.u,s,E);setBone(a.sl,s.clone().lerp(E,-.08),s.clone().lerp(E,1.0));setBone(a.f,E,Hn);a.el.position.copy(E);
   if(!a.fs){a.fs=new T.Mesh(G.cyl,M.shirt);a.fs.scale.x=a.fs.scale.z=.05;a.fs.castShadow=true;worker.add(a.fs);}setBone(a.fs,E,E.clone().lerp(Hn,.82));
@@ -986,7 +993,10 @@ function reach(side,targetW,noLook){
   hx.addScaledVector(fd,-hx.dot(fd)).normalize();var hz=new T.Vector3().crossVectors(hx,fd);a.h.quaternion.setFromRotationMatrix(new T.Matrix4().makeBasis(hx,fd,hz));a.h.position.copy(Hn).addScaledVector(fd,-.035);
   var out=w.localToWorld(Hn.clone());if(!noLook&&(side==="R"||!w.userData.look)){w.userData.look=out;look();}return out;
 }
-function rest(side){var w=worker,b=w.userData.body.position;return reach(side,w.localToWorld(V((side==="L"?-.29:.29)+b.x,.86+b.y,.05)),true);}
+function rest(side){var w=worker,b=w.userData.body.position,r=w.userData.rig;
+  if(r){var m=rigArm(side),sl=w.worldToLocal(m.A.getWorldPosition(new T.Vector3())),d=m.d,L2=(d.a+d.f)*.96,t=performance.now()/1000,sw=Math.sin(t*.9+(side==="L"?0:1.3))*.012;
+    return reach(side,w.localToWorld(V(sl.x+(side==="L"?-.07:.07),sl.y-L2,sl.z+.03+sw)),true);}
+  return reach(side,w.localToWorld(V((side==="L"?-.29:.29)+b.x,.86+b.y,.05)),true);}
 function lookAtW(p){worker.userData.look=p.clone();look();}
 /* legs follow the body down: feet stay on the ground and the knees bend forward */
 function legs(ph){var u=worker.userData,b=u.body;if(u.rig){rigLegs();return;}b.updateMatrix();
@@ -995,36 +1005,46 @@ function legs(ph){var u=worker.userData,b=u.body;if(u.rig){rigLegs();return;}b.u
     setBone(L.th,hip,j[0]);setBone(L.sh,j[0],ank);L.kn.position.copy(j[0]);
     if(L.ft){L.ft.position.set(sd*.1,lift,.22*sw);L.ft.rotation.x=-lift*2.5;}});}
 /* the head turns toward whatever the hands are working on, and he breathes */
-function look(){var u=worker.userData;if(!u.look)return;var hd=u.head,lp=hd.parent.worldToLocal(u.look.clone()).sub(hd.position);
+function look(){var u=worker.userData;if(!u.look)return;if(u.rig){rigLook(u.look);return;}var hd=u.head,lp=hd.parent.worldToLocal(u.look.clone()).sub(hd.position);
   hd.rotation.y=Math.max(-.8,Math.min(.8,Math.atan2(lp.x,lp.z)));hd.rotation.x=Math.max(-.35,Math.min(.5,-Math.atan2(lp.y,Math.hypot(lp.x,lp.z))*.8));}
 function placeWorker(pos,faceDir,walk){worker.position.copy(pos);worker.rotation.set(0,Math.atan2(faceDir.x,faceDir.z),0);
   var u=worker.userData,b=u.body,t=performance.now()/1000;u.look=null;u.dip=0;
   /* alive while standing: weight shifts from foot to foot, the chest rises and falls, the shoulders roll a hair */
   if(walk){b.position.set(Math.sin(walk)*.012,Math.abs(Math.sin(walk))*.028-.014,0);b.rotation.set(.04,0,Math.sin(walk)*.02);}
   else{b.position.set(Math.sin(t*.55)*.022,Math.sin(t*1.1)*.004,0);b.rotation.set(Math.sin(t*.9)*.006,Math.sin(t*.35)*.05,Math.sin(t*.55)*.018);}
-  if(u.rig)rigIdle(t);
+  if(u.rig)rigIdle(t,walk||0);
   u.torso.scale.x=1+Math.sin(t*1.5)*.014;u.torso.scale.z=.74*(1+Math.sin(t*1.5)*.024);u.head.rotation.set(0,0,0);
   worker.updateMatrixWorld(true);legs(walk||0);}
 /* ---------- a real rigged character (Mixamo skeleton), used when assets/quote/tech.glb is present ----------
    The same reach and crouch logic drives its arm and leg bones, so every scene works with either body. */
-function loadRig(ver){
-  function go(){new T.GLTFLoader().load("assets/quote/tech.glb?v="+ver,function(g){try{buildRig(g);}catch(e){if(window.console)console.warn("tech rig",e);}},undefined,function(){});}
+var rigAsked=false;
+function loadRig(ver){if(rigAsked)return;rigAsked=true;
+  function go(){var ld=new T.GLTFLoader();
+    ld.register(function(parser){parser.textureLoader=new T.TextureLoader(parser.options.manager);return {name:"img_textures"};});
+    ld.load("assets/quote/tech.glb?v="+ver,function(g){try{buildRig(g);}catch(e){if(window.console)console.warn("tech rig",e);}},undefined,function(){});}
   if(T.GLTFLoader)go();else{var sc=doc.createElement("script");sc.src="assets/vendor/gltf.min.js?v="+ver;sc.onload=go;doc.head.appendChild(sc);}
 }
 function buildRig(g){
-  var u=worker.userData,root=g.scene,B={},want=["Hips","Spine","Spine1","Spine2","Neck","Head","LeftArm","LeftForeArm","LeftHand","RightArm","RightForeArm","RightHand","LeftUpLeg","LeftLeg","LeftFoot","RightUpLeg","RightLeg","RightFoot"];
-  root.traverse(function(n){if(n.isBone){var k=n.name.replace(/^mixamorig\d*:?/,"");if(want.indexOf(k)>=0&&!B[k])B[k]=n;}if(n.isMesh){n.castShadow=true;n.frustumCulled=false;}});
+  var u=worker.userData,root=g.scene,B={},want=["Hips","Spine","Spine1","Spine2","Neck","Head","HeadTop_End","LeftShoulder","RightShoulder","LeftArm","LeftForeArm","LeftHand","RightArm","RightForeArm","RightHand","LeftUpLeg","LeftLeg","LeftFoot","RightUpLeg","RightLeg","RightFoot"];
+  root.traverse(function(n){if(n.isBone){var k=n.name.replace(/^mixamorig\d*:?/,"");if(want.indexOf(k)>=0&&!B[k])B[k]=n;}
+    if(n.isMesh){n.castShadow=true;n.receiveShadow=false;n.frustumCulled=false;var nm=n.name||"";
+      /* Tony's work clothes, from his photos: royal blue long sleeve, dark pants, black shoes. The cloth folds stay, from the normal map. */
+      if(/Hoody/i.test(nm))n.material=new T.MeshStandardMaterial({color:new T.Color(0x1646b8).convertSRGBToLinear(),roughness:.9,metalness:0,normalMap:n.material.normalMap,normalScale:new T.Vector2(1.3,1.3),skinning:true});
+      else if(/Pants/i.test(nm))n.material=new T.MeshStandardMaterial({color:new T.Color(0x1b1c20).convertSRGBToLinear(),roughness:.9,metalness:0,normalMap:n.material.normalMap,skinning:true});
+      else if(n.material&&n.material.map)n.material.roughness=Math.max(.6,n.material.roughness);}});
   if(!B.LeftArm||!B.RightArm||!B.LeftUpLeg||!B.Head)return;
   root.updateMatrixWorld(true);
-  var wp=function(b){return b.getWorldPosition(new T.Vector3());},hy=wp(B.Head).y-(wp(B.LeftFoot).y+wp(B.RightFoot).y)/2;
-  root.scale.multiplyScalar(1.6/Math.max(.001,hy));root.updateMatrixWorld(true);
-  var fy=(wp(B.LeftFoot).y+wp(B.RightFoot).y)/2;root.position.y-=fy-.08;
-  var holder=new T.Group();holder.add(root);worker.add(holder);holder.updateMatrixWorld(true);
+  var wp=function(b){return b.getWorldPosition(new T.Vector3());},fy0=(wp(B.LeftFoot).y+wp(B.RightFoot).y)/2,top0=B.HeadTop_End?wp(B.HeadTop_End).y:wp(B.Head).y+.2;
+  /* Tony is about 5'10": the top of the head bone lands at 1.78 m, whatever units the file came in */
+  root.scale.multiplyScalar(1.7/Math.max(.001,top0-fy0));root.updateMatrixWorld(true);
+  var fy=(wp(B.LeftFoot).y+wp(B.RightFoot).y)/2;root.position.y-=fy-.085;
+  var holder=new T.Group();holder.add(root);worker.add(holder);holder.updateMatrixWorld(true);worker.updateMatrixWorld(true);
   var len=function(a,b){return wp(a).distanceTo(wp(b));};
   var rig={root:root,holder:holder,B:B,dip:0,L:{a:len(B.LeftArm,B.LeftForeArm),f:len(B.LeftForeArm,B.LeftHand)},R:{a:len(B.RightArm,B.RightForeArm),f:len(B.RightForeArm,B.RightHand)},
     legL:{a:len(B.LeftUpLeg,B.LeftLeg),f:len(B.LeftLeg,B.LeftFoot),foot:worker.worldToLocal(wp(B.LeftFoot))},legR:{a:len(B.RightUpLeg,B.RightLeg),f:len(B.RightLeg,B.RightFoot),foot:worker.worldToLocal(wp(B.RightFoot))},
-    mixer:null,last:0,bind:{}};
+    mixer:null,last:0,bind:{},bob:0,walk:0};
   for(var bk in B)rig.bind[bk]=B[bk].quaternion.clone();
+  headwear(rig,HW);
   var idle=g.animations.filter(function(a){return /idle|breath/i.test(a.name);})[0];
   if(idle){rig.mixer=new T.AnimationMixer(root);rig.mixer.clipAction(idle).play();}
   /* hide the simple body, keep the tools */
@@ -1034,14 +1054,51 @@ function buildRig(g){
 function turnBone(bone,childW,wantW){var bp=bone.getWorldPosition(new T.Vector3()),cur=childW.clone().sub(bp).normalize(),des=wantW.clone().sub(bp).normalize();
   var q=new T.Quaternion().setFromUnitVectors(cur,des).multiply(bone.getWorldQuaternion(new T.Quaternion())),pq=bone.parent.getWorldQuaternion(new T.Quaternion()).invert();
   bone.quaternion.copy(pq.multiply(q));bone.updateMatrixWorld(true);}
-function rigIdle(t){var r=worker.userData.rig;for(var bk in r.B)r.B[bk].quaternion.copy(r.bind[bk]);if(r.mixer){var dt=r.last?Math.min(.05,t-r.last):0;r.last=t;r.mixer.update(dt);}
-  r.dip=0;r.holder.position.y=0;r.holder.rotation.x=0;worker.updateMatrixWorld(true);}
-function rigReach(side,targetW){var r=worker.userData.rig,B=r.B,A=B[side==="L"?"LeftArm":"RightArm"],F=B[side==="L"?"LeftForeArm":"RightForeArm"],H=B[side==="L"?"LeftHand":"RightHand"],d=r[side];
+/* Tony's olive cap and glasses, fitted to the head bone at the bind pose so they turn with his head.
+   o: cap height and depth, glasses height and depth, as fractions of the head bone's length */
+var HW={cy:.64,cz:.08,gy:.45,gz:.68,cs:1};
+function headwear(r,o){var B=r.B,wp=function(b){return b.getWorldPosition(new T.Vector3());};
+  [r.cap,r.glasses].forEach(function(x){if(x&&x.parent)x.parent.remove(x);});
+  var hp=wp(B.Head),tp=B.HeadTop_End?wp(B.HeadTop_End):hp.clone().add(V(0,.2,0)),hl=worker.worldToLocal(hp.clone()),hh=worker.worldToLocal(tp.clone()).y-hl.y,k=hh*(o.cs||1);
+  var capM=Std({color:new T.Color(0x57553f).convertSRGBToLinear(),roughness:.9}),cap=new T.Group();
+  var crown=new T.Mesh(new T.SphereGeometry(1,24,12,0,Math.PI*2,0,Math.PI*.5),capM);crown.scale.set(k*.5,k*.4,k*.55);crown.castShadow=true;cap.add(crown);
+  var brim=new T.Mesh(new T.CylinderGeometry(1,1,1,24,1,false,-Math.PI*.5,Math.PI),capM);brim.scale.set(k*.42,k*.03,k*.4);brim.rotation.x=.14;brim.position.set(0,k*.02,k*.42);brim.castShadow=true;cap.add(brim);
+  var band=new T.Mesh(new T.CylinderGeometry(1,1,1,24,1,true),capM);band.scale.set(k*.5,k*.07,k*.55);band.position.y=k*.02;cap.add(band);
+  var btn=new T.Mesh(G.ball,capM);btn.scale.setScalar(k*.045);btn.position.y=k*.4;cap.add(btn);
+  cap.position.set(hl.x,hl.y+hh*o.cy,hl.z+hh*o.cz);worker.add(cap);worker.updateMatrixWorld(true);B.Head.attach(cap);
+  var gl=new T.Group(),fr=Std({color:new T.Color(0x141518).convertSRGBToLinear(),roughness:.4,metalness:.3}),lens=Std({color:0xcfe3ee,roughness:.05,metalness:.1,transparent:true,opacity:.25});
+  [-1,1].forEach(function(sd){var rim=new T.Mesh(new T.TorusGeometry(k*.095,k*.01,6,18),fr);rim.position.x=sd*k*.135;rim.scale.y=.78;gl.add(rim);
+    var ln=new T.Mesh(new T.CircleGeometry(k*.09,18),lens);ln.position.x=sd*k*.135;ln.scale.y=.78;gl.add(ln);
+    var arm=new T.Mesh(G.box,fr);arm.scale.set(k*.016,k*.016,k*.46);arm.position.set(sd*k*.23,0,-k*.23);gl.add(arm);});
+  var br=new T.Mesh(G.box,fr);br.scale.set(k*.08,k*.015,k*.02);gl.add(br);
+  gl.position.set(hl.x,hl.y+hh*o.gy,hl.z+hh*o.gz);worker.add(gl);worker.updateMatrixWorld(true);B.Head.attach(gl);
+  r.cap=cap;r.glasses=gl;}
+/* turn a bone by an angle about an axis given in world space; its children follow */
+function rotW(bone,axisW,ang){if(!bone||!ang)return;var q=new T.Quaternion().setFromAxisAngle(axisW,ang).multiply(bone.getWorldQuaternion(new T.Quaternion())),pq=bone.parent.getWorldQuaternion(new T.Quaternion()).invert();
+  bone.quaternion.copy(pq.multiply(q));bone.updateMatrixWorld(true);}
+function rigIdle(t,walk){var r=worker.userData.rig,B=r.B;for(var bk in B)B[bk].quaternion.copy(r.bind[bk]);if(r.mixer){var dt=r.last?Math.min(.05,t-r.last):0;r.last=t;r.mixer.update(dt);}
+  r.dip=0;r.walk=walk||0;r.holder.rotation.set(0,0,0);
+  /* standing, his weight drifts from foot to foot; walking, he bobs a little with each step */
+  r.bob=walk?Math.abs(Math.sin(walk))*.022-.011:Math.sin(t*1.1)*.003;r.holder.position.set(walk?Math.sin(walk)*.018:Math.sin(t*.55)*.02,r.bob,0);
+  worker.updateMatrixWorld(true);
+  var X=V(1,0,0).transformDirection(worker.matrixWorld),Y=V(0,1,0),Z=V(0,0,1).transformDirection(worker.matrixWorld);
+  rotW(B.Spine,Z,walk?Math.sin(walk)*.035:-Math.sin(t*.55)*.03);
+  rotW(B.Spine,Y,walk?-Math.sin(walk)*.08:Math.sin(t*.35)*.04);
+  rotW(B.Spine2,X,(walk?.06:0)+Math.sin(t*1.5)*.018);
+  rotW(B.LeftShoulder,Z,-.2);rotW(B.RightShoulder,Z,.2);}
+function rigLook(p){var r=worker.userData.rig,H=r&&r.B.Head;if(!H)return;var hl=worker.worldToLocal(H.getWorldPosition(new T.Vector3())),lp=worker.worldToLocal(p.clone()).sub(hl);
+  var yaw=Math.max(-.85,Math.min(.85,Math.atan2(lp.x,lp.z))),pitch=Math.max(-.4,Math.min(.55,-Math.atan2(lp.y-.05,Math.hypot(lp.x,lp.z))*.85));
+  var X=V(1,0,0).transformDirection(worker.matrixWorld),Y=V(0,1,0);
+  rotW(r.B.Neck,Y,yaw*.4);rotW(H,Y,yaw*.6);rotW(r.B.Neck,X,pitch*.35);rotW(H,X,pitch*.65);}
+/* the scenes name hands by screen side ("L" is the figure's -x side), which is the rig's anatomical right */
+function rigArm(side){var r=worker.userData.rig,a=side==="L"?"Right":"Left";return {A:r.B[a+"Arm"],F:r.B[a+"ForeArm"],H:r.B[a+"Hand"],d:side==="L"?r.R:r.L};}
+function rigReach(side,targetW){var r=worker.userData.rig,m=rigArm(side),A=m.A,F=m.F,H=m.H,d=m.d;
   var S=A.getWorldPosition(new T.Vector3()),hint=POLE[side].clone().transformDirection(worker.matrixWorld),j=ik2(S,targetW,d.a,d.f,hint);
   turnBone(A,F.getWorldPosition(new T.Vector3()),j[0]);turnBone(F,H.getWorldPosition(new T.Vector3()),j[1]);return H.getWorldPosition(new T.Vector3());}
-function rigLegs(){var r=worker.userData.rig,B=r.B;r.holder.position.y=-.3*r.dip;r.holder.rotation.x=0;worker.updateMatrixWorld(true);
-  if(r.dip>0){var sp=B.Spine;sp.rotation.x+=.25*r.dip;sp.updateMatrixWorld(true);}
-  [["Left","legL"],["Right","legR"]].forEach(function(p){var U=B[p[0]+"UpLeg"],K=B[p[0]+"Leg"],Fo=B[p[0]+"Foot"],d=r[p[1]],tgt=worker.localToWorld(d.foot.clone()),hint=V(0,0,1).transformDirection(worker.matrixWorld);
+function rigLegs(){var r=worker.userData.rig,B=r.B,ph=r.walk||0;r.holder.position.y=(r.bob||0)-.3*r.dip;worker.updateMatrixWorld(true);
+  if(r.dip>0)rotW(B.Spine,V(1,0,0).transformDirection(worker.matrixWorld),.35*r.dip);
+  [["Left","legL",Math.PI],["Right","legR",0]].forEach(function(p){var U=B[p[0]+"UpLeg"],K=B[p[0]+"Leg"],Fo=B[p[0]+"Foot"],d=r[p[1]],a=ph+p[2],sw=ph?Math.sin(a):0,lift=ph?Math.max(0,Math.cos(a))*.09:0,
+      tgt=worker.localToWorld(d.foot.clone().add(V(0,lift,.2*sw))),hint=V(0,0,1).transformDirection(worker.matrixWorld);
     var j=ik2(U.getWorldPosition(new T.Vector3()),tgt,d.a,d.f,hint);turnBone(U,K.getWorldPosition(new T.Vector3()),j[0]);turnBone(K,Fo.getWorldPosition(new T.Vector3()),j[1]);});}
 function QZ(a){return new T.Quaternion().setFromAxisAngle(V(0,0,1),a);}
 function crouch(k){var b=worker.userData.body,e=smooth(k);if(worker.userData.rig){worker.userData.rig.dip=e;}b.position.y=-.3*e;b.rotation.x=.16*e;worker.updateMatrixWorld(true);legs();}
@@ -1102,6 +1159,7 @@ function setMode(m,keepT,glide){
   $$(".ov-panel .ops").forEach(function(p){p.hidden=p.getAttribute("data-for")!==m;});
   $("ovT").textContent=(ES?{show:"Tu casa en 3D",home:"Tu casa en 3D",win:"Limpieza de ventanas en 3D",sol:"Limpieza solar en 3D",scr:"Mosquiteros en 3D",pig:"Control de palomas en 3D",com:st.ctype?"Tu edificio en 3D":"Tu local en 3D"}:{show:"Your home in 3D",home:"Your home in 3D",win:"Window cleaning in 3D",sol:"Solar cleaning in 3D",scr:"Screen repair in 3D",pig:"Pigeon proofing in 3D",com:st.ctype?"Your building in 3D":"Your storefront in 3D"})[m];
   grabLabel();
+  if(overlay&&!panelUser&&phoneUI()&&(m==="win"||m==="sol"||m==="scr"||m==="pig"))panelMin(true);
   /* glide: the camera flies from where it is to the new view, no cut, so a tab change reads as one move */
   if(!keepT)user=false;goal=preset();if(!keepT&&!glide){cur=null;}
   syncControls();summary();tryKey="";
@@ -1195,7 +1253,7 @@ function frame(dt){
     var fl=flying?Math.sin(tl*22+b.ph)*.9:0;b.m.userData.w[0].rotation.z=fl;b.m.userData.w[1].rotation.z=-fl;
   });
   /* haze off unless the window demo is running */
-  haze.m.visible=mode==="win"&&h3.view===0&&tl<9.3;
+  haze.m.visible=mode==="win"&&h3.view===0&&tl<9.3;clearView();
   if(demoWin)demoWin.sillM.color.copy(me.mats.trim.color);
   if(room)room.g.visible=mode==="win"&&h3.view===1;
   if(worker){worker.visible=false;hideTools();}
@@ -1216,7 +1274,7 @@ function say(html,cls){var m=$("ovMsg"),mt=$("ovMsgT")||m;if(!overlay){m.hidden=
 /* keep the home centered in the part of the view the note doesn't cover */
 var msgH=0,lift=0,edH=-1;
 function liftView(dt){var m=$("ovMsg"),want=0;if(overlay&&ED&&!edbar.hidden){if(edH<0)edH=edbar.offsetHeight;want=Math.min(host.clientHeight*.4,(edH+12)*.5);}
-  else if(overlay&&!m.hidden){if(msgH<0)msgH=m.offsetHeight;want=Math.min(host.clientHeight*.3,(msgH+10)*.5);}
+  else if(overlay&&!m.hidden){if(msgH<0)msgH=m.offsetHeight;want=Math.min(host.clientHeight*.38,(msgH+10)*.5);}
   lift+=(want-lift)*Math.min(1,dt*5);if(Math.abs(lift-want)<.5)lift=want;var w=host.clientWidth,h=host.clientHeight;
   if(lift>.5&&w&&h)cam.setViewOffset(w,h,0,Math.round(lift),w,h);else if(cam.view&&cam.view.enabled)cam.clearViewOffset();}
 /* notes wait for the reader: each one holds until Next, and Back steps back */
@@ -1241,7 +1299,7 @@ function stepNav(){var nav=$("ovNav");if(!nav)return;var S=overlay&&steps();nav.
 function winOutside(){
   var w=demoWin,sc=screens[0],t=tl;worker.visible=true;
   var n=V(Math.sin(w.ang),0,Math.cos(w.ang)),side=V(Math.cos(w.ang),0,-Math.sin(w.ang)),wc=toWorld(w.g,0,0,0);
-  placeWorker(V(wc.x,0,wc.z).addScaledVector(n,.55).addScaledVector(side,-.12),n.clone().negate());
+  placeWorker(V(wc.x,0,wc.z).addScaledVector(n,.55).addScaledVector(side,-.3),n.clone().negate());
   /* screen comes off, then goes back in */
   var off=smooth((t-.4)/.9)*(1-smooth((t-8.0)/.9));
   sc.g.visible=true;screenLook(sc,false);
@@ -1617,7 +1675,9 @@ function summary(){
 /* ---------- camera ---------- */
 var cur=null,goal=null,user=false;
 /* how far back the camera sits so a box of half width hw and half height hh fits the screen, any shape */
-function fitWH(hw,hh){var vf=cam.fov*Math.PI/360,hf=Math.atan(Math.tan(vf)*cam.aspect);return Math.max(hw/Math.tan(hf),hh/Math.tan(vf));}
+function phoneUI(){return (host&&host.clientWidth||999)<600;}
+function visFrac(){if(!overlay||!msgH||msgH<0)return 1;var h=host.clientHeight||1;return Math.max(.42,Math.min(1,(h-msgH-16)/h));}
+function fitWH(hw,hh){var vf=cam.fov*Math.PI/360,hf=Math.atan(Math.tan(vf)*cam.aspect);return Math.max(hw/Math.tan(hf),hh/(Math.tan(vf)*visFrac()));}
 function preset(){
   if(!me)return {tx:0,ty:2,tz:0,yaw:.55,tilt:.32,dist:24};
   var tall=me.wallH+me.rise,rad=.5*Math.sqrt(me.W*me.W+me.D*me.D),cy=tall*.45,p;
@@ -1630,10 +1690,10 @@ function preset(){
   else if(mode==="pig")p={tx:0,ty:cy,tz:0,yaw:.5,tilt:.44,dist:fitWH(rad*2.1,tall*1.3)};
   else if(mode==="win"&&h3.view===1&&room)p=tl>=5.0&&tl<9.4&&!user?{tx:room.center.x+.1,ty:room.y0,tz:room.Z+.02,yaw:.25,tilt:.9,dist:fitWH(.75,.45)} /* look down into the track */
     :{tx:room.center.x,ty:room.center.y-.1,tz:room.center.z,yaw:.42,tilt:.1,dist:fitWH(1.25,.95)};
-  else if(mode==="win"){var c=toWorld(demoWin.g,0,0,0);p={tx:c.x,ty:c.y-.15,tz:c.z,yaw:demoWin.ang+.5,tilt:.1,dist:fitWH(1.55,1.15)};}
-  else if(mode==="scr"){var c2=toWorld(scrWin.g,.3,0,0);p={tx:c2.x,ty:c2.y-.2,tz:c2.z,yaw:scrWin.ang-.45,tilt:.08,dist:fitWH(1.45,1.2)};}
-  else if(mode==="sol"){var gp=me.groups.filter(function(g){return g.face>0;})[0]||me.groups[0],c3=toWorld(me.F,gp.center[0],me.TT,gp.center[1]);
-    p={tx:c3.x,ty:c3.y,tz:c3.z,yaw:.3,tilt:.7,dist:fitWH(gp.cols*PW/2+1.4,gp.rows*PD/2+1.6)};}
+  else if(mode==="win"){var ph1=phoneUI(),c=toWorld(demoWin.g,ph1?.12:.08,0,0);p={tx:c.x,ty:c.y-.35,tz:c.z,yaw:demoWin.ang+(ph1?.72:.62),tilt:ph1?.16:.12,dist:fitWH(ph1?1.7:1.75,ph1?1.45:1.3)};}
+  else if(mode==="scr"){var ph2=phoneUI(),c2=toWorld(scrWin.g,.1,0,0);p={tx:c2.x,ty:c2.y-.35,tz:c2.z,yaw:scrWin.ang-(ph2?.7:.6),tilt:ph2?.16:.1,dist:fitWH(ph2?1.7:1.7,ph2?1.45:1.3)};}
+  else if(mode==="sol"){var ph3=phoneUI(),gp=me.groups.filter(function(g){return g.face>0;})[0]||me.groups[0],c3=toWorld(me.F,gp.center[0],me.TT,gp.center[1]+.9);
+    p={tx:c3.x,ty:c3.y,tz:c3.z,yaw:.3,tilt:ph3?.86:.74,dist:fitWH(gp.cols*PW/2+1.6,gp.rows*PD/2+2.3)};}
   else p={tx:0,ty:cy*.8,tz:me.D*.08,yaw:.55,tilt:.32,dist:fitWH(rad*1.16,tall*1.1)*(mode==="show"?1.03:1)};
   return p;
 }
@@ -1718,10 +1778,14 @@ function guideSpot(){
 }
 function camGround(){return V(cam.position.x,0,cam.position.z);}
 function armTo(side,local,noLook){return reach(side,worker.localToWorld(local),noLook);}
-function idleArms(t){armTo("L",V(-.29+Math.sin(t*.9)*.012,.86,.05+Math.sin(t*.7)*.015),true);armTo("R",V(.29,.86+Math.sin(t*.9+1)*.01,.05+Math.cos(t*.7)*.015),true);}
-function swingArms(ph){armTo("L",V(-.29,.9,.16*Math.sin(ph)),true);armTo("R",V(.29,.9,-.16*Math.sin(ph)),true);}
-function waveHand(t){armTo("R",V(.36+Math.sin(t*8)*.1,1.98,.2),true);armTo("L",V(-.29,.86,.05),true);}
-function pointAt(p){var sw=worker.localToWorld(shoulder("R").clone()),dir=p.clone().sub(sw).normalize();reach("R",sw.clone().addScaledVector(dir,UA+FA-.01));armTo("L",V(-.29,.86,.05),true);lookAtW(p);}
+function idleArms(t){if(worker.userData.rig){rest("L");rest("R");return;}armTo("L",V(-.29+Math.sin(t*.9)*.012,.86,.05+Math.sin(t*.7)*.015),true);armTo("R",V(.29,.86+Math.sin(t*.9+1)*.01,.05+Math.cos(t*.7)*.015),true);}
+function swingArms(ph){var r=worker.userData.rig;if(r){["L","R"].forEach(function(sd,i){var m=rigArm(sd),sl=worker.worldToLocal(m.A.getWorldPosition(new T.Vector3())),L2=(m.d.a+m.d.f)*.95,sw=(i?-1:1)*Math.sin(ph)*.2;
+    armTo(sd,V(sl.x+(sd==="L"?-.06:.06),sl.y-L2*Math.cos(sw),sl.z+L2*Math.sin(sw)),true);});return;}
+  armTo("L",V(-.29,.9,.16*Math.sin(ph)),true);armTo("R",V(.29,.9,-.16*Math.sin(ph)),true);}
+function waveHand(t){var r=worker.userData.rig;if(r){var sl=worker.worldToLocal(rigArm("R").A.getWorldPosition(new T.Vector3()));armTo("R",V(sl.x+.22+Math.sin(t*7)*.07,sl.y+.36,sl.z+.12),true);rest("L");return;}
+  armTo("R",V(.36+Math.sin(t*8)*.1,1.98,.2),true);armTo("L",V(-.29,.86,.05),true);}
+function pointAt(p){var r=worker.userData.rig,m=r?rigArm("R"):null,sw=r?m.A.getWorldPosition(new T.Vector3()):worker.localToWorld(shoulder("R").clone()),dir=p.clone().sub(sw).normalize();
+  reach("R",sw.clone().addScaledVector(dir,r?(m.d.a+m.d.f)*.97:UA+FA-.01));if(r)rest("L");else armTo("L",V(-.29,.86,.05),true);lookAtW(p);}
 function guideFrame(dt){
   if(!worker||!me)return;var sp=guideSpot(),t=performance.now()/1000;
   if(!guide.pos){guide.pos=sp.pos.clone();guide.key=sp.key;guide.arrive=t;guide.wave=t+2.4;}
@@ -1814,7 +1878,7 @@ var ASK=(ES?[
 ]).map(function(x){return {k:x[0],when:x[1],q:x[2],a:x[3]};});
 function askList(){var ctx=mode==="home"?"home":mode,own=ASK.filter(function(x){return x.when===ctx;}),all=ASK.filter(function(x){return x.when==="all";});return own.concat(all).slice(0,7);}
 function askRender(){var p=$("askp"),b=$("askb");if(!p||!b)return;var on=overlay&&!obdOpen&&!ED;b.hidden=!on;p.hidden=!on||!askOpen;
-  var bl=askOpen?L("Close","Cerrar"):L("Ask Tony ›","Pregúntale a Tony ›");if(b.textContent!==bl)b.textContent=bl;if(!askOpen)return;
+  var bl=askOpen?L("Close","Cerrar"):L("Ask Tony","Pregúntale a Tony");if(b.textContent!==bl)b.textContent=bl;if(!askOpen)return;
   var html=askList().map(function(x){return '<button type="button" data-ask="'+x.k+'" aria-pressed="'+(askSel===x.k)+'">'+x.q+'</button>';}).join("");
   if(askSel)html+='<button type="button" data-ask="" class="back">'+L("Back to the tour","Volver al recorrido")+'</button>';if(p.innerHTML!==html)p.innerHTML=html;msgH=-1;}
 function askAct(k){askSel=k||null;if(k){var x=ASK.filter(function(y){return y.k===k;})[0];if(x)tonySay("<b>"+x.q+"</b> "+x.a,"ok",40000);track("ask_tony_q",{q:k});}else tnote=null;askRender();}
@@ -1948,6 +2012,7 @@ if("ResizeObserver" in window){var ro=new ResizeObserver(function(){msgH=-1;size
 /* ---------- controls in the builder ---------- */
 /* on a phone the controls fold under one bar; the bar says what's inside for the module that's open */
 function grabLabel(){var g=$("ovGrab");if(!g)return;var s=g.querySelector("span"),txt=(ES?{home:"Personalizar mi casa",com:st.ctype?"Armar mi edificio":"Armar mi local",win:"Por dentro o por fuera, pisos",sol:"Paneles y secciones",scr:"Malla y cantidad",pig:"Espantapájaros y la historia"}:{home:"Customize my home",com:st.ctype?"Set up my building":"Set up my storefront",win:"Inside or outside, stories",sol:"Panel count and sections",scr:"Mesh and screen count",pig:"Spinners and the story"})[mode]||L("Options","Opciones");if(s&&s.textContent!==txt)s.textContent=txt;}
+var panelUser=false;
 function panelMin(on){ov.classList.toggle("min",on);var g=$("ovGrab");if(g)g.setAttribute("aria-expanded",String(!on));}
 function syncControls(){
   $$("#ov [data-hseg]").forEach(function(g){var k=g.getAttribute("data-hseg");$$("button[data-v]",g).forEach(function(b){b.setAttribute("aria-pressed",String(+b.getAttribute("data-v")===h3[k]));});});
@@ -1958,7 +2023,7 @@ function syncControls(){
 ov.addEventListener("click",function(e){
   var t=e.target;
   if(t.closest("#wxChip")){var order=["today","sun","wind","cloud"];WX.mode=order[(order.indexOf(WX.mode)+1)%order.length];applyWx();track("weather_3d",{mode:WX.mode});return;}
-  if(t.closest("#ovGrab")){var was=ov.classList.contains("min");panelMin(!was);track("panel_toggle",{open:was});return;}
+  if(t.closest("#ovGrab")){var was=ov.classList.contains("min");panelUser=true;panelMin(!was);track("panel_toggle",{open:was});return;}
   var ot=t.closest("[data-otab]");if(ot){var og=ot.closest(".ops"),oid=ot.getAttribute("data-otab");$$("[data-otab]",og).forEach(function(b){b.setAttribute("aria-selected",String(b===ot));});$$("[data-og]",og).forEach(function(g){g.hidden=g.getAttribute("data-og")!==oid;});track("ops_tab",{tab:oid});return;}
   var mb=t.closest("[data-hmode]");if(mb){var nm=mb.getAttribute("data-hmode");if(nm===mode){replay();return;}
     /* a storefront is a different place, so that one cuts; every home view glides */
@@ -2006,7 +2071,7 @@ function sync(){
 }
 buildMe();
 return {
-  open:function(m){overlay=true;perf.hold=performance.now()+1500;perf.n=0;wxFetch();wxChip();$("ovLoad").hidden=true;attach(stageEl);var tour=m==="tour";if(tour)m=pageMode==="com"?"com":"home";if(["home","win","sol","scr","pig","com"].indexOf(m)<0)m="home";setMode(m);if(tour&&!obdDone&&m==="home")obdShow(true);start();},
+  open:function(m){overlay=true;if(C.CFG.tech&&worker)loadRig(C.CFG.tech);perf.hold=performance.now()+1500;perf.n=0;wxFetch();wxChip();$("ovLoad").hidden=true;attach(stageEl);var tour=m==="tour";if(tour)m=pageMode==="com"?"com":"home";if(["home","win","sol","scr","pig","com"].indexOf(m)<0)m="home";setMode(m);if(tour&&!obdDone&&m==="home")obdShow(true);start();},
   close:function(){if(ED)edStop();overlay=false;obdShow(false);panelMin(false);say("");secEl.forEach(function(d){d.hidden=true;});Object.keys(hsEl).forEach(function(k){hsEl[k].hidden=true;});h3.spinOv=null;if(h3.view===1)h3.view=0;setMode("show");attach(heroHost);$("ocall").hidden=true;},
   hero:function(on){heroOn=on;if(on&&!overlay){if(!worker)makeWorker();if(mode!=="show")setMode("show");else ensureScene();attach(heroHost);start();}},
   sync:sync,
@@ -2029,7 +2094,11 @@ return {
   look:function(o){if(o.style!=null)h3.style=o.style;if(o.hood!=null)h3.hood=o.hood;if(o.stories)st.stories=o.stories;if(o.grids!=null)h3.grids=o.grids;sync();},
   settle:function(){var p=preset();flight=null;goal=p;cur={};for(var k in p)cur[k]=p[k];placeCam(cur);},
   quality:function(){return {level:quality,shadows:sun.castShadow,pr:R.getPixelRatio(),calls:R.info.render.calls,tris:R.info.render.triangles,geos:R.info.memory.geometries,tex:R.info.memory.textures};},
-  state:function(){return {styleName:["New build","Ranch","Classic","Lake estate"][h3.style],mode:mode,tl:tl,h3:JSON.parse(JSON.stringify(h3)),spinners:spinners.length,birds:birds.length,nbs:nbs.length,W:me&&me.W,style:me&&me.S.id};}
+  /* for tests: where the tech stands, and a camera shot to look at him */
+  tuneHead:function(o){var r=worker&&worker.userData.rig;if(!r)return false;for(var k in o)HW[k]=o[k];for(var bk in r.B)r.B[bk].quaternion.copy(r.bind[bk]);r.holder.position.set(0,0,0);worker.updateMatrixWorld(true);headwear(r,HW);return true;},
+  techAt:function(){return worker?worker.getWorldPosition(new T.Vector3()).toArray():null;},
+  peek:function(o){focusShot=o;user=false;flight=null;cur=null;goal=o;},
+  state:function(){return {rig:!!(worker&&worker.userData.rig),styleName:["New build","Ranch","Classic","Lake estate"][h3.style],mode:mode,tl:tl,h3:JSON.parse(JSON.stringify(h3)),spinners:spinners.length,birds:birds.length,nbs:nbs.length,W:me&&me.W,style:me&&me.S.id};}
 };
 };
 })();

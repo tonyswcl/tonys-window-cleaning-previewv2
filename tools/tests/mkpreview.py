@@ -33,7 +33,7 @@ for css in ['style.css','assets/fonts.css']:
             l=local(u);
             if l:need.add(os.path.normpath(os.path.join(base,l)))
 need|={'assets/quote/q3d.js','assets/vendor/three.min.js','assets/quote/logo-pdf.jpg','assets/quote/home-4x5.webp','assets/quote/home-16x10.webp','assets/quote/com-4x5.webp','assets/quote/com-16x10.webp'}
-need|={'assets/quote/%s-%s.webp'%(a,b) for a,bs in [('style','01234'),('hood','01234')] for b in bs}|{'assets/quote/prob-%s.webp'%k for k in ['win','hw','sol','pig','scr','large']}|{'assets/quote/tony-192.jpg'}
+need|={'assets/quote/%s-%s.webp'%(a,b) for a,bs in [('style','01234'),('hood','01234')] for b in bs}|{'assets/quote/prob-%s.webp'%k for k in ['win','hw','sol','pig','scr','large']}|{'assets/quote/tony-192.jpg','assets/quote/tech.glb','assets/vendor/gltf.min.js'}
 miss=[n for n in need if not os.path.exists(os.path.join(R,n))]
 for n in sorted(need):
     if n in miss:continue
