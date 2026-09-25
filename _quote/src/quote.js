@@ -528,7 +528,8 @@ $$(".r3d",box).forEach(function(r){r.addEventListener("keydown",function(e){if(e
 /* ---------- 3D: load on demand, full screen builder ---------- */
 var api=null,loading=false,pend=[],ov=$("ov"),lastFocus=null;
 var core={st:st,CFG:CFG,P:P,$:$,$$:$$,reduce:reduce,money:money,track:track,free:free,render:render,totals:totals,
-  mode:CFG.mode||"home",close:function(){close3d();}};
+  mode:CFG.mode||"home",close:function(){close3d();},
+  ie:function(){var v=zi&&zi.value;return !!(v&&v.length===5&&ieCity(v));}};
 function script(src,ok,bad){var s=doc.createElement("script");s.src=src;s.async=true;s.onload=ok;s.onerror=bad;doc.head.appendChild(s);}
 function load3d(cb){
   if(api){if(cb)cb();return;}if(cb)pend.push(cb);if(loading)return;loading=true;
