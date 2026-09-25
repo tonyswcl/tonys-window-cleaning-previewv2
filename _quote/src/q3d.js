@@ -185,8 +185,8 @@ var M={
   water:new T.PointsMaterial({color:0xcfeaff,size:.035,transparent:true,opacity:.85,depthWrite:false}),
   tank:Std({color:0x2f6fb0,roughness:.5}),cart:Std({color:0x3a3d42,roughness:.6}),hose:Std({color:0x2b2b2e,roughness:.7}),
   /* the crew uniform: gray polo, black work pants, black cap */
-  shirt:Std({color:0x3c4045,roughness:.92}),pants:Std({color:0x0c0d0f,roughness:.85}),skin:Std({color:0xb98262,roughness:.7}),
-  hat:Std({color:0x0b0c0e,roughness:.8}),band:Std({color:0xf0b040,roughness:.6}),shoe:Std({color:0x1a1a1a,roughness:.8}),collar:Std({color:0x2c2f33,roughness:.9}),
+  shirt:Std({color:0x1d4fc7,roughness:.9}),pants:Std({color:0x111214,roughness:.85}),skin:Std({color:0xb98262,roughness:.7}),sock:Std({color:0xf2f2f0,roughness:.9}),
+  hat:Std({color:0x5c5a46,roughness:.85}),band:Std({color:0xf0b040,roughness:.6}),shoe:Std({color:0x1a1a1a,roughness:.8}),collar:Std({color:0x1a44ad,roughness:.9}),lens:Std({color:0xcfe3ee,metalness:.1,roughness:.05,transparent:true,opacity:.35}),
   rubber:Std({color:0x111111,roughness:.9}),chan:Std({color:0xc7ccd2,metalness:.8,roughness:.3}),towel:Std({color:0x3d7fd1,roughness:1}),
   iwall:Std({color:0xefe9df,roughness:.95}),ifloor:Std({map:TX.wood,roughness:.6}),vinyl:Std({color:0xf7f7f4,roughness:.5}),
   iglass:Std({color:0xdfeef7,metalness:.1,roughness:.05,transparent:true,opacity:.14,envMapIntensity:1.2,depthWrite:false}),
@@ -213,6 +213,11 @@ var ROOFS=[0xa9573c,0x7a5646,0x4f5357,0xb08a64,0x94472f,0x8f7a62].map(function(c
 var CARS=[0xf2f2f0,0xb9bdc2,0x1d1f22,0x27364f,0x9a2a22,0x56606b,0xd9d3c4].map(function(c){return Std({color:c,metalness:.55,roughness:.32,envMapIntensity:1.2});});
 M.carG=Std({color:0x1a222b,metalness:.8,roughness:.1});M.tire=Std({color:0x151515,roughness:.9});M.garL=Std({map:TX.garage,roughness:.55});M.trimL=Std({color:0xf4f1ea,roughness:.6});
 M.frond=Leaf(TX.frond,0xd6e6b4);M.palmT=Std({color:0x8a7a64,roughness:1});M.palmSk=Std({color:0xa48e6a,roughness:1,flatShading:true});
+/* the mountains: log and plank walls, a granite chimney, a forest floor of needles, nests and droppings for the pigeon story */
+TX.logs=TX.wood.clone();TX.logs.repeat.set(3,2.4);TX.logs.needsUpdate=true;
+var CABW=[0x9c7a58,0x7d6247,0xb08f6a,0x6f5a48].map(function(c){return Std({map:TX.logs,color:c,roughness:.95});});
+M.stone=Std({map:TX.cmu,color:0x8f8a80,roughness:1});M.forest=Std({map:TX.gravel,color:0x66604a,roughness:1});
+M.nest=Std({color:0x6b5537,roughness:1,flatShading:true});M.drop=new T.MeshBasicMaterial({color:0xe9e6dc,transparent:true,opacity:.9,depthWrite:false});
 M.bin=Std({color:0x2f3a33,roughness:.7});M.binB=Std({color:0x2b4f8c,roughness:.7});M.lamp=Std({color:0x7d8288,metalness:.6,roughness:.4});M.dirt=Std({color:0xb8a27f,roughness:1});M.pool=Std({color:0x3aa6d4,roughness:.08,metalness:.1,envMapIntensity:1.3});
 TX.ripple=tx(cv(128,128,function(g,w,h){var r=rng(71);g.fillStyle="#808080";g.fillRect(0,0,w,h);for(var i=0;i<260;i++){var x=r()*w,y=r()*h,l=6+r()*16;g.strokeStyle="rgba("+(r()<.5?"255,255,255":"0,0,0")+","+(.12+r()*.2)+")";g.lineWidth=1+r()*1.5;g.beginPath();g.moveTo(x,y);g.quadraticCurveTo(x+l/2,y-1.5,x+l,y);g.stroke();}}),true,true);TX.ripple.repeat.set(.3,.3);
 M.water=Std({color:0x184f76,roughness:.34,metalness:0,envMapIntensity:.28,bumpMap:TX.ripple,bumpScale:.02});M.water.fog=false;M.boat=Std({color:0xf4f4f1,roughness:.35});
@@ -236,13 +241,13 @@ var RG={hip:[roofGeo(.16),roofGeo(.27)],gable:roofGeo(.5),end:roofGeo(0,true)};
 var matCache={};
 function houseMats(cfg){
   var key=cfg.style+"-"+cfg.wc+"-"+cfg.tc+"-"+cfg.rc;if(matCache[key])return matCache[key];
-  var siding=STY[cfg.style].siding,wc=new T.Color(WC[cfg.wc]),tc=new T.Color(TC[cfg.tc]),p=PAL[cfg.rc][0];
-  var m={wall:Std({map:siding?TX.siding:TX.stucco,bumpMap:siding?null:TX.stuccoB,bumpScale:.012,color:wc,roughness:.95}),
+  var siding=STY[cfg.style].siding,cabin=!!STY[cfg.style].cabin,wc=new T.Color(WC[cfg.wc]),tc=new T.Color(TC[cfg.tc]),p=PAL[cfg.rc][0];
+  if(cabin)wc=wc.lerp(new T.Color(0x8a6444),.72); /* stained wood takes the wall color as a tint, not a paint */
+  var m={wall:Std({map:cabin?TX.logs:siding?TX.siding:TX.stucco,bumpMap:siding?null:TX.stuccoB,bumpScale:.012,color:wc,roughness:.95}),
     base:Std({color:wc.clone().multiplyScalar(.82),roughness:.95}),trim:Std({color:tc,roughness:.6}),
     garage:Std({map:TX.garage,color:cfg.tc===2?0xd9d3c6:0xffffff,roughness:.55}),
     ridge:Std({color:new T.Color().setRGB(p[0]*.85,p[1]*.85,p[2]*.85).convertSRGBToLinear(),roughness:.75}),
     porch:Std({color:new T.Color().setRGB(p[0],p[1],p[2]).convertSRGBToLinear(),roughness:.8})};
-  if(siding){m.wall.map=TX.siding;}
   matCache[key]=m;return m;
 }
 
@@ -258,6 +263,7 @@ var G={rock:[lumpy(1,.26,11),lumpy(1,.3,23),lumpy(1,.22,37)],bush:[lumpy(2,.16,5
 G.cell.rotateX(-Math.PI/2);
 function upCard(fromBase){var g=new T.PlaneGeometry(1,1);if(fromBase)g.translate(0,.5,0);var n=g.attributes.normal;for(var i=0;i<n.count;i++)n.setXYZ(i,0,1,0);g.userData.shared=true;return g;}
 G.card=upCard(false);G.frondCard=upCard(true);
+G.drop=new T.CircleGeometry(.09,10);G.drop.userData.shared=true;
 var sT=new T.CylinderGeometry(.14,.14,.44,12,1,true,0,Math.PI);sT.rotateZ(Math.PI/2);sT.rotateY(Math.PI/2);
 var TILE=[{geo:sT,dx:.3,dz:.38,h:.14,tilt:-.07,stag:0},{geo:new T.BoxGeometry(.3,.035,.42),dx:.31,dz:.34,h:.05,tilt:-.06,stag:.155},{geo:new T.BoxGeometry(.98,.014,.34),dx:1,dz:.15,h:.035,tilt:-.035,stag:.333}];
 function box(w,h,d,m,x,y,z,par,noCast){var o=new T.Mesh(G.box,m);o.scale.set(w,h,d);o.position.set(x,y,z);o.castShadow=!noCast;o.receiveShadow=true;par.add(o);return o;}
@@ -273,10 +279,16 @@ var STY=[
   {id:"new",roof:"gable",pitch:.4,story:2.8,minW:13,siding:false,front:["gar2","door","win","win"]},
   {id:"ranch",roof:"hip",pitch:.32,story:2.7,minW:16,siding:false,front:["win","win","door","win","gar2"]},
   {id:"classic",roof:"gable",pitch:.52,story:2.7,minW:12,siding:true,front:["win","win","porch","win","win"],chimney:true},
-  {id:"estate",roof:"hip",pitch:.36,story:3.2,minW:19,siding:false,front:["win","win","entry","win","gar2","gar1"],big:true}
+  {id:"estate",roof:"hip",pitch:.36,story:3.2,minW:19,siding:false,front:["win","win","entry","win","gar2","gar1"],big:true},
+  /* the mountain cabin: steep gable for snow, wood siding, a covered porch and a stone chimney. Crestline, Wrightwood, Big Bear */
+  {id:"cabin",roof:"gable",pitch:.68,story:2.8,minW:12,siding:true,front:["win","porch","win","win","gar1"],chimney:true,cabin:true}
 ];
+var STYLE_N=["New build","Ranch","Classic","Lake estate","Mountain cabin"],STYLE_ES=["Nueva","Rancho","Clásica","Casa de lago","Cabaña de montaña"];
+var HOOD_N=["street with desert yards","neighborhood with lawns","acreage","on the lake","in the mountains"];
 var PW=1.02,PD=1.72,H=.2,TOP=.07,OV=.5,RAKE=.35;
-var h3={hood:1,style:0,roof:0,rc:0,wc:0,tc:0,grids:false,view:0,stage:2,cov:true,spinOv:null,estateLarge:false,custom:null,cv:0,shop:null,sv:0,cst:0,cwc:0,cac:0,cname:""},ED=null;
+var h3={hood:1,style:0,roof:0,rc:0,wc:0,tc:0,grids:false,view:0,stage:2,cov:true,spinOv:null,estateLarge:false,custom:null,cv:0,shop:null,sv:0,cst:0,cwc:0,cac:0,cname:"",focus:null},ED=null;
+/* mountain pages open on a cabin in the pines, shingle roof */
+if(C.CFG&&C.CFG.mountain){h3.hood=4;h3.style=4;h3.roof=2;h3.rc=1;}
 var ORDER=[[1,0],[-1,0],[1,-.32],[-1,.32],[1,.32],[-1,-.32],[1,-.44],[-1,.44],[1,.16],[-1,-.16]];
 
 /* window sizes you can pick: small, standard slider, large picture */
@@ -376,7 +388,7 @@ function makeHouse(cfg,main){
     var rgh=new T.Mesh(G.cyl,mats.ridge);rgh.scale.set(.17,Math.max(.01,2*rh),.17);rgh.rotation.z=Math.PI/2;rgh.position.set(0,yr,0);rgh.castShadow=true;g.add(rgh);
     [[1,1],[1,-1],[-1,1],[-1,-1]].forEach(function(c){cylBetween(V(c[0]*rh,yr,0),V(c[0]*(W/2+oc),top-OV*Math.sin(a)+TOP+.04,c[1]*(D/2+oc)),.15,mats.ridge,g);});
   }
-  if(S.chimney){var cx2=W/2-1.5,cz=-run*.45,yRoof=top+rise*(1-.45);box(.9,rise*.45+1.5,.9,M.brick,cx2,yRoof+(rise*.45+1.5)/2-rise*.45+.2,cz,g);box(1.05,.12,1.05,M.concrete,cx2,yRoof+1.72,cz,g);}
+  if(S.chimney){var cw=S.cabin?1.15:.9,cx2=W/2-1.5,cz=-run*.45,yRoof=top+rise*(1-.45);box(cw,rise*.45+1.5,cw,S.cabin?M.stone:M.brick,cx2,yRoof+(rise*.45+1.5)/2-rise*.45+.2,cz,g);box(cw+.15,.12,cw+.15,M.concrete,cx2,yRoof+1.72,cz,g);}
   /* solar arrays */
   var zTop=-L/2+(S.roof==="hip"?1.2:1.35);h.zTop=zTop;
   groups.forEach(function(gp2){
@@ -407,14 +419,18 @@ function makeHouse(cfg,main){
   /* yard */
   var fz=D/2;
   box(W+3.2,.01,D+3.2,M.shadow,0,.012,0,g,true).receiveShadow=false;
-  (h.garages||[]).forEach(function(gg){box(gg[1]+.4,.03,8.2,M.concrete,gg[0],.015,fz+4.1,g,true);});
-  if(h.doorX!==undefined){box(1.2,.03,S.id==="classic"?6:3.2,M.concrete,h.doorX,.016,fz+(S.id==="classic"?5.2:1.6),g,true);}
+  var mtn=cfg.hood===4,drvM=mtn?M.dirt:M.concrete;
+  (h.garages||[]).forEach(function(gg){box(gg[1]+.4,.03,8.2,drvM,gg[0],.015,fz+4.1,g,true);});
+  if(h.doorX!==undefined){box(1.2,.03,S.id==="classic"||S.cabin?6:3.2,mtn?M.dirt:M.concrete,h.doorX,.016,fz+(S.id==="classic"||S.cabin?5.2:1.6),g,true);}
   var ystep=main?1:0;
   for(i=0;i<5+ystep*3;i++){var side=i%2?1:-1,sx2=side*(W/2-1.2-r()*2.5),sz=fz+.9+r()*1.1;if(h.garages&&h.garages.some(function(gg){return Math.abs(sx2-gg[0])<gg[1]/2+.8;}))continue;
     var sc=.3+r()*.35,nb=2+Math.floor(r()*2),desert=cfg.hood===0||cfg.hood===2;for(var bi=0;bi<nb;bi++){var bs=sc*(.9+r()*.5),an=r()*6.28,rd=bi?sc*.6:0;
       clump(g,sx2+Math.cos(an)*rd,bs*.4,sz+.6+Math.sin(an)*rd*.8,bs,desert?(bi%2?M.brushA:M.brushB):[M.lawnBush,M.tree2,M.tree3][bi%3],r);}}
   for(i=0;i<4+ystep*4;i++){var rk=new T.Mesh(G.rock[i%3],[M.rock,M.rock2,M.rock3][Math.floor(r()*3)]),rs=.14+r()*.22;rk.scale.set(rs*1.5,rs*.75,rs*1.1);rk.rotation.set((r()-.5)*.4,r()*3,(r()-.5)*.4);rk.position.set((r()-.5)*W,rs*.25,fz+2.3+r()*3.2);if(h.garages&&h.garages.some(function(gg){return Math.abs(rk.position.x-gg[0])<gg[1]/2+.6;}))continue;rk.castShadow=true;g.add(rk);}
-  if(main){
+  if(main&&mtn){/* pines close around a cabin, and a woodpile by the garage */
+    var co=castOn;castOn=true;pine(g,-W/2-2.6,fz+2.2,7);pine(g,W/2+2.8,fz+.6,8);pine(g,-W/2-3.4,-D/2-2.5,9);pine(g,W/2+3,-D/2-4,7.5);castOn=co;
+    box(1.6,.7,.6,M.fence,W/2-.2,.35,fz+.9,g);}
+  if(main&&!mtn){
     for(i=0;i<3;i++){var ag=new T.Group(),axx=(i===1?1:-1)*(W/2-.8-i*.6),azz=fz+3.4+i*.5;for(var l=0;l<11;l++){var lf=new T.Mesh(G.cone,M.agave);lf.scale.set(.05,.55,.05);var an=l/11*Math.PI*2;lf.position.set(Math.cos(an)*.12,.24,Math.sin(an)*.12);lf.rotation.set(Math.sin(an)*.7,0,-Math.cos(an)*.7);lf.castShadow=true;ag.add(lf);}ag.position.set(axx,0,azz);g.add(ag);}
     if(cfg.hood===0||cfg.hood===2)joshua(g,-W/2-2.4,fz+3.2,r);
     var wx=W/2+3.4,wz0=0,wz1=-D/2-4.6,wh=1.6;if((cfg.hood===0||cfg.hood===1)&&!cfg.editing){
@@ -433,7 +449,7 @@ function batch(h){
     var im=new T.InstancedMesh(list[0].geometry,list[0].material,list.length),cast=false,recv=false;
     list.forEach(function(o,i){im.setMatrixAt(i,o.matrixWorld);cast=cast||o.castShadow;recv=recv||o.receiveShadow;kill.push(o);});
     im.instanceMatrix.needsUpdate=true;im.castShadow=cast;im.receiveShadow=recv;im.frustumCulled=false;root.add(im);
-    if(list[0].geometry===G.clip)h.clipIM=im;});
+    if(list[0].geometry===G.clip){h.clipIM=im;h.clipN=list.length;}});
   kill.forEach(function(o){o.parent.remove(o);});
 }
 function joshua(par,x,z,r){
@@ -450,14 +466,16 @@ function joshua(par,x,z,r){
 /* ---------- world: my house, street, neighbors ---------- */
 var world=new T.Group();scene.add(world);
 var me=null,nbs=[],birds=[],spinners=[],cover={},builtKey="",nbKey="";
-function showPanels(){return st.sol||st.pig||mode==="sol"||mode==="pig";}
+/* the model home on the page is always the finished one: panels washed, mesh on, spinners turning */
+function showPanels(){return st.sol||st.pig||mode==="sol"||mode==="pig"||mode==="show";}
+function pigLook(){return !!st.pig||mode==="pig"||mode==="show";}
 function cfgMe(){return {pv:showPanels(),hood:h3.hood,style:h3.style,stories:st.stories,roof:h3.roof,rc:h3.rc,wc:h3.wc,tc:h3.tc,grids:h3.grids,more:st.more,n:st.panels,arrays:st.arrays,sizes:st.arrays>1?st.arr.slice(0,st.arrays):null,
   custom:h3.custom,editing:!!(ED&&ED.t==="home"),cv:h3.cv};}
 function keyOf(c){return [c.pv,c.hood,c.style,c.stories,c.roof,c.rc,c.wc,c.tc,c.grids,c.custom?"":c.more,c.n,c.arrays,c.sizes?c.sizes.join("."):"",c.custom?"c"+c.cv:"",c.editing?"e":""].join("-");}
 function buildMe(){
   checkCustom();
   if(me){world.remove(me.g);disposeGroup(me.g);}
-  birds.forEach(function(b){world.remove(b.m);});birds=[];
+  birds.forEach(function(b){world.remove(b.m);});birds=[];mess=[];
   me=makeHouse(cfgMe(),true);world.add(me.g);me.g.updateMatrixWorld(true);me.ms=(mode!=="pig"||h3.stage>=1)?1:0;
   builtKey=keyOf(me.cfg);
   me.front=me.D/2;
@@ -519,15 +537,16 @@ function dock(par,x,z,r,full){bx(1.8,.16,6,M.fence,x,.2,z-3,par);if(!full)return
    back (yard depth), gap (to the next lot), lod (2 full, 1 simple, 0 far), yard (0 gravel, 1 lawn), hood */
 function liteHouse(par,o,r){
   var g=new T.Group();if(o.ang!==undefined){g.position.set(o.cx,0,o.cz);g.rotation.y=o.ang;}else{g.position.set(o.x,0,o.zf-o.dir*o.D/2);g.rotation.y=o.dir>0?0:Math.PI;}par.add(g);
-  var W=o.W,D=o.D,f=D/2,hgt=o.st*2.75,wm=WALLS[o.wall],pitch=.34+r()*.12,rs=(D+.8)*.5*pitch,hip=r()<.55,gs=o.gar,a=(W-D)/(2*(W+.8));
+  var mtn=o.hood===4,W=o.W,D=o.D,f=D/2,hgt=o.st*2.75,wm=mtn?CABW[o.wall%CABW.length]:WALLS[o.wall],pitch=mtn?.62+r()*.12:.34+r()*.12,rs=(D+.8)*.5*pitch,hip=!mtn&&r()<.55,gs=o.gar,a=(W-D)/(2*(W+.8));
   bx(W,hgt,D,wm,0,hgt/2,0,g);
   var rm=new T.Mesh(hip?RG.hip[a<.21?0:1]:RG.gable,ROOFS[o.roof]);rm.scale.set(W+.8,rs,D+.8);rm.position.y=hgt-.12;rm.castShadow=castOn;rm.receiveShadow=true;g.add(rm);
   if(!hip){var ge=new T.Mesh(RG.end,wm);ge.scale.set(W,rs-.1,D);ge.position.y=hgt;ge.castShadow=castOn;g.add(ge);}
-  var gx=gs*(W/2-3.1),dx=gx-gs*4.3,drv=o.hood===2?M.dirt:M.concrete;
+  var gx=gs*(W/2-3.1),dx=gx-gs*4.3,drv=o.hood===2||mtn?M.dirt:M.concrete;
   bx(4.9,2.3,.1,M.garL,gx,1.15,f+.05,g);bx(5.3,.03,o.walk+.4,drv,gx,.016,f+(o.walk+.4)/2,g);
   if(o.lake){dock(g,-gs*(W/2-2.5),-f-o.back,r,o.lod===2);lawn(g,0,W+o.gap-.8,-f-o.back+.1,-f-.3);}
   if(o.lod===0){if(o.hood===1||o.hood===3){if(o.yard)lawn(g,0,W+o.gap-.6,f+.3,f+o.walk-.05);if(r()<.6){var ts=2.6+r()*1.2,tx0=(r()-.5)*W,tz0=-f-2-r()*3;clump(g,tx0,2.6,tz0,ts,r()<.5?M.tree:M.tree2,r);}}
     else if(o.hood===2&&r()<.35){bx(6,3,5,WALLS[(o.wall+2)%WALLS.length],gs*(W/2+6),1.5,-f-4,g);}
+    else if(mtn&&r()<.7)pine(g,-gs*(W/2+3),-f-3-r()*4,6+r()*4);
     return g;}
   bx(1.0,2.15,.08,M.door,dx,1.075,f+.04,g);bx(5.2,.14,.14,M.trimL,gx,2.36,f+.08,g);
   function win(x,y,z,side){if(side){bx(.05,1.15,1.5,M.trimL,x,y,z,g);bx(.07,.95,1.3,M.glass,x+(x>0?.02:-.02),y,z,g);}else{bx(1.5,1.15,.05,M.trimL,x,y,z,g);bx(1.3,.95,.07,M.glass,x,y,z+(z>0?.02:-.02),g);}}
@@ -538,10 +557,13 @@ function liteHouse(par,o,r){
   if(o.lod<2)return g;
   var desert=o.hood===0||o.hood===2;
   if(o.yard)lawn(g,0,W+o.gap-.6,f+.3,f+o.walk-.05);
-  if(o.hood!==2)bx(1.1,.03,o.walk,M.concrete,dx,.016,f+o.walk/2,g);
-  shrubs(g,-W/2+.6,W/2-.6,f+.7,3+((r()*3)|0),r,desert);
+  if(o.hood!==2&&!mtn)bx(1.1,.03,o.walk,M.concrete,dx,.016,f+o.walk/2,g);
+  shrubs(g,-W/2+.6,W/2-.6,f+.7,mtn?1:3+((r()*3)|0),r,desert);
   /* the back yard: grass or a patio, sometimes a pool, and the block wall around it */
   if(o.lake){bx(W*.5,.03,2.6,M.concrete,(r()-.5)*2,.02,-f-1.3,g);bx(.18,1.2,f+o.back-D*.2,M.cmu,W/2+o.gap/2,.6,(-D*.2-f-o.back)/2,g);}
+  else if(mtn){/* a deck out back, firewood, and pines pressing in on every side */
+    bx(W*.45,.12,2.4,M.fence,(r()-.5)*2,.1,-f-1.2,g);bx(1.4,.6,.5,M.fence,gs*(W/2-1),.3,f+.5,g);
+    pine(g,-gs*(W/2+2.2),f+o.walk*.5,6+r()*3);pine(g,gs*(W/2+2.6),-f-2-r()*3,7+r()*3);if(r()<.6)pine(g,(r()-.5)*W,-f-6-r()*4,8+r()*3);}
   else if(o.hood!==2){if(!desert&&r()<.6)lawn(g,0,W+o.gap-.8,-f-o.back+.3,-f-.3);else bx(W*.5,.03,2.6,M.concrete,(r()-.5)*2,.016,-f-1.3,g);
     if(r()<(desert?.14:.3)){var px=(r()-.5)*(W-6),pz=-f-2.2-Math.min(3,o.back*.3);bx(3.9,.04,6.8,M.concrete,px,.02,pz-2.8,g);bx(3.3,.05,6.2,M.pool,px,.03,pz-2.8,g);}
     bx(.18,1.8,f+o.back-D*.2,M.cmu,W/2+o.gap/2,.9,(-D*.2-f-o.back)/2,g);if(!o.noBack)bx(W+o.gap,1.8,.18,M.cmu,0,.9,-f-o.back,g);}
@@ -554,9 +576,10 @@ function liteHouse(par,o,r){
   if(o.hood===1||o.hood===3){if(ty<.35)palm(g,gs*-(W/2-1)+(r()-.5),f+o.walk-1.6,6.5+r()*3.5,r);else if(ty<.8)tree(g,-gs*(W/2-2)+(r()-.5)*2,f+o.walk*.55,.8+r()*.35);
     if(r()<.3)(r()<.5?pine(g,(r()-.5)*W,-f-o.back*.55,6+r()*3):tree(g,(r()-.5)*W,-f-o.back*.55,.9+r()*.3));}
   else if(o.hood===0){if(ty<.2)palm(g,-gs*(W/2-1),f+o.walk-1.6,6+r()*3,r);else if(ty<.4)joshua(g,-gs*(W/2-2),f+o.walk*.5,r);else if(ty<.6)pine(g,-gs*(W/2-1.5),f+o.walk*.5,5.5+r()*2.5);}
+  else if(mtn){}
   else{if(ty<.7)joshua(g,-gs*(W/2+4)*(.5+r()*.6),f+o.walk*(.3+r()*.4),r);if(r()<.45)for(var pk=0;pk<5;pk++)pine(g,-W/2-4+pk*(W+8)/4,-f-13,6.5+r()*2.5);}
   var cc=r(),s1=r()<.5?-1:1;if(cc<.62){car(g,gx+s1*1.2,f+3.2+r()*1.2,r()<.8?0:Math.PI,(r()*7)|0,r);if(cc<.2)car(g,gx-s1*1.2,f+3.4,0,(r()*7)|0,r);}
-  if(o.hood!==2&&r()<.3){bx(.62,1.05,.7,M.bin,gx+gs*3,.53,f+o.walk-.5,g);bx(.62,1.05,.7,M.binB,gx+gs*3.8,.53,f+o.walk-.5,g);}
+  if(o.hood!==2&&!mtn&&r()<.3){bx(.62,1.05,.7,M.bin,gx+gs*3,.53,f+o.walk-.5,g);bx(.62,1.05,.7,M.binB,gx+gs*3.8,.53,f+o.walk-.5,g);}
   return g;
 }
 function streetStrip(par,z,len,cx,near,hood){/* asphalt, then on each side a curb and sidewalk (not out on acreage) */
@@ -606,7 +629,21 @@ function buildTown(){
     [.5,1.02].forEach(function(y){bx(x1-x0,.09,.06,M.fence,0,y,z0,hoodG);bx(x1-3.5,.09,.06,M.fence,(x0-3.5)/2,y,z1,hoodG);bx(x1-3.5,.09,.06,M.fence,(x1+3.5)/2,y,z1,hoodG);
       bx(.06,.09,z1-z0,M.fence,x0,y,(z0+z1)/2,hoodG);bx(.06,.09,z1-z0,M.fence,x1,y,(z0+z1)/2,hoodG);});
     joshua(hoodG,-13,fz+1.5,r);joshua(hoodG,14,-3,r);joshua(hoodG,-15,-me.D/2-6,r);joshua(hoodG,11,fz+4.5,r);}
-  if(hood!==2){
+  if(hood===4){
+    /* the mountains: a two lane road out front, cabins spaced along it, pines by the hundred and granite between them */
+    streetStrip(hoodG,zs,2*XF+60,0,false,2);
+    [-1,1].forEach(function(side){var xx=side>0?xR+16:xL-16;
+      for(var n=0;n<5;n++){var Wn=11+r()*4,cx=xx+side*Wn/2,zfa=fz+(r()-.5)*6;castOn=Math.abs(cx)<60;
+        liteHouse(hoodG,{x:cx,zf:zfa,dir:1,W:Wn,D:8+r()*3,st:r()<.4?2:1,wall:(r()*CABW.length)|0,roof:1+((r()*2)|0),gar:r()<.5?-1:1,walk:zs-3.3-zfa,back:16,gap:22,lod:Math.abs(cx)<90?2:0,yard:0,hood:4},r);
+        xx+=side*(Wn+22+r()*20);if(Math.abs(xx)>XF)break;}});
+    for(var n3=0;n3<8;n3++){var Wb=11+r()*4,cxb=-XF*.6+n3*XF*.17+(r()-.5)*18,zfc=zs+22+r()*14;castOn=Math.abs(cxb)<45;
+      liteHouse(hoodG,{x:cxb,zf:zfc,dir:-1,W:Wb,D:8+r()*3,st:r()<.4?2:1,wall:(r()*CABW.length)|0,roof:1+((r()*2)|0),gar:r()<.5?-1:1,walk:zfc-zs-3.3,back:16,gap:24,lod:Math.abs(cxb)<80?2:0,yard:0,hood:4},r);}
+    castOn=false;var nP=lite?170:340;
+    for(var q=0;q<nP;q++){var an=r()*6.283,dd=15+Math.pow(r(),.75)*230,px=Math.cos(an)*dd,pz=Math.sin(an)*dd;
+      if(Math.abs(pz-zs)<6)continue;if(Math.abs(px)<W0/2+6&&pz>-me.D/2-9&&pz<fz+9)continue;pine(hoodG,px,pz,6+r()*5);}
+    for(var q2=0;q2<40;q2++){var an2=r()*6.283,d2=13+r()*120,rz=Math.sin(an2)*d2;if(Math.abs(rz-zs)<6)continue;var rk=new T.Mesh(G.rock[q2%3],[M.rock,M.rock2,M.rock3][q2%3]),rs=.5+r()*1.2;rk.scale.set(rs*1.6,rs,rs*1.3);rk.rotation.y=r()*3;rk.position.set(Math.cos(an2)*d2,rs*.3,rz);hoodG.add(rk);}
+    var fl=new T.Mesh(G.plane,M.forest);fl.rotation.x=-Math.PI/2;fl.scale.set(900,900,1);fl.position.y=.008;fl.receiveShadow=true;hoodG.add(fl);
+  }else if(hood!==2){
     /* the grid: a street every S meters, homes back to back between them. Street 0 is yours. */
     var S=2*me.D+33.8,kmin=lite?-2:-3,kmax=lite?1:2,lotD=S/2-12.3;
     for(var k=kmin;k<=kmax;k++){var zk=zs+k*S,near=k===0||k===-1;castOn=k===0;
@@ -662,13 +699,14 @@ function fitShadow(wide){
 }
 
 /* ---------- spinners on the vents, two hose clamps each ---------- */
-function spinCount(){return h3.spinOv!==null?h3.spinOv:C.free()+st.spin;}
+/* how many spinners: the free ones plus extras with pigeon proofing, or just the ones added on their own to a solar wash */
+function spinCount(){if(h3.spinOv!==null)return h3.spinOv;return pigLook()?C.free()+st.spin:st.spin;}
 function buildSpinners(){
   spinners.forEach(function(s){s.par.remove(s.g);if(s.disc){s.par.remove(s.disc);s.par.remove(s.edge);s.disc.geometry.dispose();s.edge.geometry.dispose();}});spinners=[];
   var n=Math.min(spinCount(),me.vents.length);
-  for(var i=0;i<n;i++){var v=me.vents[i],g=new T.Group();g.position.set(v.x,me.TT,v.z);
+  for(var i=0;i<n;i++){var v=me.vents[i],g=new T.Group(),clamps=[];g.position.set(v.x,me.TT,v.z);
     var pl=new T.Mesh(G.cyl,M.pole);pl.scale.set(.018,.9,.018);pl.position.set(.085,.46,0);pl.castShadow=true;g.add(pl);
-    [.1,.27].forEach(function(y){var cl=new T.Mesh(G.clamp,M.clampM);cl.rotation.x=Math.PI/2;cl.scale.set(1.45,1,1);cl.position.set(.035,y,0);g.add(cl);});
+    [.1,.27].forEach(function(y){var cl=new T.Mesh(G.clamp,M.clampM);cl.rotation.x=Math.PI/2;cl.scale.set(1.45,1,1);cl.position.set(.035,y,0);g.add(cl);clamps.push(cl);});
     var rot=new T.Group();rot.position.set(.085,.86,0);var hub=new T.Mesh(G.ball,M.pole);hub.scale.setScalar(.05);rot.add(hub);
     /* four mirrored cups on chrome arms, the way real reflective spinners are built */
     for(var b=0;b<4;b++){var arm=new T.Group();arm.rotation.y=b*Math.PI/2;var rod=new T.Mesh(G.cyl,M.chrome);rod.scale.set(.008,.2,.008);rod.rotation.z=Math.PI/2;rod.position.x=.1;arm.add(rod);
@@ -677,8 +715,16 @@ function buildSpinners(){
     /* how far one spinner's flash reaches on the side of the roof it faces */
     var R2=me.L*1.1,disc=new T.Mesh(new T.CircleGeometry(R2,40,Math.PI,Math.PI),M.reach.clone()),edge=new T.Mesh(new T.RingGeometry(R2-.07,R2,48,1,Math.PI,Math.PI),M.reachLine.clone());
     [disc,edge].forEach(function(o){o.rotation.x=-Math.PI/2;o.position.set(v.x,me.TT+H+.12,v.z);o.visible=false;o.renderOrder=4;v.par.add(o);});
-    g.add(rot);v.par.add(g);spinners.push({g:g,rot:rot,face:v.face,x:v.x,z:v.z,par:v.par,s:0,disc:disc,edge:edge});}
-  paintCover();
+    g.add(rot);v.par.add(g);spinners.push({g:g,rot:rot,pole:pl,clamps:clamps,face:v.face,x:v.x,z:v.z,par:v.par,s:0,t:0,disc:disc,edge:edge});}
+  paintCover();anchors();
+}
+/* the install, the way it happens on a roof: the pole goes up the vent, two hose clamps go on, then the head goes on and starts turning */
+function spinInstall(s,i,on,dt){
+  if(on){s.t+=dt;s.s=dt===0?1:clamp01((s.t-i*.4)/1.0);}else{s.t=0;s.s=Math.max(0,s.s-dt*3);}
+  var k=s.s,pk=Math.max(.02,clamp01(k/.5)),rk=clamp01((k-.65)/.35);
+  s.g.visible=k>.005;s.pole.scale.y=.9*pk;s.pole.position.y=.01+s.pole.scale.y/2;
+  s.clamps.forEach(function(c,j){c.visible=k>.5+j*.07;});
+  s.rot.visible=rk>0;s.rot.scale.setScalar(Math.max(.001,rk));s.rot.rotation.y+=dt*(3.2+i*.3)*rk;
 }
 function paintCover(){
   [1,-1].forEach(function(sign){
@@ -722,9 +768,18 @@ function spots(h,fc,count,r){
     h.rects[fc].forEach(function(q){if(x>q[0]&&x<q[1]&&z>q[2]&&z<q[3])hit=true;});if(!hit)out.push({f:f,face:fc,x:x,z:z});}
   return out;
 }
+var mess=[];
+function buildMess(r){
+  mess.forEach(function(m){if(m.parent)m.parent.remove(m);});mess=[];
+  if(!me.panels.length)return;
+  /* nests tucked under the low edge of the panels, droppings on the tile around where the birds sit */
+  var under=me.edges.filter(function(e){return !e[2]&&e[3]>0;}).sort(function(){return r()-.5;}).slice(0,6);
+  under.forEach(function(e){var par=e[4]>0?me.F:me.B,n=new T.Mesh(G.bush[0],M.nest);n.userData.s0=new T.Vector3(.2+r()*.08,.09,.16);n.scale.copy(n.userData.s0);n.position.set(e[0]+(r()-.5)*.4,me.TT+.05,e[1]-.22);n.userData.dyn=true;par.add(n);mess.push(n);});
+  spots(me,1,8,r).concat(spots(me,-1,6,r)).forEach(function(s){var d=new T.Mesh(G.drop,M.drop);d.rotation.x=-Math.PI/2;d.position.set(s.x,me.TT+.012,s.z);d.userData.s0=new T.Vector3(1,1,1).multiplyScalar(.6+r()*.9);d.scale.copy(d.userData.s0);d.renderOrder=3;d.userData.dyn=true;s.f.add(d);mess.push(d);});
+}
 function buildBirds(){
   birds.forEach(function(b){world.remove(b.m);});birds=[];
-  var r=rng(st.panels*31+h3.style*7+st.stories),landing=[];
+  var r=rng(st.panels*31+h3.style*7+st.stories),landing=[];buildMess(r);
   nbs.forEach(function(nh){spots(nh,1,9,r).concat(spots(nh,-1,7,r)).forEach(function(s){landing.push(toWorld(s.f,s.x,nh.TT,s.z));});});
   landing.sort(function(){return r()-.5;});
   function bird(pos,kind,info){var pg=pigeon();pg.position.copy(pos);pg.rotation.y=r()*6.28;world.add(pg);
@@ -739,7 +794,8 @@ function buildBirds(){
 }
 function birdTargets(snap){
   var stg=h3.stage;
-  birds.forEach(function(b){if(b.kind==="N"){b.kt=0;return;}b.kt=stg>=1&&b.kind==="U"?1:stg>=2&&covered(b)?1:0;if(snap)b.k=b.kt;});
+  /* on the tour the finished home is the point, so every bird leaves once the spinners are up; the pigeon story keeps the honest coverage math */
+  birds.forEach(function(b){if(b.kind==="N"){b.kt=0;return;}b.kt=stg>=1&&b.kind==="U"?1:stg>=2&&(mode!=="pig"||covered(b))?1:0;if(snap)b.k=b.kt;});
 }
 
 /* ---------- demo pieces: dirty glass, screens, dusty panels ---------- */
@@ -866,9 +922,10 @@ function makeWorker(){
   var w=new T.Group(),body=new T.Group(),head=new T.Group(),m;w.add(body);head.position.y=1.6;body.add(head);
   function part(geo,mat,sx,sy,sz,x,y,z,to){m=new T.Mesh(geo,mat);m.scale.set(sx,sy,sz);m.position.set(x,y,z);m.castShadow=true;(to||body).add(m);return m;}
   /* legs: thigh, knee, shin and boot, posed every frame so the feet stay planted */
-  var legs={};[-1,1].forEach(function(sd){var th=part(G.cyl,M.pants,.078,1,.078,0,0,0,w),kn=part(G.ball,M.pants,.07,.07,.07,0,0,0,w),sh=part(G.cyl,M.pants,.066,1,.066,0,0,0,w);
-    /* work boots: a rounded heel, a toe box and a sole */
-    part(G.ball,M.shoe,.066,.055,.085,sd*.1,.055,.0,w);part(G.ball,M.shoe,.06,.045,.1,sd*.1,.045,.12,w);part(G.box,M.rubber,.13,.02,.29,sd*.1,.01,.06,w);part(G.ball,M.pants,.068,.05,.068,sd*.1,.1,.01,w);legs[sd]={th:th,kn:kn,sh:sh,sd:sd};});
+  var legs={};[-1,1].forEach(function(sd){var th=part(G.cyl,M.pants,.084,1,.084,0,0,0,w),kn=part(G.ball,M.skin,.062,.062,.062,0,0,0,w),sh=part(G.cyl,M.skin,.058,1,.058,0,0,0,w);
+    /* work boots: a rounded heel, a toe box and a sole, in a foot group so they step when he walks */
+    var ft=new T.Group();ft.position.set(sd*.1,0,0);w.add(ft);
+    part(G.ball,M.shoe,.066,.055,.085,0,.055,.0,ft);part(G.ball,M.shoe,.06,.045,.1,0,.045,.12,ft);part(G.box,M.rubber,.13,.02,.29,0,.01,.06,ft);part(G.cyl,M.sock,.064,.1,.064,0,.13,.01,ft);legs[sd]={th:th,kn:kn,sh:sh,ft:ft,sd:sd};});
   /* hips and seat: rounded, with the shirt tucked under a belt */
   part(G.ball,M.pants,.19,.14,.135,0,.93,-.005);[-1,1].forEach(function(sd){part(G.ball,M.pants,.1,.1,.1,sd*.1,.9,0);});
   var prof=[[.155,0],[.175,.08],[.19,.22],[.205,.4],[.215,.54],[.2,.63],[.16,.68]].map(function(q){return new T.Vector2(q[0],q[1]);});
@@ -883,10 +940,10 @@ function makeWorker(){
   part(G.ball,M.hair,.113,.106,.112,0,.162,-.022,head);
   [-1,1].forEach(function(sd){part(G.ball,M.skin,.02,.036,.028,sd*.108,.135,0,head);});
   part(G.ball,M.skin,.017,.026,.022,0,.128,.123,head);part(G.box,M.lip,.045,.009,.01,0,.085,.108,head);
-  part(G.box,M.shades,.16,.036,.014,0,.162,.1,head);[-1,1].forEach(function(sd){part(G.box,M.shades,.008,.01,.1,sd*.098,.166,.05,head);});
+  [-1,1].forEach(function(sd){part(G.box,M.lens,.062,.034,.012,sd*.042,.162,.104,head);part(G.box,M.shades,.066,.038,.006,sd*.042,.162,.1,head);part(G.box,M.shades,.008,.008,.1,sd*.098,.166,.05,head);});part(G.box,M.shades,.02,.006,.01,0,.164,.106,head);
   var cr=part(G.cup,M.hat,1.55,1.25,1.6,0,.2,-.005,head);cr.rotation.x=0;part(G.box,M.hat,.17,.012,.12,0,.2,.14,head);part(G.box,M.band,.04,.028,.004,0,.245,.112,head);
   /* arms: short sleeve over a bare arm, a round elbow, and a hand with four fingers and a thumb */
-  function arm(sd){var u=new T.Mesh(G.cyl,M.skin),sl=new T.Mesh(G.cyl,M.shirt),f=new T.Mesh(G.cyl,M.skin),el=new T.Mesh(G.ball,M.skin),hd=new T.Group();
+  function arm(sd){var u=new T.Mesh(G.cyl,M.skin),sl=new T.Mesh(G.cyl,M.shirt),f=new T.Mesh(G.cyl,M.skin),el=new T.Mesh(G.ball,M.shirt),hd=new T.Group();
     u.scale.x=u.scale.z=.045;sl.scale.x=sl.scale.z=.062;f.scale.x=f.scale.z=.038;el.scale.setScalar(.043);
     function hp(geo,sx,sy,sz,x,y,z,rx,rz){var o=new T.Mesh(geo,M.skin);o.scale.set(sx,sy,sz);o.position.set(x,y,z);o.rotation.set(rx||0,0,rz||0);o.castShadow=true;hd.add(o);}
     hp(G.ball,.036,.05,.017,0,.045,0);
@@ -922,26 +979,32 @@ function shoulder(side){var b=worker.userData.body;b.updateMatrix();return SHL[s
 function reach(side,targetW,noLook){
   if(worker.userData.rig)return rigReach(side,targetW);
   var w=worker,a=w.userData[side],s=shoulder(side),j=ik2(s,w.worldToLocal(targetW.clone()),UA,FA,POLE[side]),E=j[0],Hn=j[1];
-  setBone(a.u,s,E);setBone(a.sl,s.clone().lerp(E,-.08),s.clone().lerp(E,.45));setBone(a.f,E,Hn);a.el.position.copy(E);
+  setBone(a.u,s,E);setBone(a.sl,s.clone().lerp(E,-.08),s.clone().lerp(E,1.0));setBone(a.f,E,Hn);a.el.position.copy(E);
+  if(!a.fs){a.fs=new T.Mesh(G.cyl,M.shirt);a.fs.scale.x=a.fs.scale.z=.05;a.fs.castShadow=true;worker.add(a.fs);}setBone(a.fs,E,E.clone().lerp(Hn,.82));
   /* the hand carries on from the forearm: palm down when reaching, palm in when hanging */
   var fd=Hn.clone().sub(E).normalize(),hx=Math.abs(fd.y)<.7?new T.Vector3().crossVectors(UP,fd).normalize():new T.Vector3(0,0,-a.sd*(fd.y<0?1:-1));
   hx.addScaledVector(fd,-hx.dot(fd)).normalize();var hz=new T.Vector3().crossVectors(hx,fd);a.h.quaternion.setFromRotationMatrix(new T.Matrix4().makeBasis(hx,fd,hz));a.h.position.copy(Hn).addScaledVector(fd,-.035);
   var out=w.localToWorld(Hn.clone());if(!noLook&&(side==="R"||!w.userData.look)){w.userData.look=out;look();}return out;
 }
-function rest(side){var w=worker,b=w.userData.body.position;return reach(side,w.localToWorld(V((side==="L"?-.3:.3)+b.x,1.0+b.y,.08)),true);}
+function rest(side){var w=worker,b=w.userData.body.position;return reach(side,w.localToWorld(V((side==="L"?-.29:.29)+b.x,.86+b.y,.05)),true);}
 function lookAtW(p){worker.userData.look=p.clone();look();}
 /* legs follow the body down: feet stay on the ground and the knees bend forward */
-function legs(){var u=worker.userData,b=u.body;if(u.rig){rigLegs();return;}b.updateMatrix();
-  [-1,1].forEach(function(sd){var L=u.legs[sd],hip=V(sd*.1,.9,0).applyMatrix4(b.matrix),ank=V(sd*.1,.1,.01),j=ik2(hip,ank,TH,SH,V(0,0,1));
-    setBone(L.th,hip,j[0]);setBone(L.sh,j[0],ank);L.kn.position.copy(j[0]);});}
+function legs(ph){var u=worker.userData,b=u.body;if(u.rig){rigLegs();return;}b.updateMatrix();
+  [-1,1].forEach(function(sd){var L=u.legs[sd],p=(ph||0)+(sd>0?0:Math.PI),sw=ph?Math.sin(p):0,lift=ph?Math.max(0,Math.cos(p))*.1:0;
+    var hip=V(sd*.1,.9,0).applyMatrix4(b.matrix),ank=V(sd*.1,.1+lift,.01+.22*sw),j=ik2(hip,ank,TH,SH,V(0,0,1));
+    setBone(L.th,hip,j[0]);setBone(L.sh,j[0],ank);L.kn.position.copy(j[0]);
+    if(L.ft){L.ft.position.set(sd*.1,lift,.22*sw);L.ft.rotation.x=-lift*2.5;}});}
 /* the head turns toward whatever the hands are working on, and he breathes */
 function look(){var u=worker.userData;if(!u.look)return;var hd=u.head,lp=hd.parent.worldToLocal(u.look.clone()).sub(hd.position);
   hd.rotation.y=Math.max(-.8,Math.min(.8,Math.atan2(lp.x,lp.z)));hd.rotation.x=Math.max(-.35,Math.min(.5,-Math.atan2(lp.y,Math.hypot(lp.x,lp.z))*.8));}
-function placeWorker(pos,faceDir){worker.position.copy(pos);worker.rotation.set(0,Math.atan2(faceDir.x,faceDir.z),0);
-  var u=worker.userData,b=u.body,t=performance.now()/1000;u.look=null;u.dip=0;b.position.set(Math.sin(t*.7)*.008,0,0);b.rotation.set(0,0,Math.sin(t*.7)*.01);
+function placeWorker(pos,faceDir,walk){worker.position.copy(pos);worker.rotation.set(0,Math.atan2(faceDir.x,faceDir.z),0);
+  var u=worker.userData,b=u.body,t=performance.now()/1000;u.look=null;u.dip=0;
+  /* alive while standing: weight shifts from foot to foot, the chest rises and falls, the shoulders roll a hair */
+  if(walk){b.position.set(Math.sin(walk)*.012,Math.abs(Math.sin(walk))*.028-.014,0);b.rotation.set(.04,0,Math.sin(walk)*.02);}
+  else{b.position.set(Math.sin(t*.55)*.022,Math.sin(t*1.1)*.004,0);b.rotation.set(Math.sin(t*.9)*.006,Math.sin(t*.35)*.05,Math.sin(t*.55)*.018);}
   if(u.rig)rigIdle(t);
-  u.torso.scale.x=1+Math.sin(t*1.7)*.012;u.torso.scale.z=.74*(1+Math.sin(t*1.7)*.018);u.head.rotation.set(0,0,0);
-  worker.updateMatrixWorld(true);legs();}
+  u.torso.scale.x=1+Math.sin(t*1.5)*.014;u.torso.scale.z=.74*(1+Math.sin(t*1.5)*.024);u.head.rotation.set(0,0,0);
+  worker.updateMatrixWorld(true);legs(walk||0);}
 /* ---------- a real rigged character (Mixamo skeleton), used when assets/quote/tech.glb is present ----------
    The same reach and crouch logic drives its arm and leg bones, so every scene works with either body. */
 function loadRig(ver){
@@ -1021,11 +1084,11 @@ function buildRoom(){
 /* ---------- modes and timelines ---------- */
 var mode="show",pageMode=C.mode||"home",tl=0,auto=true,heroOn=false,heroVis=true,overlay=false;
 var story={win:[],sol:[],scr:[]};
-function setMode(m,keepT){
+function setMode(m,keepT,glide){
   if(ED&&!((m==="home"&&ED.t==="home")||(m==="com"&&ED.t==="shop")))edStop();
   if(!me)buildMe();
-  mode=m;if(!keepT)tl=0;auto=true;say("");
-  flight=null;focusShot=null;
+  mode=m;if(!keepT)tl=0;auto=true;say("");h3.focus=null;askSel=null;askOpen=false;
+  flight=null;focusShot=null;if(!worker)makeWorker();
   ensureScene();
   if(keyOf(cfgMe())!==builtKey)buildMe();
   if(m==="pig"){buildNeighbors();buildBirds();h3.stage=0;birdTargets(true);}
@@ -1039,11 +1102,12 @@ function setMode(m,keepT){
   $$(".ov-panel .ops").forEach(function(p){p.hidden=p.getAttribute("data-for")!==m;});
   $("ovT").textContent=(ES?{show:"Tu casa en 3D",home:"Tu casa en 3D",win:"Limpieza de ventanas en 3D",sol:"Limpieza solar en 3D",scr:"Mosquiteros en 3D",pig:"Control de palomas en 3D",com:st.ctype?"Tu edificio en 3D":"Tu local en 3D"}:{show:"Your home in 3D",home:"Your home in 3D",win:"Window cleaning in 3D",sol:"Solar cleaning in 3D",scr:"Screen repair in 3D",pig:"Pigeon proofing in 3D",com:st.ctype?"Your building in 3D":"Your storefront in 3D"})[m];
   grabLabel();
-  if(!keepT)user=false;goal=preset();if(!keepT){cur=null;}
-  syncControls();summary();
+  /* glide: the camera flies from where it is to the new view, no cut, so a tab change reads as one move */
+  if(!keepT)user=false;goal=preset();if(!keepT&&!glide){cur=null;}
+  syncControls();summary();tryKey="";
 }
 function resetRoom(){room.haze.done=undefined;room.haze.clear=false;var pg=room.puddle.c.getContext("2d"),np=puddleCanvas();pg.clearRect(0,0,256,32);pg.drawImage(np,0,0);room.puddle.t.needsUpdate=true;var g=room.haze.c.getContext("2d"),n=hazeCanvas(256,212,9);g.globalCompositeOperation="copy";g.drawImage(n,0,0);g.globalCompositeOperation="source-over";room.haze.t.needsUpdate=true;room.haze.last=null;room.puddle.m.material.opacity=1;}
-function replay(){tl=0;user=false;if(mode==="win"){resetHaze();if(room)resetRoom();}if(mode==="sol")me.panels.forEach(function(p){p.dust.material.opacity=1;});if(mode==="pig"){h3.stage=0;auto=true;birdTargets(false);}track("replay_3d",{mode:mode});}
+function replay(){tl=0;user=false;h3.focus=null;askSel=null;focusShot=null;if(mode==="win"){resetHaze();if(room)resetRoom();}if(mode==="sol")me.panels.forEach(function(p){p.dust.material.opacity=1;});if(mode==="pig"){h3.stage=0;auto=true;birdTargets(false);}track("replay_3d",{mode:mode});}
 
 /* each frame, put everything where the timeline says it should be */
 /* ---------- conditions: today's sky and wind from the nearest weather station, or pick sunny, windy or cloudy ---------- */
@@ -1107,11 +1171,17 @@ function frame(dt){
   var homePig=befOn&&(probs().indexOf("pig")>=0||forceProb==="pig"),pst=homePig?(broken("pig",1)?0:broken("pig",2)?1:2):-1;
   if(homePig){if(!birds.length)buildBirds();if(h3.stage!==pst){h3.stage=pst;birdTargets(!!forceProb||dt===0);}}
   /* pigeon mesh, clips, spinners, coverage */
-  var meshOn=mode==="pig"?h3.stage>=1:homePig?pst>=1:!!st.pig,spinOn=mode==="pig"?h3.stage>=2:homePig?pst>=2:!!st.pig;
-  me.ms=me.ms===undefined?1:me.ms;var msT=meshOn?1:0;me.ms+=(msT-me.ms)*Math.min(1,dt*2.4);if(Math.abs(me.ms-msT)<.003)me.ms=msT;
+  var finished=!!st.pig||mode==="show",meshOn=mode==="pig"?h3.stage>=1:homePig?pst>=1:finished,spinOn=mode==="pig"?h3.stage>=2:homePig?pst>=2:(finished||(!st.pig&&st.spin>0));
+  var messOn=mode==="pig"?h3.stage<1:homePig?pst<1:false;
+  me.ms=me.ms===undefined?1:me.ms;var msT=meshOn?1:0;if(dt===0)me.ms=msT;else{me.ms+=(msT-me.ms)*Math.min(1,dt*2.4);if(Math.abs(me.ms-msT)<.003)me.ms=msT;}
   me.skirt.forEach(function(s){s.visible=me.ms>.02;s.scale.y=H*Math.min(1,me.ms*1.4);s.position.y=s.userData.y0+s.scale.y/2;});
-  if(me.clipIM)me.clipIM.visible=me.ms>.75;
-  spinners.forEach(function(s,i){s.s+=((spinOn?1:0)-s.s)*Math.min(1,dt*3);s.g.visible=s.s>.02;s.g.scale.setScalar(Math.max(.001,s.s));s.rot.rotation.y+=dt*(3.2+i*.3);});
+  /* clips go on one at a time once the mesh is down, the way they do on the roof */
+  if(me.clipIM){var ckT=meshOn?1:0;if(me.ck===undefined||dt===0)me.ck=ckT;else if(!ckT)me.ck=0;else if(me.ms>=.97&&me.ck<1)me.ck=Math.min(1,me.ck+dt/1.3);
+    me.clipIM.count=Math.round(me.clipN*me.ck);me.clipIM.visible=me.ck>0;}
+  /* nests and droppings: there until the cleanout, then hauled off */
+  var mkT=messOn?1:0;me.mk=me.mk===undefined||dt===0?mkT:me.mk+(mkT-me.mk)*Math.min(1,dt*2.2);
+  mess.forEach(function(m){m.visible=me.mk>.02&&(mode==="pig"||homePig);m.scale.copy(m.userData.s0).multiplyScalar(Math.max(.001,me.mk));});
+  spinners.forEach(function(s,i){spinInstall(s,i,spinOn,dt);});
   [1,-1].forEach(function(k){if(cover[k]&&cover[k].m)cover[k].m.visible=false;});
   /* one spinner's reach: the first spinner pulses in step 4, every spinner shows when coverage is switched on */
   var pulse=.18+.12*Math.sin(tl*4);
@@ -1129,6 +1199,7 @@ function frame(dt){
   if(demoWin)demoWin.sillM.color.copy(me.mats.trim.color);
   if(room)room.g.visible=mode==="win"&&h3.view===1;
   if(worker){worker.visible=false;hideTools();}
+  if(worker&&(mode==="show"||(mode==="home"&&!obdOpen)))guideFrame(dt);
   if(mode==="win"){if(h3.view===0)winOutside();else winInside();}
   else if(mode==="sol")solar();
   else if(mode==="scr")screensDemo();
@@ -1138,7 +1209,10 @@ function frame(dt){
 }
 function msgAt(list){var s="";for(var i=0;i<list.length;i++)if(tl>=list[i][0])s=list[i][1];return s;}
 var lastMsg="";
-function say(html,cls){var m=$("ovMsg"),mt=$("ovMsgT")||m;if(!overlay){m.hidden=true;return;}if(!html){m.hidden=true;lastMsg="";return;}if(html!==lastMsg){mt.innerHTML=html;lastMsg=html;msgH=-1;}m.className="ov-msg"+(cls?" "+cls:"");m.hidden=false;}
+var tnote=null;
+function tonySay(txt,cls,ms){tnote={txt:txt,cls:cls||"ok",until:performance.now()+(ms||6000)};}
+function say(html,cls){var m=$("ovMsg"),mt=$("ovMsgT")||m;if(!overlay){m.hidden=true;return;}if(!html){m.hidden=true;lastMsg="";return;}
+  if(tnote){if(performance.now()<tnote.until){html=tnote.txt;cls=tnote.cls;}else tnote=null;}if(html!==lastMsg){mt.innerHTML=html;lastMsg=html;msgH=-1;}m.className="ov-msg"+(cls?" "+cls:"");m.hidden=false;}
 /* keep the home centered in the part of the view the note doesn't cover */
 var msgH=0,lift=0,edH=-1;
 function liftView(dt){var m=$("ovMsg"),want=0;if(overlay&&ED&&!edbar.hidden){if(edH<0)edH=edbar.offsetHeight;want=Math.min(host.clientHeight*.4,(edH+12)*.5);}
@@ -1188,10 +1262,10 @@ function winOutside(){
   if(t<6.7)w.sillM.color.copy(sillDust);
   if(t>=6.7&&!haze.clear){haze.c.getContext("2d").clearRect(0,0,256,212);haze.t.needsUpdate=true;haze.clear=true;}
   var one=st.stories===1;
-  say(msgAt(ES?[[0,"<b>1.</b> Primero se quitan los mosquiteros y se tallan."],[1.4,"<b>2.</b> Agua purificada con el aplicador, trabajada hasta que la tierra se suelta."],[3.3,"<b>3.</b> Jalador en pasadas en abanico desde la esquina de arriba. El agua purificada no deja nada que manche."],[6.7,"<b>4.</b> Bordes, repisas y rieles limpios. Incluido, no es extra."],[7.9,"<b>5.</b> Mosquitero de vuelta. Vidrio que seca claro y se queda claro más tiempo."],[9.3,"<b>Listo.</b> "+(one?"$149 un piso":"$249 dos pisos")+", mosquiteros, rieles y repisas incluidos. Toca <b>Por dentro</b> para ver la parte que casi todos se saltan."]]:[[0,"<b>1.</b> Screens come off first and get scrubbed."],[1.4,"<b>2.</b> Purified water on with the applicator, worked in until the dirt lets go."],
+  say(msgAt(ES?[[0,"<b>1.</b> Primero quito los mosquiteros y los tallo."],[1.4,"<b>2.</b> Agua purificada con el aplicador, la trabajo hasta que la tierra se suelta."],[3.3,"<b>3.</b> Jalador en pasadas en abanico desde la esquina de arriba. El agua purificada no deja nada que manche."],[6.7,"<b>4.</b> Bordes, repisas y rieles limpios. Va incluido, no es extra."],[7.9,"<b>5.</b> Mosquitero de vuelta. Vidrio que seca claro y se queda claro más tiempo."],[9.3,"<b>Listo.</b> "+(one?"$149 un piso":"$249 dos pisos")+", mosquiteros, rieles y repisas incluidos. Toca <b>Por dentro</b> y te enseño la parte que casi todos se saltan."]]:[[0,"<b>1.</b> I pull the screens first and scrub them."],[1.4,"<b>2.</b> Purified water on with the applicator, worked in until the dirt lets go."],
     [3.3,"<b>3.</b> Squeegee in fanned strokes from the top corner. Purified water leaves nothing behind to spot."],
-    [6.7,"<b>4.</b> Edges, sills and tracks wiped out. Included, not an add on."],[7.9,"<b>5.</b> Screen back in. Glass that dries clear and stays clear longer."],
-    [9.3,"<b>Done.</b> "+(one?"$149 single story":"$249 two story")+", screens, tracks and sills included. Tap <b>Inside</b> for the part most crews skip."]]),t>9.3?"ok":"");
+    [6.7,"<b>4.</b> Edges, sills and tracks wiped out. That's included, not an add on."],[7.9,"<b>5.</b> Screen back in. Glass that dries clear and stays clear longer."],
+    [9.3,"<b>Done.</b> "+(one?"$149 single story":"$249 two story")+", screens, tracks and sills included. Tap <b>Inside</b> and I'll show you the part most crews skip."]]),t>9.3?"ok":"");
 }
 function winInside(){
   var t=tl,rm=room;worker.visible=true;
@@ -1206,9 +1280,9 @@ function winInside(){
   else{rest("L");rest("R");}
   if(t>=4.8&&!rm.haze.clear){rm.haze.c.getContext("2d").clearRect(0,0,256,212);rm.haze.t.needsUpdate=true;rm.haze.clear=true;}
   if(t>=8.4){var pg2=rm.puddle.c.getContext("2d");pg2.clearRect(0,0,256,32);rm.puddle.t.needsUpdate=true;}
-  say(msgAt(ES?[[0,"<b>Por dentro.</b> Todas las ventanas de la casa por $49."],[1.2,"La misma agua purificada y el mismo jalador en el vidrio de adentro."],[5.0,"<b>El riel.</b> Casi todos dejan el agua del lavado ahí como un charco de lodo. Abres la ventana y la mugre sigue."],[8.4,"<b>Aspiramos y secamos cada riel.</b> Abre tus ventanas y corren limpias. "+(st.inside?"Las ventanas por dentro ya están en tu cotización.":"Agrega las ventanas por dentro por $49 abajo.")]]:[[0,"<b>Inside.</b> Every window in the house for $49."],[1.2,"Same purified water and squeegee on the inside glass."],
+  say(msgAt(ES?[[0,"<b>Por dentro.</b> Todas las ventanas de la casa por $49, en la misma visita."],[1.2,"La misma agua purificada y el mismo jalador en el vidrio de adentro."],[5.0,"<b>El riel.</b> Casi todos dejan el agua del lavado ahí como un charco de lodo. Abres la ventana y la mugre sigue."],[8.4,"<b>Yo aspiro y seco cada riel.</b> Abre tus ventanas y corren limpias. "+(st.inside?"Las ventanas por dentro ya están en tu cotización.":"Toca el botón de arriba y lo agrego por $49.")]]:[[0,"<b>Inside.</b> Every window in the house for $49, same visit."],[1.2,"Same purified water and squeegee on the inside glass."],
     [5.0,"<b>The track.</b> Most crews leave the wash water sitting in it as a muddy puddle. Open the window and the gunk is still there."],
-    [8.4,"<b>We vacuum and wipe every track dry.</b> Open your windows and they slide clean. "+(st.inside?"Inside windows are on your quote.":"Add inside windows for $49 below.")]]),t>=8.4?"ok":"");
+    [8.4,"<b>I vacuum and wipe every track dry.</b> Open your windows and they slide clean. "+(st.inside?"Inside windows are on your quote.":"Tap the chip up top and I'll add it for $49.")]]),t>=8.4?"ok":"");
 }
 function solar(){
   var t=tl,list=me.panels.filter(function(p){return p.face>0;}),back=me.panels.filter(function(p){return p.face<0;});
@@ -1237,9 +1311,10 @@ function solar(){
   }
   var price=st.pig?L("free with your pigeon proofing","gratis con tu control de palomas"):money(st.panels*P.panel);
   var secTxt=st.arrays>1?L(" In "+st.arrays+" sections: "," En "+st.arrays+" secciones: ")+st.arr.slice(0,st.arrays).join(", ")+L(" panels."," paneles."):"";
-  say(msgAt(ES?[[0,"<b>Tus "+st.panels+" paneles</b> bajo una capa de polvo del desierto."+secTxt+" Aquí casi no llueve para enjuagarlos."],[start,"<b>Agua purificada por un cepillo suave</b> en una pértiga, fila por fila. Nadie camina sobre tus paneles."],[end+.6,"<b>Secan sin manchas ni rayas.</b> Tus "+st.panels+" paneles: "+price+". Revisión de todo el arreglo incluida."]]:[[0,"<b>Your "+st.panels+" panels</b> under a layer of desert dust."+secTxt+" Up here there's almost no rain to rinse it off."],
-    [start,"<b>Purified water through a soft brush</b> on a water fed pole, row by row. Nobody walks on your panels."],
-    [end+.6,"<b>Dries spot free, no streaks.</b> Your "+st.panels+" panels: "+price+". Full array inspection included."]]),t>end+.6?"ok":"");
+  var spinTxt=!st.pig&&st.spin?L(" Plus "+st.spin+" spinner"+(st.spin>1?"s":"")+" on the vents, "+money(st.spin*P.spinner)+", so the birds don't move in after I leave."," Más "+st.spin+" espantapájaros en las ventilas, "+money(st.spin*P.spinner)+", para que las aves no se instalen cuando me vaya."):"";
+  say(msgAt(ES?[[0,"<b>Tus "+st.panels+" paneles</b> bajo una capa de polvo del desierto."+secTxt+" Aquí casi no llueve para enjuagarlos, y la producción baja un poco cada mes."],[start,"<b>Agua purificada por un cepillo suave</b> en una pértiga, fila por fila. Nunca camino sobre tus paneles."],[end+.6,"<b>Secan sin manchas ni rayas.</b> Tus "+st.panels+" paneles: "+price+". Reviso todo el arreglo mientras estoy arriba."+spinTxt]]:[[0,"<b>Your "+st.panels+" panels</b> under a layer of desert dust."+secTxt+" Up here there's almost no rain to rinse it off, so your output drifts down a little every month."],
+    [start,"<b>Purified water through a soft brush</b> on a water fed pole, row by row. I never walk on your panels."],
+    [end+.6,"<b>Dries spot free, no streaks.</b> Your "+st.panels+" panels: "+price+". I look over the whole array while I'm up there."+spinTxt]]),t>end+.6?"ok":"");
 }
 function screensDemo(){
   var t=tl,w=scrWin,n=V(Math.sin(w.ang),0,Math.cos(w.ang)),side=V(Math.cos(w.ang),0,-Math.sin(w.ang)),wc=toWorld(w.g,0,0,0);
@@ -1257,18 +1332,21 @@ function screensDemo(){
   if(t>=.9&&t<3.8){reach("L",toWorld(sc.g,-sc.gw/2+.28,-.12,.02));reach("R",toWorld(sc.g,sc.gw/2-.04,.08,.02));}else{rest("L");rest("R");}
   var fact=ES?(st.pet?"<b>Todo clima, $64.99.</b> Poliéster recubierto de vinil, 5 veces más fuerte y mucho más resistente al sol. Aguanta sol, viento y mascotas.":"<b>Fibra de vidrio gris, $53.99.</b> La vista más clara y buen paso de aire. Bien para ventanas con sombra."):(st.pet?"<b>All weather, $64.99.</b> Heavy vinyl coated polyester, 5x stronger and far more UV stable. Takes sun, wind and pets.":"<b>Charcoal fiberglass, $53.99.</b> Clearest view and good airflow. Fine for shaded windows.");
   if(st.frames)fact+=L(" New frames and clips on all "+st.screens+", $10 more a screen."," Marcos y clips nuevos en los "+st.screens+", $10 más por mosquitero.");
-  say(msgAt(ES?[[0,"<b>Malla vieja del constructor</b> después de unos veranos del High Desert: decolorada, quebradiza, rota."],[1,"<b>Se quita y se pone malla nueva en el momento.</b> Unos 15 a 20 minutos por mosquitero, en la misma visita."],[3.6,fact]]:[[0,"<b>Old builder mesh</b> after a few High Desert summers: faded, brittle, torn."],[1,"<b>Stripped and re-meshed on site.</b> About 15 to 20 minutes a screen, same visit."],[3.6,fact]]),t>=3.6?"ok":"");
+  say(msgAt(ES?[[0,"<b>Malla vieja del constructor</b> después de unos veranos del High Desert: decolorada, quebradiza, rota."],[1,"<b>La quito y pongo malla nueva ahí mismo.</b> Unos 15 a 20 minutos por mosquitero, en la misma visita, nada se va al taller."],[3.6,fact]]:[[0,"<b>Old builder mesh</b> after a few High Desert summers: faded, brittle, torn."],[1,"<b>I strip it and re-mesh it right here.</b> About 15 to 20 minutes a screen, same visit, nothing goes to a shop."],[3.6,fact]]),t>=3.6?"ok":"");
 }
 function pigAuto(){
-  if(auto){var s=tl<2.2?0:tl<5.6?1:tl<9?2:tl<12.4?3:4;if(s!==h3.stage){h3.stage=s;birdTargets(false);syncControls();}}
+  if(h3.focus){focusShot=pigShot(h3.focus);say(FOCUS_T[h3.focus],"ok");return;}
+  if(auto){var s=tl<2.2?0:tl<5.6?1:tl<9?2:tl<12.4?3:4;if(s!==h3.stage){h3.stage=s;birdTargets(false);syncControls();}
+    /* the camera goes in close for the mesh, the clips and the first spinner, then pulls back to the whole roof */
+    if(!user){var f=h3.stage===1?(tl<3.7?"mesh":tl<5.0?"clips":null):h3.stage===2&&tl<7.4?"spin":null;focusShot=f?pigShot(f):null;}}
   var mine={1:0,"-1":0,0:0},nbN=0,U=0;
   birds.forEach(function(b){if(b.kind==="N"){nbN++;return;}if(!b.kt){if(b.kind==="U")U++;else mine[b.face]++;}else nbN++;});
   var left=mine[1]+mine[-1]+mine[0]+U,sb=0,sf=0,sc=spinners.length;spinners.forEach(function(s){if(s.face>0)sf++;else sb++;});
   var all=birds.filter(function(b){return b.kind!=="N";}).length;
   if(h3.stage===3){say(L("<b>What one spinner covers.</b> Its flashes reach the side of the roof it faces, about this far. The ridge blocks the other side, so most roofs need 2. That's why 2 to 3 come free.","<b>Lo que cubre un espantapájaros.</b> Sus destellos llegan al lado del techo al que mira, más o menos hasta aquí. La cumbrera tapa el otro lado, así que casi todos los techos necesitan 2. Por eso vienen 2 a 3 gratis."),"ok");return;}
   if(h3.stage===4){say(L("<b>Next door.</b> With your roof closed off the flock moves on: ","<b>El vecino.</b> Con tu techo cerrado la parvada se muda: ")+nbN+L(" pigeons next door now. The first home on the block to get protected stays clear."," palomas en la casa de al lado. La primera casa de la cuadra que se protege queda limpia."),"ok");return;}
-  if(h3.stage===0)say(L("<b>Today:</b> every roof on the block has pigeons. ","<b>Hoy:</b> todos los techos de la cuadra tienen palomas. ")+all+L(" on yours, nesting under the panels and resting on the ridge."," en el tuyo, anidando debajo de los paneles y descansando en la cumbrera."));
-  else if(h3.stage===1)say(L("<b>Cleanout and mesh.</b> Nests out, panels washed, mesh clipped to the frame. Nothing gets under again, but ","<b>Limpieza y malla.</b> Nidos fuera, paneles lavados, malla sujeta al marco. Nada vuelve a meterse, pero ")+left+L(" pigeons still land on the open roof. That's what the free spinners are for."," palomas siguen parándose en el techo abierto. Para eso son los espantapájaros gratis."),"warn");
+  if(h3.stage===0)say(L("<b>Today:</b> every roof on the block has pigeons. ","<b>Hoy:</b> todos los techos de la cuadra tienen palomas. ")+all+L(" on yours, nesting under the panels and resting on the ridge. Tap Next and watch me clear it."," en el tuyo, anidando debajo de los paneles y descansando en la cumbrera. Toca Siguiente y mírame limpiarlo."));
+  else if(h3.stage===1)say(tl<3.7?L("<b>Cleanout, then the mesh.</b> Nests and droppings hauled off, the area sanitized, panels washed. Then rigid steel mesh drops along every open edge.","<b>Limpieza, luego la malla.</b> Nidos y excremento fuera, el área desinfectada, paneles lavados. Luego baja malla rígida de acero por cada borde abierto."):tl<5.0?L("<b>Clips, not screws.</b> Each clip grips the lip of the panel frame. Nothing drilled, so your warranty stays whole.","<b>Clips, no tornillos.</b> Cada clip agarra el labio del marco del panel. Nada perforado, tu garantía queda entera."):L("<b>Sealed.</b> Nothing gets under again, but ","<b>Sellado.</b> Nada vuelve a meterse, pero ")+left+L(" pigeons still land on the open roof. That's what the free spinners are for."," palomas siguen parándose en el techo abierto. Para eso son los espantapájaros gratis."),tl<5.0?"ok":"warn");
   else if(!left)say(L("<b>Your roof is clear.</b> The spinners keep them from settling again, so they move next door: ","<b>Tu techo está limpio.</b> Los espantapájaros evitan que se vuelvan a acomodar, así que se van con el vecino: ")+nbN+L(" pigeons there now."," palomas allá ahora."),"ok");
   else if(!sc)say(L("<b>Mesh only.</b> ","<b>Solo malla.</b> ")+left+L(" pigeons still sit on your open roof. Add spinners."," palomas siguen en tu techo abierto. Agrega espantapájaros."),"warn");
   else if(!sb&&mine[-1])say(ES?"<b>"+sc+(sc>1?" espantapájaros solo cuidan":" espantapájaros solo cuida")+" el frente.</b> La cumbrera tapa el destello, así que "+mine[-1]+" palomas se quedan atrás. Agrega uno mirando hacia atrás.":"<b>"+sc+(sc>1?" spinners only watch":" spinner only watches")+" the front.</b> The ridge blocks the flash, so "+mine[-1]+" pigeons stay on your back side. Add one facing the back.","warn");
@@ -1507,28 +1585,29 @@ function tourSay(){if(edNote&&performance.now()-edNote.t<4500){say(edNote.txt,"o
   if(i!==dmgStop){dmgStop=i;dmgSel=0;}
   var nb=birds.filter(function(b){return b.kind!=="N";}).length,dl=dmgList(k),tapHint=dl.length?L(" Tap the number"+(dl.length>1?"s":"")+" on the house to see each one."," Toca los números en la casa para ver cada uno."):"";
   var txt,cls="";
-  if(k==="over")txt=P2.length?L("<b>Here's your home today.</b> ","<b>Así está tu casa hoy.</b> ")+listText(P2.map(function(q){return probName(q).toLowerCase();})).replace(/^./,function(c){return c.toUpperCase();})+L(". Tap Next and we'll take them one at a time.",". Toca Siguiente y los vemos uno por uno."):L("<b>Here's your home.</b> Tap Next for a quick tour, or drag to look around.","<b>Esta es tu casa.</b> Toca Siguiente para un recorrido rápido, o arrastra para mirar.");
-  else if(k==="end"){txt=L("<b>All fixed.</b> That's your home the way we leave it. Your quote right now: ","<b>Todo arreglado.</b> Así dejamos tu casa. Tu cotización ahora mismo: ")+(t.from?L("from ","desde "):"")+money(t.total)+L(". See my price below, or tap a service above to watch the job.",". Toca Ver mi precio abajo, o un servicio arriba para ver el trabajo.");cls="ok";}
+  if(k==="over")txt=P2.length?L("<b>Hi, I'm Tony.</b> Here's your home today: ","<b>Hola, soy Tony.</b> Así está tu casa hoy: ")+listText(P2.map(function(q){return probName(q).toLowerCase();}))+L(". Tap Next and I'll walk you through each one, then show you how I fix it.",". Toca Siguiente y te llevo por cada uno, y luego te enseño cómo lo arreglo."):L("<b>Hi, I'm Tony.</b> This is your home. Tap Next for a quick walk around, or drag to look on your own.","<b>Hola, soy Tony.</b> Esta es tu casa. Toca Siguiente para una vuelta rápida, o arrastra para mirar por tu cuenta.");
+  else if(k==="end"){txt=L("<b>That's how I leave it.</b> Your quote right now: ","<b>Así la dejo.</b> Tu cotización ahora mismo: ")+(t.from?L("from ","desde "):"")+money(t.total)+L(". Tap See my price below and pick a day, or tap a service above and watch me do the job. Questions? Ask me.",". Toca Ver mi precio abajo y elige un día, o un servicio arriba y mírame hacer el trabajo. ¿Dudas? Pregúntame.");cls="ok";}
   else if(ph===0&&dmgSel){txt="<b>"+probName(k)+", "+dmgSel+L(" of "," de ")+dl.length+".</b> "+dl[dmgSel-1];cls="warn";}
-  else if(ph===0){cls="warn";var windy=WX.wind>=15?L(" Wind like today's keeps blowing more on."," Con viento como el de hoy sigue llegando más."):"";txt=ES?{win:"<b>"+probName("win")+".</b> Polvo, manchas de aspersores y mosquiteros grises. Aquí se acumula rápido."+windy+tapHint,scr:"<b>Mosquiteros rotos.</b> Unos veranos de sol y viento, y la malla del constructor se rasga, se cuelga y se suelta."+tapHint,sol:"<b>Paneles con polvo.</b> "+n+" paneles bajo una capa de polvo del desierto."+windy+tapHint,pig:"<b>Palomas.</b> "+nb+" en tu techo, nidos debajo de los paneles y excremento en la teja."+tapHint}[k]:{win:"<b>"+probName("win")+".</b> Dust, sprinkler spots and gray screens. Out here it builds up fast."+windy+tapHint,
+  else if(ph===0){cls="warn";var windy=WX.wind>=15?L(" Wind like today's keeps blowing more on."," Con viento como el de hoy sigue llegando más."):"";txt=ES?{win:"<b>"+probName("win")+".</b> Polvo, manchas de aspersores y mosquiteros grises. Aquí se acumula rápido, lo veo en cada casa."+windy+tapHint,scr:"<b>Mosquiteros rotos.</b> Unos veranos de sol y viento, y la malla del constructor se rasga, se cuelga y se suelta."+tapHint,sol:"<b>Paneles con polvo.</b> Tus "+n+" paneles bajo una capa de polvo del desierto."+windy+tapHint,pig:"<b>Palomas.</b> "+nb+" en tu techo, nidos debajo de los paneles y excremento en la teja. No se van solas."+tapHint}[k]:{win:"<b>"+probName("win")+".</b> Dust, sprinkler spots and gray screens. Out here it builds up fast, I see it on every house."+windy+tapHint,
       scr:"<b>Torn screens.</b> A few summers of sun and wind, and builder mesh rips, sags and hangs loose."+tapHint,
-      sol:"<b>Dusty panels.</b> "+n+" panels under a film of desert dust."+windy+tapHint,
-      pig:"<b>Pigeons.</b> "+nb+" on your roof, nests under the panels, and droppings on the tile."+tapHint}[k];}
-  else{cls="ok";txt=ES?{win:"<b>Limpias.</b> Agua purificada y jalador, mosquiteros lavados, rieles y repisas limpios, seca sin manchas. "+(st.stories===1?"$149 un piso.":"$249 dos pisos.")+(st.hw?" Manchas de agua dura tratadas vidrio por vidrio.":""),scr:"<b>Mosquiteros nuevos.</b> "+st.screens+" con malla nueva en el momento, "+["fibra de vidrio gris","todo clima"][st.pet]+", en la mitad de cada ventana que abre.",sol:"<b>Lavados.</b> Agua purificada y cepillo suave, secan sin manchas. "+money(n*P.panel)+" a $7 por panel.",pig:ph===1?"<b>Limpio y cerrado.</b> Nidos y excremento fuera, el área desinfectada para que el olor también se vaya, paneles lavados gratis, malla rígida de acero sujeta al marco del panel. Sin tornillos ni perforaciones, tu garantía queda intacta.":"<b>Espantapájaros reflectantes.</b> Sus espejos destellan sobre el techo para que las aves no se vuelvan a acomodar. "+C.free()+" vienen gratis. La parvada se va."}[k]:{win:"<b>Clean.</b> Purified water and a squeegee, screens washed, tracks and sills wiped, dried spot free. "+(st.stories===1?"$149 single story.":"$249 two story.")+(st.hw?" Hard water spots treated pane by pane.":""),
+      sol:"<b>Dusty panels.</b> Your "+n+" panels under a film of desert dust."+windy+tapHint,
+      pig:"<b>Pigeons.</b> "+nb+" on your roof, nests under the panels, and droppings on the tile. They don't leave on their own."+tapHint}[k];}
+  else{cls="ok";txt=ES?{win:"<b>Limpias.</b> Agua purificada y jalador, mosquiteros lavados, rieles y repisas limpios, seca sin manchas. "+(st.stories===1?"$149 un piso.":"$249 dos pisos.")+(st.hw?" Las manchas de agua dura las trato vidrio por vidrio.":""),scr:"<b>Mosquiteros nuevos.</b> "+st.screens+" con malla nueva en el momento, "+["fibra de vidrio gris","todo clima"][st.pet]+", en la mitad de cada ventana que abre.",sol:"<b>Lavados.</b> Agua purificada y cepillo suave, secan sin manchas. "+money(n*P.panel)+" a $7 por panel.",pig:ph===1?"<b>Limpio y cerrado.</b> Saco nidos y excremento, desinfecto el área para que el olor también se vaya, lavo los paneles gratis y sujeto malla rígida de acero al marco del panel. Sin tornillos ni perforaciones, tu garantía queda intacta.":"<b>Espantapájaros reflectantes.</b> Sus espejos destellan sobre el techo para que las aves no se vuelvan a acomodar. "+C.free()+" vienen gratis. La parvada se va."}[k]:{win:"<b>Clean.</b> Purified water and a squeegee, screens washed, tracks and sills wiped, dried spot free. "+(st.stories===1?"$149 single story.":"$249 two story.")+(st.hw?" I treat the hard water spots pane by pane.":""),
       scr:"<b>New screens.</b> "+st.screens+" re-meshed on site with "+P.meshName[st.pet]+" mesh, on the half of each window that opens.",
       sol:"<b>Washed.</b> Purified water and a soft brush, dried spot free. "+money(n*P.panel)+" at $7 a panel.",
-      pig:ph===1?"<b>Cleaned out and closed off.</b> Nests and droppings hauled away, the area sanitized so the smell goes too, panels washed free, rigid steel mesh clipped to the panel frame. No screws, no drilling, so your warranty stays intact."
+      pig:ph===1?"<b>Cleaned out and closed off.</b> I haul the nests and droppings away, sanitize the area so the smell goes too, wash the panels free, and clip rigid steel mesh to the panel frame. No screws, no drilling, so your warranty stays intact."
         :"<b>Reflective spinners.</b> Mirrored cups flash across the roof so the birds don't settle again. "+C.free()+" come free. The flock moves on."}[k];}
   say(txt,cls);}
-function homeDesc(){return ["new build","ranch","classic","lake estate"][h3.style]+" home, "+["street with desert yards","neighborhood with lawns","acreage","on the lake"][h3.hood];}
+function homeDesc(){return STYLE_N[h3.style].toLowerCase()+" home, "+HOOD_N[h3.hood];}
 
 /* ---------- summary under the controls ---------- */
 function summary(){
   var el=$("osum"),s=st.stories,t=C.totals();if(!el)return;
   var scrP=money(Math.max(st.screens*(P.mesh[st.pet]+(st.frames?P.frame:0)),P.scrMin)),pigP=money(P.pig+Math.max(0,st.panels-P.pigUpTo)*P.pigPer+st.spin*P.spinner),winP=money(P.win[s]+(st.more?P.more[s]:0)+(st.inside?P.inside:0));
-  var txt=ES?{home:"<b>"+["Nueva","Rancho","Clásica","Casa de lago"][h3.style]+" · "+s+(s>1?" pisos":" piso")+" · "+st.panels+" paneles</b><br>Toca Ventanas, Solar, Mosquiteros o Palomas arriba para ver el trabajo en esta casa.",win:"<b>Ventanas de "+(s===1?"un piso":"dos pisos")+" · "+winP+"</b><br>Mosquiteros, rieles y repisas incluidos."+(st.inside?" Ventanas por dentro incluidas.":" Por dentro, todas las ventanas +$49."),sol:"<b>"+st.panels+" paneles · "+(st.pig?"gratis con el control de palomas":money(st.panels*P.panel))+"</b><br>$7 por panel, agua purificada, secan sin manchas.",scr:"<b>"+st.screens+" mosquitero"+(st.screens>1?"s":"")+", "+["fibra de vidrio gris","todo clima"][st.pet]+(st.frames?" · marcos nuevos":"")+" · "+scrP+"</b><br>Los mosquiteros cubren la mitad de la ventana que abre. Marcos y clips nuevos son $10 más por mosquitero. Mínimo de $149 cuando los mosquiteros son el único servicio.",pig:"<b>"+st.panels+" paneles · "+spinCount()+" espantapájaros · "+pigP+"</b><br>"+C.free()+" vienen gratis. Los extra son $50 cada uno. Lavado solar y de techo gratis."}:{home:"<b>"+["New build","Ranch","Classic","Lake estate"][h3.style]+" · "+s+" story · "+st.panels+" panels</b><br>Tap Windows, Solar, Screens or Pigeons above to watch the job on this home.",
+  var spinOnly=!st.pig&&st.spin>0?L(" Plus "+st.spin+" spinner"+(st.spin>1?"s":"")+" on the vents, "+money(st.spin*P.spinner)+"."," Más "+st.spin+" espantapájaros en las ventilas, "+money(st.spin*P.spinner)+"."):"";
+  var txt=ES?{home:"<b>"+STYLE_ES[h3.style]+" · "+s+(s>1?" pisos":" piso")+" · "+st.panels+" paneles</b><br>Toca Ventanas, Solar, Mosquiteros o Palomas arriba para ver el trabajo en esta casa.",win:"<b>Ventanas de "+(s===1?"un piso":"dos pisos")+" · "+winP+"</b><br>Mosquiteros, rieles y repisas incluidos."+(st.inside?" Ventanas por dentro incluidas.":" Por dentro, todas las ventanas +$49."),sol:"<b>"+st.panels+" paneles · "+(st.pig?"gratis con el control de palomas":money(st.panels*P.panel))+"</b><br>$7 por panel, agua purificada, secan sin manchas."+spinOnly,scr:"<b>"+st.screens+" mosquitero"+(st.screens>1?"s":"")+", "+["fibra de vidrio gris","todo clima"][st.pet]+(st.frames?" · marcos nuevos":"")+" · "+scrP+"</b><br>Los mosquiteros cubren la mitad de la ventana que abre. Marcos y clips nuevos son $10 más por mosquitero. Mínimo de $149 cuando los mosquiteros son el único servicio.",pig:"<b>"+st.panels+" paneles · "+spinCount()+" espantapájaros · "+pigP+"</b><br>"+C.free()+" vienen gratis. Los extra son $50 cada uno. Lavado solar y de techo gratis."}:{home:"<b>"+STYLE_N[h3.style]+" · "+s+" story · "+st.panels+" panels</b><br>Tap Windows, Solar, Screens or Pigeons above to watch the job on this home.",
     win:"<b>"+(s===1?"Single":"Two")+" story windows · "+winP+"</b><br>Screens, tracks and sills included."+(st.inside?" Inside windows included.":" Inside every window +$49."),
-    sol:"<b>"+st.panels+" panels · "+(st.pig?"free with pigeon proofing":money(st.panels*P.panel))+"</b><br>$7 a panel, purified water, dries spot free.",
+    sol:"<b>"+st.panels+" panels · "+(st.pig?"free with pigeon proofing":money(st.panels*P.panel))+"</b><br>$7 a panel, purified water, dries spot free."+spinOnly,
     scr:"<b>"+st.screens+" "+P.meshName[st.pet]+" screen"+(st.screens>1?"s":"")+(st.frames?" · new frames":"")+" · "+scrP+"</b><br>Screens cover the half of the window that opens. New frames and clips are $10 more a screen. $149 job minimum when screens are the only service.",
     pig:"<b>"+st.panels+" panels · "+spinCount()+" spinner"+(spinCount()===1?"":"s")+" · "+pigP+"</b><br>"+C.free()+" spinners come free. Extras are $50 each. Solar wash and roof wash free."};
   txt.com=ES?(st.ctype?"<b>Edificio de oficinas · "+st.bst+" piso"+(st.bst>1?"s":"")+" · "+st.bwin+" vidrios</b><br>"+money(C.bldgPrice().total)+" por dentro y por fuera, $"+P.bPane+" por vidrio y $"+P.bPane+" más por vidrio por cada piso. Recorrido gratis, precio firme por escrito.":"<b>Local · "+(st.cpanes+st.cdoors)+" vidrios y puertas"+(st.cstk?" · "+st.cstk+" calcomanías":"")+"</b><br>"+(st.cfreq?money(C.comVisit())+" por visita, "+C.comOffName():"$"+P.com+" una vez")+", por dentro y por fuera."):(st.ctype?"<b>Office building · "+st.bst+" stor"+(st.bst>1?"ies":"y")+" · "+st.bwin+" panes</b><br>"+money(C.bldgPrice().total)+" inside and out, $"+P.bPane+" a pane and $"+P.bPane+" more a pane per story up. Free walkthrough, firm price in writing.":"<b>Storefront · "+(st.cpanes+st.cdoors)+" panes and doors"+(st.cstk?" · "+st.cstk+" stickers":"")+"</b><br>"+(st.cfreq?money(C.comVisit())+" a visit, "+C.comOffName():"$"+P.com+" one time")+", inside and out.");
@@ -1621,6 +1700,152 @@ function callouts(dt,host){
   elC.style.transform="translate("+(flip?x-elC.offsetWidth+7:x-7)+"px,"+(y-elC.offsetHeight/2)+"px)";
 }
 
+/* ---------- Tony, the guide. He stands by the home, walks to each stop, points at the problem, waves, and answers questions ---------- */
+var guide={pos:null,key:"",ph:0,wave:0,arrive:0,wc:-1};
+function guideSpot(){
+  var fz=me.front,k="yard",pt=null;
+  if(mode==="home"&&overlay&&!obdOpen){var TS=tourStops(),cs=TS[tourAt()]||{};k=cs.k||"yard";
+    if(k==="win"&&demoWin){var n=V(Math.sin(demoWin.ang),0,Math.cos(demoWin.ang)),sd=V(Math.cos(demoWin.ang),0,-Math.sin(demoWin.ang)),wc=toWorld(demoWin.g,0,0,0);
+      return {key:"win",pos:V(wc.x,0,wc.z).addScaledVector(n,.8).addScaledVector(sd,demoWin.gw/2+.6),pt:toWorld(demoWin.g,0,.05,.1)};}
+    if(k==="scr"&&scrWin){var n2=V(Math.sin(scrWin.ang),0,Math.cos(scrWin.ang)),sd2=V(Math.cos(scrWin.ang),0,-Math.sin(scrWin.ang)),wc2=toWorld(scrWin.g,0,0,0);
+      return {key:"scr",pos:V(wc2.x,0,wc2.z).addScaledVector(n2,.8).addScaledVector(sd2,-(scrWin.gw/2+.6)),pt:toWorld(scrWin.g,-.2,0,.1)};}
+    if(k==="sol"||k==="pig"){var gp=me.groups.filter(function(g){return g.face>0;})[0];pt=k==="sol"?(anc.panel&&anc.panel.p):(anc.mesh&&anc.mesh.p);
+      return {key:k,pos:V((gp?gp.cx:0)-2.4,0,fz+2.8),pt:pt||null};}
+  }
+  /* the front yard, on the side of the door away from the driveway */
+  var dx=me.doorX!==undefined?me.doorX:0,gx=me.garages&&me.garages[0]?me.garages[0][0]:-1e9,sgn=dx>=gx?1:-1;
+  return {key:k,pos:V(dx+sgn*1.9,0,fz+1.6),pt:null};
+}
+function camGround(){return V(cam.position.x,0,cam.position.z);}
+function armTo(side,local,noLook){return reach(side,worker.localToWorld(local),noLook);}
+function idleArms(t){armTo("L",V(-.29+Math.sin(t*.9)*.012,.86,.05+Math.sin(t*.7)*.015),true);armTo("R",V(.29,.86+Math.sin(t*.9+1)*.01,.05+Math.cos(t*.7)*.015),true);}
+function swingArms(ph){armTo("L",V(-.29,.9,.16*Math.sin(ph)),true);armTo("R",V(.29,.9,-.16*Math.sin(ph)),true);}
+function waveHand(t){armTo("R",V(.36+Math.sin(t*8)*.1,1.98,.2),true);armTo("L",V(-.29,.86,.05),true);}
+function pointAt(p){var sw=worker.localToWorld(shoulder("R").clone()),dir=p.clone().sub(sw).normalize();reach("R",sw.clone().addScaledVector(dir,UA+FA-.01));armTo("L",V(-.29,.86,.05),true);lookAtW(p);}
+function guideFrame(dt){
+  if(!worker||!me)return;var sp=guideSpot(),t=performance.now()/1000;
+  if(!guide.pos){guide.pos=sp.pos.clone();guide.key=sp.key;guide.arrive=t;guide.wave=t+2.4;}
+  var d=sp.pos.clone().sub(guide.pos),dist=d.length(),walking=false;
+  if(dist>.25){var step=Math.min(dist,dt*1.5);guide.pos.addScaledVector(d.clone().normalize(),step);guide.ph+=dt*7.5;walking=true;guide.arrive=t;}
+  else if(guide.key!==sp.key){guide.key=sp.key;guide.arrive=t;guide.wave=(sp.key==="over"||sp.key==="end")?t+2.4:0;}
+  /* on the page he says hello now and then */
+  if(mode==="show"&&Math.floor(t/12)!==guide.wc){guide.wc=Math.floor(t/12);guide.wave=t+2.2;}
+  worker.visible=true;hideTools();
+  var face=walking?d.clone().normalize():camGround().sub(guide.pos).setY(0);if(face.lengthSq()<1e-4)face=V(0,0,1);face.normalize();
+  placeWorker(guide.pos,face,walking?guide.ph:0);
+  var since=t-guide.arrive;
+  if(walking)swingArms(guide.ph);
+  else if(t<guide.wave){waveHand(t);lookAtW(cam.position);}
+  else if(sp.pt&&since>.3)pointAt(sp.pt);
+  else{idleArms(t);lookAtW(cam.position);}
+}
+
+/* ---------- try it: one tap on the picture adds the thing you're looking at ---------- */
+var tryKey="";
+function tryList(){var list=[];
+  if(mode==="win")list.push(["inside",st.inside?L("✓ Inside windows on, +$49","✓ Por dentro incluido, +$49"):L("See it with the inside too, +$49","Verlo con el interior también, +$49"),!!st.inside]);
+  if(mode==="sol"){if(!st.pig)list.push(["pig",L("Pigeons around? Add mesh and free spinners, $450","¿Hay palomas? Malla y espantapájaros gratis, $450"),false]);
+    list.push(["spin",st.pig?L("✓ Spinners included","✓ Espantapájaros incluidos"):st.spin?"✓ "+st.spin+L(" spinner"+(st.spin>1?"s":"")+" on the vents, "+money(st.spin*P.spinner)," espantapájaros en las ventilas, "+money(st.spin*P.spinner)):L("Keep birds off after the wash: spinners, $50 each","Que no se paren las aves: espantapájaros, $50 cada uno"),!!(st.pig||st.spin)]);}
+  if(mode==="pig")[["mesh",L("Mesh","Malla")],["clips",L("Clips, not screws","Clips, no tornillos")],["spin",L("Spinners","Espantapájaros")]].forEach(function(q){list.push([q[0],q[1],h3.focus===q[0]]);});
+  return list;}
+function tryChips(){var el=$("try");if(!el)return;var show=overlay&&!ED&&!obdOpen&&(mode==="win"||mode==="sol"||mode==="pig"),list=show?tryList():[];
+  var key=mode+"|"+list.map(function(x){return x[0]+x[1]+x[2];}).join("|");if(key===tryKey)return;tryKey=key;el.hidden=!list.length;
+  el.innerHTML=list.map(function(x){return '<button type="button" data-try="'+x[0]+'" aria-pressed="'+x[2]+'">'+x[1]+'</button>';}).join("");askRender();}
+var FOCUS_T=ES?{mesh:"<b>Malla rígida de acero.</b> Resistente al óxido, nunca alambre de gallinero. Corre por todo el borde de cada arreglo y queda pegada a la teja, así nada se mete por debajo.",
+  clips:"<b>Clips, no tornillos.</b> Cada clip agarra el labio interior del marco del panel. Nada se perfora en tus paneles ni en tu techo, así que la garantía del fabricante queda intacta, y la malla sale limpia si un panel necesita servicio.",
+  spin:"<b>Espantapájaros reflectantes.</b> Copas de espejo en un poste cromado, sujeto a la ventila con abrazaderas. El destello evita que las aves se acomoden en el techo abierto. "+C.free()+" vienen gratis."}
+ :{mesh:"<b>Rigid steel mesh.</b> Rust resistant, never chicken wire. It runs the full edge of every array and sits tight to the tile, so nothing walks under.",
+  clips:"<b>Clips, not screws.</b> Each clip grips the inner lip of the panel frame. Nothing gets drilled into your panels or your roof, so the manufacturer warranty stays intact, and the mesh comes off clean if a panel ever needs service.",
+  spin:"<b>Reflective spinners.</b> Mirrored cups on a chrome pole, hose clamped to the vent stack. The flash keeps birds from settling on the open roof. "+C.free()+" come free."};
+function pigShot(k){var c;if(k==="spin"&&spinners[0]){var sp=spinners[0];c=toWorld(sp.par,sp.x+.08,me.TT+.75,sp.z);return {tx:c.x,ty:c.y,tz:c.z,yaw:sp.face>0?.45:Math.PI+.45,tilt:.3,dist:fitWH(1.3,1)};}
+  if(anc.mesh){c=anc.mesh.p;return k==="clips"?{tx:c.x,ty:c.y+.05,tz:c.z,yaw:.15,tilt:.5,dist:fitWH(1.25,.9)}:{tx:c.x,ty:c.y,tz:c.z,yaw:.3,tilt:.4,dist:fitWH(2.6,1.8)};}return null;}
+function tryAct(k){
+  if(mode==="pig"){h3.focus=h3.focus===k?null:k;auto=false;user=false;askSel=null;if(h3.focus){h3.stage=k==="spin"?2:1;tl=k==="mesh"?2.3:k==="clips"?4.4:5.7;birdTargets(false);}else{focusShot=null;}syncControls();track("pigeon_focus",{what:k});return;}
+  if(k==="inside"){st.inside=!st.inside;if(st.inside)st.win=true;var goIn=st.inside&&h3.view!==1;
+    if(goIn){h3.view=1;if(!room)buildRoom();fade(function(){tl=0;user=false;resetHaze();if(room)resetRoom();goal=preset();cur=null;});}
+    C.render();track("try_inside",{on:st.inside});return;}
+  if(k==="pig"){st.pig=true;st.sol=true;st.spin=0;C.render();setMode("pig",false,true);track("try_pigeon_from_solar");return;}
+  if(k==="spin"){if(st.pig){tonySay(L("<b>Spinners come with your pigeon proofing.</b> "+C.free()+" free, extras are $"+P.spinner+".","<b>Los espantapájaros vienen con tu control de palomas.</b> "+C.free()+" gratis, los extra son $"+P.spinner+"."));return;}
+    st.spin=st.spin?0:2;st.sol=true;C.render();track("try_spinners",{on:!!st.spin});}
+}
+
+/* ---------- ask Tony: the questions people ask on the porch, answered in his words ---------- */
+var askOpen=false,askSel=null;
+var ASK=(ES?[
+  ["home","all","¿Tengo que estar en casa?","No. Para el trabajo por fuera solo necesito que abran la reja y que la llave del agua sirva. Te mando mensaje cuando voy en camino y otro cuando termino, con fotos si quieres."],
+  ["long","all","¿Cuánto tarda?","Una casa de un piso son unas 2 horas por fuera, 3 si es de dos pisos. Una hora más por dentro. El solar es como una hora por 16 paneles. El control de palomas casi siempre es un día."],
+  ["ins","all","¿Tienes seguro?","Sí, responsabilidad civil general. Te mando el certificado antes del trabajo si lo quieres."],
+  ["wk","all","¿Trabajas fines de semana?","Sábados y domingos. Elige Prefiero fines de semana cuando escojas el día y te mando la primera fecha libre."],
+  ["pay","all","¿Cómo se paga?","Tarjeta, efectivo o cheque cuando el trabajo esté hecho y lo hayas revisado. Nada por adelantado."],
+  ["rain","all","¿Y si llueve?","Reviso el pronóstico. Si viene lluvia te aviso un día antes y lo movemos. Aquí el problema real es el viento, y con eso trabajo alrededor."],
+  ["scr","win","¿Limpias los mosquiteros?","Cada mosquitero se quita, se talla y se vuelve a poner. Rieles y repisas también. Va en los $149, no es extra."],
+  ["hw","win","¿Y las manchas de agua dura?","Las manchas de aspersor que ya se fijaron en el vidrio necesitan tratamiento de minerales, $12 por vidrio. Pruebo uno gratis primero para que veas la diferencia."],
+  ["lad","win","Dos pisos, ¿usas escaleras?","Pértiga con agua desde el suelo casi todo, escalera solo donde no queda de otra. Nadie se recarga en tu vidrio."],
+  ["walk","sol","¿Caminas sobre los paneles?","Nunca. Cepillo suave en una pértiga con agua, desde la orilla del techo o desde el suelo."],
+  ["war","sol","¿Es seguro para la garantía?","Agua purificada y cepillo suave es justo lo que recomiendan los fabricantes. Sin jabón, sin presión."],
+  ["oft","sol","¿Cada cuánto?","Cada 3 a 6 meses aquí. Con un plan te mando mensaje antes de cada visita."],
+  ["clip","pig","¿Por qué clips y no tornillos?","Cada agujero es una entrada de agua y un motivo para negar una garantía. Los clips agarran el labio del marco, aguantan el viento del High Desert y salen limpios si un panel necesita servicio."],
+  ["back","pig","¿Regresan las aves?","Debajo de tus paneles no, eso queda sellado. Los espantapájaros las mantienen fuera del techo abierto. Garantía de 2 años sin palomas por escrito."],
+  ["smell","pig","¿Y el olor?","Nidos y excremento fuera, y luego desinfecto el área. El olor a amoniaco se va con ellos."],
+  ["inc","pig","¿Qué incluyen los $450?","Hasta 12 paneles: limpieza, desinfección, malla con clips, 2 a 3 espantapájaros, lavado solar y lavado suave de techo."],
+  ["mesh","scr","¿Qué malla me conviene?","Todo clima si la ventana recibe sol de tarde o tienes mascotas. Fibra de vidrio gris para ventanas con sombra, es la vista más clara."],
+  ["take","scr","¿Te llevas los mosquiteros?","No, se rehacen ahí mismo en la camioneta, 15 a 20 minutos cada uno."],
+  ["hrs","com","¿Vienes fuera de horario?","Temprano antes de abrir o después de cerrar. Los locales con frecuencia fija tienen el mismo horario en cada visita."]
+]:[
+  ["home","all","Do I need to be home?","No. For outside work I just need the gate open and the spigot on. I text when I'm on the way and again when I'm done, with photos if you want them."],
+  ["long","all","How long does it take?","A single story is about 2 hours outside, 3 for two story. Add an hour for the inside. Solar is about an hour for 16 panels. Pigeon proofing is usually one day."],
+  ["ins","all","Are you insured?","Yes, general liability. I'll send the certificate before the job if you'd like it."],
+  ["wk","all","Do you work weekends?","Saturdays and Sundays both. Pick I prefer weekends when you choose a day and I'll text you the first opening."],
+  ["pay","all","How do I pay?","Card, cash or check once the work is done and you've looked it over. Nothing up front."],
+  ["rain","all","What if it rains?","I watch the forecast. If rain is coming I text you the day before and we move it. Wind is the real problem up here, and I work around it."],
+  ["scr","win","Do you do the screens?","Every screen comes off, gets scrubbed and goes back. Tracks and sills too. It's in the $149, not an extra."],
+  ["hw","win","What about hard water spots?","Sprinkler spots that have set into the glass need a mineral treatment, $12 a pane. I test one pane free first so you see the difference."],
+  ["lad","win","Two story, do you use ladders?","Water fed pole from the ground for most of it, a ladder only where I have to. Nobody leans on your glass."],
+  ["walk","sol","Do you walk on the panels?","Never. Soft brush on a water fed pole from the roof edge or the ground."],
+  ["war","sol","Is it safe for the warranty?","Purified water and a soft brush is exactly what the panel makers recommend. No soap, no pressure."],
+  ["oft","sol","How often?","Every 3 to 6 months out here. On a plan I text you before each visit."],
+  ["clip","pig","Why clips and not screws?","Every hole is a way in for water and a reason to deny a warranty claim. Clips grip the lip of the frame, hold in High Desert wind, and come off clean if a panel needs service."],
+  ["back","pig","Do the birds come back?","Not under your panels, that's sealed. The spinners keep them off the open roof. 2 year pigeon free warranty in writing."],
+  ["smell","pig","What about the smell?","Nests and droppings hauled off, then I sanitize the area. The ammonia smell goes with them."],
+  ["inc","pig","What's in the $450?","Up to 12 panels: cleanout, sanitizing, mesh clipped on, 2 to 3 spinners, a solar wash and a roof soft wash."],
+  ["mesh","scr","Which mesh should I get?","All weather if the window gets afternoon sun or you have pets. Charcoal fiberglass for shaded windows, it's the clearest view."],
+  ["take","scr","Do you take the screens away?","No, re-meshed right there at the truck, 15 to 20 minutes a screen."],
+  ["hrs","com","Do you come after hours?","Early before you open, or after close. Storefronts on a schedule get the same slot every visit."]
+]).map(function(x){return {k:x[0],when:x[1],q:x[2],a:x[3]};});
+function askList(){var ctx=mode==="home"?"home":mode,own=ASK.filter(function(x){return x.when===ctx;}),all=ASK.filter(function(x){return x.when==="all";});return own.concat(all).slice(0,7);}
+function askRender(){var p=$("askp"),b=$("askb");if(!p||!b)return;var on=overlay&&!obdOpen&&!ED;b.hidden=!on;p.hidden=!on||!askOpen;
+  var bl=askOpen?L("Close","Cerrar"):L("Ask Tony ›","Pregúntale a Tony ›");if(b.textContent!==bl)b.textContent=bl;if(!askOpen)return;
+  var html=askList().map(function(x){return '<button type="button" data-ask="'+x.k+'" aria-pressed="'+(askSel===x.k)+'">'+x.q+'</button>';}).join("");
+  if(askSel)html+='<button type="button" data-ask="" class="back">'+L("Back to the tour","Volver al recorrido")+'</button>';if(p.innerHTML!==html)p.innerHTML=html;msgH=-1;}
+function askAct(k){askSel=k||null;if(k){var x=ASK.filter(function(y){return y.k===k;})[0];if(x)tonySay("<b>"+x.q+"</b> "+x.a,"ok",40000);track("ask_tony_q",{q:k});}else tnote=null;askRender();}
+
+/* ---------- the salesman: every change gets a word from Tony, with the price and the reason ---------- */
+var lastSnap=null;
+function snapSt(){return {panels:st.panels,arrays:st.arrays,stories:st.stories,inside:!!st.inside,more:!!st.more,spin:st.spin,screens:st.screens,pet:st.pet,frames:!!st.frames,plan:st.plan,large:!!st.large,style:h3.style,hood:h3.hood,csched:st.csched,cpanes:st.cpanes,cdoors:st.cdoors,cstk:st.cstk,cin:!!st.cin,wins:st.wins,pig:!!st.pig,sol:!!st.sol,win:!!st.win,ctype:st.ctype,bwin:st.bwin,bst:st.bst};}
+function react(){var n=snapSt();if(!lastSnap||!overlay||obdOpen){lastSnap=n;return;}var o=lastSnap;lastSnap=n;
+  function ch(k){return n[k]!==o[k];}
+  var t=C.totals(),tot=(t.from?L("from ","desde "):"")+money(t.total),txt=null,k=n.panels,MN=P.meshName;
+  if(ch("panels")||ch("arrays")){
+    if(n.pig){var over=Math.max(0,k-P.pigUpTo);txt=over?L("<b>"+k+" panels.</b> $"+P.pig+" covers 12, so "+over+" more at $"+P.pigPer+" each is "+money(P.pig+over*P.pigPer)+". The solar wash and roof wash stay free.","<b>"+k+" paneles.</b> $"+P.pig+" cubre 12, así que "+over+" más a $"+P.pigPer+" cada uno son "+money(P.pig+over*P.pigPer)+". El lavado solar y de techo siguen gratis."):L("<b>"+k+" panels fits in the $"+P.pig+".</b> Cleanout, mesh, spinners, solar wash and roof wash, all in it.","<b>"+k+" paneles caben en los $"+P.pig+".</b> Limpieza, malla, espantapájaros, lavado solar y de techo, todo incluido.");}
+    else txt=L("<b>"+k+" panels at $7 is "+money(k*P.panel)+".</b> "+(k>=16?"Good size array. If pigeons ever move in, 3 spinners come free with the proofing.":"Dust costs about a tenth of your output between washes out here, so this pays for itself."),"<b>"+k+" paneles a $7 son "+money(k*P.panel)+".</b> "+(k>=16?"Buen arreglo. Si algún día llegan palomas, 3 espantapájaros vienen gratis con el control.":"El polvo se lleva como una décima parte de tu producción entre lavados, así que esto se paga solo."));
+    if(ch("arrays")&&n.arrays>1)txt=L("<b>"+n.arrays+" sections, "+k+" panels in all.</b> I mesh every open edge of each one, same price per panel.","<b>"+n.arrays+" secciones, "+k+" paneles en total.</b> Le pongo malla a cada borde abierto de cada una, mismo precio por panel.");}
+  else if(ch("stories"))txt=n.stories===2?L("<b>Two story, $249 outside.</b> Water fed pole from the ground for most of it. Screens, tracks and sills included.","<b>Dos pisos, $249 por fuera.</b> Pértiga con agua desde el suelo casi todo. Mosquiteros, rieles y repisas incluidos."):L("<b>Single story, $149 outside.</b> Screens, tracks and sills in it, about 2 hours.","<b>Un piso, $149 por fuera.</b> Mosquiteros, rieles y repisas incluidos, unas 2 horas.");
+  else if(ch("inside"))txt=n.inside?L("<b>Inside too, one flat $49.</b> Every window in the house, and I vacuum the tracks dry. Most companies charge by the window inside.","<b>Por dentro también, $49 fijos.</b> Todas las ventanas de la casa, y aspiro los rieles. Casi todos cobran por ventana por dentro."):L("<b>Outside only.</b> Add the inside any time, same visit is $49.","<b>Solo por fuera.</b> Agrega el interior cuando quieras, en la misma visita son $49.");
+  else if(ch("wins"))txt=L("<b>About "+n.wins+" windows.</b> "+(n.wins>P.coverMax[n.stories]?"Past "+P.coverMax[n.stories]+", so it's +$39 flat, not per window.":"That's inside the base price."),"<b>Como "+n.wins+" ventanas.</b> "+(n.wins>P.coverMax[n.stories]?"Más de "+P.coverMax[n.stories]+", así que son +$39 fijos, no por ventana.":"Eso entra en el precio base."));
+  else if(ch("more"))txt=n.more?L("<b>Extra glass, +$39 flat.</b> Single or two story, every window on the house.","<b>Más vidrio, +$39 fijos.</b> Un piso o dos, todas las ventanas de la casa."):L("<b>Standard count.</b> The base price covers "+P.covers[n.stories]+" windows.","<b>Cantidad normal.</b> El precio base cubre "+P.covers[n.stories]+" ventanas.");
+  else if(ch("spin")){var sc=spinCount();txt=n.pig?L("<b>"+sc+" spinner"+(sc===1?"":"s")+".</b> "+C.free()+" come free, extras are $"+P.spinner+". One covers the side of the roof it faces.","<b>"+sc+" espantapájaros.</b> "+C.free()+" vienen gratis, los extra son $"+P.spinner+". Uno cubre el lado del techo al que mira."):n.spin?L("<b>"+n.spin+" spinner"+(n.spin>1?"s":"")+" on the vents, "+money(n.spin*P.spinner)+".</b> They keep the flock off the open roof after the wash.","<b>"+n.spin+" espantapájaros en las ventilas, "+money(n.spin*P.spinner)+".</b> Mantienen la parvada fuera del techo después del lavado."):L("<b>No spinners.</b> Add them any time, $"+P.spinner+" each.","<b>Sin espantapájaros.</b> Agrégalos cuando quieras, $"+P.spinner+" cada uno.");}
+  else if(ch("screens")||ch("pet")||ch("frames")){var each=P.mesh[n.pet]+(n.frames?P.frame:0),sub=Math.round(n.screens*each*100)/100,only=!n.win&&!n.sol&&!n.pig;
+    txt=L("<b>"+n.screens+" screen"+(n.screens>1?"s":"")+", "+MN[n.pet]+(n.frames?" with new frames":"")+", "+money(sub)+".</b> "+(n.pet?"5x stronger, it doesn't go brittle in the sun.":"Clearest view, best for shaded windows.")+(only&&sub<P.scrMin?" The $"+P.scrMin+" job minimum applies when screens are the only service.":""),"<b>"+n.screens+" mosquitero"+(n.screens>1?"s":"")+", "+["fibra de vidrio gris","todo clima"][n.pet]+(n.frames?" con marcos nuevos":"")+", "+money(sub)+".</b> "+(n.pet?"5 veces más fuerte, no se pone quebradiza con el sol.":"La vista más clara, mejor para ventanas con sombra.")+(only&&sub<P.scrMin?" El mínimo de $"+P.scrMin+" aplica cuando los mosquiteros son el único servicio.":""));}
+  else if(ch("plan")){var q=C.schedule?C.schedule(t,n.plan):null;
+    txt=n.plan>=2&&q?L("<b>"+P.planName[n.plan]+".</b> "+Math.round(q.off*100)+"% off every visit after the first, price locked for the year. The glass and panels never get far enough gone for hard water or dust to set in.","<b>"+["Una vez","Una vez al año","Dos veces al año","Cada 3 meses"][n.plan]+".</b> "+Math.round(q.off*100)+"% menos en cada visita después de la primera, precio fijo por el año. El vidrio y los paneles nunca se atrasan tanto como para que el agua dura o el polvo se fijen.")
+      :n.plan===1?L("<b>Once a year.</b> I text you when it's due. Regular price, nothing to remember.","<b>Una vez al año.</b> Te mando mensaje cuando toca. Precio normal, nada que recordar."):L("<b>One time.</b> Then it's on you to remember. Every 3 months is 25% off each visit after the first.","<b>Una vez.</b> Luego te toca a ti acordarte. Cada 3 meses es 25% menos en cada visita después de la primera.");}
+  else if(ch("large")&&n.large)txt=L("<b>Big custom home.</b> I count the panes on site or from a satellite view and text you a firm price before I drive out. Inside and out runs $499 to $599 on most of them.","<b>Casa grande.</b> Cuento los vidrios en el lugar o por satélite y te mando un precio firme antes de salir. Por dentro y por fuera suele ser de $499 a $599.");
+  else if(ch("style")||ch("hood"))txt=L("<b>"+STYLE_N[n.style]+", "+HOOD_N[n.hood]+".</b> Close enough? Tap Windows, Solar, Screens or Pigeons above and I'll show you the work on it.","<b>"+STYLE_ES[n.style]+", "+["calle con patios de desierto","colonia con pasto","terreno grande","en el lago","en la montaña"][n.hood]+".</b> ¿Se parece? Toca Ventanas, Solar, Mosquiteros o Palomas arriba y te enseño el trabajo.");
+  else if(ch("csched")||ch("cpanes")||ch("cdoors")||ch("cstk")||ch("cin")){if(n.ctype===0){var gl=n.cpanes+n.cdoors;
+    txt=L("<b>"+gl+" panes and doors"+(n.csched?", "+C.comOffName("en"):"")+".</b> "+(n.csched?money(C.comVisit())+" a visit instead of $"+P.com+", inside and out.":"$"+P.com+" one time"+(gl>P.comUpTo?", plus $"+P.comOver+" flat past "+P.comUpTo:"")+". Monthly takes 15% off, every 2 weeks 25%."),"<b>"+gl+" vidrios y puertas"+(n.csched?", "+C.comOffName("es"):"")+".</b> "+(n.csched?money(C.comVisit())+" por visita en vez de $"+P.com+", por dentro y por fuera.":"$"+P.com+" una vez"+(gl>P.comUpTo?", más $"+P.comOver+" fijos pasando de "+P.comUpTo:"")+". Mensual es 15% menos, cada 2 semanas 25%."));}}
+  else if(ch("bwin")||ch("bst"))txt=L("<b>"+n.bwin+" panes on "+n.bst+" stor"+(n.bst>1?"ies":"y")+", "+money(C.bldgPrice().total)+".</b> $10 a pane inside and out on the ground floor, $10 more a pane per story up.","<b>"+n.bwin+" vidrios en "+n.bst+" piso"+(n.bst>1?"s":"")+", "+money(C.bldgPrice().total)+".</b> $10 por vidrio por dentro y por fuera en planta baja, $10 más por vidrio por cada piso.");
+  if(txt)tonySay(txt+' <span class="tot">'+L("Your quote now: ","Tu cotización ahora: ")+tot+"</span>","ok");}
+
 /* ---------- labels you can tap: panel sections, and the things on the tour ---------- */
 var secEl=[0,1,2].map(function(i){var d=doc.createElement("button");d.type="button";d.className="seclbl";d.hidden=true;d.setAttribute("data-sec3",i);stageEl.appendChild(d);return d;});
 var HS=ES?{win:"Ventanas",scr:"Mosquiteros",sol:"Solar",pig:"Palomas"}:{win:"Windows",scr:"Screens",sol:"Solar",pig:"Pigeons"},hsEl={};
@@ -1658,16 +1883,28 @@ function pics(o,list,cur){return '<div class="obd-row pics" data-o="'+o+'">'+lis
 function chips(o,list,cur){return '<div class="obd-row" data-o="'+o+'">'+list.map(function(x,i){return '<button type="button" data-v="'+(o==="stories"?i+1:i)+'" aria-pressed="'+((o==="stories"?i+1:i)===cur)+'">'+x+'</button>';}).join("")+"</div>";}
 function obdRender(){
   var P1='<div class="obd-in" data-p="1"><b class="obd-h">'+L("Let\'s get your home right","Vamos a armar tu casa")+'</b><p>'+L("Three taps and the model looks like your place.","Tres toques y el modelo se parece a tu casa.")+'</p>'+
-    '<div class="obd-l">'+L("Which looks most like your home?","¿Cuál se parece más a tu casa?")+'</div>'+pics("style",ES?[["Nueva","Estuco, teja, cochera al frente"],["Rancho","Un piso, larga y baja"],["Clásica","Tablilla, porche, ventanas con cuadrícula"],["Casa de lago","Dos pisos grandes, ventanas en arco"]]:[["New build","Stucco, tile roof, garage up front"],["Ranch","Single story, long and low"],["Classic","Siding, porch, window grids"],["Lake estate","Big two story, arched windows"]],h3.style)+
+    '<div class="obd-l">'+L("Which looks most like your home?","¿Cuál se parece más a tu casa?")+'</div>'+pics("style",ES?[["Nueva","Estuco, teja, cochera al frente"],["Rancho","Un piso, larga y baja"],["Clásica","Tablilla, porche, ventanas con cuadrícula"],["Casa de lago","Dos pisos grandes, ventanas en arco"],["Cabaña de montaña","Techo inclinado, madera, pinos"]]:[["New build","Stucco, tile roof, garage up front"],["Ranch","Single story, long and low"],["Classic","Siding, porch, window grids"],["Lake estate","Big two story, arched windows"],["Mountain cabin","Steep roof, wood siding, pines"]],h3.style)+
     '<div class="obd-l">'+L("Stories","Pisos")+'</div>'+chips("stories",ES?["1 piso","2 pisos"]:["1 story","2 story"],st.stories)+
-    '<div class="obd-l">'+L("And your street?","¿Y tu calle?")+'</div>'+pics("hood",ES?[["Patios de desierto","Piedra y bardas de bloque. Como las colonias nuevas de Victorville",0],["Pasto y árboles","Patios verdes, árboles de sombra. Como Jess Ranch",1],["En el lago","Patio trasero al agua. Como Spring Valley Lake",3],["Terreno grande","Lotes amplios, espacio de sobra. Como Oak Hills",2]]:[["Desert yards","Rock yards, block walls. Like newer Victorville tracts",0],["Lawns and trees","Green yards, shade trees. Like Jess Ranch",1],["On the lake","Backyard on the water. Like Spring Valley Lake",3],["Acreage","Big lots, room to spread out. Like Oak Hills",2]],h3.hood)+
+    '<div class="obd-l">'+L("And your street?","¿Y tu calle?")+'</div>'+pics("hood",ES?[["Patios de desierto","Piedra y bardas de bloque. Como las colonias nuevas de Victorville",0],["Pasto y árboles","Patios verdes, árboles de sombra. Como Jess Ranch",1],["En el lago","Patio trasero al agua. Como Spring Valley Lake",3],["Terreno grande","Lotes amplios, espacio de sobra. Como Oak Hills",2],["Montaña","Pinos, piedra, un camino de dos carriles. Como Crestline o Wrightwood",4]]:[["Desert yards","Rock yards, block walls. Like newer Victorville tracts",0],["Lawns and trees","Green yards, shade trees. Like Jess Ranch",1],["On the lake","Backyard on the water. Like Spring Valley Lake",3],["Acreage","Big lots, room to spread out. Like Oak Hills",2],["Mountain","Pines, granite, a two lane road. Like Crestline or Wrightwood",4]],h3.hood)+
     '<div class="obd-act"><button type="button" data-obd="skip">'+L("Skip","Saltar")+'</button><button type="button" class="go" data-obd="next">'+L("Next","Siguiente")+'</button></div></div>';
   /* the problems, as pictures you check off */
-  var PB=ES?[["win","Ventanas sucias","Polvo, manchas, mosquiteros grises"],["pig","Palomas","En el techo o debajo de los paneles"],["sol","Paneles con polvo","Una capa de polvo del desierto"],["scr","Mosquiteros rotos","Rasgados, colgados o flojos"],["hw","Manchas de agua dura","Manchas blancas de los aspersores"]]:[["win","Dirty windows","Dust, spots, gray screens"],["pig","Pigeons","On the roof or under panels"],["sol","Dusty solar panels","A film of desert dust"],["scr","Torn screens","Ripped, sagging or loose"],["hw","Hard water spots","White spots from sprinklers"]];
+  var PB=ES?[["win","Ventanas sucias","Polvo, manchas, mosquiteros grises"],["pig","Palomas","En el techo o debajo de los paneles"],["sol","Paneles con polvo","Una capa de polvo del desierto"],["scr","Mosquiteros rotos","Rasgados, colgados o flojos"],["hw","Manchas de agua dura","Manchas blancas de los aspersores"],["large","Casa grande o especial","Vidrio alto, mucho vidrio, o una casa única"]]:[["win","Dirty windows","Dust, spots, gray screens"],["pig","Pigeons","On the roof or under panels"],["sol","Dusty solar panels","A film of desert dust"],["scr","Torn screens","Ripped, sagging or loose"],["hw","Hard water spots","White spots from sprinklers"],["large","Custom or large home","Tall glass, lots of it, or a one of a kind build"]];
   var P2='<div class="obd-in" data-p="2" hidden><b class="obd-h">'+L("What seems to be the problem?","¿Cuál es el problema?")+'</b><p>'+L("Check everything that applies. Next you\'ll see it on your home.","Marca todo lo que aplique. Enseguida lo ves en tu casa.")+'</p><div class="obd-row pics pc">'+
     PB.map(function(x){return '<label class="obd-pc"><input type="checkbox" value="'+x[0]+'"'+(st[x[0]]?" checked":"")+'><img src="assets/quote/prob-'+x[0]+'.webp" alt="" width="300" height="200" loading="lazy" decoding="async"><b>'+x[1]+'</b><span>'+x[2]+'</span><i aria-hidden="true"></i></label>';}).join("")+'</div>'+
+    /* the counts, asked here so the price is right from the first frame instead of at the end */
+    stepper("panels",L("Fewer panels","Menos paneles"),L("More panels","Más paneles"),
+      '<div class="obd-det" data-det="sol pig" hidden><div class="obd-l">'+L("About how many solar panels?","¿Como cuántos paneles solares?")+'</div><div class="obd-cnt"><span>'+L("Panels","Paneles")+'</span>%s<span class="obd-hint">'+L("Count them from the street, close is fine. Tony confirms the exact count on the roof.","Cuéntalos desde la calle, aproximado está bien. Tony confirma el número exacto en el techo.")+'</span></div>'+
+      '<div class="obd-cnt"><span>'+L("Sections","Secciones")+'</span><div class="seg2" data-seg="arrays"><button type="button" data-v="1" aria-pressed="true">1</button><button type="button" data-v="2" aria-pressed="false">2</button><button type="button" data-v="3" aria-pressed="false">3</button></div></div>'+
+      [0,1,2].map(function(i){return '<div data-sec="'+i+'" hidden><span>'+L("Section ","Sección ")+(i+1)+'</span><div class="stepper" data-step="arr'+i+'"><button type="button" data-d="-1" aria-label="'+L("Fewer","Menos")+'">−</button><output class="num">8</output><button type="button" data-d="1" aria-label="'+L("More","Más")+'">+</button></div></div>';}).join("")+'</div>')+
+    stepper("screens",L("Fewer screens","Menos mosquiteros"),L("More screens","Más mosquiteros"),'<div class="obd-det" data-det="scr" hidden><div class="obd-l">'+L("How many screens?","¿Cuántos mosquiteros?")+'</div><div class="obd-cnt"><span>'+L("Screens","Mosquiteros")+'</span>%s<span class="obd-hint">'+L("Torn, sagging or loose ones. Re-meshed on site, 15 to 20 minutes each.","Rotos, colgados o flojos. Se rehacen en el lugar, 15 a 20 minutos cada uno.")+'</span></div></div>')+
+    stepper("wins",L("Fewer windows","Menos ventanas"),L("More windows","Más ventanas"),'<div class="obd-det" data-det="win hw large" hidden><div class="obd-l">'+L("About how many windows?","¿Como cuántas ventanas?")+'</div><div class="obd-cnt"><span>'+L("Windows","Ventanas")+'</span>%s<span class="obd-hint">'+L("The base price covers 10 to 12 on a single story, 18 to 20 on a two story. Past that it's a flat $39 more.","El precio base cubre 10 a 12 en un piso, 18 a 20 en dos pisos. Pasando de eso son $39 fijos más.")+'</span></div>'+
+      '<p class="obd-hint" data-det="large" hidden>'+L("Custom or large home: Tony counts the panes on site or from a satellite view and texts you a firm price before he drives out. A photo of the front with your quote speeds that up.","Casa grande o especial: Tony cuenta los vidrios en el lugar o por satélite y te manda un precio firme antes de salir. Una foto del frente con tu cotización lo acelera.")+'</p></div>')+
     '<div class="obd-act"><button type="button" data-obd="back">'+L("Back","Atrás")+'</button><button type="button" class="go" data-obd="build">'+L("Build my home","Armar mi casa")+'</button></div></div>';
-  obd.innerHTML=P1+P2;}
+  obd.innerHTML=P1+P2;detSync();}
+function stepper(k,less,more,tpl){return tpl.replace("%s",'<div class="stepper" data-step="'+k+'"><button type="button" data-d="-1" aria-label="'+less+'">−</button><output class="num">'+st[k]+'</output><button type="button" data-d="1" aria-label="'+more+'">+</button></div>');}
+/* a count row shows as soon as its problem is checked */
+function detSync(){var on={};$$(".obd-pc input",obd).forEach(function(c){on[c.value]=c.checked;});$$("[data-det]",obd).forEach(function(d){d.hidden=!d.getAttribute("data-det").split(" ").some(function(k){return on[k];});});}
+obd.addEventListener("change",function(e){if(e.target&&e.target.closest(".obd-pc"))detSync();});
 stageEl.appendChild(obd);
 function obdShow(on){obdOpen=on;obd.hidden=!on;ov.classList.toggle("obd-on",on);if(on){obdRender();say("");track("onboard_open");}secLabels();}
 obd.addEventListener("click",function(e){var t=e.target;if(!t.closest)return;
@@ -1678,7 +1915,7 @@ obd.addEventListener("click",function(e){var t=e.target;if(!t.closest)return;
   if(act==="next"){pages[0].hidden=true;pages[1].hidden=false;}
   else if(act==="back"){pages[0].hidden=false;pages[1].hidden=true;}
   else if(act==="skip"||act==="build"){
-    if(act==="build"){var any=false;$$(".obd-pc input",obd).forEach(function(c){st[c.value]=c.checked;any=any||c.checked;});if(st.hw)st.win=true;if(!any)st.win=true;
+    if(act==="build"){var any=false;$$(".obd-pc input",obd).forEach(function(c){st[c.value]=c.checked;if(c.value!=="large")any=any||c.checked;});if(st.hw||st.large)st.win=true;if(!any)st.win=true;
       track("onboard_build",{win:st.win,hw:st.hw,sol:st.sol,pig:st.pig,scr:st.scr,hood:h3.hood,style:h3.style});
       panelMin(true); /* the welcome already shaped the home, so the tour gets the whole screen; the bar under it opens the rest */}
     obdDone=true;obdShow(false);tl=0;user=false;focusShot=null;C.render();}});
@@ -1699,7 +1936,7 @@ function loop(now){
   raf=requestAnimationFrame(loop);
   if(!overlay){acc+=dt;if(acc<1/30)return;dt=acc;acc=0;}
   size();watchPerf(now);advance(dt);stepNav();
-  frame(dt);camStep(dt,now/1000);liftView(dt);R.render(scene,cam);edButton();callouts(dt,host);secLabels();
+  frame(dt);camStep(dt,now/1000);liftView(dt);R.render(scene,cam);edButton();tryChips();askRender();callouts(dt,host);secLabels();
   if(first&&!overlay){first=false;heroLay.classList.add("live");}
 }
 function start(){if(!raf){last=performance.now();raf=requestAnimationFrame(loop);}}
@@ -1716,17 +1953,22 @@ function syncControls(){
   $$("#ov [data-hseg]").forEach(function(g){var k=g.getAttribute("data-hseg");$$("button[data-v]",g).forEach(function(b){b.setAttribute("aria-pressed",String(+b.getAttribute("data-v")===h3[k]));});});
   $$("#ov [data-hsw]").forEach(function(x){x.setAttribute("aria-checked",String(!!h3[x.getAttribute("data-hsw")]));});
   $$("#ov [data-hstep='spin'] output").forEach(function(o){o.textContent=spinCount();});
+  $$("#ov [data-spinrow]").forEach(function(r){r.hidden=!!st.pig;});
 }
 ov.addEventListener("click",function(e){
   var t=e.target;
   if(t.closest("#wxChip")){var order=["today","sun","wind","cloud"];WX.mode=order[(order.indexOf(WX.mode)+1)%order.length];applyWx();track("weather_3d",{mode:WX.mode});return;}
   if(t.closest("#ovGrab")){var was=ov.classList.contains("min");panelMin(!was);track("panel_toggle",{open:was});return;}
   var ot=t.closest("[data-otab]");if(ot){var og=ot.closest(".ops"),oid=ot.getAttribute("data-otab");$$("[data-otab]",og).forEach(function(b){b.setAttribute("aria-selected",String(b===ot));});$$("[data-og]",og).forEach(function(g){g.hidden=g.getAttribute("data-og")!==oid;});track("ops_tab",{tab:oid});return;}
-  var mb=t.closest("[data-hmode]");if(mb){var nm=mb.getAttribute("data-hmode");if(nm===mode){replay();return;}fade(function(){setMode(nm);});track("view_3d_service",{mode:nm});return;}
+  var mb=t.closest("[data-hmode]");if(mb){var nm=mb.getAttribute("data-hmode");if(nm===mode){replay();return;}
+    /* a storefront is a different place, so that one cuts; every home view glides */
+    if(nm==="com"||mode==="com"||(mode==="win"&&h3.view===1))fade(function(){setMode(nm);});else setMode(nm,false,true);track("view_3d_service",{mode:nm});return;}
+  var tb=t.closest("[data-try]");if(tb){tryAct(tb.getAttribute("data-try"));return;}
+  var ab=t.closest("[data-ask]");if(ab){askAct(ab.getAttribute("data-ask"));return;}
   var z=t.closest("[data-zoom]");if(z&&goal){var d=+z.getAttribute("data-zoom");if(d===0){user=false;focusShot=null;flyTo(preset());}else{user=true;flight=null;goal.dist*=d>0?.8:1.25;limits();}return;}
   var hb=t.closest("[data-hseg] button[data-v]");
   if(hb){var k=hb.parentNode.getAttribute("data-hseg"),v=+hb.getAttribute("data-v");
-    if(k==="stage"){tl=[0,2.2,5.6,9,12.4][v];auto=true;user=false;focusShot=null;h3.stage=v;birdTargets(false);track("pigeon_stage",{stage:v});}
+    if(k==="stage"){tl=[0,2.2,5.6,9,12.4][v];auto=true;user=false;focusShot=null;h3.focus=null;askSel=null;h3.stage=v;birdTargets(false);track("pigeon_stage",{stage:v});}
     else if(k==="view"){if(h3.view!==v){h3.view=v;if(v===1&&!room)buildRoom();fade(function(){tl=0;user=false;resetHaze();if(room)resetRoom();goal=preset();cur=null;});track("window_view",{inside:v});}}
     else if(k==="style"){h3.style=v;if(v===3){if(st.stories!==2)st.stories=2;if(!st.large){st.large=true;h3.estateLarge=true;}}else{if(h3.estateLarge){st.large=false;h3.estateLarge=false;}if(v===1&&st.stories!==1)st.stories=1;h3.grids=v===2?true:h3.grids;}
       track("home_style",{style:STY[v].id});C.render();return;}
@@ -1740,7 +1982,8 @@ ov.addEventListener("click",function(e){
     buildSpinners();birdTargets(false);C.render();return;}
   var ha=t.closest("[data-hact]");if(ha){var a=ha.getAttribute("data-hact");
     if(a==="replay")replay();
-    else if(a==="next"||a==="prev"){var S=steps();if(!S)return;var i=stepAt(S);user=false;focusShot=null;if(mode==="pig"){auto=true;h3.spinOv=null;}
+    else if(a==="ask"){askOpen=!askOpen;if(!askOpen)askSel=null;askRender();track("ask_tony",{open:askOpen});}
+    else if(a==="next"||a==="prev"){var S=steps();if(!S)return;var i=stepAt(S);user=false;focusShot=null;h3.focus=null;askSel=null;askOpen=false;if(mode==="pig"){auto=true;h3.spinOv=null;}
       if(a==="next"){if(i+1<S.length){tl=S[i+1];track("note_next",{mode:mode,step:i+2});}else replay();}else rewind(S[Math.max(0,i-1)]);}
     else if(a==="obd"){fade(function(){setMode("home");obdShow(true);});}
     else if(a==="reach"){tl=9;auto=true;user=false;focusShot=null;h3.spinOv=null;h3.stage=3;birdTargets(false);track("spinner_reach");}
@@ -1759,13 +2002,13 @@ function sync(){
   if(k!==builtKey){var keepStage=h3.stage;buildMe();if(mode==="pig"){buildNeighbors();buildBirds();h3.stage=keepStage;birdTargets(true);}
     if(mode!=="show"&&mode!=="home"&&mode!=="pig"){tl=0;if(mode==="win"){resetHaze();}}goal=preset();}
   else if(spinners.length!==Math.min(spinCount(),me.vents.length)){buildSpinners();birdTargets(false);anchors();}
-  syncControls();summary();
+  syncControls();summary();react();
 }
 buildMe();
 return {
   open:function(m){overlay=true;perf.hold=performance.now()+1500;perf.n=0;wxFetch();wxChip();$("ovLoad").hidden=true;attach(stageEl);var tour=m==="tour";if(tour)m=pageMode==="com"?"com":"home";if(["home","win","sol","scr","pig","com"].indexOf(m)<0)m="home";setMode(m);if(tour&&!obdDone&&m==="home")obdShow(true);start();},
   close:function(){if(ED)edStop();overlay=false;obdShow(false);panelMin(false);say("");secEl.forEach(function(d){d.hidden=true;});Object.keys(hsEl).forEach(function(k){hsEl[k].hidden=true;});h3.spinOv=null;if(h3.view===1)h3.view=0;setMode("show");attach(heroHost);$("ocall").hidden=true;},
-  hero:function(on){heroOn=on;if(on&&!overlay){if(mode!=="show")setMode("show");else ensureScene();attach(heroHost);start();}},
+  hero:function(on){heroOn=on;if(on&&!overlay){if(!worker)makeWorker();if(mode!=="show")setMode("show");else ensureScene();attach(heroHost);start();}},
   sync:sync,
   pref:function(m){pageMode=m;},
   homeDesc:homeDesc,

@@ -50,7 +50,8 @@
 
   <link href="style.css" rel="stylesheet">
   <!-- tq:css -->
-<link href="assets/quote/quote.css?v=f31cb4bc44" rel="stylesheet">
+<link href="assets/quote/quote.css?v=19f7438336" rel="stylesheet">
+  <link rel="preload" as="image" href="assets/quote/home-4x5.webp" fetchpriority="high">
 <!-- /tq:css -->
 
   <script type="application/ld+json">
@@ -904,8 +905,9 @@
       <button type="button" data-zoom="0" aria-label="Regresar la vista">⟲</button>
     </div>
     <button type="button" class="wx" id="wxChip" aria-label="Cambiar el clima en la vista 3D">Hoy</button>
+    <div class="try" id="try" hidden></div>
     <div class="ov-fade" id="ovFade"></div>
-    <div class="ov-msg" id="ovMsg" hidden><div class="mtxt" id="ovMsgT" aria-live="polite"></div><div class="mnav" id="ovNav" hidden><button type="button" data-hact="prev" aria-label="Un paso atrás">‹ Atrás</button><span id="ovStep"></span><button type="button" data-hact="next" class="nx">Siguiente ›</button></div></div>
+    <div class="ov-msg" id="ovMsg" hidden><b class="mtag"><img src="assets/quote/tony-192.jpg" alt="" width="28" height="28" loading="lazy" decoding="async">Tony</b><div class="mtxt" id="ovMsgT" aria-live="polite"></div><div class="askp" id="askp" hidden></div><button type="button" class="askb" id="askb" data-hact="ask" hidden>Pregúntale a Tony ›</button><div class="mnav" id="ovNav" hidden><button type="button" data-hact="prev" aria-label="Un paso atrás">‹ Atrás</button><span id="ovStep"></span><button type="button" data-hact="next" class="nx">Siguiente ›</button></div></div>
   </div>
   <div class="ov-panel">
     <button type="button" class="ov-grab" id="ovGrab" aria-expanded="true"><span>Personalizar mi casa</span><i aria-hidden="true"></i></button>
@@ -913,12 +915,12 @@
     <div class="ops" data-for="home">
       <div class="otabs" role="tablist" aria-label="Personalizar"><button type="button" role="tab" data-otab="home" aria-selected="true">Casa</button><button type="button" role="tab" data-otab="colors" aria-selected="false">Colores</button><button type="button" role="tab" data-otab="solar" aria-selected="false">Solar</button><button type="button" role="tab" data-otab="street" aria-selected="false">Calle</button></div>
       <div class="og" data-og="home">
-        <div class="orow col"><span>Estilo de casa</span><div class="seg2 wrapok styles" data-hseg="style"><button type="button" data-v="0" aria-pressed="true">Nueva</button><button type="button" data-v="1" aria-pressed="false">Rancho</button><button type="button" data-v="2" aria-pressed="false">Clásica</button><button type="button" data-v="3" aria-pressed="false">Casa de lago</button></div></div>
+        <div class="orow col"><span>Estilo de casa</span><div class="seg2 wrapok styles" data-hseg="style"><button type="button" data-v="0" aria-pressed="true">Nueva</button><button type="button" data-v="1" aria-pressed="false">Rancho</button><button type="button" data-v="2" aria-pressed="false">Clásica</button><button type="button" data-v="3" aria-pressed="false">Casa de lago</button><button type="button" data-v="4" aria-pressed="false">Cabaña</button></div></div>
         <div class="orow"><span>Pisos</span><div class="seg2" data-seg="stories"><button type="button" data-v="1" aria-pressed="true">1 piso</button><button type="button" data-v="2" aria-pressed="false">2 pisos</button></div></div>
         <div class="orow"><span>Techo</span><div class="seg2" data-hseg="roof"><button type="button" data-v="0" aria-pressed="true">Teja S</button><button type="button" data-v="1" aria-pressed="false">Teja plana</button><button type="button" data-v="2" aria-pressed="false">Tejamanil</button></div></div>
         <div class="orow"><span>Cuadrícula en ventanas</span><button type="button" class="switch" data-hsw="grids" role="switch" aria-checked="false" aria-label="Cuadrícula en ventanas"></button></div>
         <div class="orow"><span>Más ventanas</span><button type="button" class="switch" data-sw="more" role="switch" aria-checked="false" aria-label="Más ventanas"></button></div>
-        <p class="onote">Rancho, Clásica y Casa de lago están aquí para casas antiguas y especiales, para que el trabajo se vea en una casa como la tuya.</p>
+        <p class="onote">Rancho, Clásica, Casa de lago y Cabaña están aquí para casas antiguas, especiales y de montaña, para que el trabajo se vea en una casa como la tuya.</p>
       </div>
       <div class="og" data-og="colors" hidden>
         <div class="orow"><span>Color de techo</span><div class="sw" data-hseg="rc"><button type="button" data-v="0" aria-pressed="true" aria-label="Terracota" style="background:#a9573a"></button><button type="button" data-v="1" aria-pressed="false" aria-label="Café" style="background:#6e5140"></button><button type="button" data-v="2" aria-pressed="false" aria-label="Gris oscuro" style="background:#46484c"></button><button type="button" data-v="3" aria-pressed="false" aria-label="Arena" style="background:#c2a67c"></button></div></div>
@@ -933,7 +935,7 @@
         <div class="orow" data-sec="2" hidden><span>Sección 3</span><div class="stepper" data-step="arr2"><button type="button" data-d="-1" aria-label="Menos paneles en la sección 3">−</button><output class="num">8</output><button type="button" data-d="1" aria-label="Más paneles en la sección 3">+</button></div></div>
       </div>
       <div class="og" data-og="street" hidden>
-        <div class="orow col"><span>Vecindario</span><div class="seg2 wrapok" data-hseg="hood"><button type="button" data-v="0" aria-pressed="false">Patios de desierto</button><button type="button" data-v="1" aria-pressed="true">Pasto</button><button type="button" data-v="3" aria-pressed="false">Lago</button><button type="button" data-v="2" aria-pressed="false">Terreno grande</button></div></div>
+        <div class="orow col"><span>Vecindario</span><div class="seg2 wrapok" data-hseg="hood"><button type="button" data-v="0" aria-pressed="false">Patios de desierto</button><button type="button" data-v="1" aria-pressed="true">Pasto</button><button type="button" data-v="3" aria-pressed="false">Lago</button><button type="button" data-v="2" aria-pressed="false">Terreno grande</button><button type="button" data-v="4" aria-pressed="false">Montaña</button></div></div>
       </div>
       <button type="button" class="replay quiet" data-hact="obd">Empezar de nuevo con mi casa y mis problemas</button>
     </div>
@@ -941,6 +943,7 @@
       <div class="orow"><span>Vista</span><div class="seg2" data-hseg="view"><button type="button" data-v="0" aria-pressed="true">Por fuera</button><button type="button" data-v="1" aria-pressed="false">Por dentro</button></div></div>
       <div class="orow"><span>Ventanas por dentro <b class="amt">+$49</b></span><button type="button" class="switch" data-sw="inside" role="switch" aria-checked="false" aria-label="Agregar ventanas por dentro"></button></div>
       <div class="orow"><span>Tu casa</span><div class="seg2" data-seg="stories"><button type="button" data-v="1" aria-pressed="true">1 piso</button><button type="button" data-v="2" aria-pressed="false">2 pisos</button></div></div>
+      <div class="orow"><span>Como cuántas ventanas</span><div class="stepper" data-step="wins"><button type="button" data-d="-1" aria-label="Menos ventanas">−</button><output class="num">12</output><button type="button" data-d="1" aria-label="Más ventanas">+</button></div></div>
       <button type="button" class="replay" data-hact="replay">▶ Verlo otra vez</button>
     </div>
     <div class="ops" data-for="sol" hidden>
@@ -949,6 +952,7 @@
       <div class="orow" data-sec="0" hidden><span>Sección 1</span><div class="stepper" data-step="arr0"><button type="button" data-d="-1" aria-label="Menos paneles en la sección 1">−</button><output class="num">8</output><button type="button" data-d="1" aria-label="Más paneles en la sección 1">+</button></div></div>
       <div class="orow" data-sec="1" hidden><span>Sección 2</span><div class="stepper" data-step="arr1"><button type="button" data-d="-1" aria-label="Menos paneles en la sección 2">−</button><output class="num">8</output><button type="button" data-d="1" aria-label="Más paneles en la sección 2">+</button></div></div>
       <div class="orow" data-sec="2" hidden><span>Sección 3</span><div class="stepper" data-step="arr2"><button type="button" data-d="-1" aria-label="Menos paneles en la sección 3">−</button><output class="num">8</output><button type="button" data-d="1" aria-label="Más paneles en la sección 3">+</button></div></div>
+      <div class="orow" data-spinrow><span>Espantapájaros <b class="amt">$50 cada uno</b></span><div class="stepper" data-step="spin"><button type="button" data-d="-1" aria-label="Menos espantapájaros">−</button><output class="num">0</output><button type="button" data-d="1" aria-label="Más espantapájaros">+</button></div></div>
       <button type="button" class="replay" data-hact="replay">▶ Verlo otra vez</button>
     </div>
     <div class="ops" data-for="scr" hidden>
@@ -1006,7 +1010,7 @@
 </nav>
 </div>
 <script>window.TQ={"svc":["win"],"mode":"home","lang":"es"};</script>
-<script src="assets/quote/quote.js?v=66e2c53d3b" defer></script>
+<script src="assets/quote/quote.js?v=9fc9579238" defer></script>
 <!-- /tq:tail -->
 </body>
 </html>

@@ -667,3 +667,10 @@ a.area-chip:focus-visible{
 @keyframes tqOut{to{opacity:0;transform:translateY(-6px)}}
 @keyframes tqIn{from{opacity:0;transform:translateY(8px)}}
 @media (prefers-reduced-motion:reduce){::view-transition-old(root),::view-transition-new(root){animation:none}}
+
+/* Tony on the job, about page */
+.about-photos{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:0 0 1.6rem}
+.about-photos figure{margin:0}
+.about-photos img{width:100%;height:auto;aspect-ratio:4/5;object-fit:cover;border-radius:16px;display:block}
+.about-photos figcaption{font-size:.86rem;color:var(--ink-soft);margin-top:.45rem}
+@media (max-width:560px){.about-photos{grid-template-columns:1fr}}

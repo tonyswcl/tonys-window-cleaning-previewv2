@@ -26,7 +26,8 @@
   <link href="assets/fonts.css" rel="stylesheet">
   <link href="style.css" rel="stylesheet">
   <!-- tq:css -->
-<link href="assets/quote/quote.css?v=f31cb4bc44" rel="stylesheet">
+<link href="assets/quote/quote.css?v=19f7438336" rel="stylesheet">
+  <link rel="preload" as="image" href="assets/quote/home-4x5.webp" fetchpriority="high">
 <!-- /tq:css -->
 
   <!-- Service structured data -->
@@ -974,8 +975,9 @@
       <button type="button" data-zoom="0" aria-label="Reset the view">⟲</button>
     </div>
     <button type="button" class="wx" id="wxChip" aria-label="Change the weather in the 3D view">Today</button>
+    <div class="try" id="try" hidden></div>
     <div class="ov-fade" id="ovFade"></div>
-    <div class="ov-msg" id="ovMsg" hidden><div class="mtxt" id="ovMsgT" aria-live="polite"></div><div class="mnav" id="ovNav" hidden><button type="button" data-hact="prev" aria-label="Back one step">‹ Back</button><span id="ovStep"></span><button type="button" data-hact="next" class="nx">Next ›</button></div></div>
+    <div class="ov-msg" id="ovMsg" hidden><b class="mtag"><img src="assets/quote/tony-192.jpg" alt="" width="28" height="28" loading="lazy" decoding="async">Tony</b><div class="mtxt" id="ovMsgT" aria-live="polite"></div><div class="askp" id="askp" hidden></div><button type="button" class="askb" id="askb" data-hact="ask" hidden>Ask Tony ›</button><div class="mnav" id="ovNav" hidden><button type="button" data-hact="prev" aria-label="Back one step">‹ Back</button><span id="ovStep"></span><button type="button" data-hact="next" class="nx">Next ›</button></div></div>
   </div>
   <div class="ov-panel">
     <button type="button" class="ov-grab" id="ovGrab" aria-expanded="true"><span>Customize my home</span><i aria-hidden="true"></i></button>
@@ -983,12 +985,12 @@
     <div class="ops" data-for="home">
       <div class="otabs" role="tablist" aria-label="Customize"><button type="button" role="tab" data-otab="home" aria-selected="true">Home</button><button type="button" role="tab" data-otab="colors" aria-selected="false">Colors</button><button type="button" role="tab" data-otab="solar" aria-selected="false">Solar</button><button type="button" role="tab" data-otab="street" aria-selected="false">Street</button></div>
       <div class="og" data-og="home">
-        <div class="orow col"><span>Home style</span><div class="seg2 wrapok styles" data-hseg="style"><button type="button" data-v="0" aria-pressed="true">New build</button><button type="button" data-v="1" aria-pressed="false">Ranch</button><button type="button" data-v="2" aria-pressed="false">Classic</button><button type="button" data-v="3" aria-pressed="false">Lake estate</button></div></div>
+        <div class="orow col"><span>Home style</span><div class="seg2 wrapok styles" data-hseg="style"><button type="button" data-v="0" aria-pressed="true">New build</button><button type="button" data-v="1" aria-pressed="false">Ranch</button><button type="button" data-v="2" aria-pressed="false">Classic</button><button type="button" data-v="3" aria-pressed="false">Lake estate</button><button type="button" data-v="4" aria-pressed="false">Mountain cabin</button></div></div>
         <div class="orow"><span>Stories</span><div class="seg2" data-seg="stories"><button type="button" data-v="1" aria-pressed="true">1 story</button><button type="button" data-v="2" aria-pressed="false">2 story</button></div></div>
         <div class="orow"><span>Roof</span><div class="seg2" data-hseg="roof"><button type="button" data-v="0" aria-pressed="true">S tile</button><button type="button" data-v="1" aria-pressed="false">Flat tile</button><button type="button" data-v="2" aria-pressed="false">Shingle</button></div></div>
         <div class="orow"><span>Window grids</span><button type="button" class="switch" data-hsw="grids" role="switch" aria-checked="false" aria-label="Window grids"></button></div>
         <div class="orow"><span>More windows</span><button type="button" class="switch" data-sw="more" role="switch" aria-checked="false" aria-label="More windows"></button></div>
-        <p class="onote">Ranch, Classic and Lake estate are here for older and custom homes, so the job shows on a home like yours.</p>
+        <p class="onote">Ranch, Classic, Lake estate and Mountain cabin are here for older, custom and mountain homes, so the job shows on a home like yours.</p>
       </div>
       <div class="og" data-og="colors" hidden>
         <div class="orow"><span>Roof color</span><div class="sw" data-hseg="rc"><button type="button" data-v="0" aria-pressed="true" aria-label="Terracotta" style="background:#a9573a"></button><button type="button" data-v="1" aria-pressed="false" aria-label="Brown blend" style="background:#6e5140"></button><button type="button" data-v="2" aria-pressed="false" aria-label="Charcoal" style="background:#46484c"></button><button type="button" data-v="3" aria-pressed="false" aria-label="Sand" style="background:#c2a67c"></button></div></div>
@@ -1003,7 +1005,7 @@
         <div class="orow" data-sec="2" hidden><span>Section 3</span><div class="stepper" data-step="arr2"><button type="button" data-d="-1" aria-label="Fewer panels in section 3">−</button><output class="num">8</output><button type="button" data-d="1" aria-label="More panels in section 3">+</button></div></div>
       </div>
       <div class="og" data-og="street" hidden>
-        <div class="orow col"><span>Neighborhood</span><div class="seg2 wrapok" data-hseg="hood"><button type="button" data-v="0" aria-pressed="false">Desert yards</button><button type="button" data-v="1" aria-pressed="true">Lawns</button><button type="button" data-v="3" aria-pressed="false">Lake</button><button type="button" data-v="2" aria-pressed="false">Acreage</button></div></div>
+        <div class="orow col"><span>Neighborhood</span><div class="seg2 wrapok" data-hseg="hood"><button type="button" data-v="0" aria-pressed="false">Desert yards</button><button type="button" data-v="1" aria-pressed="true">Lawns</button><button type="button" data-v="3" aria-pressed="false">Lake</button><button type="button" data-v="2" aria-pressed="false">Acreage</button><button type="button" data-v="4" aria-pressed="false">Mountain</button></div></div>
       </div>
       <button type="button" class="replay quiet" data-hact="obd">Start over with my home and problems</button>
     </div>
@@ -1011,6 +1013,7 @@
       <div class="orow"><span>View</span><div class="seg2" data-hseg="view"><button type="button" data-v="0" aria-pressed="true">Outside</button><button type="button" data-v="1" aria-pressed="false">Inside</button></div></div>
       <div class="orow"><span>Inside windows <b class="amt">+$49</b></span><button type="button" class="switch" data-sw="inside" role="switch" aria-checked="false" aria-label="Add inside windows"></button></div>
       <div class="orow"><span>Your home</span><div class="seg2" data-seg="stories"><button type="button" data-v="1" aria-pressed="true">1 story</button><button type="button" data-v="2" aria-pressed="false">2 story</button></div></div>
+      <div class="orow"><span>About how many windows</span><div class="stepper" data-step="wins"><button type="button" data-d="-1" aria-label="Fewer windows">−</button><output class="num">12</output><button type="button" data-d="1" aria-label="More windows">+</button></div></div>
       <button type="button" class="replay" data-hact="replay">▶ Watch it again</button>
     </div>
     <div class="ops" data-for="sol" hidden>
@@ -1019,6 +1022,7 @@
       <div class="orow" data-sec="0" hidden><span>Section 1</span><div class="stepper" data-step="arr0"><button type="button" data-d="-1" aria-label="Fewer panels in section 1">−</button><output class="num">8</output><button type="button" data-d="1" aria-label="More panels in section 1">+</button></div></div>
       <div class="orow" data-sec="1" hidden><span>Section 2</span><div class="stepper" data-step="arr1"><button type="button" data-d="-1" aria-label="Fewer panels in section 2">−</button><output class="num">8</output><button type="button" data-d="1" aria-label="More panels in section 2">+</button></div></div>
       <div class="orow" data-sec="2" hidden><span>Section 3</span><div class="stepper" data-step="arr2"><button type="button" data-d="-1" aria-label="Fewer panels in section 3">−</button><output class="num">8</output><button type="button" data-d="1" aria-label="More panels in section 3">+</button></div></div>
+      <div class="orow" data-spinrow><span>Spinners <b class="amt">$50 each</b></span><div class="stepper" data-step="spin"><button type="button" data-d="-1" aria-label="Fewer spinners">−</button><output class="num">0</output><button type="button" data-d="1" aria-label="More spinners">+</button></div></div>
       <button type="button" class="replay" data-hact="replay">▶ Watch it again</button>
     </div>
     <div class="ops" data-for="scr" hidden>
@@ -1076,7 +1080,7 @@
 </nav>
 </div>
 <script>window.TQ={"svc":["gr"],"mode":"win"};</script>
-<script src="assets/quote/quote.js?v=66e2c53d3b" defer></script>
+<script src="assets/quote/quote.js?v=9fc9579238" defer></script>
 <!-- /tq:tail -->
 </body>
 </html>

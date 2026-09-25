@@ -43,11 +43,11 @@ var P={win:[0,149,249],more:[0,39,39],covers:[0,"10 to 12","18 to 20"],coverMax:
 
 /* ---------- state ---------- */
 var MAIN=["win","sol","pig","scr"], EXTRA=["hw","roof","pc","gut","pw","ad","gr","com"], ALL=MAIN.concat(EXTRA);
-var st={stories:1,more:false,inside:false,large:false,pkg:0,panels:16,arrays:1,arr:[16,8,6],spin:0,screens:4,frames:false,pet:1,panes:6,day:"",time:-1,plan:0,wait:0,
+var st={stories:1,more:false,inside:false,large:false,pkg:0,panels:16,arrays:1,arr:[16,8,6],spin:0,wins:12,winsSet:false,screens:4,frames:false,pet:1,panes:6,day:"",time:-1,plan:0,wait:0,
   ctype:0,cfreq:0,cterm:0,cin:false,cpanes:8,cdoors:2,cstk:0,bsq:12,bst:2,bwin:48};
 ALL.forEach(function(k){st[k]=false;});
 (CFG.svc&&CFG.svc.length?CFG.svc:["win"]).forEach(function(k){if(ALL.indexOf(k)>=0)st[k]=true;});
-var LIMIT={stories:[1,2],panels:[1,99],arrays:[1,3],arr0:[1,60],arr1:[1,60],arr2:[1,60],spin:[0,20],screens:[1,40],pet:[0,1],panes:[1,60],plan:[0,3],time:[-1,2],wait:[0,3],pkg:[0,1],
+var LIMIT={stories:[1,2],panels:[1,99],wins:[3,80],arrays:[1,3],arr0:[1,60],arr1:[1,60],arr2:[1,60],spin:[0,20],screens:[1,40],pet:[0,1],panes:[1,60],plan:[0,3],time:[-1,2],wait:[0,3],pkg:[0,1],
   ctype:[0,1],cfreq:[0,2],cterm:[0,2],csched:[0,4],cpanes:[1,60],cdoors:[0,12],cstk:[0,40],bsq:[1,300],bst:[1,20],bwin:[4,990]};
 /* the storefront schedule is one row of five: how often we come and how long you sign for, folded into cfreq and cterm */
 var CSCHED=[[0,0],[1,0],[2,0],[1,1],[1,2]];
@@ -81,6 +81,8 @@ function items(lang){ITEM_ES=(lang||LANG)==="es";
     add(ix("Roof soft wash","Lavado suave de techo"),0,{note:ix("Included","Incluido"),alone:P.roof,from:false});
     if(st.pkg)add(ix("A year of cleanings: 3 more washes, every 3 months, "+n+" panels × $"+P.panel,"Un año de lavados: 3 lavados más, cada 3 meses, "+n+" paneles × $"+P.panel),0,{note:money(n*P.panel)+ix(" a visit"," por visita"),later:3*n*P.panel});}
   else if(st.sol)add(ix(n+" solar panel"+pl(n)+" × $"+P.panel,n+" panel"+(n>1?"es":"")+" solar"+(n>1?"es":"")+" × $"+P.panel),n*P.panel);
+  /* spinners on their own, added to a wash or a window clean when there is no pigeon proofing to bring the free ones */
+  if(!st.pig&&st.spin>0&&(st.sol||st.win))add(ix(st.spin+" reflective spinner"+pl(st.spin)+" on the roof vents × $"+P.spinner,st.spin+" espantapájaros reflectantes en las ventilas × $"+P.spinner),st.spin*P.spinner);
   if(st.scr){var each=P.mesh[st.pet],sub=cents(st.screens*each+(st.frames?st.screens*P.frame:0));
     add(ix(st.screens+" "+P.meshName[st.pet]+" screen"+pl(st.screens)+" × "+money(each),st.screens+" mosquitero"+pl(st.screens)+", "+MESH_ES[st.pet]+" × "+money(each)),cents(st.screens*each));
     if(st.frames)add(ix("New frames and clips, "+st.screens+" × $"+P.frame,"Marcos y clips nuevos, "+st.screens+" × $"+P.frame),st.screens*P.frame);
@@ -172,16 +174,19 @@ doc.addEventListener("click",function(e){
     if(k==="time"&&st.time===v&&v!==2)v=-1; /* tap again to clear */
     setKey(k,v);return;}
   var s=t.closest("[data-sw]");
-  if(s){var k2=s.getAttribute("data-sw");st[k2]=!st[k2];if(k2==="inside"&&st.inside&&!st.win)st.win=true;track("toggle_"+k2,{on:st[k2]});render();return;}
+  if(s){var k2=s.getAttribute("data-sw");st[k2]=!st[k2];if(k2==="inside"&&st.inside&&!st.win)st.win=true;if(k2==="more")st.winsSet=false;if(k2==="large"&&st.large&&!st.win)st.win=true;track("toggle_"+k2,{on:st[k2]});render();return;}
   var p=t.closest("[data-step] button[data-d]");
   if(p){var k3=p.parentNode.getAttribute("data-step"),d3=+p.getAttribute("data-d");
     if(/^arr\d$/.test(k3)){var ai=+k3.charAt(3);st.arr[ai]=clamp(k3,st.arr[ai]+d3);sumPanels();}
     else if(k3==="panels"&&st.arrays>1){st.arr[0]=clamp("arr0",st.arr[0]+d3);sumPanels();}
     else st[k3]=clamp(k3,st[k3]+d3);
+    if(k3==="wins"){st.winsSet=true;st.more=st.wins>P.coverMax[st.stories];if(!st.win)st.win=true;}
+    if(k3==="spin"&&!st.pig&&!st.sol&&!st.win)st.sol=true;
     if((k3==="panels"||/^arr/.test(k3))&&!st.sol&&!st.pig)st.sol=true;render();return;}
   var tile=t.closest("[data-svc]");
   if(tile){var k4=tile.getAttribute("data-svc");if(ALL.indexOf(k4)<0)return;st[k4]=!st[k4];
     if(st[k4]&&k4==="hw"&&!st.win)st.win=true;
+    if(st[k4]&&k4==="pig")st.spin=0; /* the free spinners come with it, extras start at none */
     if(st[k4]){var m={win:"win",sol:"sol",pig:"pig",scr:"scr"}[k4];if(m)core.mode=m;if(m&&api)api.pref(m);}
     track("select_service",{service:k4,on:st[k4]});render();return;}
   if(t.closest("#moreSvc")){var x=$("xtiles"),open=x.hidden;x.hidden=!open;$("moreSvc").setAttribute("aria-expanded",String(open));if(open)track("more_services");return;}
@@ -192,6 +197,7 @@ doc.addEventListener("click",function(e){
 /* ---------- render ---------- */
 var shown=0,anim=null,firstRender=true;
 function render(){
+  if(st.winsSet)st.more=st.wins>P.coverMax[st.stories];
   $$("[data-svc]").forEach(function(x){var k=x.getAttribute("data-svc");if(ALL.indexOf(k)>=0)x.setAttribute("aria-pressed",String(st[k]));});
   $$("[data-body]").forEach(function(x){x.hidden=!st[x.getAttribute("data-body")];});
   var anyOn=ALL.some(function(k){return st[k];});
@@ -345,6 +351,7 @@ function homeLine(){if(comOnly())return comLine();var b=[st.stories+" story"];
   if(api&&api.homeDesc)b.push(api.homeDesc());
   if(st.sol||st.pig)b.push(st.panels+" solar panels"+(st.arrays>1?" in "+st.arrays+" sections ("+st.arr.slice(0,st.arrays).join(", ")+")":""));
   if(st.scr)b.push(st.screens+" screens, "+P.meshName[st.pet]+(st.frames?", new frames and clips":""));
+  if(st.winsSet)b.push("about "+st.wins+" windows");
   if(st.large)b.push("large custom home");return b.join(", ");}
 function msg(t){
   t=t||totals();
@@ -620,7 +627,7 @@ $$(".r3d",box).forEach(function(r){r.addEventListener("keydown",function(e){if(e
 var api=null,loading=false,pend=[],ov=$("ov"),lastFocus=null;
 var core={st:st,CFG:CFG,P:P,$:$,$$:$$,reduce:reduce,money:money,track:track,free:free,render:render,totals:totals,
   mode:CFG.mode||"home",close:function(){close3d();},
-  ie:function(){var v=zi&&zi.value;return !!(v&&v.length===5&&ieCity(v));},comVisit:function(){return comVisit();},comOffName:comOffName,bldgPrice:bldgPrice};
+  ie:function(){var v=zi&&zi.value;return !!(v&&v.length===5&&ieCity(v));},comVisit:function(){return comVisit();},comOffName:comOffName,bldgPrice:bldgPrice,schedule:schedule,recurring:recurring};
 function script(src,ok,bad){var s=doc.createElement("script");s.src=src;s.async=true;s.onload=ok;s.onerror=bad;doc.head.appendChild(s);}
 function load3d(cb){
   if(api){if(cb)cb();return;}if(cb)pend.push(cb);if(loading)return;loading=true;

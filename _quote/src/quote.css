@@ -412,7 +412,7 @@ html.tq-lock,html.tq-lock body{overflow:hidden!important}
 .tq .obd-pc:has(input:focus-visible){outline:3px solid #f0b040;outline-offset:2px}
 .tq .obd-row.pc .obd-pc:last-child:nth-child(odd){grid-column:1/-1;flex-direction:row;align-items:center;gap:10px}
 .tq .obd-row.pc .obd-pc:last-child:nth-child(odd) img{width:44%}
-@media (min-width:900px){.tq .obd-row.pc{grid-template-columns:repeat(5,1fr)}.tq .obd-row.pc .obd-pc:last-child:nth-child(odd){grid-column:auto;flex-direction:column;align-items:stretch}.tq .obd-row.pc .obd-pc:last-child:nth-child(odd) img{width:100%}}
+@media (min-width:900px){.tq .obd-row.pc{grid-template-columns:repeat(3,1fr)}.tq .obd-row.pc .obd-pc:last-child:nth-child(odd){grid-column:auto;flex-direction:column;align-items:stretch}.tq .obd-row.pc .obd-pc:last-child:nth-child(odd) img{width:100%}}
 .tq .dmg{position:absolute;left:0;top:0;z-index:2;width:30px;height:30px;border-radius:50%;border:2px solid #fff;background:#c8462b;color:#fff;font:800 14px var(--display);display:grid;place-items:center;box-shadow:0 4px 12px -4px rgba(0,0,0,.55);cursor:pointer;padding:0}
 .tq .dmg[aria-pressed="true"]{background:#fff;color:#c8462b;border-color:#c8462b}
 .tq .dmg::before{content:"";position:absolute;inset:-6px;border-radius:50%;border:2px solid rgba(200,70,43,.55);animation:tqPing 1.8s ease-out infinite}
@@ -456,3 +456,26 @@ html.tq-lock,html.tq-lock body{overflow:hidden!important}
 .tq .edbar .ed-hint{margin:6px 0 0;font:500 12.5px/1.35 var(--body);color:#5b7188}
 .tq .cname{flex:1;min-width:0;max-width:220px;border:2px solid #d3e6f0;border-radius:10px;padding:7px 10px;font:600 14px var(--body);color:#103050}
 @media (min-width:900px){.tq .edbar{right:auto;max-width:620px}}
+
+/* Tony's speech: his tag on the note, the try it chips on the picture, the questions people ask him */
+.tq .mtag{display:inline-flex;align-items:center;gap:7px;margin:0 0 6px;font:800 11.5px var(--display);letter-spacing:.06em;text-transform:uppercase;color:#8f5d08}
+.tq .mtag img{width:28px;height:28px;border-radius:50%;object-fit:cover;border:2px solid #f0b040;background:#eaf6fc}
+.tq .ov-msg .tot{display:block;margin-top:4px;font:800 13px var(--display);color:#1b7a4c}
+.tq .askb{margin-top:7px;border:0;background:transparent;padding:2px 0;font:800 13px var(--display);color:#8f5d08;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.tq .askp{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;max-height:34vh;overflow:auto}
+.tq .askp button{border:2px solid #d3e6f0;background:#fff;border-radius:999px;padding:6px 11px;font:700 13px var(--display);color:#103050;text-align:left}
+.tq .askp button[aria-pressed="true"]{border-color:#f0b040;background:#fdf4e2}
+.tq .askp button.back{background:#103050;color:#fff;border-color:#103050}
+.tq .try{position:absolute;left:10px;top:44px;z-index:3;display:flex;flex-direction:column;align-items:flex-start;gap:6px;max-width:min(78%,360px)}
+.tq .try button{border:0;background:rgba(255,255,255,.93);color:#103050;font:800 12.5px/1.25 var(--display);padding:7px 12px 7px 28px;border-radius:999px;box-shadow:0 4px 12px -6px rgba(0,0,0,.45);cursor:pointer;text-align:left;position:relative}
+.tq .try button::before{content:"";position:absolute;left:10px;top:50%;width:10px;height:10px;margin-top:-5px;border-radius:50%;background:#f0b040;box-shadow:0 0 0 3px rgba(240,176,64,.3)}
+.tq .try button[aria-pressed="true"]{background:#1b7a4c;color:#fff}
+.tq .try button[aria-pressed="true"]::before{background:#fff;box-shadow:none}
+.tq .ov.obd-on .try,.tq .ov.ed-on .try{display:none}
+@media (min-width:900px){.tq .try{top:48px}}
+/* the counts, asked right where the problem is picked */
+.tq .obd-det{margin-top:10px;padding:10px 12px;border-radius:12px;background:#f4f9fc;border:1px solid #d3e6f0}
+.tq .obd-det .obd-l{margin-top:0}
+.tq .obd-cnt{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding-block:4px;font:700 14px var(--display);color:#103050}
+.tq .obd-cnt .obd-hint{flex:1 1 100%;font:500 12.5px/1.35 var(--body);color:#5b7188}
+.tq .obd-det [data-sec]{display:flex;align-items:center;justify-content:space-between;gap:10px;padding-block:4px;font:700 13px var(--display);color:#44607a}

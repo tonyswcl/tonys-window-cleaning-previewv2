@@ -168,6 +168,13 @@ def com_swap(html):
             .replace('See it on my home', 'See it on my storefront'))
 
 
+def css_block(conf_v, conf):
+    """The stylesheet, plus a preload for the hero poster so the picture paints before the 3D even starts loading."""
+    poster = 'com-4x5' if conf['mode'] == 'com' else 'home-4x5'
+    return ('<link href="assets/quote/quote.css?v=' + conf_v['quote.css'] + '" rel="stylesheet">\n'
+            '  <link rel="preload" as="image" href="assets/quote/' + poster + '.webp" fetchpriority="high">')
+
+
 def blocks(conf, v):
     lang = conf.get('lang', 'en')
     three_card = {'pig': 'card-pig.html', 'win': 'card-win.html', 'sol': 'card-sol.html', 'scr': 'card-scr.html', 'com': 'card-com.html'}.get(conf['mode'], 'card-home.html')
@@ -176,7 +183,7 @@ def blocks(conf, v):
         tail = ('<div class="tq" data-nosnippet>\n' + lazy_ov(frag('ov.html', lang)) + '\n' + frag('dock.html', lang) + '\n</div>\n'
                 '<script>window.TQ=' + json.dumps(dict(conf, **({'tech': v['tech']} if v.get('tech') else {})), separators=(',', ':')) + ';</script>\n'
                 '<script src="assets/quote/quote.js?v=' + v['quote.js'] + '" defer></script>')
-        return {'css': '<link href="assets/quote/quote.css?v=' + v['quote.css'] + '" rel="stylesheet">', 'cta': frag('cta.html', lang), 'media': frag('media.html', lang), 'steps': steps, 'tail': tail}
+        return {'css': css_block(v, conf), 'cta': frag('cta.html', lang), 'media': frag('media.html', lang), 'steps': steps, 'tail': tail}
     head, media, cta = frag('three-head.html'), frag('media.html'), frag('cta.html')
     if conf['mode'] == 'com':
         head = com_swap(head).replace('<h2>See it on your home in 3D</h2><p>Pick your home. Watch the job get done.</p>', '<h2>See it on your storefront in 3D</h2><p>Set your panes, doors and stickers. Watch the glass get done.</p>')
@@ -196,7 +203,7 @@ def blocks(conf, v):
             '<script>window.TQ=' + json.dumps(dict(conf, **({'tech': v['tech']} if v.get('tech') else {})), separators=(',', ':')) + ';</script>\n'
             '<script src="assets/quote/quote.js?v=' + v['quote.js'] + '" defer></script>')
     return {
-        'css': '<link href="assets/quote/quote.css?v=' + v['quote.css'] + '" rel="stylesheet">',
+        'css': css_block(v, conf),
         'cta': cta,
         'media': media,
         'steps': steps,
