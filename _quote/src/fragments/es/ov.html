@@ -1,0 +1,116 @@
+<div class="ov" id="ov" role="dialog" aria-modal="true" aria-labelledby="ovT" hidden data-mode="home">
+  <div class="ov-top">
+    <b id="ovT">Tu casa en 3D</b>
+    <span class="ov-hint">Arrastra para girar · pellizca o + para acercar</span>
+    <button type="button" class="ov-x" id="ovX" aria-label="Cerrar la vista 3D">✕</button>
+  </div>
+  <div class="ov-tabs" role="tablist" aria-label="Qué mostrar">
+    <button type="button" role="tab" data-hmode="home" aria-selected="true">Mi casa</button>
+    <button type="button" role="tab" data-hmode="win" aria-selected="false">Ventanas</button>
+    <button type="button" role="tab" data-hmode="sol" aria-selected="false">Solar</button>
+    <button type="button" role="tab" data-hmode="scr" aria-selected="false">Mosquiteros</button>
+    <button type="button" role="tab" data-hmode="pig" aria-selected="false">Palomas</button>
+    <button type="button" role="tab" data-hmode="com" aria-selected="false">Local</button>
+  </div>
+  <div class="ov-stage" id="stage">
+    <div class="ov-load" id="ovLoad">Cargando 3D…</div>
+    <div class="callout" id="ocall" hidden><i></i><span></span></div>
+    <div class="zoom" role="group" aria-label="Zoom">
+      <button type="button" data-zoom="1" aria-label="Acercar">+</button>
+      <button type="button" data-zoom="-1" aria-label="Alejar">−</button>
+      <button type="button" data-zoom="0" aria-label="Regresar la vista">⟲</button>
+    </div>
+    <button type="button" class="wx" id="wxChip" aria-label="Cambiar el clima en la vista 3D">Hoy</button>
+    <div class="ov-fade" id="ovFade"></div>
+    <div class="ov-msg" id="ovMsg" hidden><div class="mtxt" id="ovMsgT" aria-live="polite"></div><div class="mnav" id="ovNav" hidden><button type="button" data-hact="prev" aria-label="Un paso atrás">‹ Atrás</button><span id="ovStep"></span><button type="button" data-hact="next" class="nx">Siguiente ›</button></div></div>
+  </div>
+  <div class="ov-panel">
+    <button type="button" class="ov-grab" id="ovGrab" aria-expanded="true"><span>Personalizar mi casa</span><i aria-hidden="true"></i></button>
+    <div class="ops" data-for="home">
+      <div class="otabs" role="tablist" aria-label="Personalizar"><button type="button" role="tab" data-otab="home" aria-selected="true">Casa</button><button type="button" role="tab" data-otab="colors" aria-selected="false">Colores</button><button type="button" role="tab" data-otab="solar" aria-selected="false">Solar</button><button type="button" role="tab" data-otab="street" aria-selected="false">Calle</button></div>
+      <div class="og" data-og="home">
+        <div class="orow col"><span>Estilo de casa</span><div class="seg2 wrapok styles" data-hseg="style"><button type="button" data-v="0" aria-pressed="true">Nueva</button><button type="button" data-v="1" aria-pressed="false">Rancho</button><button type="button" data-v="2" aria-pressed="false">Clásica</button><button type="button" data-v="3" aria-pressed="false">Casa de lago</button></div></div>
+        <div class="orow"><span>Pisos</span><div class="seg2" data-seg="stories"><button type="button" data-v="1" aria-pressed="true">1 piso</button><button type="button" data-v="2" aria-pressed="false">2 pisos</button></div></div>
+        <div class="orow"><span>Techo</span><div class="seg2" data-hseg="roof"><button type="button" data-v="0" aria-pressed="true">Teja S</button><button type="button" data-v="1" aria-pressed="false">Teja plana</button><button type="button" data-v="2" aria-pressed="false">Tejamanil</button></div></div>
+        <div class="orow"><span>Cuadrícula en ventanas</span><button type="button" class="switch" data-hsw="grids" role="switch" aria-checked="false" aria-label="Cuadrícula en ventanas"></button></div>
+        <div class="orow"><span>Más ventanas</span><button type="button" class="switch" data-sw="more" role="switch" aria-checked="false" aria-label="Más ventanas"></button></div>
+        <p class="onote">Rancho, Clásica y Casa de lago están aquí para casas antiguas y especiales, para que el trabajo se vea en una casa como la tuya.</p>
+      </div>
+      <div class="og" data-og="colors" hidden>
+        <div class="orow"><span>Color de techo</span><div class="sw" data-hseg="rc"><button type="button" data-v="0" aria-pressed="true" aria-label="Terracota" style="background:#a9573a"></button><button type="button" data-v="1" aria-pressed="false" aria-label="Café" style="background:#6e5140"></button><button type="button" data-v="2" aria-pressed="false" aria-label="Gris oscuro" style="background:#46484c"></button><button type="button" data-v="3" aria-pressed="false" aria-label="Arena" style="background:#c2a67c"></button></div></div>
+        <div class="orow"><span>Paredes</span><div class="sw" data-hseg="wc"><button type="button" data-v="0" aria-pressed="true" aria-label="Arena del desierto" style="background:#e3d5bb"></button><button type="button" data-v="1" aria-pressed="false" aria-label="Blanco" style="background:#f1eee8"></button><button type="button" data-v="2" aria-pressed="false" aria-label="Gris cálido" style="background:#c9c5bd"></button><button type="button" data-v="3" aria-pressed="false" aria-label="Adobe" style="background:#d2ae8c"></button></div></div>
+        <div class="orow"><span>Marcos</span><div class="sw" data-hseg="tc"><button type="button" data-v="0" aria-pressed="true" aria-label="Marcos blancos" style="background:#f5f3ee"></button><button type="button" data-v="1" aria-pressed="false" aria-label="Marcos crema" style="background:#e9dcc0"></button><button type="button" data-v="2" aria-pressed="false" aria-label="Marcos bronce" style="background:#5b4a3b"></button></div></div>
+      </div>
+      <div class="og" data-og="solar" hidden>
+        <div class="orow"><span>Paneles solares</span><div class="stepper" data-step="panels"><button type="button" data-d="-1" aria-label="Menos paneles">−</button><output class="num">16</output><button type="button" data-d="1" aria-label="Más paneles">+</button></div><b class="ptotal num" hidden></b></div>
+        <div class="orow"><span>Secciones</span><div class="seg2" data-seg="arrays"><button type="button" data-v="1" aria-pressed="true">1</button><button type="button" data-v="2" aria-pressed="false">2</button><button type="button" data-v="3" aria-pressed="false">3</button></div></div>
+        <div class="orow" data-sec="0" hidden><span>Sección 1</span><div class="stepper" data-step="arr0"><button type="button" data-d="-1" aria-label="Menos paneles en la sección 1">−</button><output class="num">8</output><button type="button" data-d="1" aria-label="Más paneles en la sección 1">+</button></div></div>
+        <div class="orow" data-sec="1" hidden><span>Sección 2</span><div class="stepper" data-step="arr1"><button type="button" data-d="-1" aria-label="Menos paneles en la sección 2">−</button><output class="num">8</output><button type="button" data-d="1" aria-label="Más paneles en la sección 2">+</button></div></div>
+        <div class="orow" data-sec="2" hidden><span>Sección 3</span><div class="stepper" data-step="arr2"><button type="button" data-d="-1" aria-label="Menos paneles en la sección 3">−</button><output class="num">8</output><button type="button" data-d="1" aria-label="Más paneles en la sección 3">+</button></div></div>
+      </div>
+      <div class="og" data-og="street" hidden>
+        <div class="orow col"><span>Vecindario</span><div class="seg2 wrapok" data-hseg="hood"><button type="button" data-v="0" aria-pressed="false">Patios de desierto</button><button type="button" data-v="1" aria-pressed="true">Pasto</button><button type="button" data-v="3" aria-pressed="false">Lago</button><button type="button" data-v="2" aria-pressed="false">Terreno grande</button></div></div>
+      </div>
+      <button type="button" class="replay quiet" data-hact="obd">Empezar de nuevo con mi casa y mis problemas</button>
+    </div>
+    <div class="ops" data-for="win" hidden>
+      <div class="orow"><span>Vista</span><div class="seg2" data-hseg="view"><button type="button" data-v="0" aria-pressed="true">Por fuera</button><button type="button" data-v="1" aria-pressed="false">Por dentro</button></div></div>
+      <div class="orow"><span>Ventanas por dentro <b class="amt">+$49</b></span><button type="button" class="switch" data-sw="inside" role="switch" aria-checked="false" aria-label="Agregar ventanas por dentro"></button></div>
+      <div class="orow"><span>Tu casa</span><div class="seg2" data-seg="stories"><button type="button" data-v="1" aria-pressed="true">1 piso</button><button type="button" data-v="2" aria-pressed="false">2 pisos</button></div></div>
+      <button type="button" class="replay" data-hact="replay">▶ Verlo otra vez</button>
+    </div>
+    <div class="ops" data-for="sol" hidden>
+      <div class="orow big"><span>Tus paneles</span><div class="stepper" data-step="panels"><button type="button" data-d="-1" aria-label="Menos paneles">−</button><output class="num">16</output><button type="button" data-d="1" aria-label="Más paneles">+</button></div><b class="ptotal num" hidden></b></div>
+      <div class="orow"><span>Secciones</span><div class="seg2" data-seg="arrays"><button type="button" data-v="1" aria-pressed="true">1</button><button type="button" data-v="2" aria-pressed="false">2</button><button type="button" data-v="3" aria-pressed="false">3</button></div></div>
+      <div class="orow" data-sec="0" hidden><span>Sección 1</span><div class="stepper" data-step="arr0"><button type="button" data-d="-1" aria-label="Menos paneles en la sección 1">−</button><output class="num">8</output><button type="button" data-d="1" aria-label="Más paneles en la sección 1">+</button></div></div>
+      <div class="orow" data-sec="1" hidden><span>Sección 2</span><div class="stepper" data-step="arr1"><button type="button" data-d="-1" aria-label="Menos paneles en la sección 2">−</button><output class="num">8</output><button type="button" data-d="1" aria-label="Más paneles en la sección 2">+</button></div></div>
+      <div class="orow" data-sec="2" hidden><span>Sección 3</span><div class="stepper" data-step="arr2"><button type="button" data-d="-1" aria-label="Menos paneles en la sección 3">−</button><output class="num">8</output><button type="button" data-d="1" aria-label="Más paneles en la sección 3">+</button></div></div>
+      <button type="button" class="replay" data-hact="replay">▶ Verlo otra vez</button>
+    </div>
+    <div class="ops" data-for="scr" hidden>
+      <div class="orow col"><span>Malla</span><div class="seg2 mesh" data-seg="pet"><button type="button" data-v="0" aria-pressed="false">Fibra de vidrio gris<small>$53.99</small></button><button type="button" data-v="1" aria-pressed="true">Todo clima<small>$64.99</small></button></div></div>
+      <p class="onote" data-mesh-fact="0">La misma clase de malla que usó el constructor, bien tensada. La vista más clara, buen paso de aire, bien para ventanas con sombra.</p>
+      <p class="onote" data-mesh-fact="1">Poliéster recubierto de vinil. 5 veces más fuerte y mucho más resistente al sol, aguanta sol, viento y mascotas sin ponerse quebradizo.</p>
+      <div class="orow"><span>Mosquiteros</span><div class="stepper" data-step="screens"><button type="button" data-d="-1" aria-label="Menos mosquiteros">−</button><output class="num">4</output><button type="button" data-d="1" aria-label="Más mosquiteros">+</button></div></div>
+      <div class="orow"><span>Marcos y clips nuevos <b class="amt">+$10 por mosquitero</b></span><button type="button" class="switch" data-sw="frames" role="switch" aria-checked="false" aria-label="Marcos y clips nuevos, $10 por mosquitero"></button></div>
+      <button type="button" class="replay" data-hact="replay">▶ Verlo otra vez</button>
+    </div>
+    <div class="ops" data-for="com" hidden>
+      <div class="orow"><span>Limpieza</span><div class="seg2" data-seg="ctype"><button type="button" data-v="0" aria-pressed="true">Local</button><button type="button" data-v="1" aria-pressed="false">Edificio de oficinas</button></div></div>
+      <div class="cgrp" data-cg="0">
+        <div class="otabs" role="tablist" aria-label="Arma tu local"><button type="button" role="tab" data-otab="look" aria-selected="true">Mi local</button><button type="button" role="tab" data-otab="glass" aria-selected="false">Vidrio</button><button type="button" role="tab" data-otab="plan" aria-selected="false">Frecuencia</button></div>
+        <div class="og" data-og="look">
+          <div class="orow col"><span>Tipo de local</span><div class="seg2 wrapok" data-hseg="cst"><button type="button" data-v="0" aria-pressed="true">Plaza</button><button type="button" data-v="1" aria-pressed="false">Café con patio</button><button type="button" data-v="2" aria-pressed="false">Vidrio alto</button><button type="button" data-v="3" aria-pressed="false">Independiente</button></div></div>
+          <div class="orow"><label for="cname">Nombre en el letrero</label><input id="cname" class="cname" type="text" maxlength="18" placeholder="Tu negocio" autocomplete="organization"></div>
+          <div class="orow"><span>Paredes</span><div class="sw" data-hseg="cwc"><button type="button" data-v="0" aria-pressed="true" aria-label="Gris cálido" style="background:#c9c5bd"></button><button type="button" data-v="1" aria-pressed="false" aria-label="Arena" style="background:#e3d5bb"></button><button type="button" data-v="2" aria-pressed="false" aria-label="Piedra" style="background:#bfb29c"></button><button type="button" data-v="3" aria-pressed="false" aria-label="Adobe" style="background:#cfae8a"></button></div></div>
+          <div class="orow"><span>Color del letrero</span><div class="sw" data-hseg="cac"><button type="button" data-v="0" aria-pressed="true" aria-label="Azul marino" style="background:#103050"></button><button type="button" data-v="1" aria-pressed="false" aria-label="Verde" style="background:#1b7a4c"></button><button type="button" data-v="2" aria-pressed="false" aria-label="Rojo" style="background:#9a2a22"></button><button type="button" data-v="3" aria-pressed="false" aria-label="Azul" style="background:#2b4f8c"></button></div></div>
+        </div>
+        <div class="og" data-og="glass" hidden>
+          <div class="orow"><span>Vidrios</span><div class="stepper" data-step="cpanes"><button type="button" data-d="-1" aria-label="Menos vidrios">−</button><output class="num">8</output><button type="button" data-d="1" aria-label="Más vidrios">+</button></div></div>
+          <div class="orow"><span>Puertas de vidrio</span><div class="stepper" data-step="cdoors"><button type="button" data-d="-1" aria-label="Menos puertas">−</button><output class="num">2</output><button type="button" data-d="1" aria-label="Más puertas">+</button></div></div>
+          <div class="orow"><span>Calcomanías de vinil <b class="amt">+$10 cada una</b></span><div class="stepper" data-step="cstk"><button type="button" data-d="-1" aria-label="Menos calcomanías">−</button><output class="num">0</output><button type="button" data-d="1" aria-label="Más calcomanías">+</button></div></div>
+          <div class="orow"><span>Divisiones y espejos <b class="amt">+$50</b></span><button type="button" class="switch" data-sw="cin" role="switch" aria-checked="false" aria-label="Agregar divisiones y espejos interiores"></button></div>
+          <p class="onote">Toca Armar mi local en la imagen para colocar los vidrios y las puertas tú mismo.</p>
+        </div>
+        <div class="og" data-og="plan" hidden>
+          <div class="orow col"><span>Frecuencia</span><div class="seg2 wrapok" data-seg="csched"><button type="button" data-v="0" aria-pressed="true">Una vez $149</button><button type="button" data-v="1" aria-pressed="false">Mensual 15% menos</button><button type="button" data-v="2" aria-pressed="false">Cada 2 semanas 25% menos</button><button type="button" data-v="3" aria-pressed="false">Contrato trimestral 20% menos</button><button type="button" data-v="4" aria-pressed="false">Contrato anual 40% menos</button></div></div>
+          <p class="onote">Los contratos fijan el precio. Aplica el mejor descuento, nunca los dos, y el precio de abajo se actualiza conforme cambias.</p>
+        </div>
+      </div>
+      <div class="cgrp" data-cg="1" hidden>
+        <div class="orow"><span>Tamaño, miles de pies²</span><div class="stepper" data-step="bsq"><button type="button" data-d="-1" aria-label="Edificio más chico">−</button><output class="num">12</output><button type="button" data-d="1" aria-label="Edificio más grande">+</button></div></div>
+        <div class="orow"><span>Pisos</span><div class="stepper" data-step="bst"><button type="button" data-d="-1" aria-label="Menos pisos">−</button><output class="num">2</output><button type="button" data-d="1" aria-label="Más pisos">+</button></div></div>
+        <div class="orow"><span>Vidrios</span><div class="stepper" data-step="bwin"><button type="button" data-d="-4" aria-label="Menos ventanas">−</button><output class="num">48</output><button type="button" data-d="4" aria-label="Más ventanas">+</button></div></div>
+      </div>
+      <button type="button" class="replay" data-hact="replay">▶ Verlo otra vez</button>
+    </div>
+    <div class="ops" data-for="pig" hidden>
+      <div class="orow col"><span>La historia</span><div class="seg2 wrapok" data-hseg="stage"><button type="button" data-v="0" aria-pressed="false">Hoy</button><button type="button" data-v="1" aria-pressed="false">Limpieza + malla</button><button type="button" data-v="2" aria-pressed="true">+ Espantapájaros gratis</button><button type="button" data-v="3" aria-pressed="false">Lo que cubre 1</button><button type="button" data-v="4" aria-pressed="false">El vecino</button></div></div>
+      <div class="orow"><span>Espantapájaros <button type="button" class="one" data-hact="try1">Prueba con 1</button></span><div class="stepper" data-hstep="spin"><button type="button" data-d="-1" aria-label="Menos espantapájaros">−</button><output class="num">3</output><button type="button" data-d="1" aria-label="Más espantapájaros">+</button></div></div>
+      <div class="orow"><span>Mostrar lo que cubre cada uno</span><button type="button" class="switch" data-hsw="cov" role="switch" aria-checked="true" aria-label="Mostrar la cobertura de los espantapájaros"></button></div>
+      <div class="orow"><span>Paneles solares</span><div class="stepper" data-step="panels"><button type="button" data-d="-1" aria-label="Menos paneles">−</button><output class="num">16</output><button type="button" data-d="1" aria-label="Más paneles">+</button></div><b class="ptotal num" hidden></b></div>
+    </div>
+    <div class="osum" id="osum"></div>
+    <a class="qb qb-gold ov-cta" href="#quote" id="ovCta">Ver mi precio</a>
+  </div>
+</div>

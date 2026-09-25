@@ -22,16 +22,42 @@ CITIES = [('spring-valley-lake', 'Spring Valley Lake', 'Spring Valley Pkwy'), ('
           ('oak-hills', 'Oak Hills', 'Oak Hill Rd, Oak Hills'), ('hesperia', 'Hesperia', 'Main St, Hesperia'),
           ('victorville', 'Victorville', 'Bear Valley Rd, Victorville'), ('adelanto', 'Adelanto', 'Bartlett Ave, Adelanto'),
           ('phelan', 'Phelan', 'Phelan Rd, Phelan'), ('silverwood', 'Silverwood', 'Camp Creek, Silverwood'),
-          ('inland-empire', 'Inland Empire', 'Base Line Rd, Rancho Cucamonga')]
+          ('inland-empire', 'Inland Empire', 'Base Line Rd, Rancho Cucamonga'),
+          ('fontana', 'Fontana', 'Sierra Ave, Fontana'), ('rancho-cucamonga', 'Rancho Cucamonga', 'Base Line Rd, Rancho Cucamonga'),
+          ('crestline', 'Crestline', 'Lake Dr, Crestline'), ('lake-arrowhead', 'Lake Arrowhead', 'Hwy 173, Lake Arrowhead'),
+          ('running-springs', 'Running Springs', 'Hilltop Blvd, Running Springs'), ('big-bear-lake', 'Big Bear Lake', 'Big Bear Blvd, Big Bear Lake'),
+          ('wrightwood', 'Wrightwood', 'Park Dr, Wrightwood'), ('cajon-pass', 'Cajon Pass', 'Cajon Blvd, Devore')]
+
+# pages in Spanish: same tool, Spanish fragments and strings
+SPANISH = {'espanol.html': 'index.html', 'control-de-palomas.html': 'pigeon-proofing.html',
+           'limpieza-de-ventanas.html': 'window-cleaning.html', 'limpieza-de-paneles-solares.html': 'solar-panel-cleaning.html'}
+
+# topic pages that don't follow the city naming: which services they start with, and which 3D module opens
+TOPICS = {'screen-replacement': (['scr'], 'scr'), 'all-weather-mesh': (['scr'], 'scr'), 'sliding-door-screen-repair': (['scr'], 'scr'),
+          'solar-panel-cleaning-warranty-safe': (['sol'], 'sol'), 'solar-cleaning-maintenance-plan': (['sol'], 'sol'), 'solar-panel-bird-mesh-cost': (['pig'], 'pig'),
+          'pigeon-proofing-without-drilling': (['pig'], 'pig'), 'pigeon-droppings-cleanup': (['pig'], 'pig'),
+          'hard-water-stains-windows': (['win', 'hw'], 'win'), 'window-cleaning-two-story': (['win'], 'win'), 'inside-window-cleaning': (['win'], 'win'),
+          'window-cleaning-maintenance-plan': (['win'], 'win'), 'hesperia-window-cleaning-reviews': (['win'], 'home'),
+          'storefront-window-cleaning': (['com'], 'com'), 'office-window-cleaning': (['com'], 'com'), 'medical-office-window-cleaning': (['com'], 'com'),
+          'new-construction-window-cleaning-silverwood': (['pc'], 'win'), 'mountain-communities': (['win'], 'home')}
+MOUNTAIN = ['crestline', 'lake-arrowhead', 'running-springs', 'big-bear-lake', 'wrightwood', 'cajon-pass']
 
 
 def page_config(fn):
     base = fn[:-5]
+    lang = 'es' if fn in SPANISH else 'en'
+    if lang == 'es':
+        fn = SPANISH[fn]
+        base = fn[:-5]
     city = street = None
     for slug, name, st in CITIES:
         if base == slug or base.endswith('-' + slug):
             city, street = name, st
-    if base.startswith('pigeon-proofing'):
+    if base in TOPICS:
+        svc, mode = TOPICS[base]
+        if base == 'window-cleaning-two-story':
+            pass
+    elif base.startswith('pigeon-proofing'):
         svc, mode = ['pig'], 'pig'
     elif base.startswith('solar-panel-cleaning'):
         svc, mode = ['sol'], 'sol'
@@ -57,11 +83,19 @@ def page_config(fn):
     if city:
         conf['city'] = city
         conf['street'] = street
+    if lang == 'es':
+        conf['lang'] = 'es'
+    if base in MOUNTAIN or base == 'mountain-communities':
+        conf['mountain'] = True
     return conf
 
 
-def frag(name):
-    with open(os.path.join(FRAG, name), encoding='utf-8') as f:
+def frag(name, lang='en'):
+    """A fragment, in Spanish when the page is Spanish and a translation exists in fragments/es."""
+    path = os.path.join(FRAG, lang, name) if lang != 'en' else os.path.join(FRAG, name)
+    if not os.path.exists(path):
+        path = os.path.join(FRAG, name)
+    with open(path, encoding='utf-8') as f:
         return f.read().rstrip('\n')
 
 
@@ -135,7 +169,14 @@ def com_swap(html):
 
 
 def blocks(conf, v):
+    lang = conf.get('lang', 'en')
     three_card = {'pig': 'card-pig.html', 'win': 'card-win.html', 'sol': 'card-sol.html', 'scr': 'card-scr.html', 'com': 'card-com.html'}.get(conf['mode'], 'card-home.html')
+    if lang != 'en':
+        steps = '\n\n'.join([lazy_bodies(frag('steps.html', lang), conf['svc']), frag('zip.html', lang), frag('three-head.html', lang) + '\n' + frag(three_card, lang) + '\n' + frag('three-tail.html', lang)])
+        tail = ('<div class="tq" data-nosnippet>\n' + lazy_ov(frag('ov.html', lang)) + '\n' + frag('dock.html', lang) + '\n</div>\n'
+                '<script>window.TQ=' + json.dumps(dict(conf, **({'tech': v['tech']} if v.get('tech') else {})), separators=(',', ':')) + ';</script>\n'
+                '<script src="assets/quote/quote.js?v=' + v['quote.js'] + '" defer></script>')
+        return {'css': '<link href="assets/quote/quote.css?v=' + v['quote.css'] + '" rel="stylesheet">', 'cta': frag('cta.html', lang), 'media': frag('media.html', lang), 'steps': steps, 'tail': tail}
     head, media, cta = frag('three-head.html'), frag('media.html'), frag('cta.html')
     if conf['mode'] == 'com':
         head = com_swap(head).replace('<h2>See it on your home in 3D</h2><p>Pick your home. Watch the job get done.</p>', '<h2>See it on your storefront in 3D</h2><p>Set your panes, doors and stickers. Watch the glass get done.</p>')

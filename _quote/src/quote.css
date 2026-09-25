@@ -161,6 +161,10 @@
 .tq .save b{font:800 15px var(--display)}
 .tq .save span{font-size:12.5px;color:var(--ink-2)}
 .tq .from-note{font-size:12.5px;color:var(--ink-3);text-align:right;margin-top:6px}
+.tq .proof{margin-top:10px;font-size:13px;line-height:1.45;color:var(--ink-2);text-align:right}
+.tq .proof q{quotes:"\201C" "\201D";font-style:italic;color:var(--ink)}
+.tq .proof span{color:var(--ink-3);white-space:nowrap}
+.tq .proof span::before{content:"★ ";color:var(--gold)}
 .tq .early-tip{display:block;text-align:right;margin-top:8px;font:800 14px var(--display);color:var(--gold-text)}
 .tq .guar{display:flex;gap:8px;align-items:flex-start;margin-top:14px;font-size:14px;color:var(--ink-2);background:var(--ok-wash);border-radius:12px;padding:10px 12px}
 .tq .guar b{color:var(--ok)}

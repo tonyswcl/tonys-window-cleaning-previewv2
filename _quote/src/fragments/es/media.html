@@ -1,0 +1,46 @@
+    <div class="wipe-col">
+      <div class="modes" id="modes" role="group" aria-label="Qué mostrar">
+        <button type="button" data-m="r3d" aria-pressed="true">Casa en 3D</button>
+        <button type="button" data-m="win" aria-pressed="false">Ventanas</button>
+        <button type="button" data-m="sol" aria-pressed="false">Solar</button>
+        <button type="button" data-m="pig" aria-pressed="false">Palomas</button>
+      </div>
+      <div class="wipe" id="wipe">
+        <div class="lay r3d open3d" data-mode="tour" data-lay="r3d" role="button" tabindex="0" aria-label="Abrir la vista 3D de tu casa">
+          <img class="r3d-poster" id="r3dPoster" src="assets/quote/home-4x5.webp" alt="Modelo 3D de una casa del High Desert con ventanas limpias, paneles solares lavados, malla contra palomas y espantapájaros" width="800" height="1000" fetchpriority="high" decoding="async">
+          <div class="h3host" id="h3host"></div>
+          <div class="callout" id="hcall" hidden><i></i><span></span></div>
+          <span class="r3d-go">Verlo en mi casa</span>
+        </div>
+        <div class="lay car" data-lay="win" hidden>
+          <div class="track">
+            <figure><img src="assets/quote/win-after.jpg" alt="Puerta corrediza de vidrio, clara después de la limpieza" width="800" height="600" loading="lazy" decoding="async"><figcaption>Puerta corrediza · vidrio claro</figcaption></figure>
+            <figure><img src="assets/photos/spring-valley-lake-window-02.jpg" alt="Ventana en arco de una casa en Spring Valley Lake después de la limpieza" width="750" height="1000" loading="lazy" decoding="async"><figcaption>Ventana en arco · Spring Valley Lake</figcaption></figure>
+            <figure><img src="assets/photos/apple-valley-window-02.jpg" alt="Ventanal grande en Apple Valley después de la limpieza" width="750" height="1000" loading="lazy" decoding="async"><figcaption>Ventanal · Apple Valley</figcaption></figure>
+          </div>
+          <div class="dots" aria-hidden="true"></div>
+          <div class="done show"><b>Mosquiteros, rieles y repisas también.</b><span>$149 un piso, $249 dos pisos.</span></div>
+        </div>
+        <div class="lay car" data-lay="sol" hidden>
+          <div class="track">
+            <figure><img src="assets/quote/sol-after.jpg" alt="Arreglo solar después de un lavado con agua purificada" width="480" height="640" loading="lazy" decoding="async"><figcaption>Todo el arreglo · una visita</figcaption></figure>
+            <figure><img src="assets/photos/adelanto-solar-03.jpg" alt="Paneles solares limpios en una casa de Adelanto" width="1000" height="750" loading="lazy" decoding="async"><figcaption>Arreglo en Adelanto</figcaption></figure>
+            <figure><img src="assets/photos/victorville-solar-01.jpg" alt="Arreglo solar limpio en una casa de dos pisos en Victorville" width="750" height="1000" loading="lazy" decoding="async"><figcaption>Dos pisos en Victorville</figcaption></figure>
+          </div>
+          <div class="dots" aria-hidden="true"></div>
+          <div class="done show"><b>$7 por panel.</b><span>Agua purificada y cepillo suave. Nadie camina sobre tus paneles.</span></div>
+        </div>
+        <div class="lay car" data-lay="pig" hidden>
+          <div class="track">
+            <figure><img src="assets/quote/pig-after.jpg" alt="Arreglo solar con malla sujeta en el borde después del control de palomas" width="800" height="600" loading="lazy" decoding="async"><figcaption>Malla sujeta · paneles limpios</figcaption></figure>
+            <figure><img src="assets/photos/hub-pigeon-proofing-02.jpg" alt="Malla contra palomas a lo largo de todo el borde de un arreglo solar" width="750" height="1000" loading="lazy" decoding="async"><figcaption>Malla en todo el borde</figcaption></figure>
+            <figure><img src="assets/photos/apple-valley-pigeon-05.jpg" alt="Arreglo solar sellado y limpio en Apple Valley" width="778" height="1000" loading="lazy" decoding="async"><figcaption>Apple Valley · sellado y limpio</figcaption></figure>
+          </div>
+          <div class="dots" aria-hidden="true"></div>
+          <div class="done show"><b>$450 hasta 12 paneles.</b><span>Limpieza, malla sujeta con clips, 2 a 3 espantapájaros gratis.</span></div>
+          <button type="button" class="qb qb-gold qb-sm open3d cmp-3d" data-mode="pig">Verlo en 3D</button>
+        </div>
+        <span class="lbl" id="wlbl">3D en vivo</span>
+      </div>
+      <p class="wipe-note" id="wnote">Una casa modelo terminada como dejamos la tuya. Tócala para probar con la tuya.</p>
+    </div>

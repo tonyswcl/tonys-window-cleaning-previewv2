@@ -10,6 +10,10 @@ function $$(sel,root){return [].slice.call((root||doc).querySelectorAll(sel));}
 var reduce=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
 var LIVE=CFG.live!==false; /* false only in previews, so a test never posts a real lead */
 var FORM="https://formspree.io/f/mdkzdael", PHONE="714-559-0300", SMS="+17145590300";
+/* Spanish pages get the same tool. Ticket, notes and plans read in Spanish; the message to Tony, the form and the PDF stay in English so he can read them fast. */
+var LANG=CFG.lang||"en",ES=LANG==="es";function L(en,es){return ES?es:en;}
+var ITEM_ES=ES;function ix(en,es){return ITEM_ES?es:en;}
+var COMF_ES=["una vez","mensual","cada 2 semanas"],COMT_ES=["mes a mes","contrato trimestral","contrato anual"],MESH_ES=["fibra de vidrio gris","todo clima"];
 /* what Meta hears. Standard events where one fits, then the three names the campaigns optimize on:
    CustomizeSimulator (someone shaped the 3D to their home), QuoteReady (they built a price), QuoteSubmitted (they sent it to Tony). */
 var META_MAP={view_3d:["ViewContent",{content_type:"simulator"}],onboard_build:["CustomizeSimulator",{}],edit_done:["CustomizeSimulator",{}],home_style:["CustomizeSimulator",{}],
@@ -39,12 +43,15 @@ var P={win:[0,149,249],more:[0,39,39],covers:[0,"10 to 12","18 to 20"],coverMax:
 
 /* ---------- state ---------- */
 var MAIN=["win","sol","pig","scr"], EXTRA=["hw","roof","pc","gut","pw","ad","gr","com"], ALL=MAIN.concat(EXTRA);
-var st={stories:1,more:false,inside:false,large:false,pkg:0,panels:16,arrays:1,arr:[16,8,6],spin:0,screens:4,frames:false,pet:1,panes:6,day:"",time:-1,plan:0,wait:2,
+var st={stories:1,more:false,inside:false,large:false,pkg:0,panels:16,arrays:1,arr:[16,8,6],spin:0,screens:4,frames:false,pet:1,panes:6,day:"",time:-1,plan:0,wait:0,
   ctype:0,cfreq:0,cterm:0,cin:false,cpanes:8,cdoors:2,cstk:0,bsq:12,bst:2,bwin:48};
 ALL.forEach(function(k){st[k]=false;});
 (CFG.svc&&CFG.svc.length?CFG.svc:["win"]).forEach(function(k){if(ALL.indexOf(k)>=0)st[k]=true;});
 var LIMIT={stories:[1,2],panels:[1,99],arrays:[1,3],arr0:[1,60],arr1:[1,60],arr2:[1,60],spin:[0,20],screens:[1,40],pet:[0,1],panes:[1,60],plan:[0,3],time:[-1,2],wait:[0,3],pkg:[0,1],
-  ctype:[0,1],cfreq:[0,2],cterm:[0,2],cpanes:[1,60],cdoors:[0,12],cstk:[0,40],bsq:[1,300],bst:[1,20],bwin:[4,990]};
+  ctype:[0,1],cfreq:[0,2],cterm:[0,2],csched:[0,4],cpanes:[1,60],cdoors:[0,12],cstk:[0,40],bsq:[1,300],bst:[1,20],bwin:[4,990]};
+/* the storefront schedule is one row of five: how often we come and how long you sign for, folded into cfreq and cterm */
+var CSCHED=[[0,0],[1,0],[2,0],[1,1],[1,2]];
+function csched(){return st.cterm===2?4:st.cterm===1?3:st.cfreq;}
 function clamp(k,v){var L=LIMIT[k];return L?Math.max(L[0],Math.min(L[1],v)):v;}
 /* panels can sit in up to 3 sections; the total is always the sum */
 function setArrays(a){a=clamp("arrays",a);if(a===st.arrays)return;
@@ -59,57 +66,57 @@ function pl(n){return n===1?"":"s";}
 function free(){return st.panels>=16?3:2;}
 function anyOther(k){return ALL.some(function(x){return x!==k&&st[x];});}
 
-function items(){
+function items(lang){ITEM_ES=(lang||LANG)==="es";
   var a=[],n=st.panels,s=st.stories;
   function add(t,v,o){o=o||{};a.push({t:t,v:v||0,note:o.note||"",from:!!o.from,alone:o.alone||0,later:o.later||0});}
-  if(st.win){add((s===1?"Single":"Two")+" story windows, screens, tracks and sills",P.win[s]);
-    if(st.more)add("More than "+P.coverMax[s]+" windows",P.more[s]);
-    if(st.inside)add("Inside windows, whole house, tracks included",P.inside);
-    if(st.large)add("Large custom home, extra labor",P.large||0,P.large?{}:{note:"Tony confirms"});}
-  if(st.pig){add("Pigeon proofing, up to "+P.pigUpTo+" panels",P.pig);
-    if(n>P.pigUpTo)add((n-P.pigUpTo)+" more panel"+pl(n-P.pigUpTo)+" × $"+P.pigPer,(n-P.pigUpTo)*P.pigPer);
-    add(free()+" reflective spinners",0,{note:"Free"});
-    if(st.spin)add(st.spin+" extra spinner"+pl(st.spin)+" × $"+P.spinner,st.spin*P.spinner);
-    add(n+" solar panels washed",0,{note:"Free",alone:n*P.panel});
-    add("Roof soft wash",0,{note:"Included",alone:P.roof,from:false});
-    if(st.pkg)add("A year of cleanings: 3 more washes, every 3 months, "+n+" panels × $"+P.panel,0,{note:money(n*P.panel)+" a visit",later:3*n*P.panel});}
-  else if(st.sol)add(n+" solar panel"+pl(n)+" × $"+P.panel,n*P.panel);
+  if(st.win){add(ix((s===1?"Single":"Two")+" story windows, screens, tracks and sills",(s===1?"Ventanas de un piso":"Ventanas de dos pisos")+", mosquiteros, rieles y repisas"),P.win[s]);
+    if(st.more)add(ix("More than "+P.coverMax[s]+" windows","Más de "+P.coverMax[s]+" ventanas"),P.more[s]);
+    if(st.inside)add(ix("Inside windows, whole house, tracks included","Ventanas por dentro, toda la casa, rieles incluidos"),P.inside);
+    if(st.large)add(ix("Large custom home, extra labor","Casa grande, mano de obra extra"),P.large||0,P.large?{}:{note:ix("Tony confirms","Tony confirma")});}
+  if(st.pig){add(ix("Pigeon proofing, up to "+P.pigUpTo+" panels","Control de palomas, hasta "+P.pigUpTo+" paneles"),P.pig);
+    if(n>P.pigUpTo)add(ix((n-P.pigUpTo)+" more panel"+pl(n-P.pigUpTo)+" × $"+P.pigPer,(n-P.pigUpTo)+" panel"+(n-P.pigUpTo>1?"es":"")+" más × $"+P.pigPer),(n-P.pigUpTo)*P.pigPer);
+    add(ix(free()+" reflective spinners",free()+" espantapájaros reflectantes"),0,{note:ix("Free","Gratis")});
+    if(st.spin)add(ix(st.spin+" extra spinner"+pl(st.spin)+" × $"+P.spinner,st.spin+" espantapájaros extra × $"+P.spinner),st.spin*P.spinner);
+    add(ix(n+" solar panels washed",n+" paneles solares lavados"),0,{note:ix("Free","Gratis"),alone:n*P.panel});
+    add(ix("Roof soft wash","Lavado suave de techo"),0,{note:ix("Included","Incluido"),alone:P.roof,from:false});
+    if(st.pkg)add(ix("A year of cleanings: 3 more washes, every 3 months, "+n+" panels × $"+P.panel,"Un año de lavados: 3 lavados más, cada 3 meses, "+n+" paneles × $"+P.panel),0,{note:money(n*P.panel)+ix(" a visit"," por visita"),later:3*n*P.panel});}
+  else if(st.sol)add(ix(n+" solar panel"+pl(n)+" × $"+P.panel,n+" panel"+(n>1?"es":"")+" solar"+(n>1?"es":"")+" × $"+P.panel),n*P.panel);
   if(st.scr){var each=P.mesh[st.pet],sub=cents(st.screens*each+(st.frames?st.screens*P.frame:0));
-    add(st.screens+" "+P.meshName[st.pet]+" screen"+pl(st.screens)+" × "+money(each),cents(st.screens*each));
-    if(st.frames)add("New frames and clips, "+st.screens+" × $"+P.frame,st.screens*P.frame);
-    if(!anyOther("scr")&&sub<P.scrMin)add("$"+P.scrMin+" job minimum",cents(P.scrMin-sub));}
-  if(st.hw)add("Hard water removal, "+st.panes+" pane"+pl(st.panes)+" × $"+P.pane,st.panes*P.pane,{from:true});
-  if(st.roof&&!st.pig)add("Roof soft wash",P.roof,{from:true});
-  if(st.pc)add("New construction clean, "+(s===1?"single":"two")+" story, inside and out",P.pc[s],{from:true});
-  if(st.gut)add("Gutter cleanout",0,{note:"Quoted on site"});
-  if(st.pw)add("Driveway and patio wash",0,{note:"Quoted on site"});
-  if(st.ad)add("Decal and vinyl removal",P.ad,{from:true});
-  if(st.gr)add("Graffiti removal",P.gr,{from:true});
+    add(ix(st.screens+" "+P.meshName[st.pet]+" screen"+pl(st.screens)+" × "+money(each),st.screens+" mosquitero"+pl(st.screens)+", "+MESH_ES[st.pet]+" × "+money(each)),cents(st.screens*each));
+    if(st.frames)add(ix("New frames and clips, "+st.screens+" × $"+P.frame,"Marcos y clips nuevos, "+st.screens+" × $"+P.frame),st.screens*P.frame);
+    if(!anyOther("scr")&&sub<P.scrMin)add(ix("$"+P.scrMin+" job minimum","Mínimo de $"+P.scrMin),cents(P.scrMin-sub));}
+  if(st.hw)add(ix("Hard water removal, "+st.panes+" pane"+pl(st.panes)+" × $"+P.pane,"Manchas de agua dura, "+st.panes+" vidrio"+pl(st.panes)+" × $"+P.pane),st.panes*P.pane,{from:true});
+  if(st.roof&&!st.pig)add(ix("Roof soft wash","Lavado suave de techo"),P.roof,{from:true});
+  if(st.pc)add(ix("New construction clean, "+(s===1?"single":"two")+" story, inside and out","Limpieza de obra nueva, "+(s===1?"un piso":"dos pisos")+", por dentro y por fuera"),P.pc[s],{from:true});
+  if(st.gut)add(ix("Gutter cleanout","Limpieza de canaletas"),0,{note:ix("Quoted on site","Se cotiza en el lugar")});
+  if(st.pw)add(ix("Driveway and patio wash","Lavado de cochera y patio"),0,{note:ix("Quoted on site","Se cotiza en el lugar")});
+  if(st.ad)add(ix("Decal and vinyl removal","Quitar calcomanías y vinil"),P.ad,{from:true});
+  if(st.gr)add(ix("Graffiti removal","Quitar grafiti"),P.gr,{from:true});
   if(st.com){if(st.ctype===0){var gl=st.cpanes+st.cdoors,ov=Math.max(0,gl-P.comUpTo),co=comOff();
-      add("Storefront glass inside and out, 8 to "+P.comUpTo+" panes"+(st.cfreq?", "+P.comFName[st.cfreq]:"")+(co?", "+comOffName()+", per visit":""),comVisit());
-      if(ov)add(ov+" more pane"+pl(ov)+" and door"+(ov>1?"s":"")+", flat",P.comOver);
-      if(st.cin)add("Interior partitions and mirrors",P.comIn);
-      if(st.cstk)add(st.cstk+" vinyl sticker"+pl(st.cstk)+" changed out × $"+P.stk,st.cstk*P.stk);}
-    else{var bp=bldgPrice();add("Office building, "+st.bwin+" panes inside and out, "+st.bst+" stor"+(st.bst>1?"ies":"y")+", about "+(st.bsq*1000).toLocaleString("en-US")+" sq ft",bp.total,{from:true});
-      if(st.bst>1)add("Upper floors: $"+P.bPane+" more a pane for each story up",0,{note:"In the price"});}}
+      add(ix("Storefront glass inside and out, 8 to "+P.comUpTo+" panes"+(st.cfreq?", "+P.comFName[st.cfreq]:"")+(co?", "+comOffName("en")+", per visit":""),"Vidrio del local por dentro y por fuera, 8 a "+P.comUpTo+" vidrios"+(st.cfreq?", "+COMF_ES[st.cfreq]:"")+(co?", "+comOffName("es")+", por visita":"")),comVisit());
+      if(ov)add(ix(ov+" more pane"+pl(ov)+" and door"+(ov>1?"s":"")+", flat",ov+" vidrio"+pl(ov)+" y puerta"+pl(ov)+" más, tarifa fija"),P.comOver);
+      if(st.cin)add(ix("Interior partitions and mirrors","Divisiones y espejos interiores"),P.comIn);
+      if(st.cstk)add(ix(st.cstk+" vinyl sticker"+pl(st.cstk)+" changed out × $"+P.stk,st.cstk+" calcomanía"+pl(st.cstk)+" de vinil cambiada"+pl(st.cstk)+" × $"+P.stk),st.cstk*P.stk);}
+    else{var bp=bldgPrice();add(ix("Office building, "+st.bwin+" panes inside and out, "+st.bst+" stor"+(st.bst>1?"ies":"y")+", about "+(st.bsq*1000).toLocaleString("en-US")+" sq ft","Edificio de oficinas, "+st.bwin+" vidrios por dentro y por fuera, "+st.bst+" piso"+pl(st.bst)+", unos "+(st.bsq*1000).toLocaleString("en-US")+" pies cuadrados"),bp.total,{from:true});
+      if(st.bst>1)add(ix("Upper floors: $"+P.bPane+" more a pane for each story up","Pisos altos: $"+P.bPane+" más por vidrio por cada piso"),0,{note:ix("In the price","En el precio")});}}
   return a;
 }
 /* the storefront discount that applies: the better of how often we come and how long you sign for */
 function comOff(){var f=P.comOff[st.cfreq]||0,t=P.comTermOff[st.cterm]||0;return Math.max(f,t);}
-function comOffName(){var f=P.comOff[st.cfreq]||0,t=P.comTermOff[st.cterm]||0;return (t>f?P.comTermName[st.cterm]:P.comFName[st.cfreq])+" "+Math.round(Math.max(f,t)*100)+"% off";}
+function comOffName(lang){var es=(lang||LANG)==="es",f=P.comOff[st.cfreq]||0,t=P.comTermOff[st.cterm]||0;return (t>f?(es?COMT_ES:P.comTermName)[st.cterm]:(es?COMF_ES:P.comFName)[st.cfreq])+" "+Math.round(Math.max(f,t)*100)+(es?"% menos":"% off");}
 function comVisit(){return cents(P.com*(1-comOff()));}
 /* office buildings: panes spread over the stories, $10 a pane on the ground floor and $10 more a pane for each story up */
 function bldgPrice(){var n=st.bwin,f=Math.max(1,st.bst),per=Math.floor(n/f),rem=n%f,total=0,rows=[];
   for(var s=1;s<=f;s++){var c=per+(s<=rem?1:0),rate=P.bPane*s;rows.push({story:s,n:c,rate:rate,amt:c*rate});total+=c*rate;}return {total:total,rows:rows};}
-function totals(){
-  var it=items(),sub=0;it.forEach(function(x){sub+=x.v;});sub=cents(sub);
+function totals(lang){
+  var it=items(lang),sub=0;it.forEach(function(x){sub+=x.v;});sub=cents(sub);
   var early=st.day&&sub>0?cents(sub*P.early):0;
   return {it:it,sub:sub,early:early,total:cents(sub-early),from:it.some(function(x){return x.from;})};
 }
 function savings(t){
   var a=[];
-  if(st.pig){a.push(["Solar wash for your "+st.panels+" panels, free with pigeon proofing",st.panels*P.panel]);a.push(["Roof soft wash, included (from $"+P.roof+" on its own)",P.roof]);}
-  if(t.early)a.push(["Booked on our website, 10% off",t.early]);
+  if(st.pig){a.push([L("Solar wash for your "+st.panels+" panels, free with pigeon proofing","Lavado solar de tus "+st.panels+" paneles, gratis con el control de palomas"),st.panels*P.panel]);a.push([L("Roof soft wash, included (from $"+P.roof+" on its own)","Lavado suave de techo, incluido (desde $"+P.roof+" por separado)"),P.roof]);}
+  if(t.early)a.push([L("Booked on our website, 10% off","Reservado en nuestro sitio, 10% menos"),t.early]);
   return a;
 }
 /* what each maintenance visit costs, split so discounts land where they belong:
@@ -123,15 +130,16 @@ function recurring(){var r=recurParts();return r.win+r.sol;}
 
 /* ---------- days: any day, the next 60 in a row, plus a date box for anything later ---------- */
 var WD=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"], MO=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+var WD_ES=["dom","lun","mar","mié","jue","vie","sáb"], MO_ES=["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
 function iso(d){return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2);}
 function parseIso(s){var m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(s||"");return m?new Date(+m[1],+m[2]-1,+m[3],12):null;}
-function fmt(d,long){return WD[d.getDay()]+" "+MO[d.getMonth()]+" "+d.getDate()+(long?", "+d.getFullYear():"");}
+function fmt(d,long,es){if(es)return WD_ES[d.getDay()]+" "+d.getDate()+" "+MO_ES[d.getMonth()]+(long?" "+d.getFullYear():"");return WD[d.getDay()]+" "+MO[d.getMonth()]+" "+d.getDate()+(long?", "+d.getFullYear():"");}
 function addMonths(d,m){var x=new Date(d.getTime());var day=x.getDate();x.setDate(1);x.setMonth(x.getMonth()+m);
   var last=new Date(x.getFullYear(),x.getMonth()+1,0).getDate();x.setDate(Math.min(day,last));return x;}
 var TODAY=new Date();TODAY.setHours(12,0,0,0);
 function isWkend(d){return d&&(d.getDay()===0||d.getDay()===6);}
 /* weekdays are morning or afternoon; a Saturday or Sunday, or no day at all, can simply say "I prefer weekends" */
-function dayText(){var d=parseIso(st.day);if(!d)return st.time===2?"any weekend":"";return fmt(d)+(isWkend(d)?", weekend":st.time===0?", morning":st.time===1?", afternoon":"");}
+function dayText(lang){var es=(lang||"en")==="es",d=parseIso(st.day);if(!d)return st.time===2?(es?"cualquier fin de semana":"any weekend"):"";return fmt(d,false,es)+(isWkend(d)?(es?", fin de semana":", weekend"):st.time===0?(es?", por la mañana":", morning"):st.time===1?(es?", por la tarde":", afternoon"):"");}
 function fixTime(){var d=parseIso(st.day);if(isWkend(d))st.time=2;else if(d&&st.time===2)st.time=-1;}
 
 /* ---------- lazy parts: other services' options and the 3D controls wait in <template> until first use ---------- */
@@ -143,6 +151,7 @@ function setText(id,txt){var el=$(id);if(el)el.textContent=txt;}
 /* ---------- delegated controls: data-seg, data-sw, data-step (3D-only controls use data-h*) ---------- */
 function setKey(k,v){
   if(k==="arrays"){setArrays(+v);track("pick_arrays",{arrays:st.arrays});render();return;}
+  if(k==="csched"){var cs=CSCHED[clamp("csched",+v)];st.cfreq=cs[0];st.cterm=cs[1];track("pick_commercial_schedule",{schedule:+v});render();return;}
   if(k==="pet"||k==="stories"||k==="plan"||k==="time"||k==="wait"||k==="pkg"||k==="ctype"||k==="cfreq"||k==="cterm")v=clamp(k,+v);
   if(k==="cterm"&&v&&!st.cfreq)st.cfreq=1; /* an agreement means we come back, so one time turns into monthly */
   if(k==="cfreq"&&!v)st.cterm=0;
@@ -189,6 +198,7 @@ function render(){
   $("empty").hidden=anyOn;
   $("panelRow").hidden=!(st.sol||st.pig);
   if(EXTRA.some(function(k){return st[k];})&&$("xtiles").hidden){$("xtiles").hidden=false;$("moreSvc").setAttribute("aria-expanded","true");}
+  st.csched=csched();
   $$("[data-seg]").forEach(function(g){var k=g.getAttribute("data-seg");$$("button[data-v]",g).forEach(function(b){b.setAttribute("aria-pressed",String(+b.getAttribute("data-v")===st[k]));});});
   $$("[data-sw]").forEach(function(x){x.setAttribute("aria-checked",String(!!st[x.getAttribute("data-sw")]));});
   $$("[data-step]").forEach(function(g){var k=g.getAttribute("data-step"),o=g.querySelector("output");if(o)o.textContent=/^arr\d$/.test(k)?st.arr[+k.charAt(3)]:st[k];});
@@ -197,47 +207,60 @@ function render(){
   $$("[data-step='panels']").forEach(function(g){g.hidden=st.arrays>1;});
   $$(".ptotal").forEach(function(x){x.hidden=st.arrays<2;x.textContent=st.panels+" total";});
   var s=st.stories;
-  setText("winNote",(s===1?"1":"2")+" story price covers "+P.covers[s]+" windows.");
-  setText("moreLbl","More than "+P.coverMax[s]+" windows ");
+  setText("winNote",L((s===1?"1":"2")+" story price covers "+P.covers[s]+" windows.","El precio de "+(s===1?"1 piso":"2 pisos")+" cubre "+P.covers[s]+" ventanas."));
+  setText("moreLbl",L("More than "+P.coverMax[s]+" windows ","Más de "+P.coverMax[s]+" ventanas "));
   setText("moreAmt","+$"+P.more[s]);
-  setText("solNote",st.pig?"Free with pigeon proofing. Purified water and a soft brush.":"Purified water and a soft brush, dries spot free. Set your panel count below.");
+  setText("solNote",L(st.pig?"Free with pigeon proofing. Purified water and a soft brush.":"Purified water and a soft brush, dries spot free. Set your panel count below.",st.pig?"Gratis con el control de palomas. Agua purificada y cepillo suave.":"Agua purificada y cepillo suave, seca sin manchas. Pon tu cantidad de paneles abajo."));
   $$("[data-mesh-fact]").forEach(function(x){x.hidden=+x.getAttribute("data-mesh-fact")!==st.pet;});
   var pn=st.panels,pp=P.pig+Math.max(0,pn-P.pigUpTo)*P.pigPer+st.spin*P.spinner;
-  setText("pkgA",money(pp));setText("pkgB","+"+money(3*pn*P.panel)+" for the year");
-  setText("pkgNote",st.pkg?"Your year: "+money(pp)+" now, then 3 washes every 3 months at "+money(pn*P.panel)+" each ("+pn+" panels × $"+P.panel+"). Panels need it out here anyway, and every visit is the right time to check the spinners, clips and mesh. It's on the calendar, so there's nothing to remember.":
+  setText("pkgA",money(pp));setText("pkgB","+"+money(3*pn*P.panel)+L(" for the year"," por el año"));
+  setText("pkgNote",ES?(st.pkg?"Tu año: "+money(pp)+" hoy, luego 3 lavados cada 3 meses a "+money(pn*P.panel)+" cada uno ("+pn+" paneles × $"+P.panel+"). Los paneles lo necesitan aquí de todos modos, y cada visita es el momento de revisar espantapájaros, clips y malla. Queda en el calendario, no hay que acordarse de nada.":"Hoy incluye un lavado solar y un lavado suave de techo gratis. Agrega un año de lavados y cada visita también revisa espantapájaros, clips y malla."):
+    st.pkg?"Your year: "+money(pp)+" now, then 3 washes every 3 months at "+money(pn*P.panel)+" each ("+pn+" panels × $"+P.panel+"). Panels need it out here anyway, and every visit is the right time to check the spinners, clips and mesh. It's on the calendar, so there's nothing to remember.":
     "Today includes a free solar wash and a roof soft wash. Add a year of cleanings and every visit doubles as a spinner, clip and mesh check.");
   var hwWin=$("hwWin");if(hwWin)hwWin.hidden=!st.hw;
   $$("[data-cg]").forEach(function(g){g.hidden=+g.getAttribute("data-cg")!==st.ctype;});
-  var cgl=st.cpanes+st.cdoors;setText("comNote",(cgl>P.comUpTo?"That's "+cgl+" panes counting doors, so a flat $"+P.comOver+" covers everything past "+P.comUpTo+", inside and out. ":"$"+P.com+" flat for 8 to "+P.comUpTo+" panes inside and out, doors included. ")+"Month to month: 15% off monthly, 25% off every 2 weeks. Sign for a quarter and it's 20% off every visit, sign for a year and it's 40% off.");
-  var bp=bldgPrice();setText("bldgNote","$"+P.bPane+" a pane inside and out on the ground floor, $"+P.bPane+" more a pane for each story up"+(st.bst>1?": "+bp.rows.map(function(r){return "story "+r.story+" "+r.n+" × $"+r.rate;}).join(", "):"")+". We check every pane for hard water staining and work around existing tint. Free walkthrough, firm price in writing.");
+  var cgl=st.cpanes+st.cdoors;setText("comNote",ES?((cgl>P.comUpTo?"Son "+cgl+" vidrios contando puertas, así que $"+P.comOver+" fijos cubren todo lo que pase de "+P.comUpTo+", por dentro y por fuera. ":"$"+P.com+" fijos por 8 a "+P.comUpTo+" vidrios por dentro y por fuera, puertas incluidas. ")+"Mes a mes: 15% menos mensual, 25% menos cada 2 semanas. Con contrato trimestral es 20% menos en cada visita, con contrato anual 40% menos."):
+    (cgl>P.comUpTo?"That's "+cgl+" panes counting doors, so a flat $"+P.comOver+" covers everything past "+P.comUpTo+", inside and out. ":"$"+P.com+" flat for 8 to "+P.comUpTo+" panes inside and out, doors included. ")+"Month to month: 15% off monthly, 25% off every 2 weeks. Sign for a quarter and it's 20% off every visit, sign for a year and it's 40% off.");
+  var bp=bldgPrice();setText("bldgNote",ES?"$"+P.bPane+" por vidrio por dentro y por fuera en la planta baja, $"+P.bPane+" más por vidrio por cada piso hacia arriba"+(st.bst>1?": "+bp.rows.map(function(r){return "piso "+r.story+" "+r.n+" × $"+r.rate;}).join(", "):"")+". Revisamos cada vidrio por manchas de agua dura y respetamos el polarizado. Recorrido gratis, precio firme por escrito.":
+    "$"+P.bPane+" a pane inside and out on the ground floor, $"+P.bPane+" more a pane for each story up"+(st.bst>1?": "+bp.rows.map(function(r){return "story "+r.story+" "+r.n+" × $"+r.rate;}).join(", "):"")+". We check every pane for hard water staining and work around existing tint. Free walkthrough, firm price in writing.");
 
   var t=totals(),tl=$("tlines");tl.textContent="";
-  if(!t.it.length){var e0=doc.createElement("div");e0.className="tline";e0.textContent="Tap a service above to see a price.";tl.appendChild(e0);}
+  if(!t.it.length){var e0=doc.createElement("div");e0.className="tline";e0.textContent=L("Tap a service above to see a price.","Toca un servicio arriba para ver un precio.");tl.appendChild(e0);}
   t.it.forEach(function(x){var d=doc.createElement("div");d.className="tline"+(x.note?" inc":"");var a=doc.createElement("span");a.textContent=x.t;var b2=doc.createElement("b");
-    b2.textContent=x.note||((x.from?"from ":"")+money(x.v));d.appendChild(a);d.appendChild(b2);tl.appendChild(d);});
-  if(t.early){var d2=doc.createElement("div");d2.className="tline early-l";var a2=doc.createElement("span");a2.textContent="Booked on our website, 10% off";var b3=doc.createElement("b");b3.textContent=money(-t.early);d2.appendChild(a2);d2.appendChild(b3);tl.appendChild(d2);}
+    b2.textContent=x.note||((x.from?L("from ","desde "):"")+money(x.v));d.appendChild(a);d.appendChild(b2);tl.appendChild(d);});
+  if(t.early){var d2=doc.createElement("div");d2.className="tline early-l";var a2=doc.createElement("span");a2.textContent=L("Booked on our website, 10% off","Reservado en nuestro sitio, 10% menos");var b3=doc.createElement("b");b3.textContent=money(-t.early);d2.appendChild(a2);d2.appendChild(b3);tl.appendChild(d2);}
   var sv=savings(t),box=$("save");box.textContent="";box.hidden=!sv.length;
-  if(sv.length){var tot=0;sv.forEach(function(x){tot+=x[1];});var h=doc.createElement("b");h.textContent="You save "+money(tot);box.appendChild(h);
+  if(sv.length){var tot=0;sv.forEach(function(x){tot+=x[1];});var h=doc.createElement("b");h.textContent=L("You save ","Ahorras ")+money(tot);box.appendChild(h);
     sv.forEach(function(x){var r=doc.createElement("span");r.textContent=x[0]+": "+money(x[1]);box.appendChild(r);});}
   $("fromNote").hidden=!t.from;
+  /* one line from a public Google review, picked for the service on the quote */
+  var pr=$("proof");if(pr){var q=proofFor();pr.hidden=!q||!anyOn;pr.textContent="";if(q){var qq=doc.createElement("q");qq.textContent=q[0];pr.appendChild(qq);var who=doc.createElement("span");who.textContent=" "+q[1]+L(" on Google"," en Google");pr.appendChild(who);}}
   $("earlyTip").hidden=!!st.day||!anyOn;
   $("early").className="early"+(st.day?" on":"");
-  $("earlyTxt").textContent=st.day?"Booked on our website: 10% off, "+money(t.early)+" saved.":"Book on our website and save an extra 10%. Pick your day below.";
+  $("earlyTxt").textContent=st.day?L("Booked on our website: 10% off, "+money(t.early)+" saved.","Reservado en nuestro sitio: 10% menos, "+money(t.early)+" de ahorro."):L("Book on our website and save an extra 10%. Pick your day below.","Reserva en nuestro sitio y ahorra un 10% extra. Elige tu día abajo.");
   var a0=shown,t0=performance.now(),target=t.total;if(anim)cancelAnimationFrame(anim);
   if(firstRender||reduce){shown=target;paint(target,true);firstRender=false;}
   else (function step(now){var q=Math.min(1,(now-t0)/380),v=q>=1?target:a0+(target-a0)*(1-Math.pow(1-q,3));shown=v;paint(q>=1?target:Math.round(v),q>=1);if(q<1)anim=requestAnimationFrame(step);})(t0);
   /* a quote with nothing priced yet, like an office building, reads as a free walkthrough instead of $0 */
-  function paint(v,final){var walk=final&&target===0&&t.it.length>0,txt=walk?"Free walkthrough":(t.from&&final?"from ":"")+money(v);$("ttotal").textContent=txt;var dt=$("dockTotal");if(dt)dt.textContent=walk?"Quote":money(v);}
-  days();planBox(t);waitBox(t);msg(t);
+  function paint(v,final){var walk=final&&target===0&&t.it.length>0,txt=walk?L("Free walkthrough","Recorrido gratis"):(t.from&&final?L("from ","desde "):"")+money(v);$("ttotal").textContent=txt;var dt=$("dockTotal");if(dt)dt.textContent=walk?L("Quote","Cotizar"):money(v);}
+  days();planBox(t);waitBox(t);msg(totals("en"));
   if(api)api.sync();
 }
+
+/* public Google reviews, the same ones on the reviews page, one line each. Pigeon quotes get a pigeon review, and so on. */
+var PROOF={pig:[["Got the job done in one day at the best price.","Henry R."],["I recommend them to any one looking to get their solar pigeon proofed in the High Desert.","Oswaldo F."],["He cleaned my solar panels and whole roof, installed wire around the panels and he also installed the spinners for the pigeons.","Hailey B."]],
+  hw:[["All hard water stains gone. Very professional and thorough.","Pam S."]],
+  sol:[["The panels are so clean and look awesome.","Chelsi in Fontana"],["Tony did a great job and even cleaned the solar panels.","Staci M."]],
+  win:[["Tony did an excellent job cleaning my windows as well as my solar panels.","Mike S."],["Very professional and thorough. Will use again. Reasonable price.","Pam S."]],
+  any:[["Tony is a first class guy, very nice and professional.","Henry R."]]};
+function proofFor(){var k=st.pig?"pig":st.hw?"hw":st.sol?"sol":st.win?"win":"any",list=PROOF[k];return list[TODAY.getDate()%list.length];}
 
 /* ---------- step 2: days and plan ---------- */
 var dayRow=$("days");
 (function(){
   for(var i=1;i<=60;i++){var d=new Date(TODAY.getTime());d.setDate(d.getDate()+i);
     var we=isWkend(d),b=doc.createElement("button");b.type="button";b.className="day"+(we?" wk":"");b.setAttribute("data-day",iso(d));b.setAttribute("aria-pressed","false");
-    var w=doc.createElement("span");w.textContent=WD[d.getDay()];var n=doc.createElement("b");n.textContent=d.getDate();var m=doc.createElement("span");m.textContent=MO[d.getMonth()];
+    var w=doc.createElement("span");w.textContent=(ES?WD_ES:WD)[d.getDay()];var n=doc.createElement("b");n.textContent=d.getDate();var m=doc.createElement("span");m.textContent=(ES?MO_ES:MO)[d.getMonth()];
     b.appendChild(w);b.appendChild(n);b.appendChild(m);dayRow.appendChild(b);}
   var min=new Date(TODAY.getTime());min.setDate(min.getDate()+1);var max=new Date(TODAY.getTime());max.setFullYear(max.getFullYear()+1);
   var di=$("dateIn");di.min=iso(min);di.max=iso(max);
@@ -247,18 +270,19 @@ var dayRow=$("days");
 function days(){
   $$(".day",dayRow).forEach(function(b){b.setAttribute("aria-pressed",String(b.getAttribute("data-day")===st.day));});
   var di=$("dateIn"),inRow=!!dayRow.querySelector('[data-day="'+st.day+'"]');di.value=st.day&&!inRow?st.day:"";
-  var pick=$("dayPicked");pick.textContent=(st.day||st.time===2)?"Your day: "+dayText()+". Tony confirms by text.":"";
+  var pick=$("dayPicked");pick.textContent=(st.day||st.time===2)?L("Your day: ","Tu día: ")+dayText(LANG)+L(". Tony confirms by text.",". Tony confirma por mensaje."):"";
   var d=parseIso(st.day),we=isWkend(d);$$("[data-seg='time'] button").forEach(function(b){var v=+b.getAttribute("data-v");b.hidden=we?v!==2:(d?v===2:false);});
 }
-function schedule(t,plan){
+function schedule(t,plan,lang){var es=(lang||"en")==="es";
   plan=plan===undefined?st.plan:plan;
   var freq=P.planFreq[plan],off=P.planOff[plan],rp=recurParts(),per=rp.win+rp.sol,each=cents(rp.win*(1-off)+rp.sol*(rp.solOff?1-off:1)),start=parseIso(st.day);
   if(!freq)return {plan:0,freq:0,visits:[],per:per,each:per,off:0,year:t.total,save:0};
   var n=12/freq,v=[];
-  for(var i=0;i<n;i++)v.push({i:i,date:start?addMonths(start,i*freq):null,amt:i===0?t.total:each,label:i===0?"First visit, everything on your quote":"Maintenance visit"+(off?", "+Math.round(off*100)+"% off":"")});
+  for(var i=0;i<n;i++)v.push({i:i,date:start?addMonths(start,i*freq):null,amt:i===0?t.total:each,label:i===0?(es?"Primera visita, todo lo de tu cotización":"First visit, everything on your quote"):(es?"Visita de mantenimiento":"Maintenance visit")+(off?", "+Math.round(off*100)+(es?"% menos":"% off"):"")});
   return {plan:plan,freq:freq,visits:v,per:per,each:each,off:off,n:n,year:cents(t.total+each*(n-1)),save:cents((per-each)*(n-1))};
 }
 /* what each plan does for you, in plain words */
+var PLAN_WHY_ES=["Una limpieza, y luego te toca a ti acordarte cuándo vuelve a tocar.","Tony te manda un mensaje una vez al año cuando toca. Precio normal, nada que recordar.","Primavera y otoño. 15% menos en cada visita después de la primera, y tu precio queda fijo por el año.","Cada temporada, y el mejor valor. 25% menos en cada visita después de la primera, precio fijo por el año. El vidrio y los paneles nunca se atrasan mucho, así que el agua dura y el polvo nunca alcanzan a fijarse."];
 var PLAN_WHY=["One clean, then it's on you to remember when it's time again.",
   "Tony texts you once a year when it's time. Regular price, nothing to remember.",
   "Spring and fall. 15% off every visit after the first, and your price is locked for the year.",
@@ -267,18 +291,18 @@ function planBox(t){
   var box=$("planbox"),ol=$("visits"),per=recurring();
   /* each plan button shows what it costs for this quote */
   $$("[data-seg='plan'] button[data-v]").forEach(function(b){var v=+b.getAttribute("data-v"),sm=b.querySelector("small");if(!sm)return;
-    var sc=schedule(t,v);sm.textContent=!per?(v?"windows or solar":"just this visit"):v===0?"just this visit":v===1?money(sc.per)+" next year":money(sc.each)+" a visit, "+Math.round(sc.off*100)+"% off";});
-  $("planWhy").textContent=PLAN_WHY[st.plan];
-  $("pdfBtn").textContent="Download my "+(st.plan?"plan":"quote")+" (PDF)";
+    var sc=schedule(t,v);sm.textContent=!per?(v?L("windows or solar","ventanas o solar"):L("just this visit","solo esta visita")):v===0?L("just this visit","solo esta visita"):v===1?money(sc.per)+L(" next year"," el próximo año"):money(sc.each)+L(" a visit, "," por visita, ")+Math.round(sc.off*100)+L("% off","% menos");});
+  $("planWhy").textContent=(ES?PLAN_WHY_ES:PLAN_WHY)[st.plan];
+  $("pdfBtn").textContent=L("Download my "+(st.plan?"plan":"quote")+" (PDF)","Descargar mi "+(st.plan?"plan":"cotización")+" (PDF)");
   if(!st.plan){box.hidden=true;return;}
   box.hidden=false;ol.textContent="";
-  var sc=schedule(t);
-  if(!per){$("plantot").textContent="Plans cover window and solar cleaning. Add one of those above to build a plan.";return;}
-  sc.visits.forEach(function(v){var li=doc.createElement("li");var a=doc.createElement("span");a.textContent=(v.date?fmt(v.date,true):(v.i===0?"Your first visit":"Month "+(v.i*sc.freq+1)))+" · "+v.label;
+  var sc=schedule(t,undefined,LANG);
+  if(!per){$("plantot").textContent=L("Plans cover window and solar cleaning. Add one of those above to build a plan.","Los planes cubren ventanas y paneles solares. Agrega uno de esos arriba para armar un plan.");return;}
+  sc.visits.forEach(function(v){var li=doc.createElement("li");var a=doc.createElement("span");a.textContent=(v.date?fmt(v.date,true,ES):(v.i===0?L("Your first visit","Tu primera visita"):L("Month ","Mes ")+(v.i*sc.freq+1)))+" · "+v.label;
     var b=doc.createElement("b");b.textContent=money(v.amt);li.appendChild(a);li.appendChild(b);ol.appendChild(li);});
-  var pigNote=st.pig?" Solar upkeep is counted by panels: "+st.panels+" × $"+P.panel+" = "+money(st.panels*P.panel)+" a visit.":"";
-  $("plantot").textContent=st.plan===1?"Next year's visit is "+money(sc.per)+". Tony texts you when it's time."+pigNote:
-    "About "+money(sc.year)+" for the year."+(sc.save>0?" That's "+money(sc.save)+" less than booking each visit on its own.":"")+pigNote+" Tony writes the plan up before anything is scheduled.";
+  var pigNote=st.pig?L(" Solar upkeep is counted by panels: "," El mantenimiento solar se cuenta por paneles: ")+st.panels+" × $"+P.panel+" = "+money(st.panels*P.panel)+L(" a visit."," por visita."):"";
+  $("plantot").textContent=st.plan===1?L("Next year's visit is "+money(sc.per)+". Tony texts you when it's time.","La visita del próximo año es "+money(sc.per)+". Tony te manda un mensaje cuando toca.")+pigNote:
+    L("About "+money(sc.year)+" for the year."+(sc.save>0?" That's "+money(sc.save)+" less than booking each visit on its own.":""),"Unos "+money(sc.year)+" por el año."+(sc.save>0?" Son "+money(sc.save)+" menos que reservar cada visita por separado.":""))+pigNote+L(" Tony writes the plan up before anything is scheduled."," Tony pone el plan por escrito antes de agendar nada.");
 }
 
 /* ---------- what happens if you wait ---------- */
@@ -289,14 +313,20 @@ var WAIT={
   scr:["New mesh, and bugs stay out this season.","UV keeps working on the old mesh. Small tears get bigger.","Brittle mesh tears in the wind, and frames bend.","Bent or missing frames mean new ones, $10 more a screen."],
   hw:["Spots come off while they're still on the surface.","Minerals keep stacking with every sprinkler cycle.","Spots bond deeper and take more passes to lift.","Etching sets in, and some of it can't be polished out."]};
 var WAIT_WHEN=["Book now","In 3 months","In 6 months","In a year"],WAIT_NAME={win:"Windows",sol:"Solar panels",pig:"Pigeons",scr:"Screens",hw:"Hard water"};
+var WAIT_ES={win:["Vidrio claro ahora, y el agua dura nunca toma ventaja.","El polvo y las manchas de aspersores se acumulan. Todavía es una limpieza normal.","Las manchas empiezan a pegarse al vidrio. La limpieza tarda más y algunos vidrios pueden necesitar tratamiento de agua dura.","El agua dura puede marcar el vidrio para siempre. Quitarla cuesta desde $12 por vidrio, y una marca profunda no se revierte."],
+  sol:["Paneles a plena producción desde el día que nos vamos.","El polvo le quita a lo que producen tus paneles cada día. Aquí casi no llueve para enjuagarlo.","El calor del verano hornea el polvo, y cualquier excremento tapa celdas enteras.","Un año de producción que no recuperas, y una limpieza más difícil."],
+  pig:["Nidos fuera, malla puesta, paneles lavados y techo lavado gratis.","Más nidos y excremento debajo de los paneles. La limpieza es la parte más grande del precio.","Las palomas pueden criar más de una vez al año, así que más aves hacen su casa en tu techo.","Más aves, nidos más grandes, un olor más fuerte y más excremento en el cableado y la teja."],
+  scr:["Malla nueva, y los bichos se quedan afuera esta temporada.","El sol sigue trabajando la malla vieja. Las rasgaduras chicas crecen.","La malla quebradiza se rompe con el viento, y los marcos se doblan.","Marcos doblados o perdidos significan marcos nuevos, $10 más por mosquitero."],
+  hw:["Las manchas salen mientras siguen en la superficie.","Los minerales se siguen acumulando con cada riego.","Las manchas se pegan más hondo y toman más pasadas para salir.","Empieza el marcado, y parte de eso ya no se pule."]};
+var WAIT_WHEN_ES=["Reservar ahora","En 3 meses","En 6 meses","En un año"],WAIT_NAME_ES={win:"Ventanas",sol:"Paneles solares",pig:"Palomas",scr:"Mosquiteros",hw:"Agua dura"};
 function waitBox(t){
   var ul=$("waitList");if(!ul)return;ul.textContent="";
   var keys=["pig","sol","win","scr","hw"].filter(function(k){return st[k]&&!(k==="sol"&&st.pig);});if(!keys.length)keys=["win","sol"];
-  keys.forEach(function(k){var li=doc.createElement("li");li.className="w"+st.wait;var b=doc.createElement("b");b.textContent=WAIT_NAME[k];li.appendChild(b);
-    var sp=doc.createElement("span");sp.textContent=WAIT[k][st.wait];li.appendChild(sp);ul.appendChild(li);});
+  keys.forEach(function(k){var li=doc.createElement("li");li.className="w"+st.wait;var b=doc.createElement("b");b.textContent=(ES?WAIT_NAME_ES:WAIT_NAME)[k];li.appendChild(b);
+    var sp=doc.createElement("span");sp.textContent=(ES?WAIT_ES:WAIT)[k][st.wait];li.appendChild(sp);ul.appendChild(li);});
   var q=schedule(t,3),per=recurring();
-  $("waitNote").textContent=st.wait===0?"Book on our website today and the 10% is yours.":
-    (per?"Like landscaping, glass and panels need upkeep, not one visit. Every 3 months keeps you ahead and saves "+money(q.save)+" over the year.":"Like landscaping, upkeep beats catching up. Tony can put you on a reminder so it never gets this far.");
+  $("waitNote").textContent=st.wait===0?L("Book on our website today and the 10% is yours.","Reserva en nuestro sitio hoy y el 10% es tuyo."):
+    (per?L("Like landscaping, glass and panels need upkeep, not one visit. Every 3 months keeps you ahead and saves "+money(q.save)+" over the year.","Como el jardín, el vidrio y los paneles necesitan mantenimiento, no una sola visita. Cada 3 meses te mantiene adelante y ahorra "+money(q.save)+" al año."):L("Like landscaping, upkeep beats catching up. Tony can put you on a reminder so it never gets this far.","Como el jardín, mantener es mejor que ponerse al corriente. Tony te puede poner un recordatorio para que no llegue a tanto."));
 }
 
 /* ---------- step 3: details once, then text, email or the form, all written out for Tony ---------- */
@@ -339,13 +369,13 @@ function msg(t){
 ["fname","fstreet","fphone","femail","fnotes"].forEach(function(id){var e=$(id);if(e)e.addEventListener("input",function(){msg();});});
 function copyText(txt,okMsg,node){
   var toast=$("toast");
-  function sel(){try{var r=doc.createRange();r.selectNodeContents(node);var s=getSelection();s.removeAllRanges();s.addRange(r);}catch(e){}toast.textContent="Selected. Copy it with your phone's menu.";}
+  function sel(){try{var r=doc.createRange();r.selectNodeContents(node);var s=getSelection();s.removeAllRanges();s.addRange(r);}catch(e){}toast.textContent=L("Selected. Copy it with your phone's menu.","Seleccionado. Cópialo con el menú de tu teléfono.");}
   if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(txt).then(function(){toast.textContent=okMsg;},sel);else sel();
 }
-$("smsA").addEventListener("click",function(){track("text_tap");copyText(msg.text,"Copied too. If Messages didn't open, paste it into a text to "+PHONE+".",$("msg"));});
-$("mailA").addEventListener("click",function(){track("email_tap");copyText(msg.text,"Copied too. If your email didn't open, paste it into an email to "+MAIL+".",$("msg"));});
-$("copyBtn").addEventListener("click",function(){copyText(msg.text,"Copied. Paste it into a text to "+PHONE+" or an email to "+MAIL+".",$("msg"));});
-if(!("ontouchstart" in window)&&!(navigator.maxTouchPoints>0)){var wn=$("wayNote");if(wn)wn.textContent="On a computer, email or the form is easiest. Texting opens on a phone.";}else{var wn2=$("wayNote");if(wn2)wn2.hidden=true;}
+$("smsA").addEventListener("click",function(){track("text_tap");copyText(msg.text,L("Copied too. If Messages didn't open, paste it into a text to "+PHONE+".","También se copió. Si no se abrieron tus mensajes, pégalo en un texto al "+PHONE+"."),$("msg"));});
+$("mailA").addEventListener("click",function(){track("email_tap");copyText(msg.text,L("Copied too. If your email didn't open, paste it into an email to "+MAIL+".","También se copió. Si no se abrió tu correo, pégalo en un correo a "+MAIL+"."),$("msg"));});
+$("copyBtn").addEventListener("click",function(){copyText(msg.text,L("Copied. Paste it into a text to "+PHONE+" or an email to "+MAIL+".","Copiado. Pégalo en un texto al "+PHONE+" o en un correo a "+MAIL+"."),$("msg"));});
+if(!("ontouchstart" in window)&&!(navigator.maxTouchPoints>0)){var wn=$("wayNote");if(wn)wn.textContent=L("On a computer, email or the form is easiest. Texting opens on a phone.","En computadora, el correo o el formulario es lo más fácil. El texto se abre en un celular.");}else{var wn2=$("wayNote");if(wn2)wn2.hidden=true;}
 
 /* the form: straight to Tony's inbox, with everything he needs to send a crew */
 var lastSend=0;
@@ -353,20 +383,20 @@ $("sendForm").addEventListener("submit",function(e){
   e.preventDefault();
   if($("hp").value)return; /* bots fill the hidden field, people never see it */
   var ph=$("fphone").value.replace(/\D/g,"");if(ph.length===11&&ph.charAt(0)==="1")ph=ph.slice(1);
-  if(ph.length!==10){$("fphone").setAttribute("aria-invalid","true");$("ferr").textContent="Add a 10 digit mobile number so Tony can text you back.";$("fphone").focus();return;}
-  if(Date.now()-lastSend<30000){$("ferr").textContent="Got it already. Tony will text you back from "+PHONE+".";return;}
+  if(ph.length!==10){$("fphone").setAttribute("aria-invalid","true");$("ferr").textContent=L("Add a 10 digit mobile number so Tony can text you back.","Pon un celular de 10 dígitos para que Tony te pueda contestar por texto.");$("fphone").focus();return;}
+  if(Date.now()-lastSend<30000){$("ferr").textContent=L("Got it already. Tony will text you back from "+PHONE+".","Ya lo tenemos. Tony te contesta por texto desde el "+PHONE+".");return;}
   $("fphone").removeAttribute("aria-invalid");$("ferr").textContent="";
-  var btn=$("sendBtn"),lbl=btn.querySelector("b");btn.disabled=true;lbl.textContent="Sending…";
-  var t=totals(),sc=schedule(t);
+  var btn=$("sendBtn"),lbl=btn.querySelector("b");btn.disabled=true;lbl.textContent=L("Sending…","Enviando…");
+  var t=totals("en"),sc=schedule(t);
   var data={name:fld("fname").slice(0,80),phone:ph.slice(0,3)+"-"+ph.slice(3,6)+"-"+ph.slice(6),address:fld("fstreet").slice(0,140),email:fld("femail").slice(0,120),notes:fld("fnotes").slice(0,400),
     quote:t.it.map(lineText).join("\n"),subtotal:money(t.sub),booked_online:t.early?money(-t.early):"none",total:(t.from?"from ":"")+money(t.total),
     day:dayText()||"Tony to suggest",home:homeLine(),plan:st.plan&&sc.visits.length?(P.planName[st.plan]+", "+sc.visits.length+" visit"+pl(sc.visits.length)+" this year, about "+money(sc.year)+". Maintenance visits "+money(sc.each)):"One time",
     message:msg.text,page:location.pathname,city:cityOf(),check_this_quote:shareUrl(),
     _subject:msg.subj||("New quote "+money(t.total)),_replyto:fld("femail")||undefined,_gotcha:""};
   function done(ok){
-    btn.disabled=false;lbl.textContent=ok?"Sent ✓":"Send the form";
+    btn.disabled=false;lbl.textContent=ok?L("Sent ✓","Enviado ✓"):L("Send the form","Mandar el formulario");
     if(ok){lastSend=Date.now();$("sent").hidden=false;$("prevNote").hidden=LIVE;track("generate_lead",{value:t.total,currency:"USD",method:"form"});try{doc.dispatchEvent(new CustomEvent("tq:lead",{detail:{value:t.total}}));}catch(x){}}
-    else $("ferr").textContent="That didn't go through. Tap Text Tony or Email Tony instead, or call "+PHONE+".";
+    else $("ferr").textContent=L("That didn't go through. Tap Text Tony or Email Tony instead, or call "+PHONE+".","No se envió. Toca Texto a Tony o Correo a Tony, o llama al "+PHONE+".");
   }
   if(!LIVE){setTimeout(function(){done(true);},450);return;}
   fetch(FORM,{method:"POST",headers:{"Accept":"application/json","Content-Type":"application/json"},body:JSON.stringify(data)})
@@ -421,7 +451,7 @@ function makePdf(logo,home){
     o.push("BT /F1 8 Tf "+col(soft)+" rg 48 56 Td ("+esc("Customer copy for "+(name||"you")+". Tony brings the printed original to your visit for signatures. Not for reuse.")+") Tj ET");}
   function head(s){need(40);y+=8;text(48,y,s,11,true,gold);y+=10;line(48,y,564,rule);y+=18;}
   function para(s,size,c){wrap(s,size||10,516).forEach(function(ln){need(14);text(48,y,ln,size||10,false,c||soft);y+=(size||10)+4;});}
-  var t=totals(),sc=schedule(t),per=recurring(),name=$("fname").value.trim(),street=$("fstreet").value.trim(),who=(name?name:"")+(name&&street?" · ":"")+street;
+  var t=totals("en"),sc=schedule(t),per=recurring(),name=$("fname").value.trim(),street=$("fstreet").value.trim(),who=(name?name:"")+(name&&street?" · ":"")+street;
   page();
   rect(0,0,612,110,[234,246,252]);rect(0,108,612,3,[240,176,64]);
   if(logo)ops.push("q 64 0 0 64 48 "+(792-94)+" cm /Im1 Do Q");
@@ -512,14 +542,14 @@ function homeShot(){
 /* simple names people aren't scared of: Date-Customer-City.pdf */
 function pdfName(){function clean(x){return x.replace(/[^A-Za-z0-9 ]+/g," ").trim().replace(/\s+/g,"-");}
   var n=clean(fld("fname")),c=clean(cityOf());return [iso(TODAY),n||"Tonys-Window-Cleaning-Quote",c].filter(Boolean).join("-")+".pdf";}
-function buildPdf(cb,note){note.textContent="Making your PDF…";
+function buildPdf(cb,note){note.textContent=L("Making your PDF…","Preparando tu PDF…");
   function finish(logo){var blob;try{blob=makePdf(logo,homeShot());}catch(e){note.textContent="Couldn't make the PDF on this device. Your quote is still on this page.";if(window.console)console.warn(e);return;}cb(blob);}
   fetch("assets/quote/logo-pdf.jpg").then(function(r){return r.ok?r.arrayBuffer():null;}).then(function(b){finish(b?{bytes:new Uint8Array(b),w:160,h:160}:null);},function(){finish(null);});}
 function saveBlob(blob,name){var url=URL.createObjectURL(blob),a=doc.createElement("a");a.href=url;a.download=name;doc.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(url);a.remove();},4000);}
 $("pdfBtn").addEventListener("click",function(){var note=$("pdfNote");
   buildPdf(function(blob){track("download_plan",{plan:st.plan});
     if(!LIVE){note.textContent="Your PDF is ready ("+pdfName()+"). In this preview downloads are blocked, on twindowclean.com it saves to your phone.";window.__tqLastPdf=blob;window.__tqLastName=pdfName();return;}
-    saveBlob(blob,pdfName());note.textContent="Saved as "+pdfName()+". Send it with your quote and Tony has everything in one place.";},note);});
+    saveBlob(blob,pdfName());note.textContent=L("Saved as "+pdfName()+". Send it with your quote and Tony has everything in one place.","Guardado como "+pdfName()+". Mándalo con tu cotización y Tony tiene todo en un solo lugar. El PDF va en inglés.");},note);});
 /* share: the PDF itself goes into the share sheet, so a spouse or landlord gets a real document, not a link */
 $("shareBtn").addEventListener("click",function(){var note=$("toast");
   buildPdf(function(blob){track("share_quote",{as:"pdf"});var name=pdfName();
@@ -549,20 +579,21 @@ function zres(cls,bold,rest,href,linkTxt){
 var zi=$("zipIn");
 if(zi)zi.addEventListener("input",function(){
   var v=zi.value.replace(/\D/g,"").slice(0,5);zi.value=v;
-  if(v.length<5){zres("","We cover the High Desert and the Inland Empire:","Hesperia, Victorville, Apple Valley, Oak Hills, Phelan, Adelanto, Spring Valley Lake, Fontana, Rancho Cucamonga, Ontario, Riverside and more.");return;}
+  if(v.length<5){zres("",L("We cover the High Desert and the Inland Empire:","Cubrimos el High Desert y el Inland Empire:"),L("Hesperia, Victorville, Apple Valley, Oak Hills, Phelan, Adelanto, Spring Valley Lake, Fontana, Rancho Cucamonga, Ontario, Riverside and more.","Hesperia, Victorville, Apple Valley, Oak Hills, Phelan, Adelanto, Spring Valley Lake, Fontana, Rancho Cucamonga, Ontario, Riverside y más."));return;}
   track("zip_check",{zip:v});
   var here=function(h){return location.pathname.replace(/^\//,"")===h;},ie=ieCity(v);
-  if(Z[v]){zipCity=Z[v][2]==="the High Desert"?Z[v][0]:Z[v][2];zres("yes","Yes, we come to "+Z[v][0]+".","No trip fee, and your price above is the price.",here(Z[v][1])?"#tq-send":Z[v][1],here(Z[v][1])?"Send your quote →":"See the work we've done in "+Z[v][2]+" →");}
-  else if(HDX[v]){zipCity=HDX[v];zres("yes","Yes, "+HDX[v]+" is on our High Desert route.","No trip fee, and your price above is the price.","#tq-send","Send your quote →");}
-  else if(ie){zipCity=ie;zres("yes","Yes, we come down the hill to "+ie+".","Same prices as up here and no travel fee. Pigeon proofing, solar, windows and screens, all of it.",here("inland-empire.html")?"#tq-send":"inland-empire.html",here("inland-empire.html")?"Send your quote →":"See our Inland Empire work →");}
-  else if(/^9[0-6]/.test(v)){zipCity="";zres("maybe","We go where the work is.","We don't charge for travel. Add your address below and Tony will tell you straight, with a real price.","#tq-send","Add my address →");}
-  else{zipCity="";zres("maybe","We're a Southern California crew.","If you have a home or property out here, add the address below and Tony will get you a real price.","#tq-send","Add my address →");}
+  if(Z[v]){zipCity=Z[v][2]==="the High Desert"?Z[v][0]:Z[v][2];zres("yes",L("Yes, we come to "+Z[v][0]+".","Sí, vamos a "+Z[v][0]+"."),L("No trip fee, and your price above is the price.","Sin cargo por viaje, y tu precio de arriba es el precio."),here(Z[v][1])?"#tq-send":Z[v][1],here(Z[v][1])?L("Send your quote →","Manda tu cotización →"):L("See the work we've done in "+Z[v][2]+" →","Ver nuestro trabajo en "+Z[v][2]+" →"));}
+  else if(HDX[v]){zipCity=HDX[v];zres("yes",L("Yes, "+HDX[v]+" is on our High Desert route.","Sí, "+HDX[v]+" está en nuestra ruta del High Desert."),L("No trip fee, and your price above is the price.","Sin cargo por viaje, y tu precio de arriba es el precio."),"#tq-send",L("Send your quote →","Manda tu cotización →"));}
+  else if(ie){zipCity=ie;zres("yes",L("Yes, we come down the hill to "+ie+".","Sí, bajamos la cuesta hasta "+ie+"."),L("Same prices as up here and no travel fee. Pigeon proofing, solar, windows and screens, all of it.","Los mismos precios que aquí arriba y sin cargo por viaje. Palomas, solar, ventanas y mosquiteros, todo."),here("inland-empire.html")?"#tq-send":"inland-empire.html",here("inland-empire.html")?L("Send your quote →","Manda tu cotización →"):L("See our Inland Empire work →","Ver nuestro trabajo en el Inland Empire →"));}
+  else if(/^9[0-6]/.test(v)){zipCity="";zres("maybe",L("We go where the work is.","Vamos a donde está el trabajo."),L("We don't charge for travel. Add your address below and Tony will tell you straight, with a real price.","No cobramos el viaje. Pon tu dirección abajo y Tony te dice derecho, con un precio real."),"#tq-send",L("Add my address →","Poner mi dirección →"));}
+  else{zipCity="";zres("maybe",L("We're a Southern California crew.","Somos una cuadrilla del sur de California."),L("If you have a home or property out here, add the address below and Tony will get you a real price.","Si tienes una casa o propiedad por aquí, pon la dirección abajo y Tony te da un precio real."),"#tq-send",L("Add my address →","Poner mi dirección →"));}
   msg();
 });
 doc.addEventListener("click",function(e){var a=e.target.closest&&e.target.closest('a.zlink[href="#tq-send"]');if(a){e.preventDefault();$("tq-send").scrollIntoView({behavior:reduce?"auto":"smooth"});setTimeout(function(){$("fstreet").focus({preventScroll:true});},reduce?0:500);}});
 
 /* ---------- hero: live 3D first, then real finished jobs you can swipe ---------- */
-var TABS={r3d:{lbl:"Live 3D",note:"A model home finished the way we leave yours. Tap it to try your own."},
+var TABS=ES?{r3d:{lbl:"3D en vivo",note:"Una casa modelo terminada como dejamos la tuya. Tócala para probar con la tuya."},win:{lbl:"Ventanas",note:"Trabajos reales terminados. Desliza para ver más."},sol:{lbl:"Solar",note:"Trabajos reales terminados. Desliza para ver más."},pig:{lbl:"Control de palomas",note:"Trabajos reales terminados. Desliza para ver más."}}:
+  {r3d:{lbl:"Live 3D",note:"A model home finished the way we leave yours. Tap it to try your own."},
   win:{lbl:"Windows",note:"Real finished jobs. Swipe for more."},sol:{lbl:"Solar",note:"Real finished jobs. Swipe for more."},pig:{lbl:"Pigeon proofing",note:"Real finished jobs. Swipe for more."}};
 var heroTab="r3d",box=$("wipe"),curCar=null;
 $$(".car",box).forEach(function(c){

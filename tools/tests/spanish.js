@@ -1,0 +1,36 @@
+/* the Spanish pages: same tool, Spanish words on the ticket, the plan, the days and the 3D notes; the message to Tony stays English */
+const {chromium}=require('playwright');
+(async()=>{const b=await chromium.launch({executablePath:(process.env.CHROME||'/opt/pw-browsers/chromium-1194/chrome-linux/chrome'),args:['--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
+const ctx=await b.newContext({viewport:{width:390,height:844},isMobile:true,hasTouch:true});const p=await ctx.newPage();const errs=[],res=[];p.on('pageerror',e=>errs.push(e.message));
+const ok=(n,c,d)=>res.push((c?'PASS ':'FAIL ')+n+(d!==undefined?'  ['+String(d).slice(0,200)+']':''));
+await p.addInitScript(()=>{window.__tqFixedQ=true;});
+await p.route(/googletagmanager|google-analytics|facebook|clarity|formspree|fonts\.g|weather\.gov/,r=>r.abort());
+await p.goto('http://localhost:8765/control-de-palomas.html');await p.waitForFunction(()=>window.__tq&&window.__tq.api,null,{timeout:90000});await p.waitForTimeout(1500);
+ok('html lang es',await p.$eval('html',e=>e.lang==='es'));
+ok('hreflang pair present',(await p.$$eval('link[rel="alternate"][hreflang]',l=>l.map(x=>x.hreflang).join(','))).includes('en'));
+const lines=await p.$eval('#tlines',e=>e.innerText.replace(/\n/g,' | '));
+ok('ticket in Spanish',/Control de palomas, hasta 12 paneles/.test(lines)&&/Gratis/.test(lines),lines);
+ok('total $650',await p.$eval('#ttotal',e=>e.textContent)==='$650');
+ok('savings in Spanish',/Ahorras/.test(await p.$eval('#save',e=>e.innerText)));
+ok('proof line en Google',/en Google/.test(await p.$eval('#proof',e=>e.textContent)));
+ok('plan buttons in Spanish',/por visita, 25% menos/.test(await p.$eval('[data-seg="plan"]',e=>e.innerText)));
+ok('wait list in Spanish',/Palomas/.test(await p.$eval('#waitList',e=>e.innerText))&&/Nidos fuera/.test(await p.$eval('#waitList',e=>e.innerText)));
+ok('days in Spanish',/^(dom|lun|mar|mié|jue|vie|sáb)$/.test(await p.$eval('#days .day span',e=>e.textContent)));
+await p.click('[data-seg="time"] [data-v="2"]');await p.waitForTimeout(200);
+ok('weekend preference in Spanish',/Tu día: cualquier fin de semana/.test(await p.$eval('#dayPicked',e=>e.textContent)));
+const msg=await p.$eval('#msg',e=>e.textContent);
+ok('message to Tony stays English',/Pigeon proofing, up to 12 panels/.test(msg)&&/Day: any weekend/.test(msg),msg.slice(0,140));
+await p.fill('#zipIn','92345');await p.dispatchEvent('#zipIn','input');ok('ZIP answer in Spanish',/Sí, vamos a Hesperia/.test(await p.$eval('#zres',e=>e.innerText)));
+/* the 3D: welcome cards, tour notes and the panel in Spanish */
+await p.click('.tq-intro [data-mode="tour"]');await p.waitForTimeout(2000);
+ok('welcome in Spanish',/Vamos a armar tu casa/.test(await p.$eval('.obd',e=>e.innerText)));
+await p.click('.obd [data-obd="next"]');await p.waitForTimeout(300);ok('problem cards in Spanish',/Palomas/.test(await p.$eval('.obd',e=>e.innerText)));
+await p.click('.obd [data-obd="build"]');await p.waitForTimeout(2500);await p.evaluate(()=>window.__tq.api.settle());await p.waitForTimeout(600);
+ok('tour note in Spanish',/Así está tu casa hoy/.test(await p.$eval('#ovMsg',e=>e.innerText)),await p.$eval('#ovMsg',e=>e.innerText.slice(0,120)));
+ok('nav labels in Spanish',/Siguiente|Arreglarlo/.test(await p.$eval('#ovNav .nx',e=>e.textContent)));
+ok('grab bar in Spanish',/Personalizar mi casa/.test(await p.$eval('#ovGrab',e=>e.textContent)));
+await p.click('.ov-tabs [data-hmode="pig"]');await p.waitForTimeout(1500);
+ok('pigeon story in Spanish',/Hoy:/.test(await p.$eval('#ovMsg',e=>e.innerText)));
+ok('summary in Spanish',/Tu cotización ahora mismo/.test(await p.$eval('#osum',e=>e.innerText)));
+ok('no JS errors',!errs.length,errs.join(' | '));
+console.log(res.join('\n'));await b.close();})();

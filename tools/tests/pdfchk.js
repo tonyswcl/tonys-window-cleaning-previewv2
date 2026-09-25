@@ -5,7 +5,7 @@ const ctx=await b.newContext({viewport:{width:900,height:800},acceptDownloads:tr
 await p.addInitScript(()=>{window.__tqFixedQ=true;});
 await p.route(/googletagmanager|google-analytics|facebook|clarity|formspree|fonts\.g|weather\.gov/,r=>r.abort());
 await p.goto('http://localhost:8765/'+pg);await p.waitForFunction(()=>window.__tq&&window.__tq.api,null,{timeout:90000});await p.waitForTimeout(2500);
-if(tag==='com'){for(let i=0;i<3;i++)await p.click('[data-step="cstk"] [data-d="1"]');await p.click('[data-seg="cfreq"] [data-v="1"]');}
+if(tag==='com'){for(let i=0;i<3;i++)await p.click('[data-step="cstk"] [data-d="1"]');await p.click('[data-seg="csched"] [data-v="1"]');}
 await p.fill('#fname','Sample Customer');await p.fill('#fstreet','100 Main St, Hesperia');
 const [dl]=await Promise.all([p.waitForEvent('download',{timeout:30000}),p.click('#pdfBtn')]);await dl.saveAs('pdf-'+tag+'.pdf');console.log(tag,dl.suggestedFilename(),errs);await ctx.close();}
 await b.close();})();
