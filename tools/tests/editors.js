@@ -33,7 +33,7 @@ await p.click('.ov-panel [data-hseg="cst"] [data-v="1"]').catch(e=>console.log('
 await snap('s0');
 await p.click('.edgo');await p.waitForTimeout(800);let c0=await st();console.log('shop start',c0.items.length,'len',c0.len);
 await p.click('.edbar [data-edseg="type"] [data-v="1"]');await tap(c0.len/2-.6,1.5);let c1=await st();console.log('after door add',c1.items.length,JSON.stringify(c1.items.map(i=>i[3])),'counts',await p.evaluate(()=>{const s=window.__tq.st;return [s.cpanes,s.cdoors,s.cstk].join(',');}));
-await p.click('.edbar [data-edseg="type"] [data-v="0"]');await p.click('.edbar [data-ed="wider"]');await p.waitForTimeout(500);let c2=await st();await tap(c2.len/2-1.0,2.0);
+await p.click('.edbar [data-edseg="type"] [data-v="0"]');await p.click('.edbar [data-ed="wider"]');await p.waitForTimeout(1500);/* wider flies the camera; on the software renderer the tap point is only right once it lands */let c2=await st();await tap(c2.len/2-1.0,2.0);
 await p.click('.edbar [data-ed="stk"]');await p.waitForTimeout(400);await snap('s1');
 await p.click('.edbar [data-ed="done"]');await p.waitForTimeout(800);
 console.log('shop counts',await p.evaluate(()=>{const s=window.__tq.st;return [s.cpanes,s.cdoors,s.cstk].join(',');}));
