@@ -138,7 +138,7 @@ var PAL=[[[.72,.37,.24],[.62,.30,.20],[.80,.46,.30]],[[.44,.32,.25],[.35,.25,.20
 TX.gravel.repeat.set(240,240);TX.gravelB.repeat.set(240,240);
 var M={
   under:Std({color:0x3e332b,roughness:1,side:T.DoubleSide}),
-  glass:Std({color:0x1d2a36,metalness:.9,roughness:.06,envMapIntensity:1.15}),
+  glass:Std({color:0x22303d,metalness:.92,roughness:.035,envMapIntensity:1.45}),
   door:Std({color:0x7a5a3e,roughness:.55}),
   concrete:Std({map:TX.concrete,roughness:.95}),asphalt:Std({map:TX.asphalt,roughness:.95}),curb:Std({color:0xcfccc4,roughness:.9}),
   cmu:Std({map:TX.cmu,roughness:.95}),cap:Std({color:0xcbb895,roughness:.9}),brick:Std({map:TX.brick,roughness:.9}),
@@ -811,7 +811,20 @@ function sweep(hz,t,t0,dur,passes,v0,dv,wpx){
   for(var tt=from;tt<=t+1e-6;tt+=.015){var q=sweepAt(tt,t0,dur,passes,v0,dv);if(pi!==null&&q[2]!==pi)hz.last=null;pi=q[2];wipeHaze(hz,q[0],q[1],wpx);}
   hz.done=t;return sweepAt(t,t0,dur,passes,v0,dv);
 }
-function resetHaze(){haze.done=undefined;haze.clear=false;var g=haze.c.getContext("2d"),n=hazeCanvas(256,212,5);g.globalCompositeOperation="copy";g.drawImage(n,0,0);g.globalCompositeOperation="source-over";haze.t.needsUpdate=true;haze.last=null;}
+/* the scrub: the applicator works the glass in overlapping arcs and leaves a milky soap film with tiny bubbles */
+function scrubAt(p){var row=p*3.2,x=Math.sin(row*Math.PI)*.4,y=.4-.8*Math.min(1,p*1.06)+.07*Math.cos(row*Math.PI*2);return [x,y];}
+function scrub(hz,t,t0,dur){var from=Math.max(hz.sdone===undefined?t0:hz.sdone,t0),g=hz.c.getContext("2d"),W=hz.c.width,Hh=hz.c.height;
+  for(var tt=from;tt<=t+1e-6;tt+=.02){var q=scrubAt(clamp01((tt-t0)/dur)),x=(q[0]+.5)*W,y=(.5-q[1])*Hh;
+    if(hz.slast){g.globalCompositeOperation="source-over";g.strokeStyle="rgba(236,242,247,.42)";g.lineCap="round";g.lineWidth=W*.13;g.beginPath();g.moveTo(hz.slast[0],hz.slast[1]);g.lineTo(x,y);g.stroke();
+      g.strokeStyle="rgba(255,255,255,.35)";g.lineWidth=2;for(var k=0;k<3;k++){var ox=(Math.sin(tt*37+k*2.1))*W*.05,oy=(Math.cos(tt*29+k*1.7))*W*.05;g.beginPath();g.arc(x+ox,y+oy,1.5+k,0,7);g.stroke();}}
+    hz.slast=[x,y];}
+  hz.sdone=t;hz.t.needsUpdate=true;return scrubAt(clamp01((t-t0)/dur));}
+/* the squeegee: fanned pulls from the top corner, each one bowed the way a real pull is, the blade angle following the stroke */
+function fanAt(p,passes){var idx=Math.min(passes-1,Math.floor(p*passes)),fr=p*passes-idx,dir=idx%2?-1:1,u=dir*(-.5+fr)*.88,v=.4-idx*(.8/passes)-.16*Math.sin(fr*Math.PI)*(1-idx/passes);return [u,v,idx,dir,fr];}
+function fan(hz,t,t0,dur,passes,wpx){var from=Math.max(hz.done===undefined?t0:hz.done,t0),pi=null;
+  for(var tt=from;tt<=t+1e-6;tt+=.012){var q=fanAt(clamp01((tt-t0)/dur),passes);if(pi!==null&&q[2]!==pi)hz.last=null;pi=q[2];wipeHaze(hz,q[0],q[1],wpx);}
+  hz.done=t;return fanAt(clamp01((t-t0)/dur),passes);}
+function resetHaze(){haze.sdone=undefined;haze.slast=null;haze.done=undefined;haze.clear=false;var g=haze.c.getContext("2d"),n=hazeCanvas(256,212,5);g.globalCompositeOperation="copy";g.drawImage(n,0,0);g.globalCompositeOperation="source-over";haze.t.needsUpdate=true;haze.last=null;}
 function wipeHaze(hz,u,v,wpx){var g=hz.c.getContext("2d"),W=hz.c.width,Hh=hz.c.height,x=(u+.5)*W,y=(.5-v)*Hh;
   g.globalCompositeOperation="destination-out";g.strokeStyle="#000";g.lineCap="round";g.lineWidth=wpx;g.beginPath();
   if(hz.last){g.moveTo(hz.last[0],hz.last[1]);}else g.moveTo(x-.1,y);g.lineTo(x,y);g.stroke();g.globalCompositeOperation="source-over";hz.last=[x,y];hz.t.needsUpdate=true;}
@@ -849,7 +862,11 @@ function makeWorker(){
   w.userData={L:arm(-1),R:arm(1),body:body,head:head,torso:torso,legs:legs,dip:0,look:null};
   w.visible=false;scene.add(w);
   /* tools */
-  var sq=new T.Group();box(.36,.03,.03,M.chan,0,0,.02,sq,true);box(.35,.012,.012,M.rubber,0,0,.004,sq,true);sq.visible=false;scene.add(sq);tools.sq=sq;
+  var sq=new T.Group();box(.36,.03,.03,M.chan,0,0,.02,sq,true);box(.35,.012,.012,M.rubber,0,0,.004,sq,true);
+  var bead=new T.Mesh(G.box,new T.MeshBasicMaterial({color:0xf4fbff,transparent:true,opacity:.7,depthWrite:false}));bead.scale.set(.37,.006,.006);bead.position.set(0,-.009,.002);sq.add(bead);tools.bead=bead;
+  sq.visible=false;scene.add(sq);tools.sq=sq;
+  /* the applicator: a T bar with a wet sleeve, what lays the soap on before the squeegee */
+  var mop=new T.Group();box(.34,.05,.05,new T.MeshStandardMaterial({color:0xe9eef2,roughness:.95}),0,0,.03,mop,true);box(.3,.02,.02,M.chan,0,.03,.05,mop,true);mop.visible=false;scene.add(mop);tools.mop=mop;
   var hd=new T.Mesh(G.cyl,M.pole);hd.scale.x=hd.scale.z=.014;hd.visible=false;scene.add(hd);tools.handle=hd;
   var tw=new T.Mesh(G.box,M.towel);tw.scale.set(.16,.05,.1);tw.visible=false;scene.add(tw);tools.towel=tw;
   var pole=new T.Mesh(G.cyl,M.pole);pole.scale.x=pole.scale.z=.022;pole.visible=false;scene.add(pole);tools.pole=pole;
@@ -1095,7 +1112,7 @@ function liftView(dt){var m=$("ovMsg"),want=0;if(overlay&&ED&&!edbar.hidden){if(
 /* notes wait for the reader: each one holds until Next, and Back steps back */
 function steps(){
   if(ED)return null;
-  if(mode==="win")return h3.view===1?[0,1.2,5.0,8.4]:[0,1.4,6.4,7.8,9.3];
+  if(mode==="win")return h3.view===1?[0,1.2,5.0,8.4]:[0,1.4,3.3,6.7,7.9,9.3];
   if(mode==="sol"){var n=me.panels.filter(function(p){return p.face>0;}).length,per=Math.min(.55,11/Math.max(1,n));return [0,1.4,1.4+n*per+.6];}
   if(mode==="scr")return [0,1,3.6];
   if(mode==="pig")return [0,2.2,5.6,9,12.4];
@@ -1116,25 +1133,28 @@ function winOutside(){
   var n=V(Math.sin(w.ang),0,Math.cos(w.ang)),side=V(Math.cos(w.ang),0,-Math.sin(w.ang)),wc=toWorld(w.g,0,0,0);
   placeWorker(V(wc.x,0,wc.z).addScaledVector(n,.55).addScaledVector(side,-.12),n.clone().negate());
   /* screen comes off, then goes back in */
-  var off=smooth((t-.4)/.9)*(1-smooth((t-7.9)/.9));
+  var off=smooth((t-.4)/.9)*(1-smooth((t-8.0)/.9));
   sc.g.visible=true;screenLook(sc,false);
   sc.g.position.set(sc.x0+(-(w.gw/2+.6)-sc.x0)*off,-.2*off,.14+.3*off);sc.g.rotation.set(-.12*off,.5*off,0);
-  if(t<1.4||t>7.8){var sp=toWorld(sc.g,-sc.gw/2+.05,0,0),sp2=toWorld(sc.g,sc.gw/2-.05,0,0);
+  if(t<1.4||t>7.9){var sp=toWorld(sc.g,-sc.gw/2+.05,0,0),sp2=toWorld(sc.g,sc.gw/2-.05,0,0);
     if(off>.01&&off<.99){reach("L",sp);reach("R",sp2);}else{rest("L");rest("R");}}
-  /* four squeegee passes, top to bottom, then the sill */
-  var u,v,idx;
-  if(t>=1.5&&t<6.4){var pt=sweep(haze,t,1.5,4.8,4,.34,.23,256*.36/w.gw);u=pt[0];v=pt[1];idx=pt[2];
-    var P2=toWorld(w.g,u*w.gw,v*w.gh,.1);tools.sq.visible=true;tools.sq.position.copy(P2);tools.sq.quaternion.copy(w.g.getWorldQuaternion(new T.Quaternion())).multiply(QZ(idx%2?1.3:1.84));
-    var hand=reach("R",P2.clone().addScaledVector(n,.2));tools.handle.visible=true;setBone(tools.handle,P2.clone().addScaledVector(n,.03),hand);tools.handle.scale.x=tools.handle.scale.z=.014;rest("L");
-  }else if(t>=6.4&&t<7.8){var q=clamp01((t-6.5)/1.1),sx=(-.5+q)*w.gw,SP=toWorld(w.g,sx,-w.gh/2-.1,.14);crouch(Math.min(clamp01((t-6.4)/.3),clamp01((7.8-t)/.3)));
+  /* soap on in arcs, then fanned squeegee pulls from the top, then the sill */
+  var wq=w.g.getWorldQuaternion(new T.Quaternion());
+  if(t>=1.4&&t<3.3){var sp3=scrub(haze,t,1.4,1.9),P1=toWorld(w.g,sp3[0]*w.gw,sp3[1]*w.gh,.1);tools.mop.visible=true;tools.mop.position.copy(P1);tools.mop.quaternion.copy(wq).multiply(QZ(.35*Math.sin(t*9)));
+    var h1=reach("R",P1.clone().addScaledVector(n,.18));tools.handle.visible=true;setBone(tools.handle,P1.clone().addScaledVector(n,.04),h1);tools.handle.scale.x=tools.handle.scale.z=.014;rest("L");}
+  else if(t>=3.3&&t<6.7){var pt=fan(haze,t,3.3,3.4,4,256*.36/w.gw),u=pt[0],v=pt[1],dir=pt[3],fr=pt[4];
+    var P2=toWorld(w.g,u*w.gw,v*w.gh,.1),tang=Math.atan2(-.16*Math.PI*Math.cos(fr*Math.PI),.88*dir);tools.sq.visible=true;tools.sq.position.copy(P2);tools.sq.quaternion.copy(wq).multiply(QZ(tang+(dir>0?-.55:.55)));
+    tools.bead.material.opacity=.45+.35*Math.abs(Math.sin(t*14));
+    var hand=reach("R",P2.clone().addScaledVector(n,.2));tools.handle.visible=true;setBone(tools.handle,P2.clone().addScaledVector(n,.03),hand);tools.handle.scale.x=tools.handle.scale.z=.014;rest("L");}
+  else if(t>=6.7&&t<7.9){var q=clamp01((t-6.8)/1.0),sx=(-.5+q)*w.gw,SP=toWorld(w.g,sx,-w.gh/2-.1,.14);crouch(Math.min(clamp01((t-6.7)/.3),clamp01((7.9-t)/.3)));
     tools.towel.visible=true;var hh=reach("L",SP);tools.towel.position.copy(hh);rest("R");
-    w.sillM.color.copy(sillDust).lerp(me.mats.trim.color,q);
-  }
-  if(t<6.4)w.sillM.color.copy(sillDust);
-  if(t>=6.4&&!haze.clear){haze.c.getContext("2d").clearRect(0,0,256,212);haze.t.needsUpdate=true;haze.clear=true;}
+    w.sillM.color.copy(sillDust).lerp(me.mats.trim.color,q);}
+  if(t<6.7)w.sillM.color.copy(sillDust);
+  if(t>=6.7&&!haze.clear){haze.c.getContext("2d").clearRect(0,0,256,212);haze.t.needsUpdate=true;haze.clear=true;}
   var one=st.stories===1;
-  say(msgAt([[0,"<b>1.</b> Screens come off first and get scrubbed."],[1.4,"<b>2.</b> Purified water, then a squeegee, top to bottom. Nothing left on the glass to spot."],
-    [6.4,"<b>3.</b> Sills and tracks wiped out. Included, not an add on."],[7.8,"<b>4.</b> Screen back in. Glass that dries clear."],
+  say(msgAt([[0,"<b>1.</b> Screens come off first and get scrubbed."],[1.4,"<b>2.</b> Purified water on with the applicator, worked in so the dirt lets go of the glass."],
+    [3.3,"<b>3.</b> Squeegee pulled in fanned strokes from the top corner. No streaks, and purified water leaves nothing behind to spot."],
+    [6.7,"<b>4.</b> Edges, sills and tracks wiped out. Included, not an add on."],[7.9,"<b>5.</b> Screen back in. Glass that dries clear and stays clear longer."],
     [9.3,"<b>Done.</b> "+(one?"$149 single story":"$249 two story")+", screens, tracks and sills included. Tap <b>Inside</b> to see the part most crews skip."]]),t>9.3?"ok":"");
 }
 function winInside(){
@@ -1333,9 +1353,9 @@ function comShot(k){var c=com,W=c.W,H=c.H,front=st.ctype===0?0:c.D/2;
   if(k==="cglass")return {tx:0,ty:st.ctype===0?1.9:3,tz:front,yaw:.3,tilt:.08,dist:fitWH(Math.min(W*.4,7),2.6)};
   return {tx:0,ty:c.cy,tz:front-(st.ctype===0?2:c.D*.2),yaw:.42,tilt:st.ctype===0?.2:.28,dist:fitWH(W*.62+3,H*.8+1)};}
 function comSay(){if(edNote&&performance.now()-edNote.t<4500){say(edNote.txt,"ok");return;}var S=comStops(),i=Math.min(stepAt(steps()),S.length-1),cs=S[i],t=C.totals(),shop=st.ctype===0,gl=st.cpanes+st.cdoors,txt,cls="";
-  if(cs.k==="cover")txt=shop?"<b>Your storefront today.</b> "+st.cpanes+" pane"+(st.cpanes>1?"s":"")+" and "+st.cdoors+" glass door"+(st.cdoors===1?"":"s")+" collecting dust, fingerprints and sprinkler spots. Tap Next to see it done.":"<b>Your building today.</b> "+st.bst+" stor"+(st.bst>1?"ies":"y")+" and "+st.bwin+" windows under a film of desert dust. Tap Next to see it done.";
+  if(cs.k==="cover")txt=shop?"<b>Your storefront today.</b> "+st.cpanes+" pane"+(st.cpanes>1?"s":"")+" and "+st.cdoors+" glass door"+(st.cdoors===1?"":"s")+" collecting dust, fingerprints and sprinkler spots. Tap Next to see it done.":"<b>Your building today.</b> "+st.bst+" stor"+(st.bst>1?"ies":"y")+" and "+st.bwin+" panes under a film of desert dust, with hard water spots where the sprinklers reach. Tap Next to see it done.";
   else if(cs.k==="cglass"&&!cs.ph){cls="warn";txt=shop?"<b>First impressions.</b> Customers see the glass before they see the shelves. Out here it only takes a couple of windy weeks to look neglected.":"<b>Dusty glass.</b> Tenants and visitors notice it from the parking lot, and the wind keeps bringing more.";}
-  else if(cs.k==="cglass"){cls="ok";txt=shop?"<b>Clean, inside and out.</b> Purified water, frames and doors wiped, handprints gone. "+(st.cfreq?money(C.comVisit())+" a visit "+P.comFName[st.cfreq]:"$"+P.com+" flat for 8 to "+P.comUpTo+" panes")+(gl>P.comUpTo?", with the extra "+(gl-P.comUpTo)+" panes confirmed by Tony":"")+".":"<b>Clean, top to bottom.</b> Worked after hours so nobody is in the way. Free walkthrough and a firm price before we start.";}
+  else if(cs.k==="cglass"){cls="ok";txt=shop?"<b>Clean, inside and out.</b> Purified water, frames and doors wiped, handprints gone. "+(st.cfreq?money(C.comVisit())+" a visit, "+C.comOffName():"$"+P.com+" flat for 8 to "+P.comUpTo+" panes")+(gl>P.comUpTo?", plus a flat $"+P.comOver+" for the other "+(gl-P.comUpTo):"")+".":"<b>Clean, top to bottom.</b> $"+P.bPane+" a pane inside and out on the ground floor, $"+P.bPane+" more a pane for each story up. Every pane checked for hard water staining, existing tint left alone. Worked after hours.";}
   else if(cs.k==="cstk"&&!cs.ph){cls="warn";txt="<b>Old stickers.</b> Faded promos and peeling corners make a shop look closed. "+st.cstk+" on your glass.";}
   else if(cs.k==="cstk"){cls="ok";txt="<b>Swapped and straight.</b> Old ones off clean, new ones up level, $10 a sticker while we're there.";}
   else{cls="ok";txt="<b>That's your "+(shop?"storefront":"building")+" done right.</b> "+(t.total>0?"Your quote: "+(t.from?"from ":"")+money(t.total)+(shop?" a visit.":"."):"Tony walks it with you for free and gives you a firm written price.")+" One invoice a month, worked around your hours.";}
@@ -1458,7 +1478,7 @@ function tourSay(){if(edNote&&performance.now()-edNote.t<4500){say(edNote.txt,"o
   else{cls="ok";txt={win:"<b>Clean.</b> Purified water and a squeegee, screens washed, tracks and sills wiped, dried spot free. "+(st.stories===1?"$149 single story.":"$249 two story.")+(st.hw?" Hard water spots treated pane by pane.":""),
       scr:"<b>New screens.</b> "+st.screens+" re-meshed on site with "+P.meshName[st.pet]+" mesh, on the half of each window that opens.",
       sol:"<b>Washed.</b> Purified water and a soft brush, dried spot free. "+money(n*P.panel)+" at $7 a panel.",
-      pig:ph===1?"<b>Cleaned out and closed off.</b> Nests, droppings and debris hauled away, the area sanitized so the smell goes with them, panels washed free, and mesh clipped to the frame. Nothing drilled, so your panel warranty stays safe."
+      pig:ph===1?"<b>Cleaned out and closed off.</b> Nests, droppings and debris hauled away, the area sanitized so the smell goes with them, panels washed free, and rigid steel mesh clipped to the lip of the panel frame. No screws, no drilling, no chicken wire, so your panel warranty stays intact."
         :"<b>Reflective spinners.</b> Mirrored cups flash across the roof so the birds don't settle again. "+C.free()+" come free. The flock moves on."}[k];}
   say(txt,cls);}
 function homeDesc(){return ["new build","ranch","classic","lake estate"][h3.style]+" home, "+["street with desert yards","neighborhood with lawns","acreage","on the lake"][h3.hood];}
@@ -1471,7 +1491,7 @@ function summary(){
     sol:"<b>"+st.panels+" panels · "+(st.pig?"free with pigeon proofing":money(st.panels*P.panel))+"</b><br>$7 a panel, purified water, dries spot free.",
     scr:"<b>"+st.screens+" "+P.meshName[st.pet]+" screen"+(st.screens>1?"s":"")+(st.frames?" · new frames":"")+" · "+money(Math.max(st.screens*(P.mesh[st.pet]+(st.frames?P.frame:0)),P.scrMin))+"</b><br>Screens cover the half of the window that opens. New frames and clips are $10 more a screen. $149 job minimum when screens are the only service.",
     pig:"<b>"+st.panels+" panels · "+spinCount()+" spinner"+(spinCount()===1?"":"s")+" · "+money(P.pig+Math.max(0,st.panels-P.pigUpTo)*P.pigPer+st.spin*P.spinner)+"</b><br>"+C.free()+" spinners come free. Extras are $50 each. Solar wash and roof wash free."};
-  txt.com=st.ctype?"<b>Office building · "+st.bst+" stor"+(st.bst>1?"ies":"y")+" · "+st.bwin+" windows</b><br>Free walkthrough and a firm price before we start.":"<b>Storefront · "+(st.cpanes+st.cdoors)+" panes and doors"+(st.cstk?" · "+st.cstk+" stickers":"")+"</b><br>"+(st.cfreq?money(C.comVisit())+" a visit "+P.comFName[st.cfreq]:"$"+P.com+" one time")+", inside and out.";
+  txt.com=st.ctype?"<b>Office building · "+st.bst+" stor"+(st.bst>1?"ies":"y")+" · "+st.bwin+" panes</b><br>"+money(C.bldgPrice().total)+" inside and out, $"+P.bPane+" a pane and $"+P.bPane+" more a pane per story up. Free walkthrough, firm price in writing.":"<b>Storefront · "+(st.cpanes+st.cdoors)+" panes and doors"+(st.cstk?" · "+st.cstk+" stickers":"")+"</b><br>"+(st.cfreq?money(C.comVisit())+" a visit, "+C.comOffName():"$"+P.com+" one time")+", inside and out.";
   el.innerHTML=(txt[mode]||txt.home)+"<br><span class=\"small\">Your quote right now: "+(t.from?"from ":"")+money(t.total)+"</span>";
 }
 
@@ -1534,7 +1554,7 @@ el.addEventListener("webglcontextlost",function(e){e.preventDefault();lost=true;
 el.addEventListener("webglcontextrestored",function(){lost=false;$("ovLoad").hidden=true;first=true;if(quality>1)setQuality(quality-1);start();});
 
 /* ---------- callouts that point at the details ---------- */
-var CALL={glass:"Purified water, dries spot free",panel:"Panels washed streak free, $7 each",mesh:"Mesh clipped to the frame, never bolted",spin:"Spinners on the vents, held with hose clamps",tile:"Roof soft wash, free with pigeon proofing"};
+var CALL={glass:"Purified water, dries spot free",panel:"Panels washed streak free, $7 each",mesh:"Rigid steel mesh, frame clips, nothing drilled",spin:"Spinners on the vents, held with hose clamps",tile:"Roof soft wash, free with pigeon proofing"};
 var ORDERS={pig:["mesh","spin","panel","glass"],win:["glass","panel","mesh","spin"],sol:["panel","mesh","glass","spin"],scr:["glass","mesh","panel","spin"],home:["glass","panel","mesh","spin"]};
 var anc={};
 function anchors(){

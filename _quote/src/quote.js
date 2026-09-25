@@ -10,9 +10,19 @@ function $$(sel,root){return [].slice.call((root||doc).querySelectorAll(sel));}
 var reduce=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
 var LIVE=CFG.live!==false; /* false only in previews, so a test never posts a real lead */
 var FORM="https://formspree.io/f/mdkzdael", PHONE="714-559-0300", SMS="+17145590300";
+/* what Meta hears. Standard events where one fits, then the three names the campaigns optimize on:
+   CustomizeSimulator (someone shaped the 3D to their home), QuoteReady (they built a price), QuoteSubmitted (they sent it to Tony). */
+var META_MAP={view_3d:["ViewContent",{content_type:"simulator"}],onboard_build:["CustomizeSimulator",{}],edit_done:["CustomizeSimulator",{}],home_style:["CustomizeSimulator",{}],
+  select_service:["CustomizeSimulator",{}],pick_pigeon_package:["CustomizeSimulator",{}],pick_plan:["CustomizeSimulator",{}],
+  download_plan:["QuoteReady",{}],share_quote:["QuoteReady",{}],text_tap:["QuoteSubmitted",{method:"text"}],email_tap:["QuoteSubmitted",{method:"email"}],phone_click:["Contact",{}]};
 function track(name,params){try{
-  if(typeof window.gtag==="function")window.gtag("event",name,params||{});
-  if(typeof window.fbq==="function"){if(name==="generate_lead")window.fbq("track","Lead",params||{});else window.fbq("trackCustom",name,params||{});}
+  params=params||{};
+  if(typeof window.gtag==="function")window.gtag("event",name,params);
+  if(typeof window.fbq==="function"){var mm=META_MAP[name];
+    if(name==="generate_lead"){window.fbq("track","Lead",{value:params.value,currency:"USD",content_name:"quick quote"});window.fbq("trackCustom","QuoteSubmitted",{method:"form",value:params.value,currency:"USD"});}
+    else if(mm){var mp={};for(var k in mm[1])mp[k]=mm[1][k];for(var k2 in params)if(typeof params[k2]!=="object")mp[k2]=params[k2];
+      if(mm[0]==="ViewContent"||mm[0]==="Contact")window.fbq("track",mm[0],mp);else window.fbq("trackCustom",mm[0],mp);}
+    else window.fbq("trackCustom",name,params);}
   if(typeof window.clarity==="function")window.clarity("event",name);
 }catch(e){}}
 
@@ -21,19 +31,20 @@ var P={win:[0,149,249],more:[0,39,39],covers:[0,"10 to 12","18 to 20"],coverMax:
   pig:450,pigUpTo:12,pigPer:50,spinner:50,mesh:[53.99,64.99],meshName:["charcoal fiberglass","all weather"],frame:10,scrMin:149,
   planFreq:[0,12,6,3],planOff:[0,0,.15,.25],planName:["One time","Once a year","Twice a year","Every 3 months"],
   pane:12,pc:[0,249,349],roof:599,gr:129,ad:129,early:0.10,
-  /* storefronts: a flat $149 for 8 to 10 panes inside and out (doors count), then the same 15% and 25% plan discounts as homes.
-     comPane and bldg are null until Tony sets a rate; until then those lines read "Tony confirms" */
-  com:149,comOff:[0,.15,.25],comFName:["one time","monthly","every 2 weeks"],comUpTo:10,comPane:null,comIn:50,stk:10,bldg:null,
+  /* storefronts: a flat $149 for 8 to 10 panes inside and out (doors count), $50 flat past 10. Month to month is 15% off monthly
+     or 25% off every 2 weeks; a quarterly agreement is 20% off, a yearly agreement 40% off. The best one applies, never stacked.
+     Office buildings: $10 a pane inside and out on the ground floor, $10 more a pane for each story up. */
+  com:149,comOff:[0,.15,.25],comFName:["one time","monthly","every 2 weeks"],comTermOff:[0,.20,.40],comTermName:["month to month","quarterly agreement","yearly agreement"],comUpTo:10,comOver:50,comIn:50,stk:10,bPane:10,
   large:null /* extra labor for large custom homes; null means Tony confirms on site */};
 
 /* ---------- state ---------- */
 var MAIN=["win","sol","pig","scr"], EXTRA=["hw","roof","pc","gut","pw","ad","gr","com"], ALL=MAIN.concat(EXTRA);
 var st={stories:1,more:false,inside:false,large:false,pkg:0,panels:16,arrays:1,arr:[16,8,6],spin:0,screens:4,frames:false,pet:1,panes:6,day:"",time:-1,plan:0,wait:2,
-  ctype:0,cfreq:0,cin:false,cpanes:8,cdoors:2,cstk:0,bsq:12,bst:2,bwin:48};
+  ctype:0,cfreq:0,cterm:0,cin:false,cpanes:8,cdoors:2,cstk:0,bsq:12,bst:2,bwin:48};
 ALL.forEach(function(k){st[k]=false;});
 (CFG.svc&&CFG.svc.length?CFG.svc:["win"]).forEach(function(k){if(ALL.indexOf(k)>=0)st[k]=true;});
 var LIMIT={stories:[1,2],panels:[1,99],arrays:[1,3],arr0:[1,60],arr1:[1,60],arr2:[1,60],spin:[0,20],screens:[1,40],pet:[0,1],panes:[1,60],plan:[0,3],time:[-1,2],wait:[0,3],pkg:[0,1],
-  ctype:[0,1],cfreq:[0,2],cpanes:[1,60],cdoors:[0,12],cstk:[0,40],bsq:[1,300],bst:[1,20],bwin:[4,990]};
+  ctype:[0,1],cfreq:[0,2],cterm:[0,2],cpanes:[1,60],cdoors:[0,12],cstk:[0,40],bsq:[1,300],bst:[1,20],bwin:[4,990]};
 function clamp(k,v){var L=LIMIT[k];return L?Math.max(L[0],Math.min(L[1],v)):v;}
 /* panels can sit in up to 3 sections; the total is always the sum */
 function setArrays(a){a=clamp("arrays",a);if(a===st.arrays)return;
@@ -74,15 +85,22 @@ function items(){
   if(st.pw)add("Driveway and patio wash",0,{note:"Quoted on site"});
   if(st.ad)add("Decal and vinyl removal",P.ad,{from:true});
   if(st.gr)add("Graffiti removal",P.gr,{from:true});
-  if(st.com){if(st.ctype===0){var gl=st.cpanes+st.cdoors,ov=Math.max(0,gl-P.comUpTo);
-      add("Storefront glass inside and out, 8 to "+P.comUpTo+" panes, "+P.comFName[st.cfreq]+(st.cfreq?", "+Math.round(P.comOff[st.cfreq]*100)+"% off, per visit":""),comVisit());
-      if(ov)add(ov+" more pane"+pl(ov)+" and door"+(ov>1?"s":""),P.comPane?ov*P.comPane:0,P.comPane?{}:{note:"Tony confirms"});
+  if(st.com){if(st.ctype===0){var gl=st.cpanes+st.cdoors,ov=Math.max(0,gl-P.comUpTo),co=comOff();
+      add("Storefront glass inside and out, 8 to "+P.comUpTo+" panes"+(st.cfreq?", "+P.comFName[st.cfreq]:"")+(co?", "+comOffName()+", per visit":""),comVisit());
+      if(ov)add(ov+" more pane"+pl(ov)+" and door"+(ov>1?"s":"")+", flat",P.comOver);
       if(st.cin)add("Interior partitions and mirrors",P.comIn);
       if(st.cstk)add(st.cstk+" vinyl sticker"+pl(st.cstk)+" changed out × $"+P.stk,st.cstk*P.stk);}
-    else add("Office building, "+st.bst+" stor"+(st.bst>1?"ies":"y")+", about "+(st.bsq*1000).toLocaleString("en-US")+" sq ft, "+st.bwin+" windows",P.bldg||0,P.bldg?{from:true}:{note:"Free walkthrough"});}
+    else{var bp=bldgPrice();add("Office building, "+st.bwin+" panes inside and out, "+st.bst+" stor"+(st.bst>1?"ies":"y")+", about "+(st.bsq*1000).toLocaleString("en-US")+" sq ft",bp.total,{from:true});
+      if(st.bst>1)add("Upper floors: $"+P.bPane+" more a pane for each story up",0,{note:"In the price"});}}
   return a;
 }
-function comVisit(){return cents(P.com*(1-P.comOff[st.cfreq]));}
+/* the storefront discount that applies: the better of how often we come and how long you sign for */
+function comOff(){var f=P.comOff[st.cfreq]||0,t=P.comTermOff[st.cterm]||0;return Math.max(f,t);}
+function comOffName(){var f=P.comOff[st.cfreq]||0,t=P.comTermOff[st.cterm]||0;return (t>f?P.comTermName[st.cterm]:P.comFName[st.cfreq])+" "+Math.round(Math.max(f,t)*100)+"% off";}
+function comVisit(){return cents(P.com*(1-comOff()));}
+/* office buildings: panes spread over the stories, $10 a pane on the ground floor and $10 more a pane for each story up */
+function bldgPrice(){var n=st.bwin,f=Math.max(1,st.bst),per=Math.floor(n/f),rem=n%f,total=0,rows=[];
+  for(var s=1;s<=f;s++){var c=per+(s<=rem?1:0),rate=P.bPane*s;rows.push({story:s,n:c,rate:rate,amt:c*rate});total+=c*rate;}return {total:total,rows:rows};}
 function totals(){
   var it=items(),sub=0;it.forEach(function(x){sub+=x.v;});sub=cents(sub);
   var early=st.day&&sub>0?cents(sub*P.early):0;
@@ -125,7 +143,9 @@ function setText(id,txt){var el=$(id);if(el)el.textContent=txt;}
 /* ---------- delegated controls: data-seg, data-sw, data-step (3D-only controls use data-h*) ---------- */
 function setKey(k,v){
   if(k==="arrays"){setArrays(+v);track("pick_arrays",{arrays:st.arrays});render();return;}
-  if(k==="pet"||k==="stories"||k==="plan"||k==="time"||k==="wait"||k==="pkg"||k==="ctype"||k==="cfreq")v=clamp(k,+v);
+  if(k==="pet"||k==="stories"||k==="plan"||k==="time"||k==="wait"||k==="pkg"||k==="ctype"||k==="cfreq"||k==="cterm")v=clamp(k,+v);
+  if(k==="cterm"&&v&&!st.cfreq)st.cfreq=1; /* an agreement means we come back, so one time turns into monthly */
+  if(k==="cfreq"&&!v)st.cterm=0;
   if(k==="ctype")track("pick_commercial",{type:v?"building":"storefront"});
   if(k==="pkg"){if(v&&!st.plan)st.plan=3;track("pick_pigeon_package",{year:v});}
   st[k]=v;
@@ -137,7 +157,7 @@ doc.addEventListener("click",function(e){
   var t=e.target;if(!t.closest)return;
   if(!hydrated&&t.closest(".tq"))hydrate();
   /* the little i buttons: why an add on costs what it costs */
-  var wy=t.closest("[data-why]");if(wy){var op=wy.closest(".opt"),wb=op&&op.nextElementSibling;if(wb&&wb.classList.contains("why")){var op2=wb.hidden;wb.hidden=!op2;wy.setAttribute("aria-expanded",String(op2));if(op2)track("why_price");}return;}
+  var wy=t.closest("[data-why]");if(wy){var op=wy.closest(".opt,.note"),wb=op&&op.nextElementSibling;if(wb&&wb.classList.contains("why")){var op2=wb.hidden;wb.hidden=!op2;wy.setAttribute("aria-expanded",String(op2));if(op2)track("why_price");}return;}
   /* do I really need this / how will it help me */
   var nd=t.closest("[data-need]");if(nd){var nb=nd.closest(".needs"),nk=nd.getAttribute("data-need"),on=nd.getAttribute("aria-pressed")!=="true";
     $$("[data-need]",nb).forEach(function(x){x.setAttribute("aria-pressed",String(on&&x===nd));});$$(".nans",nb).forEach(function(x){x.hidden=!(on&&x.getAttribute("data-ans")===nk);});if(on)track("need_tab",{tab:nk});return;}
@@ -191,7 +211,8 @@ function render(){
     "Today includes a free solar wash and a roof soft wash. Add a year of cleanings and every visit doubles as a spinner, clip and mesh check.");
   var hwWin=$("hwWin");if(hwWin)hwWin.hidden=!st.hw;
   $$("[data-cg]").forEach(function(g){g.hidden=+g.getAttribute("data-cg")!==st.ctype;});
-  var cgl=st.cpanes+st.cdoors;setText("comNote",cgl>P.comUpTo&&!P.comPane?"That's "+cgl+" panes counting doors. The first "+P.comUpTo+" are in the price, and Tony confirms the other "+(cgl-P.comUpTo)+" before the first visit.":"$"+P.com+" flat for 8 to "+P.comUpTo+" panes inside and out, doors included. Monthly takes 15% off every visit, every 2 weeks takes 25% off.");
+  var cgl=st.cpanes+st.cdoors;setText("comNote",(cgl>P.comUpTo?"That's "+cgl+" panes counting doors, so a flat $"+P.comOver+" covers everything past "+P.comUpTo+", inside and out. ":"$"+P.com+" flat for 8 to "+P.comUpTo+" panes inside and out, doors included. ")+"Month to month: 15% off monthly, 25% off every 2 weeks. Sign for a quarter and it's 20% off every visit, sign for a year and it's 40% off.");
+  var bp=bldgPrice();setText("bldgNote","$"+P.bPane+" a pane inside and out on the ground floor, $"+P.bPane+" more a pane for each story up"+(st.bst>1?": "+bp.rows.map(function(r){return "story "+r.story+" "+r.n+" × $"+r.rate;}).join(", "):"")+". We check every pane for hard water staining and work around existing tint. Free walkthrough, firm price in writing.");
 
   var t=totals(),tl=$("tlines");tl.textContent="";
   if(!t.it.length){var e0=doc.createElement("div");e0.className="tline";e0.textContent="Tap a service above to see a price.";tl.appendChild(e0);}
@@ -292,7 +313,7 @@ function cityOf(){var parts=fld("fstreet").split(","),c=parts.length>1?parts[par
 /* a storefront or building quote describes the business, not a home */
 function comOnly(){return st.com&&!ALL.some(function(k){return k!=="com"&&k!=="gr"&&k!=="ad"&&st[k];});}
 function comLine(){var bn=api&&api.bizName?pdfClean(api.bizName()||""):"";return st.ctype===0?"Storefront"+(bn?" ("+bn+")":"")+", "+st.cpanes+" pane"+pl(st.cpanes)+" and "+st.cdoors+" glass door"+pl(st.cdoors)+(st.cstk?", "+st.cstk+" vinyl sticker"+pl(st.cstk):"")+(st.cin?", partitions and mirrors too":"")+", "+P.comFName[st.cfreq]
-  :"Office building, "+st.bst+" stor"+(st.bst>1?"ies":"y")+", about "+(st.bsq*1000).toLocaleString("en-US")+" sq ft, "+st.bwin+" windows";}
+  :"Office building, "+st.bst+" stor"+(st.bst>1?"ies":"y")+", about "+(st.bsq*1000).toLocaleString("en-US")+" sq ft, "+st.bwin+" panes inside and out";}
 function propLabel(){return comOnly()?"Business":"Home";}
 function homeLine(){if(comOnly())return comLine();var b=[st.stories+" story"];
   if(api&&api.homeDesc)b.push(api.homeDesc());
@@ -362,19 +383,19 @@ var FLAGS=ALL.concat(["more","inside","large","frames","pkg"]);
 function token(){var f=0;FLAGS.forEach(function(k,i){if(st[k])f|=1<<i;});
   return "q"+f.toString(36)+"-"+st.stories+st.pet+st.plan+(st.time+1)+"-"+st.panels+"-"+st.spin+"-"+st.screens+"-"+st.panes+
     (st.arrays>1?"-a"+st.arr.slice(0,st.arrays).join("."):"")+
-    (st.com?"-c"+st.ctype+st.cfreq+(st.cin?1:0)+"."+[st.cpanes,st.cdoors,st.cstk,st.bsq,st.bst,st.bwin].join("."):"")+(st.day?"-d"+st.day.replace(/-/g,""):"");}
+    (st.com?"-c"+st.ctype+st.cfreq+(st.cin?1:0)+st.cterm+"."+[st.cpanes,st.cdoors,st.cstk,st.bsq,st.bst,st.bwin].join("."):"")+(st.day?"-d"+st.day.replace(/-/g,""):"");}
 function loadToken(){
-  var m=/^#q([0-9a-z]{1,5})-([12])([01])([0-3])([0-3])-(\d{1,2})-(\d{1,2})-(\d{1,2})-(\d{1,2})(?:-a(\d{1,2}(?:\.\d{1,2}){1,2}))?(?:-c([01])([0-2])([01])\.(\d{1,2})\.(\d{1,2})\.(\d{1,2})\.(\d{1,3})\.(\d{1,2})\.(\d{1,3}))?(?:-d(\d{8}))?$/.exec(location.hash||"");
+  var m=/^#q([0-9a-z]{1,5})-([12])([01])([0-3])([0-3])-(\d{1,2})-(\d{1,2})-(\d{1,2})-(\d{1,2})(?:-a(\d{1,2}(?:\.\d{1,2}){1,2}))?(?:-c([01])([0-2])([01])([0-2])?\.(\d{1,2})\.(\d{1,2})\.(\d{1,2})\.(\d{1,3})\.(\d{1,2})\.(\d{1,3}))?(?:-d(\d{8}))?$/.exec(location.hash||"");
   if(!m)return false;
   var f=parseInt(m[1],36);if(!(f>=0)||f>=(1<<FLAGS.length))return false;
   FLAGS.forEach(function(k,i){st[k]=!!(f&(1<<i));});
   st.stories=clamp("stories",+m[2]);st.pet=clamp("pet",+m[3]);st.plan=clamp("plan",+m[4]);st.time=clamp("time",+m[5]-1);
   st.panels=clamp("panels",+m[6]);st.spin=clamp("spin",+m[7]);st.screens=clamp("screens",+m[8]);st.panes=clamp("panes",+m[9]);
   if(m[10]){var parts=m[10].split(".");st.arrays=parts.length;parts.forEach(function(x,i){st.arr[i]=clamp("arr"+i,+x);});sumPanels();}
-  if(m[11]){st.ctype=clamp("ctype",+m[11]);st.cfreq=clamp("cfreq",+m[12]);st.cin=m[13]==="1";st.cpanes=clamp("cpanes",+m[14]);st.cdoors=clamp("cdoors",+m[15]);st.cstk=clamp("cstk",+m[16]);
-    st.bsq=clamp("bsq",+m[17]);st.bst=clamp("bst",+m[18]);st.bwin=clamp("bwin",+m[19]);}
+  if(m[11]){st.ctype=clamp("ctype",+m[11]);st.cfreq=clamp("cfreq",+m[12]);st.cin=m[13]==="1";st.cterm=clamp("cterm",+(m[14]||0));st.cpanes=clamp("cpanes",+m[15]);st.cdoors=clamp("cdoors",+m[16]);st.cstk=clamp("cstk",+m[17]);
+    st.bsq=clamp("bsq",+m[18]);st.bst=clamp("bst",+m[19]);st.bwin=clamp("bwin",+m[20]);}
   /* the picked day comes along only while it's still ahead, so the 10% matches what was shared */
-  if(m[20]){var d=parseIso(m[20].slice(0,4)+"-"+m[20].slice(4,6)+"-"+m[20].slice(6)),max=new Date(TODAY.getTime());max.setFullYear(max.getFullYear()+1);
+  if(m[21]){var d=parseIso(m[21].slice(0,4)+"-"+m[21].slice(4,6)+"-"+m[21].slice(6)),max=new Date(TODAY.getTime());max.setFullYear(max.getFullYear()+1);
     if(d&&d>TODAY&&d<=max)st.day=iso(d);}
   st.pkg=st.pkg?1:0;fixTime();
   return true;
@@ -443,10 +464,14 @@ function makePdf(logo,home){
   /* storefront schedules, priced for this storefront */
   if(st.com&&st.ctype===0){head("Storefront schedules");
     need(18);text(48,y,"Schedule",9,true,soft);text(300,y,"Each visit",9,true,soft,"r");text(420,y,"Visits a year",9,true,soft,"r");text(564,y,"About a year",9,true,soft,"r");y+=16;
-    var extra=(st.cin?P.comIn:0)+st.cstk*P.stk;[[0,1],[1,12],[2,26]].forEach(function(r){var v=cents(P.com*(1-P.comOff[r[0]]))+extra;need(18);if(r[0]===st.cfreq)rect(44,y-12,524,17,[253,244,226]);
-      text(48,y,P.comFName[r[0]].charAt(0).toUpperCase()+P.comFName[r[0]].slice(1)+(r[0]?"  ("+Math.round(P.comOff[r[0]]*100)+"% off)":""),11,r[0]===st.cfreq,ink);text(300,y,money(v),11,false,ink,"r");text(420,y,String(r[1]),11,false,ink,"r");text(564,y,money(v*r[1]),11,true,ink,"r");y+=18;});
-    if(st.cpanes+st.cdoors>P.comUpTo)para("Your storefront has "+(st.cpanes+st.cdoors)+" panes counting doors. The price covers 8 to "+P.comUpTo+", and Tony confirms the rest before the first visit.",10,soft);}
-  if(st.com&&st.ctype===1){head("Your building");para("Office building, "+st.bst+" stor"+(st.bst>1?"ies":"y")+", about "+(st.bsq*1000).toLocaleString("en-US")+" square feet, "+st.bwin+" windows. Tony walks it with you for free and gives you a firm written price before any work starts. Worked after hours, one invoice a month.",10,ink);}
+    var extra=(st.cin?P.comIn:0)+st.cstk*P.stk+(st.cpanes+st.cdoors>P.comUpTo?P.comOver:0),cur=comOff();
+    [["One time",0,1,0],["Monthly, month to month",.15,12,1],["Every 2 weeks, month to month",.25,26,2],["Monthly, quarterly agreement",.20,12,3],["Monthly, yearly agreement",.40,12,4]].forEach(function(r){var v=cents(P.com*(1-r[1]))+extra,on=Math.abs(r[1]-cur)<.001&&(st.cfreq?r[1]>0:r[1]===0);need(18);if(on)rect(44,y-12,524,17,[253,244,226]);
+      text(48,y,r[0]+(r[1]?"  ("+Math.round(r[1]*100)+"% off)":""),11,on,ink);text(300,y,money(v),11,false,ink,"r");text(420,y,String(r[2]),11,false,ink,"r");text(564,y,money(v*r[2]),11,true,ink,"r");y+=18;});
+    if(st.cpanes+st.cdoors>P.comUpTo)para("Your storefront has "+(st.cpanes+st.cdoors)+" panes counting doors. The first "+P.comUpTo+" are in the base price and a flat $"+P.comOver+" covers the rest, inside and out.",10,soft);}
+  if(st.com&&st.ctype===1){head("Your building");var bq=bldgPrice();
+    need(18);text(48,y,"Story",9,true,soft);text(300,y,"Panes",9,true,soft,"r");text(420,y,"Each, in and out",9,true,soft,"r");text(564,y,"Amount",9,true,soft,"r");y+=16;
+    bq.rows.forEach(function(r){need(18);text(48,y,r.story===1?"Ground floor":"Story "+r.story,11,false,ink);text(300,y,String(r.n),11,false,ink,"r");text(420,y,money(r.rate),11,false,ink,"r");text(564,y,money(r.amt),11,true,ink,"r");y+=18;});
+    para("Every pane is checked for hard water staining and we work around existing tint. Pane counts are confirmed on a free walkthrough, then the price is firm in writing. Worked after hours, one invoice a month.",10,ink);}
   /* what waiting costs, for the services on this quote */
   var wk=["pig","sol","win","scr","hw"].filter(function(k){return st[k]&&!(k==="sol"&&st.pig);});
   if(wk.length){head("What happens if you wait");
@@ -568,7 +593,7 @@ $$(".r3d",box).forEach(function(r){r.addEventListener("keydown",function(e){if(e
 var api=null,loading=false,pend=[],ov=$("ov"),lastFocus=null;
 var core={st:st,CFG:CFG,P:P,$:$,$$:$$,reduce:reduce,money:money,track:track,free:free,render:render,totals:totals,
   mode:CFG.mode||"home",close:function(){close3d();},
-  ie:function(){var v=zi&&zi.value;return !!(v&&v.length===5&&ieCity(v));},comVisit:function(){return comVisit();}};
+  ie:function(){var v=zi&&zi.value;return !!(v&&v.length===5&&ieCity(v));},comVisit:function(){return comVisit();},comOffName:comOffName,bldgPrice:bldgPrice};
 function script(src,ok,bad){var s=doc.createElement("script");s.src=src;s.async=true;s.onload=ok;s.onerror=bad;doc.head.appendChild(s);}
 function load3d(cb){
   if(api){if(cb)cb();return;}if(cb)pend.push(cb);if(loading)return;loading=true;
@@ -608,6 +633,11 @@ if(ov){
 /* ---------- start ---------- */
 if(CFG.street)$("fstreet").placeholder=CFG.street;
 if(loadToken()){hydrate();$("shared").hidden=false;setTimeout(function(){var q=$("quote");if(q)q.scrollIntoView({block:"start"});},60);}
+/* a link can land straight in the 3D: twindowclean.com/pigeon-proofing.html?see=pig, or #see-pig. Search snippets and ads use these. */
+(function(){var m=/[?&]see=(tour|home|win|sol|scr|pig|com)\b/.exec(location.search)||/^#see-(tour|home|win|sol|scr|pig|com)$/.exec(location.hash||"");if(!m)return;
+  var want=m[1];if(want==="win"||want==="sol"||want==="pig"||want==="scr")st[want]=true;
+  var go=function(){if(!ov)return;hydrate();render();open3d(want==="home"?"tour":want);track("deep_link_3d",{see:want});};
+  if(doc.readyState==="complete")setTimeout(go,150);else window.addEventListener("load",function(){setTimeout(go,150);});})();
 if("IntersectionObserver" in window){var seen=false;new IntersectionObserver(function(en,o){if(en[0].isIntersecting&&!seen){seen=true;track("view_price");o.disconnect();}}).observe($("price"));}
 render();
 setTab("r3d");

@@ -18,7 +18,8 @@ Written at the end of the build session on September 25, 2026. Read this top to 
 - Solar: $7 a panel.
 - Pigeon proofing: $450 up to 12 panels, +$50 each panel over 12, 2 to 3 reflective spinners free (extra $50 each), solar wash and roof soft wash included (roof wash is from $599 on its own). Mesh is clipped to the frame, never bolted. 2 year pigeon free warranty.
 - Screens: $53.99 charcoal fiberglass, $64.99 all weather, new frames +$10 a screen, $149 minimum when screens are the only service.
-- Storefronts: **$149 flat for 8 to 10 panes inside and out**, doors count as panes. Monthly 15% off every visit, every 2 weeks 25% off. Interior partitions and mirrors +$50. Rotating vinyl stickers $10 each. Office buildings: free walkthrough, then a firm price.
+- Storefronts: **$149 flat for 8 to 10 panes inside and out**, doors count as panes, **flat $50 more past 10**. Month to month: monthly 15% off every visit, every 2 weeks 25% off. **Quarterly agreement 20% off, yearly agreement 40% off** (the best single discount applies, never stacked). Interior partitions and mirrors +$50. Rotating vinyl stickers $10 each, every visit.
+- Office buildings: **$10 a pane inside and out on the ground floor, $10 more a pane for each story up** (story 2 is $20 a pane, story 3 is $30). Every pane checked for hard water staining, existing tint left alone. Free walkthrough confirms the count, then the price is firm in writing.
 - Home plans: once a year, twice a year 15% off, every 3 months 25% off. Booking online takes 10% off the first visit.
 - Large custom homes: Tony confirms on site ($499 to $599 inside and out on some).
 - Jobs run Monday to Friday. Weekends are free quote visits after 3 PM only.
@@ -51,13 +52,15 @@ Private preview of every page (only Tony can open it until he shares it): https:
 
 Made in the browser (`makePdf` in `quote.js`), downloaded or shared as a file. Every page carries a light diagonal watermark "CUSTOMER COPY" with the customer's name and date, and a footer line saying Tony brings the printed original for signatures. Storefront quotes show the storefront picture and a schedule table.
 
-## Waiting on Tony
+## Answered by Tony on September 25
 
-1. Storefront discounts: I read "then do the discounts from there" as 15% off monthly and 25% off every 2 weeks. Weekly was dropped. Confirm or give rates.
-2. Panes past 10 on a storefront: shows "Tony confirms" until he gives a per pane rate. Set `P.comPane` in `quote.js`.
-3. Office buildings: shows "Free walkthrough". A rate per window or per square foot goes in `P.bldg` (and the items line in `items()`).
-4. Stickers are charged $10 each per visit. Confirm.
-5. The camera lock: I read "Keep it where users can zoom in and wonder into other random homes. That's not the point of this." as "don't let them wander". Confirm.
+- Storefront discounts 15% monthly and 25% every 2 weeks confirmed; quarterly agreement 20%, yearly agreement 40% added.
+- Panes past 10 on a storefront: flat $50, inside and out.
+- Office buildings: $10 a pane, $10 more a pane per story up. Hard staining check and tint care are part of the pitch.
+- No Barstow page (too far, not enough there).
+- Search Console export received (3 months): the home page carries almost all clicks; "screen replacement" has 167 impressions at position 10 with no clicks; Google shows the site for Crestline, Lake Arrowhead and Cajon queries. The SEO plan in the masterplan artifact builds on that.
+- Meta pixel `1424363186269397` is live on every page and has fired; the account has no custom conversions yet. `quote.js` now maps events to ViewContent, CustomizeSimulator, QuoteReady, QuoteSubmitted, Lead and Contact.
+- Deep links: any page opens straight into the 3D with `?see=pig|win|sol|scr|com|tour` or `#see-pig`. Tested in `tools/tests/deeplink.js`.
 
 ## Blocked
 
