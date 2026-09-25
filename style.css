@@ -620,3 +620,50 @@ a.area-chip:focus-visible{
 }
 .hood h3{font-family:var(--font-head);font-size:1.05rem;color:var(--navy-800);margin-bottom:.35rem}
 .hood p{font-size:.95rem;color:var(--ink-soft);margin:0;line-height:1.6}
+
+/* ===== LIGHT LOOK (navy retired) =====
+   Navy stays for text only. Every block that used a navy or deep blue
+   background now sits on baby blue with navy text and gold accents. */
+:root{
+  --grad-deep:linear-gradient(160deg,#eaf6fc 0%,#d6ecf7 100%);
+  --grad-hero:linear-gradient(180deg,#eaf6fc 0%,#cfe8f5 100%);
+  --gold-text:#8f5d08;
+}
+.nav{background:rgba(255,255,255,.9);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 8px 30px -22px rgba(16,48,80,.5);padding-block:.5rem}
+.nav:not(.scrolled) .brand-text{color:var(--ink);text-shadow:none}
+.nav:not(.scrolled) .brand-text strong{color:var(--gold-text)}
+.nav-links a{color:var(--ink-soft);text-shadow:none}
+.nav-links a:hover{color:var(--brand-600)}
+.nav-phone{color:var(--brand-600)!important;text-shadow:none!important}
+.nav-toggle span{background:var(--ink)}
+.btn-ghost{background:#fff;color:var(--ink);border:1.5px solid var(--sky-200);backdrop-filter:none}
+.btn-ghost:hover{background:var(--sky-50)}
+.link-arrow{color:var(--gold-text);border-bottom-color:rgba(143,93,8,.35)}
+.link-arrow:hover{border-color:var(--gold-text)}
+.marquee,.stats,.quote,.tilt-card.accent,.compare-good{color:var(--ink)}
+.marquee-track span.dot,.stat .suf,.compare-good h3{color:var(--gold-text)}
+.tilt-card.accent{border:1px solid var(--sky-200)}
+.tilt-card.accent h3,.quote-info .section-title{color:var(--navy-800)}
+.tilt-card.accent p,.stat p,.quote-info .lead,.compare-good li{color:var(--ink-soft)}
+.tilt-card.accent .svc-ic,.ci{background:#fff}
+.tilt-card.accent .svc-price{color:var(--navy-800)}
+.cta-banner{background:linear-gradient(160deg,#eaf6fc 0%,#cfe8f5 100%);color:var(--ink)}
+.cta-banner::after{display:none}
+.cta-banner h2{color:var(--navy-800)}
+.cta-banner .grad{background:none;color:var(--gold-text)}
+.cta-banner p{color:var(--ink-soft)}
+.footer{background:#eaf6fc;color:var(--ink-soft);border-top:1px solid var(--sky-200)}
+.footer-brand,.footer-brand .brand-text,.footer-col h3,.footer-col h4{color:var(--navy-800)}
+.footer-brand .brand-text strong{color:var(--gold-text)}
+.footer-note,.footer-col a{color:var(--ink-soft)}
+.footer-col a:hover{color:var(--brand-600)}
+.footer-bottom{border-top-color:var(--sky-200);color:var(--ink-soft)}
+
+/* Page to page: the browser cross fades the whole page and keeps the nav still. Native, no script, no weight. */
+@view-transition{navigation:auto}
+.nav{view-transition-name:site-nav}
+::view-transition-old(root){animation:tqOut .18s ease-in both}
+::view-transition-new(root){animation:tqIn .28s ease-out both}
+@keyframes tqOut{to{opacity:0;transform:translateY(-6px)}}
+@keyframes tqIn{from{opacity:0;transform:translateY(8px)}}
+@media (prefers-reduced-motion:reduce){::view-transition-old(root),::view-transition-new(root){animation:none}}

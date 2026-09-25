@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Pricing | Tony's Window Cleaning High Desert</title>
-  <meta name="description" content="What we actually charge in the High Desert. Pigeon proofing from $450, solar from $7 a panel, windows from $149, screens $64.99. Firm quote before we start." />
+  <meta name="description" content="What we charge in the High Desert. Pigeon proofing from $450, solar $7 a panel, windows from $149, screens from $53.99. Book online, save 10%." />
   <meta name="theme-color" content="#103050" />
   <link rel="canonical" href="https://twindowclean.com/pricing.html" />
 
@@ -48,6 +48,9 @@
     src="https://www.facebook.com/tr?id=1424363186269397&ev=PageView&noscript=1" alt="" /></noscript>
 
   <link href="style.css" rel="stylesheet">
+  <!-- tq:css -->
+<link href="assets/quote/quote.css?v=1371b26d96" rel="stylesheet">
+<!-- /tq:css -->
 
   <script type="application/ld+json">
   {
@@ -214,6 +217,7 @@
   "@context": "https://schema.org",
   "@type": "HomeAndConstructionBusiness",
   "name": "Tony's Window Cleaning",
+  "alternateName": "Tonys Window Cleaning",
   "image": "https://twindowclean.com/assets/logo.png",
   "telephone": "+1-714-559-0300",
   "email": "twindowclean@gmail.com",
@@ -368,8 +372,6 @@
   "@id": "https://twindowclean.com/#business",
   "logo": "https://twindowclean.com/assets/logo.png"
 }
-
-
 </script>
 </head>
 <body>
@@ -396,30 +398,375 @@
     </button>
   </header>
 
-  <section class="hero hero-static">
-    <div class="hero-overlay"></div>
-    <div class="hero-content reveal">
+  <div class="tq">
+<section class="tq-hero" id="tq-top">
+  <div class="wrap">
+    <div class="tq-intro">
       <p class="crumbs"><a href="/">Home</a><span>/</span>Pricing</p>
-      <span class="eyebrow"><span class="gold-text">★★★★★</span> 5.0 from 25 Google reviews</span>
-      <h1 class="hero-title">What We <span class="grad">Actually Charge</span></h1>
-      <p class="hero-tagline">Published starting prices for every service we offer.</p>
-      <p class="hero-sub">
-        Knowing roughly what something costs before you call saves everyone time,
-        so the starting numbers are all published below.
-        Every price below is a starting point, and we tell you exactly what moves it.
-      </p>
-      <div class="hero-actions">
-        <a href="tel:7145590300" class="btn btn-primary">📞 Call 714-559-0300</a>
-        <a href="#quote" class="btn btn-ghost">Get a Firm Quote</a>
+      <span class="where">Serving the High Desert this week</span>
+      <h1>What We <span class="grad">Actually Charge</span></h1>
+      <p class="tagline">Published starting prices for every service we offer.</p>
+      <p class="lede">Knowing roughly what something costs before you call saves everyone time, so the starting numbers are all published below. Every price below is a starting point, and we tell you exactly what moves it.</p>
+<!-- tq:cta -->
+      <div class="chips">
+        <span class="chip">Windows <b>$149</b></span>
+        <span class="chip">Two story <b>$249</b></span>
+        <span class="chip">Inside <b>+$49</b></span>
+        <span class="chip">Solar <b>$7</b>/panel</span>
+        <span class="chip">Pigeon proofing <b>$450</b></span>
+        <span class="chip">Screens <b>$53.99</b></span>
       </div>
-      <ul class="hero-trust">
-        <li><strong>Free</strong><span>Inspection and quote</span></li>
-        <li><strong>Firm</strong><span>Written before we start</span></li>
-        <li><strong>2 year</strong><span>Warranty on proofing</span></li>
-        <li><strong>No</strong><span>Hidden add ons</span></li>
-      </ul>
+      <div class="go">
+        <a class="qb qb-gold" href="#quote">Get my price</a>
+        <button type="button" class="qb qb-ghost open3d" data-mode="tour">See it on my home</button>
+      </div>
+      <p class="rate"><b>★★★★★</b> 5.0 on Google · Free inspection · Satisfaction guaranteed</p>
+<!-- /tq:cta -->
     </div>
-  </section>
+<!-- tq:media -->
+    <div class="wipe-col">
+      <div class="modes" id="modes" role="group" aria-label="What to show">
+        <button type="button" data-m="r3d" aria-pressed="true">3D home</button>
+        <button type="button" data-m="win" aria-pressed="false">Windows</button>
+        <button type="button" data-m="sol" aria-pressed="false">Solar</button>
+        <button type="button" data-m="pig" aria-pressed="false">Pigeons</button>
+      </div>
+      <div class="wipe" id="wipe">
+        <div class="lay r3d open3d" data-mode="tour" data-lay="r3d" role="button" tabindex="0" aria-label="Open the 3D preview of your home">
+          <img class="r3d-poster" id="r3dPoster" src="assets/quote/home-4x5.webp" alt="3D model of a High Desert home with clean windows, washed solar panels, pigeon mesh and spinners" width="800" height="1000" fetchpriority="high" decoding="async">
+          <div class="h3host" id="h3host"></div>
+          <div class="callout" id="hcall" hidden><i></i><span></span></div>
+          <span class="r3d-go">See it on my home</span>
+        </div>
+        <div class="lay car" data-lay="win" hidden>
+          <div class="track">
+            <figure><img src="assets/quote/win-after.jpg" alt="Sliding glass door, clear after cleaning" width="800" height="600" loading="lazy" decoding="async"><figcaption>Sliding door · clear glass</figcaption></figure>
+            <figure><img src="assets/photos/spring-valley-lake-window-02.jpg" alt="Arched window on a Spring Valley Lake home after cleaning" width="750" height="1000" loading="lazy" decoding="async"><figcaption>Arched window · Spring Valley Lake</figcaption></figure>
+            <figure><img src="assets/photos/apple-valley-window-02.jpg" alt="Large picture window in Apple Valley after cleaning" width="750" height="1000" loading="lazy" decoding="async"><figcaption>Picture window · Apple Valley</figcaption></figure>
+          </div>
+          <div class="dots" aria-hidden="true"></div>
+          <div class="done show"><b>Screens, tracks and sills too.</b><span>$149 single story, $249 two story.</span></div>
+        </div>
+        <div class="lay car" data-lay="sol" hidden>
+          <div class="track">
+            <figure><img src="assets/quote/sol-after.jpg" alt="Solar array after a purified water wash" width="480" height="640" loading="lazy" decoding="async"><figcaption>Full array · one visit</figcaption></figure>
+            <figure><img src="assets/photos/adelanto-solar-03.jpg" alt="Clean solar panels on an Adelanto home" width="1000" height="750" loading="lazy" decoding="async"><figcaption>Adelanto array</figcaption></figure>
+            <figure><img src="assets/photos/victorville-solar-01.jpg" alt="Clean solar array on a Victorville two story home" width="750" height="1000" loading="lazy" decoding="async"><figcaption>Victorville two story</figcaption></figure>
+          </div>
+          <div class="dots" aria-hidden="true"></div>
+          <div class="done show"><b>$7 a panel.</b><span>Purified water and a soft brush. Nobody walks on your panels.</span></div>
+        </div>
+        <div class="lay car" data-lay="pig" hidden>
+          <div class="track">
+            <figure><img src="assets/quote/pig-after.jpg" alt="Solar array with mesh clipped along the edge after pigeon proofing" width="800" height="600" loading="lazy" decoding="async"><figcaption>Mesh clipped · panels clean</figcaption></figure>
+            <figure><img src="assets/photos/hub-pigeon-proofing-02.jpg" alt="Pigeon mesh running the full edge of a solar array" width="750" height="1000" loading="lazy" decoding="async"><figcaption>Mesh along the full edge</figcaption></figure>
+            <figure><img src="assets/photos/apple-valley-pigeon-05.jpg" alt="Sealed and cleaned solar array in Apple Valley" width="778" height="1000" loading="lazy" decoding="async"><figcaption>Apple Valley · sealed and clean</figcaption></figure>
+          </div>
+          <div class="dots" aria-hidden="true"></div>
+          <div class="done show"><b>$450 up to 12 panels.</b><span>Cleaned out, mesh clipped on, 2 to 3 spinners free.</span></div>
+          <button type="button" class="qb qb-gold qb-sm open3d cmp-3d" data-mode="pig">See it in 3D</button>
+        </div>
+        <span class="lbl" id="wlbl">Live 3D</span>
+      </div>
+      <p class="wipe-note" id="wnote">A model home finished the way we leave yours. Tap it to try your own.</p>
+    </div>
+<!-- /tq:media -->
+  </div>
+</section>
+<!-- tq:steps -->
+<!-- STEP 1: pick and price -->
+<section class="tq-step" id="quote" data-nosnippet>
+  <span id="need"></span>
+  <div class="wrap">
+    <div id="shared" class="banner" hidden>You opened a shared quote. Change anything you like.</div>
+    <div class="step-head"><span class="step-n">1</span><h2>Tap what you need</h2></div>
+    <p class="step-sub">Pick one or more. These are real prices, and Tony confirms in writing before any work starts.</p>
+    <div class="tiles" id="tiles">
+      <button type="button" class="tile" data-svc="win" aria-pressed="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M12 3v18M3 12h18"/></svg>
+        <b>Windows</b><span>From $149, screens, tracks and sills included</span></button>
+      <button type="button" class="tile" data-svc="sol" aria-pressed="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 18 7 6h10l3 12Z"/><path d="M5.5 12h13M12 6v12"/></svg>
+        <b>Solar panels</b><span>$7 a panel, dried spot free</span></button>
+      <button type="button" class="tile" data-svc="pig" aria-pressed="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 13c4 0 6-3 9-3s4 2 6 2l3-2-1 4c-1 3-4 5-8 5-5 0-9-2-9-6Z"/><circle cx="17" cy="11" r=".5" fill="currentColor"/></svg>
+        <b>Pigeon proofing</b><span>$450 up to 12 panels, spinners free</span></button>
+      <button type="button" class="tile" data-svc="scr" aria-pressed="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="1.5"/><path d="M4 8h16M4 13h16M9 3v18M15 3v18" stroke-width="1"/></svg>
+        <b>Screens</b><span>Re-meshed on site from $53.99</span></button>
+    </div>
+    <button type="button" class="more-svc" id="moreSvc" aria-expanded="false" aria-controls="xtiles"><b>Find our other services</b><span>Hard water, roof wash, new construction and more</span></button>
+    <div class="xtiles" id="xtiles" hidden>
+      <button type="button" class="xtile" data-svc="hw" aria-pressed="false"><b>Hard water removal</b><span>from $12 a pane</span></button>
+      <button type="button" class="xtile" data-svc="roof" aria-pressed="false"><b>Roof soft wash</b><span>from $599, included with pigeon proofing</span></button>
+      <button type="button" class="xtile" data-svc="pc" aria-pressed="false"><b>New construction clean</b><span>from $249 inside and out</span></button>
+      <button type="button" class="xtile" data-svc="gut" aria-pressed="false"><b>Gutter cleanout</b><span>quoted on site</span></button>
+      <button type="button" class="xtile" data-svc="pw" aria-pressed="false"><b>Driveway and patio wash</b><span>quoted on site</span></button>
+      <button type="button" class="xtile" data-svc="ad" aria-pressed="false"><b>Decal and vinyl removal</b><span>from $129</span></button>
+      <button type="button" class="xtile" data-svc="gr" aria-pressed="false"><b>Graffiti removal</b><span>from $129</span></button>
+      <button type="button" class="xtile" data-svc="com" aria-pressed="false"><b>Storefronts and buildings</b><span>$149 inside and out</span></button>
+    </div>
+
+    <div class="price-grid" id="price">
+      <div class="card svcs">
+        <div class="empty" id="empty" hidden>Tap a service above to see its options.</div>
+        <div class="svc" data-body="win">
+          <h3>Window cleaning <small>$149 / $249</small></h3>
+          <div class="opt"><span>Your home</span><div class="seg2" data-seg="stories"><button type="button" data-v="1" aria-pressed="true">1 story</button><button type="button" data-v="2" aria-pressed="false">2 story</button></div></div>
+          <div class="note" id="winNote"></div>
+          <div class="opt"><span><span id="moreLbl">More than 12 windows </span><b class="amt" id="moreAmt">+$39</b> <button type="button" class="info" data-why aria-expanded="false" aria-label="Why this price">i</button></span><button type="button" class="switch" data-sw="more" role="switch" aria-checked="false" aria-label="More windows than standard"></button></div>
+          <p class="why" hidden>The base price covers 10 to 12 windows on a single story or 18 to 20 on a two story. Past that it's more glass, more screens and more tracks to do right, so it's a flat $39 more, single or two story.</p>
+          <div class="opt"><span>Inside windows too <b class="amt">+$49</b> <button type="button" class="info" data-why aria-expanded="false" aria-label="Why this price">i</button><small>Every window in the house, tracks vacuumed and wiped dry</small></span><button type="button" class="switch" data-sw="inside" role="switch" aria-checked="false" aria-label="Add inside windows"></button></div>
+          <p class="why" hidden>One flat $49 for every window inside the house, with the tracks vacuumed and wiped dry. Most companies charge by the window for inside work. We're already there with the water and the tools, so doing the inside costs you far less than a separate visit.</p>
+          <div class="opt"><span>Large or custom home <button type="button" class="info" data-why aria-expanded="false" aria-label="Why this price">i</button><small>Lake homes, tall glass and lots of it. Tony confirms the price after a look.</small></span><button type="button" class="switch" data-sw="large" role="switch" aria-checked="false" aria-label="Large or custom home"></button></div>
+          <p class="why" hidden>Big custom homes vary a lot. Extra panes and screens are counted on site or from a satellite view, and inside and out can run $499 to $599 on some homes. You get the exact price from Tony before anything starts, so there are no surprises on the day.</p>
+          <p class="get"><b>What you get.</b> More light in every room, a clear view, screens and tracks that slide the way they should, and glass that lasts because hard water never gets the chance to etch it.</p>
+          <p class="now"><b>Why now.</b> Dust and sprinkler overspray build up fast up here. A cleaning every 3 to 6 months keeps hard water from setting into the glass.</p>
+          <button type="button" class="see3d open3d" data-mode="win">Watch a window get cleaned in 3D →</button>
+        </div>
+        <template data-tpl><div class="svc" data-body="pig">
+          <h3>Pigeon proofing <small>$450+</small></h3>
+          <div class="note">$450 covers up to 12 panels. Each panel over 12 is +$50 for the mesh, labor and cleaning that panel. Rigid, rust resistant steel mesh, never chicken wire, held by clips that grip the lip of the panel frame. Nothing is drilled or screwed into your panels, so the manufacturer warranty stays intact. 2 to 3 spinners free, plus a free solar wash and roof wash. <button type="button" class="info" data-why aria-expanded="false" aria-label="Why clips and not screws">i</button></div>
+          <p class="why" hidden>Cheaper crews screw or bolt mesh into the panel frame or the roof. Every hole is a spot for water and a reason for a solar company to deny a warranty claim. Our clips grip the inner lip of the frame, hold in High Desert wind, and come off clean if a panel ever needs service.</p>
+          <div class="opt stack"><span>Your package</span><div class="seg2 mesh" data-seg="pkg"><button type="button" data-v="0" aria-pressed="true">Pigeon proofing<small id="pkgA">$450</small></button><button type="button" data-v="1" aria-pressed="false">+ a year of cleanings<small id="pkgB"></small></button></div></div>
+          <p class="note" id="pkgNote"></p>
+          <div class="opt"><span>Panels over 12 <b class="amt">+$50 each</b> <button type="button" class="info" data-why aria-expanded="false" aria-label="Why this price">i</button></span></div>
+          <p class="why" hidden>$450 covers up to 12 panels. Each panel past that means more mesh, more clips, more cleanout under the array and one more panel to wash, so it's $50 a panel. Set your count in the panel box below.</p>
+          <div class="opt"><span>Extra spinners <b class="amt">$50 each</b> <button type="button" class="info" data-why aria-expanded="false" aria-label="Why this price">i</button></span><div class="stepper" data-step="spin"><button type="button" data-d="-1" aria-label="Fewer spinners">−</button><output class="num">0</output><button type="button" data-d="1" aria-label="More spinners">+</button></div></div>
+          <p class="why" hidden>2 to 3 spinners come free. A spinner's flash covers the side of the roof it faces, and a ridge blocks it, so bigger roofs or roofs with birds on both sides usually need one more. Tap "See what the spinners do" to watch it in 3D.</p>
+          <p class="get"><b>What you get.</b> Birds out for good, nests and droppings hauled away and the area sanitized so the smell goes too, panels and roof cleaned, mesh clipped to the frame so nothing voids your panel warranty, and a 2 year pigeon free warranty in writing.</p>
+          <p class="now"><b>Why now.</b> Nests only get bigger. The longer the birds stay, the more there is to clean out and haul off, and that's the biggest swing in the price.</p>
+          <button type="button" class="see3d open3d" data-mode="pig">See what the spinners do in 3D →</button>
+        </div></template>
+        <template data-tpl><div class="svc" data-body="sol">
+          <h3>Solar panel cleaning <small>$7 a panel</small></h3>
+          <div class="note" id="solNote"></div>
+          <p class="get"><b>What you get.</b> Panels that make what they're rated for, and a look over the whole array for damage, loose wiring and birds while we're up there. $7 a panel, dried spot free.</p>
+          <p class="now"><b>Why now.</b> There's almost no rain up here to rinse panels, so the dust stacks up and your output drops a little more every month.</p>
+          <button type="button" class="see3d open3d" data-mode="sol">See your panels cleaned in 3D →</button>
+        </div></template>
+        <template data-tpl><div class="svc" data-body="scr">
+          <h3>Screen repair <small>per screen</small></h3>
+          <div class="opt stack"><span>Mesh</span><div class="seg2 mesh" data-seg="pet"><button type="button" data-v="0" aria-pressed="false">Charcoal fiberglass<small>$53.99</small></button><button type="button" data-v="1" aria-pressed="true">All weather<small>$64.99</small></button></div></div>
+          <p class="note" data-mesh-fact="0">The same class of mesh your builder used, installed and tensioned right. Clearest view and good airflow. Fine for shaded windows.</p>
+          <p class="note" data-mesh-fact="1">Heavy vinyl coated polyester, 5x stronger and far more UV stable. Takes desert sun, wind and pets without going brittle.</p>
+          <div class="opt"><span>How many screens</span><div class="stepper" data-step="screens"><button type="button" data-d="-1" aria-label="Fewer screens">−</button><output class="num">4</output><button type="button" data-d="1" aria-label="More screens">+</button></div></div>
+          <div class="opt"><span>New frames and clips <b class="amt">+$10 a screen</b> <button type="button" class="info" data-why aria-expanded="false" aria-label="Why this price">i</button><small>Bent, missing or loose frames get rebuilt to fit, with new clips. Either mesh.</small></span><button type="button" class="switch" data-sw="frames" role="switch" aria-checked="false" aria-label="New frames and clips, $10 a screen"></button></div>
+          <p class="why" hidden>When a frame is bent, loose or missing corners, new mesh won't sit tight in it. We rebuild the frame to fit your window with new corners and clips, so the screen snaps in and stays. $10 a screen, with either mesh.</p>
+          <div class="note">Re-meshed on site, same visit. $149 job minimum when screens are the only service. 2 year warranty.</div>
+          <p class="get"><b>What you get.</b> Air in and bugs out, a clearer view from inside, screens that pop in and out easily, and a 2 year warranty on the mesh.</p>
+          <p class="now"><b>Why now.</b> UV runs about nine months a year up here. Builder mesh goes brittle, then the wind finishes it off.</p>
+          <button type="button" class="see3d open3d" data-mode="scr">Compare the mesh in 3D →</button>
+        </div></template>
+        <template data-tpl><div class="svc" data-body="hw">
+          <h3>Hard water removal <small>from $12 a pane</small></h3>
+          <div class="opt"><span>Panes with spots <button type="button" class="info" data-why aria-expanded="false" aria-label="Why this price">i</button></span><div class="stepper" data-step="panes"><button type="button" data-d="-1" aria-label="Fewer panes">−</button><output class="num">6</output><button type="button" data-d="1" aria-label="More panes">+</button></div></div>
+          <p class="why" hidden>Hard water is minerals bonded to the glass, so each pane is treated and polished by hand, pane by pane. We test one pane free first so you see the result before you decide on the rest.</p>
+          <div class="note">Added to an exterior window clean, so window cleaning is on your quote too. One pane tested free first so you see the result before you pay for the rest.</div>
+        </div></template>
+        <template data-tpl><div class="svc" data-body="roof">
+          <h3>Roof soft wash <small>from $599</small></h3>
+          <div class="note">Part of our pressure washing. Low pressure soft wash, safe for tile and shingle, priced by the size of the roof. Included with pigeon proofing.</div>
+        </div></template>
+        <template data-tpl><div class="svc" data-body="pc">
+          <h3>New construction clean <small>from $249</small></h3>
+          <div class="opt"><span>Your home</span><div class="seg2" data-seg="stories"><button type="button" data-v="1" aria-pressed="true">1 story</button><button type="button" data-v="2" aria-pressed="false">2 story</button></div></div>
+          <div class="note">Stucco, paint, stickers and drywall dust off new glass, inside and out. $249 single story, $349 two story. Tempered panes tested before any scraping.</div>
+        </div></template>
+        <template data-tpl><div class="svc" data-body="gut">
+          <h3>Gutter cleanout <small>quoted on site</small></h3>
+          <div class="note">Tony prices it when he sees it, usually while he's already there. No charge to look.</div>
+        </div></template>
+        <template data-tpl><div class="svc" data-body="pw">
+          <h3>Driveway and patio wash <small>quoted on site</small></h3>
+          <div class="note">Priced by the size of the concrete. Tony gives you the number before he starts.</div>
+        </div></template>
+        <template data-tpl><div class="svc" data-body="ad">
+          <h3>Decal and vinyl removal <small>from $129</small></h3>
+          <div class="note">Up to three panes of old decals, signage or window graphics. Staged process, and a straight answer on any pane that can't be saved.</div>
+        </div></template>
+        <template data-tpl><div class="svc" data-body="gr">
+          <h3>Graffiti removal <small>from $129</small></h3>
+          <div class="note">A single tag on one pane. Etched glass starts with an $89 assessment, credited if you go ahead.</div>
+        </div></template>
+        <template data-tpl><div class="svc" data-body="com">
+          <h3>Storefronts and buildings <small>$149 inside and out</small></h3>
+          <div class="opt"><span class="l"><b>What are we cleaning?</b></span><div class="seg2" data-seg="ctype"><button type="button" data-v="0" aria-pressed="true">Storefront</button><button type="button" data-v="1" aria-pressed="false">Office building</button></div></div>
+          <div class="cgrp" data-cg="0">
+            <div class="opt"><span class="l"><b>Glass panes</b><small>Every pane facing out, big or small</small></span><div class="stepper" data-step="cpanes"><button type="button" data-d="-1" aria-label="Fewer panes">−</button><output class="num">8</output><button type="button" data-d="1" aria-label="More panes">+</button></div></div>
+            <div class="opt"><span class="l"><b>Glass doors</b><small>Each door counts as a pane</small></span><div class="stepper" data-step="cdoors"><button type="button" data-d="-1" aria-label="Fewer doors">−</button><output class="num">2</output><button type="button" data-d="1" aria-label="More doors">+</button></div></div>
+            <div class="opt"><span class="l"><b>How often</b></span><div class="seg2 wrapok" data-seg="cfreq"><button type="button" data-v="0" aria-pressed="true">One time $149</button><button type="button" data-v="1" aria-pressed="false">Monthly 15% off</button><button type="button" data-v="2" aria-pressed="false">Every 2 weeks 25% off</button></div></div>
+            <div class="opt"><span class="l"><b>Sign for longer, pay less</b><small>Locks the price and the schedule</small></span><div class="seg2 wrapok" data-seg="cterm"><button type="button" data-v="0" aria-pressed="true">Month to month</button><button type="button" data-v="1" aria-pressed="false">Quarterly 20% off</button><button type="button" data-v="2" aria-pressed="false">Yearly 40% off</button></div></div>
+            <div class="opt"><span>Interior partitions and mirrors <b class="amt">+$50</b></span><button type="button" class="switch" data-sw="cin" role="switch" aria-checked="false" aria-label="Add interior partitions and mirrors"></button></div>
+            <div class="opt"><span class="l"><b>Rotating vinyl stickers <b class="amt">+$10 each</b> <button type="button" class="info" data-why aria-expanded="false" aria-label="What this covers">i</button></b><small>Hours, sales and promos you swap out</small></span><div class="stepper" data-step="cstk"><button type="button" data-d="-1" aria-label="Fewer stickers">−</button><output class="num">0</output><button type="button" data-d="1" aria-label="More stickers">+</button></div></div>
+            <p class="why" hidden>When your promos change, we take the old sticker off clean and put the new one up straight while we're there, $10 a sticker. You bring the stickers, we handle the glass.</p>
+            <div class="note" id="comNote">$149 flat for 8 to 10 panes inside and out, doors included. Monthly takes 15% off every visit, every 2 weeks takes 25% off.</div>
+          </div>
+          <div class="cgrp" data-cg="1" hidden>
+            <div class="opt"><span class="l"><b>Building size</b><small>Thousands of square feet, close is fine</small></span><div class="stepper" data-step="bsq"><button type="button" data-d="-1" aria-label="Smaller building">−</button><output class="num">12</output><button type="button" data-d="1" aria-label="Bigger building">+</button></div></div>
+            <div class="opt"><span class="l"><b>Stories</b></span><div class="stepper" data-step="bst"><button type="button" data-d="-1" aria-label="Fewer stories">−</button><output class="num">2</output><button type="button" data-d="1" aria-label="More stories">+</button></div></div>
+            <div class="opt"><span class="l"><b>Panes</b><small>Count one side and multiply, close is fine</small></span><div class="stepper" data-step="bwin"><button type="button" data-d="-4" aria-label="Fewer windows">−</button><output class="num">48</output><button type="button" data-d="4" aria-label="More windows">+</button></div></div>
+            <div class="note" id="bldgNote">$10 a pane inside and out on the ground floor, $10 more a pane for each story up. We check every pane for hard water staining and work around existing tint. Free walkthrough, firm price in writing.</div>
+          </div>
+          <div class="note"><a href="commercial-window-cleaning.html">See storefront plans →</a> · <button type="button" class="linkish open3d" data-mode="com">See it in 3D</button></div>
+        </div></template>
+        <div class="svc" id="panelRow">
+          <div class="opt"><span class="l"><b>Solar panels on your roof</b><small>Count them from the street, close is fine</small></span><div class="stepper" data-step="panels"><button type="button" data-d="-1" aria-label="Fewer panels">−</button><output class="num">16</output><button type="button" data-d="1" aria-label="More panels">+</button></div><b class="ptotal num" hidden></b></div>
+          <div class="opt"><span class="l"><b>Sections</b><small>Panels in separate groups? Count each one.</small></span><div class="seg2" data-seg="arrays"><button type="button" data-v="1" aria-pressed="true">1</button><button type="button" data-v="2" aria-pressed="false">2</button><button type="button" data-v="3" aria-pressed="false">3</button></div></div>
+          <div class="opt" data-sec="0" hidden><span>Section 1</span><div class="stepper" data-step="arr0"><button type="button" data-d="-1" aria-label="Fewer panels in section 1">−</button><output class="num">8</output><button type="button" data-d="1" aria-label="More panels in section 1">+</button></div></div>
+          <div class="opt" data-sec="1" hidden><span>Section 2</span><div class="stepper" data-step="arr1"><button type="button" data-d="-1" aria-label="Fewer panels in section 2">−</button><output class="num">8</output><button type="button" data-d="1" aria-label="More panels in section 2">+</button></div></div>
+          <div class="opt" data-sec="2" hidden><span>Section 3</span><div class="stepper" data-step="arr2"><button type="button" data-d="-1" aria-label="Fewer panels in section 3">−</button><output class="num">6</output><button type="button" data-d="1" aria-label="More panels in section 3">+</button></div></div>
+        </div>
+      </div>
+      <div class="card ticket" aria-live="polite">
+        <div id="tlines"></div>
+        <div class="ttotal"><span>Total</span><b id="ttotal" class="num">$149</b></div>
+        <div class="save" id="save" hidden></div>
+        <p class="from-note" id="fromNote" hidden>Specialty work is a starting price. Tony confirms it in writing before he starts.</p>
+        <a class="early-tip" id="earlyTip" href="#day">Book online and save 10% →</a>
+        <div class="guar"><span aria-hidden="true">✓</span><span><b>Satisfaction guaranteed.</b> If anything isn't right, we redo it before we leave.</span></div>
+        <ul class="trust"><li>Free inspection</li><li>No trip fee in the High Desert</li><li>Card, cash or check</li></ul>
+        <a class="qb qb-gold" href="#day" style="width:100%;margin-top:14px">Pick a day →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STEP 2: day and plan -->
+<section class="tq-step" id="day" data-nosnippet>
+  <div class="wrap">
+    <div class="step-head"><span class="step-n">2</span><h2>Pick a day</h2></div>
+    <p class="early" id="early"><span class="early-badge">Book online</span><span id="earlyTxt">Book on our website and save an extra 10%. Pick your day below.</span></p>
+    <div class="pickgrid">
+      <div class="card">
+        <div class="lab">Day</div>
+        <div class="days" id="days" role="group" aria-label="Pick a day"></div>
+        <label class="other-date"><span>Or pick another date</span><input type="date" id="dateIn"></label>
+        <div class="lab" style="margin-top:14px">Time</div>
+        <div class="seg2 wrapok" data-seg="time"><button type="button" data-v="0" aria-pressed="false">Morning</button><button type="button" data-v="1" aria-pressed="false">Afternoon</button><button type="button" data-v="2" aria-pressed="false">I prefer weekends</button></div>
+        <p class="small strong" id="dayPicked"></p>
+        <p class="small" id="dayRule">Tony confirms by text, and if your day fills up he'll offer the closest one.</p>
+      </div>
+      <div class="card plan">
+        <div class="lab">How often</div>
+        <div class="plans" data-seg="plan"><button type="button" data-v="0" aria-pressed="true"><b>One time</b><small>just this visit</small></button><button type="button" data-v="1" aria-pressed="false"><b>Once a year</b><small></small></button><button type="button" data-v="2" aria-pressed="false"><b>Twice a year</b><small></small></button><button type="button" data-v="3" aria-pressed="false"><b>Every 3 months</b><i>Best value</i><small></small></button></div>
+        <p class="small strong" id="planWhy"></p>
+        <p class="small">Desert dust and hard water come back, the same as a lawn grows back. On a plan Tony texts you before each visit, so you never have to remember.</p>
+        <div class="planbox" id="planbox" hidden><div class="lab">Your plan</div><ol class="visits" id="visits"></ol><p class="plantot" id="plantot"></p></div>
+        <button type="button" class="qb qb-ghost qb-sm pdf" id="pdfBtn">Download my quote (PDF)</button>
+        <p class="small" id="pdfNote" aria-live="polite"></p>
+      </div>
+    </div>
+    <div class="card wait">
+      <div class="lab">What happens next</div>
+      <div class="reasons">
+        <p><b>Your price is set.</b> It's right above, and it doesn't change on the day.</p>
+        <p><b>Tony confirms by text.</b> He brings everything, works around your day, and you don't lift a finger.</p>
+        <p><b>Nothing to pay now.</b> Card, cash or check once the work is done and you've looked it over.</p>
+      </div>
+      <div class="lab" style="margin-top:14px">What happens if you wait</div>
+      <div class="seg2 wrapok" data-seg="wait"><button type="button" data-v="0" aria-pressed="false">Book now</button><button type="button" data-v="1" aria-pressed="false">3 months</button><button type="button" data-v="2" aria-pressed="true">6 months</button><button type="button" data-v="3" aria-pressed="false">A year</button></div>
+      <ul class="waitlist" id="waitList"></ul>
+      <p class="small strong" id="waitNote"></p>
+      <a class="qb qb-gold qb-sm" href="#day" id="waitGo" style="margin-top:10px">Pick my day and save 10% →</a>
+    </div>
+  </div>
+</section>
+
+<!-- STEP 3: send -->
+<section class="tq-step" id="tq-send" data-nosnippet>
+  <div class="wrap">
+    <div class="step-head"><span class="step-n">3</span><h2>Send it your way</h2></div>
+    <p class="step-sub">Nothing to pay now. Fill in your details once, then text, email or send the form. Everything Tony needs is already written for you.</p>
+    <form class="send" id="sendForm" novalidate>
+      <div class="card">
+        <div class="fld"><label for="fname">Your name</label><input id="fname" name="name" autocomplete="name" maxlength="80" placeholder="Maria Lopez"></div>
+        <div class="fld"><label for="fstreet">Address</label><input id="fstreet" name="street" autocomplete="street-address" maxlength="140" placeholder="Street, city"></div>
+        <div class="fld"><label for="fphone">Mobile number</label><input id="fphone" name="phone" type="tel" inputmode="tel" autocomplete="tel-national" maxlength="20" placeholder="760-555-0123" aria-describedby="ferr"></div>
+        <div class="fld"><label for="femail">Email <small>optional</small></label><input id="femail" name="email" type="email" inputmode="email" autocomplete="email" maxlength="120" placeholder="you@email.com"></div>
+        <div class="fld"><label for="fnotes">Anything we should know? <small>optional</small></label><textarea id="fnotes" name="notes" maxlength="400" rows="2" placeholder="Gate code, dogs in the yard, best time to call"></textarea></div>
+        <div class="err" id="ferr" role="alert"></div>
+        <div class="hp" aria-hidden="true"><label for="hp">Leave this empty</label><input id="hp" name="company" tabindex="-1" autocomplete="off"></div>
+        <div class="lab" style="margin-top:14px">How do you want to send it?</div>
+        <div class="ways">
+          <a class="way" id="smsA" href="sms:+17145590300"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12Z"/></svg><b>Text Tony</b><span>Opens your messages, all filled in</span></a>
+          <a class="way" id="mailA" href="mailto:twindowclean@gmail.com"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg><b>Email Tony</b><span>Opens your email, all filled in</span></a>
+          <button type="submit" class="way" id="sendBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4Z"/></svg><b>Send the form</b><span>Straight to Tony from here</span></button>
+        </div>
+        <p class="small" id="wayNote">Texting works from a phone. On a computer, email or the form is easiest.</p>
+        <div id="sent" class="sent" hidden>
+          <b>Sent. Tony has your quote.</b>
+          <p>He'll text you back from 714-559-0300. Save the number so you know it's him.</p>
+          <div class="prev" id="prevNote" hidden>Preview only, nothing was sent. On the live site this lands in Tony's inbox with the full breakdown.</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="msg-h">What Tony gets</div>
+        <div class="msg" id="msg"></div>
+        <div class="acts">
+          <button type="button" class="qb qb-ghost qb-sm" id="copyBtn">Copy</button>
+          <button type="button" class="qb qb-ghost qb-sm" id="shareBtn">Save or share as PDF</button>
+        </div>
+        <div class="toast" id="toast" role="status"></div>
+        <div class="tip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="6" width="18" height="14" rx="2"/><circle cx="12" cy="13" r="3.5"/><path d="M8 6l1.5-2h5L16 6"/></svg><span>Texting? Add a photo of your roof or windows. Tony can size the job before he drives out.</span></div>
+        <div class="numline"><span>Or call</span><b>714-559-0300</b></div>
+      </div>
+    </form>
+    <details class="signs" id="signs">
+      <summary>How to tell it's time</summary>
+      <ul>
+        <li><b>Windows.</b> Spots when the sun hits the glass, screens that look gray, or more than 6 months since the last clean.</li>
+        <li><b>Solar panels.</b> No wash in the last 6 months, or a sunny day in your solar app reading lower than it used to.</li>
+        <li><b>Pigeons.</b> Birds on the roof, droppings on the tile or driveway, cooing under the panels, or a sharp ammonia smell in the heat. They don't leave on their own.</li>
+        <li><b>Screens.</b> Tears, holes, mesh that bows out of the frame or crumbles when you press it.</li>
+      </ul>
+    </details>
+  </div>
+</section>
+
+<!-- ZIP -->
+<section class="tq-step zipsec" id="zip">
+  <div class="wrap zip">
+    <div>
+      <h2>Do you come to me?</h2>
+      <p class="step-sub">Type your ZIP. You'll know in one second.</p>
+    </div>
+    <div>
+      <div class="zipbox"><input id="zipIn" inputmode="numeric" maxlength="5" autocomplete="postal-code" placeholder="92345" aria-label="Your ZIP code"></div>
+      <div class="zres" id="zres" aria-live="polite"><b>We cover the High Desert:</b> Hesperia, Victorville, Apple Valley, Oak Hills, Phelan, Adelanto, Spring Valley Lake and Silverwood.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 3D -->
+<section class="tq-step" id="three">
+  <div class="wrap">
+    <div class="sec-h"><h2>See it on your home in 3D</h2><p>Pick your home. Watch the job get done.</p></div>
+    <div class="t3grid">
+      <div class="p3">
+        <button type="button" class="p3-img open3d" data-mode="tour" aria-label="Open the 3D preview"><img src="assets/quote/home-16x10.webp" alt="3D model of a High Desert home with clean windows, washed solar panels and pigeon mesh" width="960" height="600" loading="lazy" decoding="async"><span class="r3d-go">Open the 3D preview</span></button>
+        <div class="p3-btns">
+          <button type="button" class="qb qb-ghost qb-sm open3d" data-mode="win">Windows</button>
+          <button type="button" class="qb qb-ghost qb-sm open3d" data-mode="sol">Solar</button>
+          <button type="button" class="qb qb-ghost qb-sm open3d" data-mode="scr">Screens</button>
+          <button type="button" class="qb qb-ghost qb-sm open3d" data-mode="pig">Pigeons</button>
+        </div>
+        <p class="p3-s">Older home or a big custom home? Pick Ranch, Classic or Lake estate and see the job on a home like yours.</p>
+      </div>
+      <div class="card sci">
+        <h3>What you're looking at</h3>
+        <ul class="ticks">
+          <li><b>Windows</b> cleaned with purified water, screens, tracks and sills included.</li>
+          <li><b>Solar panels</b> washed streak free, $7 a panel.</li>
+          <li><b>Pigeon mesh</b> clipped to the panel frame, never bolted, with free spinners on the vents.</li>
+          <li><b>Screens</b> re-meshed on site in charcoal fiberglass or all weather.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- /tq:steps -->
+</div>
 
   <section class="section services">
     <div class="container">
@@ -464,8 +811,8 @@
       <div class="photo-grid reveal">
         <a class="price-card" href="commercial-window-cleaning.html">
           <h3>Commercial Window Cleaning</h3>
-          <p class="svc-price">from $89 per visit</p>
-          <p>Storefront glass inside and out, up to ten pane faces, monthly. $79 biweekly, $69 weekly, $119 one off. Interior partitions add $50. After hours, one invoice a month. Local pages for <a href="commercial-window-cleaning-victorville.html">Victorville</a>, <a href="commercial-window-cleaning-hesperia.html">Hesperia</a> and <a href="commercial-window-cleaning-apple-valley.html">Apple Valley</a>.</p>
+          <p class="svc-price">$149 per storefront</p>
+          <p>Storefront glass inside and out, 8 to 10 panes with doors, $149. Monthly is 15% off and every 2 weeks is 25% off. Interior partitions add $50. After hours, one invoice a month. Local pages for <a href="commercial-window-cleaning-victorville.html">Victorville</a>, <a href="commercial-window-cleaning-hesperia.html">Hesperia</a> and <a href="commercial-window-cleaning-apple-valley.html">Apple Valley</a>.</p>
         </a>
         <a class="price-card" href="graffiti-removal.html">
           <h3>Graffiti Removal</h3>
@@ -569,63 +916,6 @@
     </div>
   </section>
 
-  <section id="quote" class="section quote">
-    <div class="container quote-grid">
-      <div class="quote-info reveal">
-        <span class="kicker light">Free Quote</span>
-        <h2 class="section-title">Get a firm number</h2>
-        <p class="lead">Tell us roughly what you have and we will get back to you the same day. If you want it fastest, just call.</p>
-
-        <ul class="contact-list">
-          <li><a href="tel:7145590300"><span class="ci">&#128222;</span> 714-559-0300</a></li>
-          <li><a href="mailto:twindowclean@gmail.com"><span class="ci">&#9993;&#65039;</span> twindowclean@gmail.com</a></li>
-          <li><a href="https://www.facebook.com/twindowclean" target="_blank" rel="noopener"><span class="ci">&#128216;</span> Facebook</a></li>
-        </ul>
-      </div>
-
-      <!-- Booking handled by Formspree &rarr; delivers to twindowclean@gmail.com -->
-      <form class="quote-form glass-card reveal" action="https://formspree.io/f/mdkzdael" method="POST">
-        <input type="hidden" name="_subject" value="Quote request from Pricing page">
-        <div class="field">
-          <label for="q-name">Name</label>
-          <input id="q-name" name="name" type="text" placeholder="Your name" required>
-        </div>
-        <div class="row">
-          <div class="field">
-            <label for="q-phone">Phone</label>
-            <input id="q-phone" name="phone" type="tel" placeholder="(760) 555-0123" required>
-          </div>
-          <div class="field">
-            <label for="q-city">City</label>
-            <input id="q-city" name="city" type="text" placeholder="Victorville, Hesperia&hellip;" required>
-          </div>
-        </div>
-        <div class="field">
-          <label for="q-service">What do you need priced?</label>
-          <select id="q-service" name="service">
-            <option>Pigeon Proofing</option>
-            <option>Solar Panel Cleaning</option>
-            <option>Window Cleaning</option>
-            <option>Screen Re-Mesh</option>
-            <option>Hard Water Stain Removal</option>
-            <option>Commercial Window Cleaning</option>
-            <option>Graffiti or Adhesive Removal</option>
-            <option>Post Construction Clean</option>
-            <option>Roof or Pressure Washing</option>
-            <option>Annual Service Plan</option>
-            <option>More than one of these</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="q-details">Tell us about the job</label>
-          <textarea id="q-details" name="details" rows="4" placeholder="How many windows, how many panels, single or two story"></textarea>
-        </div>
-        <button type="submit" class="btn btn-primary full">Send Request</button>
-        <p class="form-note">We usually reply the same day. No charge to come look.</p>
-      </form>
-    </div>
-  </section>
-
 
   <footer class="footer">
     <div class="container footer-grid">
@@ -658,6 +948,7 @@
         <a href="adelanto.html">Adelanto</a>
         <a href="oak-hills.html">Oak Hills</a>
         <a href="phelan.html">Phelan</a>
+        <a href="inland-empire.html">Inland Empire</a>
         <a href="service-areas.html">All service areas</a>
       </div>
       <div class="footer-col">
@@ -685,5 +976,135 @@
 
   <script src="assets/tags.js" defer></script>
   <script src="main.js" defer></script>
+<!-- tq:tail -->
+<div class="tq" data-nosnippet>
+<div class="ov" id="ov" role="dialog" aria-modal="true" aria-labelledby="ovT" hidden data-mode="home">
+  <div class="ov-top">
+    <b id="ovT">Your home in 3D</b>
+    <span class="ov-hint">Drag to turn · pinch or + to zoom</span>
+    <button type="button" class="ov-x" id="ovX" aria-label="Close the 3D preview">✕</button>
+  </div>
+  <div class="ov-tabs" role="tablist" aria-label="What to show">
+    <button type="button" role="tab" data-hmode="home" aria-selected="true">My home</button>
+    <button type="button" role="tab" data-hmode="win" aria-selected="false">Windows</button>
+    <button type="button" role="tab" data-hmode="sol" aria-selected="false">Solar</button>
+    <button type="button" role="tab" data-hmode="scr" aria-selected="false">Screens</button>
+    <button type="button" role="tab" data-hmode="pig" aria-selected="false">Pigeons</button>
+    <button type="button" role="tab" data-hmode="com" aria-selected="false">Storefront</button>
+  </div>
+  <div class="ov-stage" id="stage">
+    <div class="ov-load" id="ovLoad">Loading 3D…</div>
+    <div class="callout" id="ocall" hidden><i></i><span></span></div>
+    <div class="zoom" role="group" aria-label="Zoom">
+      <button type="button" data-zoom="1" aria-label="Zoom in">+</button>
+      <button type="button" data-zoom="-1" aria-label="Zoom out">−</button>
+      <button type="button" data-zoom="0" aria-label="Reset the view">⟲</button>
+    </div>
+    <button type="button" class="wx" id="wxChip" aria-label="Change the weather in the 3D view">Today</button>
+    <div class="ov-fade" id="ovFade"></div>
+    <div class="ov-msg" id="ovMsg" hidden><div class="mtxt" id="ovMsgT" aria-live="polite"></div><div class="mnav" id="ovNav" hidden><button type="button" data-hact="prev" aria-label="Back one step">‹ Back</button><span id="ovStep"></span><button type="button" data-hact="next" class="nx">Next ›</button></div></div>
+  </div>
+  <div class="ov-panel">
+    <button type="button" class="ov-grab" id="ovGrab" aria-expanded="true"><span>Customize my home</span><i aria-hidden="true"></i></button>
+    <template data-tpl>
+    <div class="ops" data-for="home">
+      <div class="otabs" role="tablist" aria-label="Customize"><button type="button" role="tab" data-otab="home" aria-selected="true">Home</button><button type="button" role="tab" data-otab="colors" aria-selected="false">Colors</button><button type="button" role="tab" data-otab="solar" aria-selected="false">Solar</button><button type="button" role="tab" data-otab="street" aria-selected="false">Street</button></div>
+      <div class="og" data-og="home">
+        <div class="orow col"><span>Home style</span><div class="seg2 wrapok styles" data-hseg="style"><button type="button" data-v="0" aria-pressed="true">New build</button><button type="button" data-v="1" aria-pressed="false">Ranch</button><button type="button" data-v="2" aria-pressed="false">Classic</button><button type="button" data-v="3" aria-pressed="false">Lake estate</button></div></div>
+        <div class="orow"><span>Stories</span><div class="seg2" data-seg="stories"><button type="button" data-v="1" aria-pressed="true">1 story</button><button type="button" data-v="2" aria-pressed="false">2 story</button></div></div>
+        <div class="orow"><span>Roof</span><div class="seg2" data-hseg="roof"><button type="button" data-v="0" aria-pressed="true">S tile</button><button type="button" data-v="1" aria-pressed="false">Flat tile</button><button type="button" data-v="2" aria-pressed="false">Shingle</button></div></div>
+        <div class="orow"><span>Window grids</span><button type="button" class="switch" data-hsw="grids" role="switch" aria-checked="false" aria-label="Window grids"></button></div>
+        <div class="orow"><span>More windows</span><button type="button" class="switch" data-sw="more" role="switch" aria-checked="false" aria-label="More windows"></button></div>
+        <p class="onote">Ranch, Classic and Lake estate are here for older and custom homes, so the job shows on a home like yours.</p>
+      </div>
+      <div class="og" data-og="colors" hidden>
+        <div class="orow"><span>Roof color</span><div class="sw" data-hseg="rc"><button type="button" data-v="0" aria-pressed="true" aria-label="Terracotta" style="background:#a9573a"></button><button type="button" data-v="1" aria-pressed="false" aria-label="Brown blend" style="background:#6e5140"></button><button type="button" data-v="2" aria-pressed="false" aria-label="Charcoal" style="background:#46484c"></button><button type="button" data-v="3" aria-pressed="false" aria-label="Sand" style="background:#c2a67c"></button></div></div>
+        <div class="orow"><span>Walls</span><div class="sw" data-hseg="wc"><button type="button" data-v="0" aria-pressed="true" aria-label="Desert sand" style="background:#e3d5bb"></button><button type="button" data-v="1" aria-pressed="false" aria-label="White" style="background:#f1eee8"></button><button type="button" data-v="2" aria-pressed="false" aria-label="Warm gray" style="background:#c9c5bd"></button><button type="button" data-v="3" aria-pressed="false" aria-label="Adobe" style="background:#d2ae8c"></button></div></div>
+        <div class="orow"><span>Trim</span><div class="sw" data-hseg="tc"><button type="button" data-v="0" aria-pressed="true" aria-label="White trim" style="background:#f5f3ee"></button><button type="button" data-v="1" aria-pressed="false" aria-label="Cream trim" style="background:#e9dcc0"></button><button type="button" data-v="2" aria-pressed="false" aria-label="Bronze trim" style="background:#5b4a3b"></button></div></div>
+      </div>
+      <div class="og" data-og="solar" hidden>
+        <div class="orow"><span>Solar panels</span><div class="stepper" data-step="panels"><button type="button" data-d="-1" aria-label="Fewer panels">−</button><output class="num">16</output><button type="button" data-d="1" aria-label="More panels">+</button></div><b class="ptotal num" hidden></b></div>
+        <div class="orow"><span>Sections</span><div class="seg2" data-seg="arrays"><button type="button" data-v="1" aria-pressed="true">1</button><button type="button" data-v="2" aria-pressed="false">2</button><button type="button" data-v="3" aria-pressed="false">3</button></div></div>
+        <div class="orow" data-sec="0" hidden><span>Section 1</span><div class="stepper" data-step="arr0"><button type="button" data-d="-1" aria-label="Fewer panels in section 1">−</button><output class="num">8</output><button type="button" data-d="1" aria-label="More panels in section 1">+</button></div></div>
+        <div class="orow" data-sec="1" hidden><span>Section 2</span><div class="stepper" data-step="arr1"><button type="button" data-d="-1" aria-label="Fewer panels in section 2">−</button><output class="num">8</output><button type="button" data-d="1" aria-label="More panels in section 2">+</button></div></div>
+        <div class="orow" data-sec="2" hidden><span>Section 3</span><div class="stepper" data-step="arr2"><button type="button" data-d="-1" aria-label="Fewer panels in section 3">−</button><output class="num">8</output><button type="button" data-d="1" aria-label="More panels in section 3">+</button></div></div>
+      </div>
+      <div class="og" data-og="street" hidden>
+        <div class="orow col"><span>Neighborhood</span><div class="seg2 wrapok" data-hseg="hood"><button type="button" data-v="0" aria-pressed="false">Desert yards</button><button type="button" data-v="1" aria-pressed="true">Lawns</button><button type="button" data-v="3" aria-pressed="false">Lake</button><button type="button" data-v="2" aria-pressed="false">Acreage</button></div></div>
+      </div>
+      <button type="button" class="replay quiet" data-hact="obd">Start over with my home and problems</button>
+    </div>
+    <div class="ops" data-for="win" hidden>
+      <div class="orow"><span>View</span><div class="seg2" data-hseg="view"><button type="button" data-v="0" aria-pressed="true">Outside</button><button type="button" data-v="1" aria-pressed="false">Inside</button></div></div>
+      <div class="orow"><span>Inside windows <b class="amt">+$49</b></span><button type="button" class="switch" data-sw="inside" role="switch" aria-checked="false" aria-label="Add inside windows"></button></div>
+      <div class="orow"><span>Your home</span><div class="seg2" data-seg="stories"><button type="button" data-v="1" aria-pressed="true">1 story</button><button type="button" data-v="2" aria-pressed="false">2 story</button></div></div>
+      <button type="button" class="replay" data-hact="replay">▶ Watch it again</button>
+    </div>
+    <div class="ops" data-for="sol" hidden>
+      <div class="orow big"><span>Your panel count</span><div class="stepper" data-step="panels"><button type="button" data-d="-1" aria-label="Fewer panels">−</button><output class="num">16</output><button type="button" data-d="1" aria-label="More panels">+</button></div><b class="ptotal num" hidden></b></div>
+      <div class="orow"><span>Sections</span><div class="seg2" data-seg="arrays"><button type="button" data-v="1" aria-pressed="true">1</button><button type="button" data-v="2" aria-pressed="false">2</button><button type="button" data-v="3" aria-pressed="false">3</button></div></div>
+      <div class="orow" data-sec="0" hidden><span>Section 1</span><div class="stepper" data-step="arr0"><button type="button" data-d="-1" aria-label="Fewer panels in section 1">−</button><output class="num">8</output><button type="button" data-d="1" aria-label="More panels in section 1">+</button></div></div>
+      <div class="orow" data-sec="1" hidden><span>Section 2</span><div class="stepper" data-step="arr1"><button type="button" data-d="-1" aria-label="Fewer panels in section 2">−</button><output class="num">8</output><button type="button" data-d="1" aria-label="More panels in section 2">+</button></div></div>
+      <div class="orow" data-sec="2" hidden><span>Section 3</span><div class="stepper" data-step="arr2"><button type="button" data-d="-1" aria-label="Fewer panels in section 3">−</button><output class="num">8</output><button type="button" data-d="1" aria-label="More panels in section 3">+</button></div></div>
+      <button type="button" class="replay" data-hact="replay">▶ Watch it again</button>
+    </div>
+    <div class="ops" data-for="scr" hidden>
+      <div class="orow col"><span>Mesh</span><div class="seg2 mesh" data-seg="pet"><button type="button" data-v="0" aria-pressed="false">Charcoal fiberglass<small>$53.99</small></button><button type="button" data-v="1" aria-pressed="true">All weather<small>$64.99</small></button></div></div>
+      <p class="onote" data-mesh-fact="0">The same class of mesh your builder used, tensioned right. Clearest view, good airflow, fine for shaded windows.</p>
+      <p class="onote" data-mesh-fact="1">Heavy vinyl coated polyester. 5x stronger and far more UV stable, so it takes desert sun, wind and pets without going brittle.</p>
+      <div class="orow"><span>Screens</span><div class="stepper" data-step="screens"><button type="button" data-d="-1" aria-label="Fewer screens">−</button><output class="num">4</output><button type="button" data-d="1" aria-label="More screens">+</button></div></div>
+      <div class="orow"><span>New frames and clips <b class="amt">+$10 a screen</b></span><button type="button" class="switch" data-sw="frames" role="switch" aria-checked="false" aria-label="New frames and clips, $10 a screen"></button></div>
+      <button type="button" class="replay" data-hact="replay">▶ Watch it again</button>
+    </div>
+    <div class="ops" data-for="com" hidden>
+      <div class="orow"><span>Cleaning</span><div class="seg2" data-seg="ctype"><button type="button" data-v="0" aria-pressed="true">Storefront</button><button type="button" data-v="1" aria-pressed="false">Office building</button></div></div>
+      <div class="cgrp" data-cg="0">
+        <div class="otabs" role="tablist" aria-label="Set up your storefront"><button type="button" role="tab" data-otab="look" aria-selected="true">My storefront</button><button type="button" role="tab" data-otab="glass" aria-selected="false">Glass</button><button type="button" role="tab" data-otab="plan" aria-selected="false">Schedule</button></div>
+        <div class="og" data-og="look">
+          <div class="orow col"><span>Storefront style</span><div class="seg2 wrapok" data-hseg="cst"><button type="button" data-v="0" aria-pressed="true">Strip center</button><button type="button" data-v="1" aria-pressed="false">Cafe with patio</button><button type="button" data-v="2" aria-pressed="false">Tall glass</button><button type="button" data-v="3" aria-pressed="false">Standalone</button></div></div>
+          <div class="orow"><label for="cname">Name on the sign</label><input id="cname" class="cname" type="text" maxlength="18" placeholder="Your business" autocomplete="organization"></div>
+          <div class="orow"><span>Walls</span><div class="sw" data-hseg="cwc"><button type="button" data-v="0" aria-pressed="true" aria-label="Warm gray" style="background:#c9c5bd"></button><button type="button" data-v="1" aria-pressed="false" aria-label="Sand" style="background:#e3d5bb"></button><button type="button" data-v="2" aria-pressed="false" aria-label="Stone" style="background:#bfb29c"></button><button type="button" data-v="3" aria-pressed="false" aria-label="Adobe" style="background:#cfae8a"></button></div></div>
+          <div class="orow"><span>Sign color</span><div class="sw" data-hseg="cac"><button type="button" data-v="0" aria-pressed="true" aria-label="Navy" style="background:#103050"></button><button type="button" data-v="1" aria-pressed="false" aria-label="Green" style="background:#1b7a4c"></button><button type="button" data-v="2" aria-pressed="false" aria-label="Red" style="background:#9a2a22"></button><button type="button" data-v="3" aria-pressed="false" aria-label="Blue" style="background:#2b4f8c"></button></div></div>
+        </div>
+        <div class="og" data-og="glass" hidden>
+          <div class="orow"><span>Glass panes</span><div class="stepper" data-step="cpanes"><button type="button" data-d="-1" aria-label="Fewer panes">−</button><output class="num">8</output><button type="button" data-d="1" aria-label="More panes">+</button></div></div>
+          <div class="orow"><span>Glass doors</span><div class="stepper" data-step="cdoors"><button type="button" data-d="-1" aria-label="Fewer doors">−</button><output class="num">2</output><button type="button" data-d="1" aria-label="More doors">+</button></div></div>
+          <div class="orow"><span>Vinyl stickers <b class="amt">+$10 each</b></span><div class="stepper" data-step="cstk"><button type="button" data-d="-1" aria-label="Fewer stickers">−</button><output class="num">0</output><button type="button" data-d="1" aria-label="More stickers">+</button></div></div>
+          <div class="orow"><span>Partitions and mirrors <b class="amt">+$50</b></span><button type="button" class="switch" data-sw="cin" role="switch" aria-checked="false" aria-label="Add interior partitions and mirrors"></button></div>
+          <p class="onote">Tap Build my storefront on the picture to place the panes and doors yourself.</p>
+        </div>
+        <div class="og" data-og="plan" hidden>
+          <div class="orow col"><span>How often</span><div class="seg2 wrapok" data-seg="cfreq"><button type="button" data-v="0" aria-pressed="true">One time $149</button><button type="button" data-v="1" aria-pressed="false">Monthly 15% off</button><button type="button" data-v="2" aria-pressed="false">Every 2 weeks 25% off</button></div></div>
+          <div class="orow col"><span>Agreement</span><div class="seg2 wrapok" data-seg="cterm"><button type="button" data-v="0" aria-pressed="true">Month to month</button><button type="button" data-v="1" aria-pressed="false">Quarterly 20% off</button><button type="button" data-v="2" aria-pressed="false">Yearly 40% off</button></div></div>
+          <p class="onote">The better discount applies, never both. The price below updates as you go.</p>
+        </div>
+      </div>
+      <div class="cgrp" data-cg="1" hidden>
+        <div class="orow"><span>Size, thousand sq ft</span><div class="stepper" data-step="bsq"><button type="button" data-d="-1" aria-label="Smaller building">−</button><output class="num">12</output><button type="button" data-d="1" aria-label="Bigger building">+</button></div></div>
+        <div class="orow"><span>Stories</span><div class="stepper" data-step="bst"><button type="button" data-d="-1" aria-label="Fewer stories">−</button><output class="num">2</output><button type="button" data-d="1" aria-label="More stories">+</button></div></div>
+        <div class="orow"><span>Panes</span><div class="stepper" data-step="bwin"><button type="button" data-d="-4" aria-label="Fewer windows">−</button><output class="num">48</output><button type="button" data-d="4" aria-label="More windows">+</button></div></div>
+      </div>
+      <button type="button" class="replay" data-hact="replay">▶ Watch it again</button>
+    </div>
+    <div class="ops" data-for="pig" hidden>
+      <div class="orow col"><span>The story</span><div class="seg2 wrapok" data-hseg="stage"><button type="button" data-v="0" aria-pressed="false">Today</button><button type="button" data-v="1" aria-pressed="false">Cleanout + mesh</button><button type="button" data-v="2" aria-pressed="true">+ Free spinners</button><button type="button" data-v="3" aria-pressed="false">What 1 spinner covers</button><button type="button" data-v="4" aria-pressed="false">Next door</button></div></div>
+      <div class="orow"><span>Spinners <button type="button" class="one" data-hact="try1">Try just 1</button></span><div class="stepper" data-hstep="spin"><button type="button" data-d="-1" aria-label="Fewer spinners">−</button><output class="num">3</output><button type="button" data-d="1" aria-label="More spinners">+</button></div></div>
+      <div class="orow"><span>Show what each spinner covers</span><button type="button" class="switch" data-hsw="cov" role="switch" aria-checked="true" aria-label="Show spinner coverage"></button></div>
+      <div class="orow"><span>Solar panels</span><div class="stepper" data-step="panels"><button type="button" data-d="-1" aria-label="Fewer panels">−</button><output class="num">16</output><button type="button" data-d="1" aria-label="More panels">+</button></div><b class="ptotal num" hidden></b></div>
+    </div>
+    </template>
+    <div class="osum" id="osum"></div>
+    <a class="qb qb-gold ov-cta" href="#quote" id="ovCta">See my price</a>
+  </div>
+</div>
+<nav class="dock" aria-label="Quick actions">
+  <a class="qb p" href="#quote"><span id="dockTotal" class="num">$149</span><small>my price</small></a>
+  <a class="qb qb-gold" href="#tq-send">Text</a>
+  <a class="qb qb-ghost" href="tel:7145590300">Call</a>
+</nav>
+</div>
+<script>window.TQ={"svc":["win"],"mode":"home"};</script>
+<script src="assets/quote/quote.js?v=0041d3e1c5" defer></script>
+<!-- /tq:tail -->
 </body>
 </html>

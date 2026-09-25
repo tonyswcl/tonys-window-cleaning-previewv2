@@ -1,7 +1,8 @@
 # twindowclean.com
 
 Static site for Tony's Window Cleaning, Hesperia CA. Served by GitHub Pages
-from this repo. No build step: every `.html` file in the root is a live page.
+from this repo. Every `.html` file in the root is a live page. The quote tool and 3D preview are
+injected into every page by `python3 _quote/build.py` from `_quote/src/`; see `.claude/HANDOFF.md`.
 
 ## Layout
 
@@ -11,7 +12,7 @@ from this repo. No build step: every `.html` file in the root is a live page.
 | `window-cleaning.html`, `solar-panel-cleaning.html`, `pigeon-proofing.html`, `screen-repair.html`, `hard-water-removal.html`, `post-construction-window-cleaning.html` | Residential service hubs |
 | `commercial-window-cleaning.html`, `graffiti-removal.html`, `adhesive-removal.html` | Commercial service hubs |
 | `commercial-window-cleaning-<city>.html`, `graffiti-removal-victorville.html` | Commercial by city |
-| `<city>.html` | City hubs (hesperia, victorville, spring-valley-lake, apple-valley, adelanto, oak-hills, phelan) |
+| `<city>.html` | City hubs (hesperia, victorville, spring-valley-lake, silverwood, apple-valley, adelanto, oak-hills, phelan) and `inland-empire.html` |
 | `<service>-<city>.html` | Residential service by city, 24 pages |
 | `service-areas.html`, `about.html`, `reviews.html`, `gallery.html`, `contact.html`, `pricing.html`, `privacy.html`, `404.html` | Company pages |
 | `style.css`, `main.js` | One stylesheet, one script, shared by every page |
@@ -21,6 +22,8 @@ from this repo. No build step: every `.html` file in the root is a live page.
 | `assets/og/` | 1200x630 social cards, one per page, same filename as the page |
 | `assets/ads/` | Meta ad creatives |
 | `tools/docs/` | The quote / invoice / agreement document system (de-identified templates only) |
+| `_quote/` | Quote tool and 3D sources and the build that injects them (not served) |
+| `tools/tests/` | Browser tests, SEO audit, similarity check and the preview builder |
 | `sitemap.xml`, `robots.txt`, `CNAME` | Search and hosting config |
 
 ## Rules that keep the site fast and ranking

@@ -1,0 +1,46 @@
+    <div class="wipe-col">
+      <div class="modes" id="modes" role="group" aria-label="What to show">
+        <button type="button" data-m="r3d" aria-pressed="true">3D home</button>
+        <button type="button" data-m="win" aria-pressed="false">Windows</button>
+        <button type="button" data-m="sol" aria-pressed="false">Solar</button>
+        <button type="button" data-m="pig" aria-pressed="false">Pigeons</button>
+      </div>
+      <div class="wipe" id="wipe">
+        <div class="lay r3d open3d" data-mode="tour" data-lay="r3d" role="button" tabindex="0" aria-label="Open the 3D preview of your home">
+          <img class="r3d-poster" id="r3dPoster" src="assets/quote/home-4x5.webp" alt="3D model of a High Desert home with clean windows, washed solar panels, pigeon mesh and spinners" width="800" height="1000" fetchpriority="high" decoding="async">
+          <div class="h3host" id="h3host"></div>
+          <div class="callout" id="hcall" hidden><i></i><span></span></div>
+          <span class="r3d-go">See it on my home</span>
+        </div>
+        <div class="lay car" data-lay="win" hidden>
+          <div class="track">
+            <figure><img src="assets/quote/win-after.jpg" alt="Sliding glass door, clear after cleaning" width="800" height="600" loading="lazy" decoding="async"><figcaption>Sliding door · clear glass</figcaption></figure>
+            <figure><img src="assets/photos/spring-valley-lake-window-02.jpg" alt="Arched window on a Spring Valley Lake home after cleaning" width="750" height="1000" loading="lazy" decoding="async"><figcaption>Arched window · Spring Valley Lake</figcaption></figure>
+            <figure><img src="assets/photos/apple-valley-window-02.jpg" alt="Large picture window in Apple Valley after cleaning" width="750" height="1000" loading="lazy" decoding="async"><figcaption>Picture window · Apple Valley</figcaption></figure>
+          </div>
+          <div class="dots" aria-hidden="true"></div>
+          <div class="done show"><b>Screens, tracks and sills too.</b><span>$149 single story, $249 two story.</span></div>
+        </div>
+        <div class="lay car" data-lay="sol" hidden>
+          <div class="track">
+            <figure><img src="assets/quote/sol-after.jpg" alt="Solar array after a purified water wash" width="480" height="640" loading="lazy" decoding="async"><figcaption>Full array · one visit</figcaption></figure>
+            <figure><img src="assets/photos/adelanto-solar-03.jpg" alt="Clean solar panels on an Adelanto home" width="1000" height="750" loading="lazy" decoding="async"><figcaption>Adelanto array</figcaption></figure>
+            <figure><img src="assets/photos/victorville-solar-01.jpg" alt="Clean solar array on a Victorville two story home" width="750" height="1000" loading="lazy" decoding="async"><figcaption>Victorville two story</figcaption></figure>
+          </div>
+          <div class="dots" aria-hidden="true"></div>
+          <div class="done show"><b>$7 a panel.</b><span>Purified water and a soft brush. Nobody walks on your panels.</span></div>
+        </div>
+        <div class="lay car" data-lay="pig" hidden>
+          <div class="track">
+            <figure><img src="assets/quote/pig-after.jpg" alt="Solar array with mesh clipped along the edge after pigeon proofing" width="800" height="600" loading="lazy" decoding="async"><figcaption>Mesh clipped · panels clean</figcaption></figure>
+            <figure><img src="assets/photos/hub-pigeon-proofing-02.jpg" alt="Pigeon mesh running the full edge of a solar array" width="750" height="1000" loading="lazy" decoding="async"><figcaption>Mesh along the full edge</figcaption></figure>
+            <figure><img src="assets/photos/apple-valley-pigeon-05.jpg" alt="Sealed and cleaned solar array in Apple Valley" width="778" height="1000" loading="lazy" decoding="async"><figcaption>Apple Valley · sealed and clean</figcaption></figure>
+          </div>
+          <div class="dots" aria-hidden="true"></div>
+          <div class="done show"><b>$450 up to 12 panels.</b><span>Cleaned out, mesh clipped on, 2 to 3 spinners free.</span></div>
+          <button type="button" class="qb qb-gold qb-sm open3d cmp-3d" data-mode="pig">See it in 3D</button>
+        </div>
+        <span class="lbl" id="wlbl">Live 3D</span>
+      </div>
+      <p class="wipe-note" id="wnote">A model home finished the way we leave yours. Tap it to try your own.</p>
+    </div>
