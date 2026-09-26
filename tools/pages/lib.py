@@ -225,6 +225,16 @@ def sec_faq(kicker, title, faq):
     return out
 
 
+def sec_related(title, links):
+    """A row of links to the pages next to this one, in the area chip style the city pages use."""
+    out = ('  <!-- related -->\n  <section class="section" style="padding-top:0">\n    <div class="container">\n      <div class="section-head reveal">\n'
+           '        <span class="kicker">Related</span>\n        <h2 class="section-title">%s</h2>\n      </div>\n      <div class="areas-grid reveal">\n' % esc(title))
+    for href, label in links:
+        out += '        <a class="area-chip" href="%s">%s</a>\n' % (href, esc(label))
+    out += '      </div>\n    </div>\n  </section>\n  <!-- /related -->\n'
+    return out
+
+
 def sec_cta(title, sub, btn, lang='en'):
     return ('  <section class="cta-banner">\n    <div class="container">\n      <h2>%s</h2>\n      <p>%s</p>\n      <div class="hero-actions center">\n'
             '        <a href="#quote" class="btn btn-primary">%s</a>\n        <a href="tel:7145590300" class="btn btn-ghost light">%s 714-559-0300</a>\n      </div>\n    </div>\n  </section>\n\n'
@@ -255,7 +265,7 @@ def render(p, parts):
     out = head(p, biz, tags)
     out += '<body>\n  <div class="scroll-progress" id="scrollProgress"></div>\n\n'
     out += NAV_ES if lang == 'es' else nav
-    out += '\n' + hero(p)
+    out += '\n  <main id="main">\n' + hero(p)
     for kind, *args in p['sections']:
         if kind == 'text':
             out += sec_text(*args)
@@ -266,6 +276,9 @@ def render(p, parts):
         elif kind == 'cta':
             out += sec_cta(*args, lang=lang)
     out += sec_faq(p.get('faq_kicker', 'Preguntas' if lang == 'es' else 'FAQ'), p['faq_title'], p['faq'])
+    if p.get('related'):
+        out += sec_related(*p['related'])
+    out += '  </main>\n'
     out += '\n' + (FOOT_ES if lang == 'es' else foot)
     out += '\n  <script src="assets/tags.js" defer></script>\n  <script src="main.js" defer></script>\n<!-- tq:tail -->\n<!-- /tq:tail -->\n</body>\n</html>\n'
     return out

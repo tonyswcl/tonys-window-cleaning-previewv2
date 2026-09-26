@@ -437,7 +437,7 @@ html.tq-lock,html.tq-lock body{overflow:hidden!important}
 .tq .obd-row.pics button[aria-pressed="true"]{box-shadow:0 0 0 2px #f0b040}
 @media (min-width:900px){.tq .obd-row.pics{grid-template-columns:repeat(4,1fr)}.tq .obd-in{width:min(640px,100%)}}
 
-.tq button.linkish{border:0;background:none;padding:0;font:inherit;color:#b8760d;font-weight:700;text-decoration:underline;cursor:pointer}
+.tq button.linkish{border:0;background:none;padding:0;font:inherit;color:var(--gold-text);font-weight:700;text-decoration:underline;cursor:pointer}
 
 .tq .edgo{position:absolute;left:10px;top:42px;z-index:3;border:0;background:rgba(255,255,255,.9);color:#103050;font:800 12px var(--display);padding:6px 11px 6px 28px;border-radius:999px;box-shadow:0 4px 12px -6px rgba(0,0,0,.45);cursor:pointer}
 .tq .edgo::before{content:"";position:absolute;left:10px;top:50%;width:10px;height:10px;margin-top:-6px;border:2px solid #b8760d;border-radius:2px;transform:rotate(45deg) scaleX(.45)}

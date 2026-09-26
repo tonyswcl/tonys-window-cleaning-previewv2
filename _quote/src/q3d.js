@@ -96,7 +96,8 @@ scene.add(sun);scene.add(sun.target);
 /* ---------- textures, all painted on canvas ---------- */
 function cv(w,h,f){var c=doc.createElement("canvas");c.width=w;c.height=h;f(c.getContext("2d"),w,h);return c;}
 function tx(c,rep,lin){var t=new T.CanvasTexture(c);if(!lin)t.encoding=T.sRGBEncoding;t.anisotropy=ANI;if(rep){t.wrapS=t.wrapT=T.RepeatWrapping;}return t;}
-function dots(g,w,h,r,n,rgb,a0,a1,s0,s1){for(var i=0;i<n;i++){var s=s0+r()*(s1-s0);g.fillStyle="rgba("+rgb+","+(a0+r()*(a1-a0)).toFixed(3)+")";g.fillRect(r()*w,r()*h,s,s);}}
+/* thousands of specks per texture: one color per call and the alpha through globalAlpha, so no color string is built and parsed per speck */
+function dots(g,w,h,r,n,rgb,a0,a1,s0,s1){g.fillStyle="rgb("+rgb+")";for(var i=0;i<n;i++){var s=s0+r()*(s1-s0);g.globalAlpha=a0+r()*(a1-a0);g.fillRect(r()*w,r()*h,s,s);}g.globalAlpha=1;}
 function blot(g,w,h,r,n,rgb,a,rad){for(var i=0;i<n;i++){var x=r()*w,y=r()*h,rr=rad*(.5+r()),gr=g.createRadialGradient(x,y,0,x,y,rr);gr.addColorStop(0,"rgba("+rgb+","+a+")");gr.addColorStop(1,"rgba("+rgb+",0)");g.fillStyle=gr;g.fillRect(x-rr,y-rr,2*rr,2*rr);}}
 var TX={};
 (function(){
@@ -187,7 +188,7 @@ var M={
   shadow:new T.MeshBasicMaterial({map:TX.shadow,transparent:true,depthWrite:false}),
   water:new T.PointsMaterial({color:0xcfeaff,size:.035,transparent:true,opacity:.85,depthWrite:false}),
   tank:Std({color:0x2f6fb0,roughness:.5}),cart:Std({color:0x3a3d42,roughness:.6}),hose:Std({color:0x2b2b2e,roughness:.7}),
-  /* the crew uniform: gray polo, black work pants, black cap */
+  /* Tony's own look for the simple body: royal blue long sleeve, black shorts, white socks, olive cap */
   shirt:Std({color:0x1d4fc7,roughness:.9}),pants:Std({color:0x111214,roughness:.85}),skin:Std({color:0xb98262,roughness:.7}),sock:Std({color:0xf2f2f0,roughness:.9}),
   hat:Std({color:0x5c5a46,roughness:.85}),band:Std({color:0xf0b040,roughness:.6}),shoe:Std({color:0x1a1a1a,roughness:.8}),collar:Std({color:0x1a44ad,roughness:.9}),lens:Std({color:0xcfe3ee,metalness:.1,roughness:.05,transparent:true,opacity:.35}),
   rubber:Std({color:0x111111,roughness:.9}),chan:Std({color:0xc7ccd2,metalness:.8,roughness:.3}),towel:Std({color:0x3d7fd1,roughness:1}),
@@ -219,8 +220,8 @@ M.frond=Leaf(TX.frond,0xd6e6b4);M.palmT=Std({color:0x8a7a64,roughness:1});M.palm
 /* the mountains: log and plank walls, a granite chimney, a forest floor of needles, nests and droppings for the pigeon story */
 TX.logs=TX.wood.clone();TX.logs.repeat.set(3,2.4);TX.logs.needsUpdate=true;
 var CABW=[0x9c7a58,0x7d6247,0xb08f6a,0x6f5a48].map(function(c){return Std({map:TX.logs,color:c,roughness:.95});});
-M.stone=Std({map:TX.cmu,color:0x8f8a80,roughness:1});M.forest=Std({map:TX.gravel,color:0x66604a,roughness:1});
-M.nest=Std({color:0x6b5537,roughness:1,flatShading:true});M.drop=new T.MeshBasicMaterial({color:0xe9e6dc,transparent:true,opacity:.9,depthWrite:false});
+M.forest=Std({map:TX.gravel,color:0x66604a,roughness:1});
+M.drop=new T.MeshBasicMaterial({color:0xe9e6dc,transparent:true,opacity:.9,depthWrite:false});
 M.bin=Std({color:0x2f3a33,roughness:.7});M.binB=Std({color:0x2b4f8c,roughness:.7});M.lamp=Std({color:0x7d8288,metalness:.6,roughness:.4});M.dirt=Std({color:0xb8a27f,roughness:1});M.pool=Std({color:0x3aa6d4,roughness:.08,metalness:.1,envMapIntensity:1.3});
 TX.ripple=tx(cv(128,128,function(g,w,h){var r=rng(71);g.fillStyle="#808080";g.fillRect(0,0,w,h);for(var i=0;i<260;i++){var x=r()*w,y=r()*h,l=6+r()*16;g.strokeStyle="rgba("+(r()<.5?"255,255,255":"0,0,0")+","+(.12+r()*.2)+")";g.lineWidth=1+r()*1.5;g.beginPath();g.moveTo(x,y);g.quadraticCurveTo(x+l/2,y-1.5,x+l,y);g.stroke();}}),true,true);TX.ripple.repeat.set(.3,.3);
 M.water=Std({color:0x184f76,roughness:.34,metalness:0,envMapIntensity:.28,bumpMap:TX.ripple,bumpScale:.02});M.water.fog=false;M.boat=Std({color:0xf4f4f1,roughness:.35});
@@ -613,8 +614,7 @@ function liteHouse(par,o,r){
   if(o.hood===1||o.hood===3){if(ty<.35)palm(g,gs*-(W/2-1)+(r()-.5),f+o.walk-1.6,6.5+r()*3.5,r);else if(ty<.8)tree(g,-gs*(W/2-2)+(r()-.5)*2,f+o.walk*.55,.8+r()*.35);
     if(r()<.3)(r()<.5?pine(g,(r()-.5)*W,-f-o.back*.55,6+r()*3):tree(g,(r()-.5)*W,-f-o.back*.55,.9+r()*.3));}
   else if(o.hood===0){if(ty<.2)palm(g,-gs*(W/2-1),f+o.walk-1.6,6+r()*3,r);else if(ty<.4)joshua(g,-gs*(W/2-2),f+o.walk*.5,r);else if(ty<.6)pine(g,-gs*(W/2-1.5),f+o.walk*.5,5.5+r()*2.5);}
-  else if(mtn){}
-  else{if(ty<.7)joshua(g,-gs*(W/2+4)*(.5+r()*.6),f+o.walk*(.3+r()*.4),r);if(r()<.45)for(var pk=0;pk<5;pk++)pine(g,-W/2-4+pk*(W+8)/4,-f-13,6.5+r()*2.5);}
+  else if(!mtn){if(ty<.7)joshua(g,-gs*(W/2+4)*(.5+r()*.6),f+o.walk*(.3+r()*.4),r);if(r()<.45)for(var pk=0;pk<5;pk++)pine(g,-W/2-4+pk*(W+8)/4,-f-13,6.5+r()*2.5);}
   var cc=r(),s1=r()<.5?-1:1;if(cc<.62){car(g,gx+s1*1.2,f+3.2+r()*1.2,r()<.8?0:Math.PI,(r()*7)|0,r);if(cc<.2)car(g,gx-s1*1.2,f+3.4,0,(r()*7)|0,r);}
   if(o.hood!==2&&!mtn&&r()<.3){bx(.62,1.05,.7,M.bin,gx+gs*3,.53,f+o.walk-.5,g);bx(.62,1.05,.7,M.binB,gx+gs*3.8,.53,f+o.walk-.5,g);}
   return g;
@@ -1030,7 +1030,7 @@ function makeWorker(){
   [-1,1].forEach(function(s){var wh=new T.Mesh(G.cyl,M.rubber);wh.scale.set(.1,.05,.1);wh.rotation.z=Math.PI/2;wh.position.set(s*.37,.1,0);cart.add(wh);});
   cart.visible=false;scene.add(cart);tools.cart=cart;
   worker=w;
-  if(C.CFG.tech){if(overlay)loadRig(C.CFG.tech);else setTimeout(function(){loadRig(C.CFG.tech);},2500);}
+  if(C.CFG.tech){if(overlay)loadRig(C.CFG.tech);else idleRig();}
 }
 var SHL={L:V(-.22,1.5,0),R:V(.22,1.5,0)},UA=.3,FA=.29,POLE={L:V(-1,-.9,-.5),R:V(1,-.9,-.5)},TH=.45,SH=.45;
 /* two joint reach: from a root toward a target, with the middle joint pushed toward a hint direction */
@@ -1074,9 +1074,14 @@ function placeWorker(pos,faceDir,walk){worker.position.copy(pos);worker.rotation
 /* ---------- a real rigged character (Mixamo skeleton), used when assets/quote/tech.glb is present ----------
    The same reach and crouch logic drives its arm and leg bones, so every scene works with either body. */
 var rigAsked=false;
+/* on the page the character comes in once the browser is idle and the hero is on screen; on a slow or data saving
+   connection it waits until someone opens the 3D */
+function idleRig(){var cn=navigator.connection;if(cn&&(cn.saveData||/2g/.test(cn.effectiveType||"")))return;
+  function go(){if(rigAsked)return;if(heroVis&&!doc.hidden)loadRig(C.CFG.tech);else setTimeout(go,2000);}
+  if(window.requestIdleCallback)requestIdleCallback(function(){setTimeout(go,800);},{timeout:3000});else setTimeout(go,2500);}
 function loadRig(ver){if(rigAsked)return;rigAsked=true;
   function need(src,cb){var sc=doc.createElement("script");sc.src=src;sc.onload=cb;doc.head.appendChild(sc);}
-  function go(){var ld=new T.GLTFLoader();
+  function go(){var ld=new T.GLTFLoader();if(T.MeshoptDecoder)ld.setMeshoptDecoder(T.MeshoptDecoder);
     ld.register(function(parser){parser.textureLoader=new T.TextureLoader(parser.options.manager);return {name:"img_textures"};});
     ld.load(window.TQ_TECH_URL||("assets/quote/tech.glb?v="+ver),function(g){try{buildRig(g);}catch(e){if(window.console)console.warn("tech rig",e);}},undefined,function(){});}
   function gl(){if(T.GLTFLoader)go();else need("assets/vendor/gltf.min.js?v="+ver,go);}
@@ -1117,7 +1122,7 @@ function buildRig(g){
   if(idle){rig.mixer=new T.AnimationMixer(root);rig.mixer.clipAction(idle).play();}
   /* hide the simple body, keep the tools */
   worker.children.forEach(function(c){if(c!==holder)c.visible=false;});
-  u.rig=rig;
+  u.rig=rig;perf.hold=performance.now()+2500; /* its first frame compiles new shaders; that pause isn't a slow phone */
 }
 function turnBone(bone,childW,wantW){var bp=bone.getWorldPosition(new T.Vector3()),cur=childW.clone().sub(bp).normalize(),des=wantW.clone().sub(bp).normalize();
   var q=new T.Quaternion().setFromUnitVectors(cur,des).multiply(bone.getWorldQuaternion(new T.Quaternion())),pq=bone.parent.getWorldQuaternion(new T.Quaternion()).invert();
@@ -1593,7 +1598,7 @@ function drive(dt){weather(dt);TX.ripple.offset.x=(TX.ripple.offset.x+dt*.012)%1
   var sp=10,cyc=2*mover.span/sp+12;mover.t+=dt;var ph=mover.t%cyc,dir=Math.floor(mover.t/cyc)%2?-1:1,x=dir*(-mover.span+ph*sp),on=ph*sp<2*mover.span;
   mover.g.visible=on;if(!on)return;mover.g.position.set(x,0,mover.zs+dir*1.75);mover.g.rotation.y=dir>0?Math.PI/2:-Math.PI/2;}
 function frame(dt){
-  var pristine=mode==="show"||mode==="home";drive(dt);
+  drive(dt);
   if(ED){if(com&&ED.t==="shop"){com.grime.forEach(function(o){o.visible=false;});if(com.patio)com.patio.visible=false;if(com.patio2)com.patio2.visible=false;}else edHide(true);return;}
   if(comOn()){if(worker){worker.visible=false;hideTools();}comFrame(dt);return;}
   /* screen and window pages show the finished screens on the model; everywhere else they stay out of the way */
@@ -1641,7 +1646,6 @@ function frame(dt){
   else if(mode==="scr")screensDemo();
   else if(mode==="pig")pigAuto();
   else if(mode==="home"&&overlay){if(obdOpen)say("");else tourSay();}
-  if(pristine&&mode==="show"){}
 }
 function msgAt(list){var s="";for(var i=0;i<list.length;i++)if(tl>=list[i][0])s=list[i][1];return s;}
 var lastMsg="";
@@ -2753,8 +2757,9 @@ var raf=0,last=0,acc=0,host=heroHost,first=true,lost=false;
 var quality=3,perf={n:0,t0:0,hold:0};
 function setQuality(q){quality=q;var pr=q>=3?PR0:q===2?Math.max(1,PR0-.5):1;if(Math.abs(R.getPixelRatio()-pr)>.01){R.setPixelRatio(pr);size();}
   if(q<=0&&sun.castShadow){sun.castShadow=false;}track("3d_quality",{level:q});}
-/* measured in real time: after the first moment, any 2 second stretch under 24 frames a second steps down one level */
-function watchPerf(now){if(window.__tqFixedQ||!overlay)return;if(now<perf.hold){perf.t0=now;perf.n=0;return;}perf.n++;var el=now-perf.t0;
+/* measured in real time: after the first moment, any 2 second stretch under 24 frames a second steps down one level.
+   The hero on the page is watched too (it draws at most 30 a second), so a phone that can't keep up gets the lighter version there as well. */
+function watchPerf(now){if(window.__tqFixedQ)return;if(now<perf.hold){perf.t0=now;perf.n=0;return;}perf.n++;var el=now-perf.t0;
   if(el>=2000){var fps=perf.n*1000/el;perf.t0=now;perf.n=0;if(fps<24&&quality>0){setQuality(quality-1);perf.hold=now+1200;}}}
 function size(){var w=host.clientWidth,h=host.clientHeight;if(!w||!h)return;var c=R.domElement;if(c.width!==Math.round(w*R.getPixelRatio())||c.height!==Math.round(h*R.getPixelRatio()))R.setSize(w,h,false);if(Math.abs(cam.aspect-w/h)>.001){cam.aspect=w/h;cam.updateProjectionMatrix();goal=preset();limits&&goal&&limits();}}
 function loop(now){
@@ -2831,11 +2836,12 @@ function sync(){
   else if(spinners.length!==Math.min(spinCount(),me.vents.length)){buildSpinners();birdTargets(false);anchors();}
   syncControls();summary();react();
 }
-buildMe();
+/* the home and street are built on first use, not inside the start up task, so starting the 3D is two shorter tasks */
+function built(){if(!me)buildMe();}
 return {
-  open:function(m){overlay=true;if(C.CFG.tech&&worker)loadRig(C.CFG.tech);perf.hold=performance.now()+1500;perf.n=0;wxFetch();wxChip();$("ovLoad").hidden=true;attach(stageEl);var tour=m==="tour";if(tour)m=isCom()?"com":"home";tabsSync();if(["home","win","sol","scr","pig","com"].indexOf(m)<0)m="home";setMode(m);if(tour&&!obdDone&&m==="home")obdShow(true);start();},
+  open:function(m){built();overlay=true;if(C.CFG.tech&&worker)loadRig(C.CFG.tech);perf.hold=performance.now()+1500;perf.n=0;wxFetch();wxChip();$("ovLoad").hidden=true;attach(stageEl);var tour=m==="tour";if(tour)m=isCom()?"com":"home";tabsSync();if(["home","win","sol","scr","pig","com"].indexOf(m)<0)m="home";setMode(m);if(tour&&!obdDone&&m==="home")obdShow(true);start();},
   close:function(){if(ED)edStop();overlay=false;obdShow(false);panelMin(false);say("");secEl.forEach(function(d){d.hidden=true;});Object.keys(hsEl).forEach(function(k){hsEl[k].hidden=true;});h3.spinOv=null;if(h3.view===1)h3.view=0;setMode("show");attach(heroHost);$("ocall").hidden=true;},
-  hero:function(on){heroOn=on;if(on&&!overlay){if(!worker)makeWorker();if(mode!=="show")setMode("show");else ensureScene();attach(heroHost);start();}},
+  hero:function(on){heroOn=on;if(on&&!overlay)setTimeout(function(){if(!heroOn||overlay)return;built();if(!worker)makeWorker();if(mode!=="show")setMode("show");else ensureScene();attach(heroHost);perf.hold=performance.now()+3000;perf.n=0;start();},0);},
   sync:sync,
   pref:function(m){pageMode=m;},
   prop:function(c){var was=isCom();C.propCom=!!c;tabsSync();if(was!==!!c&&!overlay&&mode==="show"){ensureScene();cur=null;goal=null;}},
@@ -2845,18 +2851,20 @@ return {
   edPt:function(u,v){if(!ED)return null;var fr=edFrame(),p=fr.p.clone().addScaledVector(fr.d,u);p.y=v;p.project(cam);var rc=R.domElement.getBoundingClientRect();return {x:rc.left+(p.x+1)/2*rc.width,y:rc.top+(1-p.y)/2*rc.height};},
   edState:function(){if(!ED)return null;return {t:ED.t,f:ED.f,sel:!!edSel,items:edItems().map(function(w){return ED.t==="home"?[w.u,w.v,w.sz,w.s]:[w.x,w.y,w.sz,w.door?1:0,w.stk||0];}),len:edFrame().len};},
   /* a still frame of the model home, used to make the poster images */
-  snap:function(w,h,o){o=o||{};var back=null;if(o.com&&!overlay){back=mode;setMode("com");}else if(mode!=="show"&&!overlay)setMode("show");else ensureScene();cam.clearViewOffset();lift=0;R.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix();
+  snap:function(w,h,o){built();o=o||{};var back=null;if(o.com&&!overlay){back=mode;setMode("com");}else if(mode!=="show"&&!overlay)setMode("show");else ensureScene();cam.clearViewOffset();lift=0;R.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix();
     var p=preset();if(o.yaw!=null)p.yaw=o.yaw;if(o.tilt!=null)p.tilt=o.tilt;if(o.dist)p.dist*=o.dist;if(o.ty)p.ty+=o.ty;
+    /* the PDF picture: with a section on the back of the roof, look from the side and above so every section is in it */
+    if(o.allRoof&&!o.com&&me&&(st.sol||st.pig)&&me.groups.some(function(g){return g.face<0;})){p.yaw=1.57;p.tilt=.9;p.dist*=1.15;}
     frame(0);placeCam(p);R.render(scene,cam);var url=R.domElement.toDataURL(o.type||"image/png",o.q||.9);cur=null;goal=null;size();if(back!==null)setMode(back);return url;},
   seek:function(t){tl=t;},
   /* a picture of one problem on the model home, for the welcome cards */
-  probSnap:function(k,w,h){var hw0=st.hw;if(k==="hw")st.hw=true;forceProb=k==="hw"?"win":k;if(mode!=="show")setMode("show");cam.clearViewOffset();lift=0;
+  probSnap:function(k,w,h){built();var hw0=st.hw;if(k==="hw")st.hw=true;forceProb=k==="hw"?"win":k;if(mode!=="show")setMode("show");cam.clearViewOffset();lift=0;
     R.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix();frame(0);frame(0);var p=tourShot(forceProb,0);if(k==="hw"){p.dist*=.62;p.yaw-=.12;}
     placeCam(p);R.render(scene,cam);var url=R.domElement.toDataURL("image/png");forceProb=null;st.hw=hw0;frame(0);cur=null;goal=null;size();return url;},
   /* picture cards for the welcome: set the look, then snap it */
   look:function(o){if(o.style!=null)h3.style=o.style;if(o.hood!=null)h3.hood=o.hood;if(o.stories)st.stories=o.stories;if(o.grids!=null)h3.grids=o.grids;if(o.roof!=null)h3.roof=o.roof;if(o.rc!=null)h3.rc=o.rc;sync();},
   settle:function(){var p=preset();flight=null;goal=p;cur={};for(var k in p)cur[k]=p[k];placeCam(cur);},
-  quality:function(){return {level:quality,shadows:sun.castShadow,pr:R.getPixelRatio(),calls:R.info.render.calls,tris:R.info.render.triangles,geos:R.info.memory.geometries,tex:R.info.memory.textures};},
+  quality:function(){return {level:quality,shadows:sun.castShadow,pr:R.getPixelRatio(),calls:R.info.render.calls,tris:R.info.render.triangles,geos:R.info.memory.geometries,tex:R.info.memory.textures,progs:R.info.programs.length};},
   /* for tests: where the tech stands, and a camera shot to look at him */
   tuneHead:function(o){var r=worker&&worker.userData.rig;if(!r)return false;for(var k in o)HW[k]=o[k];for(var bk in r.B)r.B[bk].quaternion.copy(r.bind[bk]);r.holder.position.set(0,0,0);worker.updateMatrixWorld(true);headwear(r,HW);return true;},
   techAt:function(){return worker?worker.getWorldPosition(new T.Vector3()).toArray():null;},

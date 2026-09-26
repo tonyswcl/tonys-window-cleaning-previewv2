@@ -20,6 +20,7 @@ for path in sorted(glob.glob(os.path.join(os.path.dirname(os.path.abspath(__file
     mod = importlib.import_module(os.path.basename(path)[:-3])
     (ES if '_es' in path else EN).extend(mod.PAGES)
 ALL = EN + ES
+GENERATED = set()
 
 # the language pairs: English page -> Spanish page
 PAIRS = {'index.html': 'espanol.html', 'pigeon-proofing.html': 'control-de-palomas.html',
@@ -28,6 +29,67 @@ PAIRS = {'index.html': 'espanol.html', 'pigeon-proofing.html': 'control-de-palom
 FOOTER_AREAS_ADD = [('mountain-communities.html', 'Mountain communities'), ('pigeon-proofing-fontana.html', 'Fontana'),
                     ('pigeon-proofing-rancho-cucamonga.html', 'Rancho Cucamonga')]
 FOOTER_COMPANY_ADD = [('espanol.html', 'Español')]
+
+# related pages: each page in a group links to the others, so no page hangs on a single link. The first page is the hub.
+# EXTRA pages carry a group's links without being one of its targets.
+REVIEWS = ('hesperia-window-cleaning-reviews.html', 'Customer reviews')
+RELATED = [
+    ('More on window cleaning', [('window-cleaning.html', 'Window cleaning'), ('inside-window-cleaning.html', 'Inside windows'),
+                                 ('hard-water-stains-windows.html', 'Hard water stains'), ('window-cleaning-two-story.html', 'Two story homes'),
+                                 ('window-cleaning-maintenance-plan.html', 'Window maintenance plans'), ('screen-repair.html', 'Screen repair')],
+     ['window-cleaning-silverwood.html', 'window-cleaning-spring-valley-lake.html', 'new-construction-window-cleaning-silverwood.html']),
+    ('More on screens', [('screen-repair.html', 'Screen repair'), ('screen-replacement.html', 'Screen replacement'),
+                         ('sliding-door-screen-repair.html', 'Sliding door screens'), ('all-weather-mesh.html', 'All weather mesh')], []),
+    ('More on solar panel cleaning', [('solar-panel-cleaning.html', 'Solar panel cleaning'), ('solar-panel-cleaning-warranty-safe.html', 'Warranty safe cleaning'),
+                                      ('solar-cleaning-maintenance-plan.html', 'Solar maintenance plans'), ('pigeon-proofing.html', 'Pigeon proofing')],
+     ['solar-panel-cleaning-fontana.html']),
+    ('More on pigeon proofing', [('pigeon-proofing.html', 'Pigeon proofing'), ('pigeon-proofing-without-drilling.html', 'Proofing without drilling'),
+                                 ('pigeon-droppings-cleanup.html', 'Droppings cleanup'), ('solar-panel-bird-mesh-cost.html', 'Bird mesh cost'),
+                                 ('solar-panel-cleaning.html', 'Solar panel cleaning')],
+     ['pigeon-proofing-fontana.html', 'pigeon-proofing-rancho-cucamonga.html', 'pigeon-proofing-spring-valley-lake.html']),
+    ('More commercial cleaning', [('commercial-window-cleaning.html', 'Commercial window cleaning'), ('storefront-window-cleaning.html', 'Storefronts'),
+                                  ('office-window-cleaning.html', 'Office buildings'), ('medical-office-window-cleaning.html', 'Medical offices')], []),
+    ('Other mountain towns we serve', [('mountain-communities.html', 'Mountain communities'), ('crestline.html', 'Crestline'), ('lake-arrowhead.html', 'Lake Arrowhead'),
+                                       ('running-springs.html', 'Running Springs'), ('big-bear-lake.html', 'Big Bear Lake'), ('wrightwood.html', 'Wrightwood'),
+                                       ('cajon-pass.html', 'Cajon Pass')], []),
+    ('What we clean', [('window-cleaning.html', 'Window cleaning'), ('solar-panel-cleaning.html', 'Solar panel cleaning'), ('pigeon-proofing.html', 'Pigeon proofing'),
+                       ('screen-repair.html', 'Screen repair'), ('commercial-window-cleaning.html', 'Commercial window cleaning')],
+     ['hesperia-window-cleaning-reviews.html']),
+]
+
+
+def related_for(fn):
+    """The group a page is the hub of, or else the first group it belongs to: a heading and the links to the others in it."""
+    hub = [g for g in RELATED if g[1][0][0] == fn]
+    member = [g for g in RELATED if fn in [h for h, _ in g[1]] + g[2]]
+    for title, links, extra in hub + member:
+        out = [(h, t) for h, t in links if h != fn]
+        if fn != REVIEWS[0]:
+            out.append(REVIEWS)
+        return title, out
+    return None
+
+
+def ensure_main(s):
+    """Wrap everything between the site header and the footer in one main landmark."""
+    if '<main' in s:
+        return s
+    i, j = s.find('</header>\n'), s.find('  <footer class="footer">')
+    if i < 0 or j < i:
+        return s
+    i += len('</header>\n')
+    k = s.rfind('<!-- ===== FOOTER ===== -->', i, j)
+    end = s.rfind('\n', 0, k if k >= 0 else j) + 1
+    return s[:i] + '\n  <main id="main">\n' + s[i:end] + '  </main>\n\n' + s[end:]
+
+
+def related_block(s, fn):
+    """Hand written pages get the same related row, refreshed in place, just before the end of main."""
+    rel = related_for(fn)
+    s = re.sub(r'(?s)  <!-- related -->\n.*?  <!-- /related -->\n', '', s)
+    if not rel or '  </main>\n' not in s:
+        return s
+    return s.replace('  </main>\n', lib.sec_related(*rel) + '  </main>\n', 1)
 
 
 def check_all():
@@ -123,8 +185,12 @@ def main():
     lib.DIMS.update(lib.photo_dims())
     parts = lib.ref_parts()
     for p in ALL:
+        if p.get('lang', 'en') == 'en':
+            p['related'] = related_for(p['fn'])
         lib.write_page(p, parts)
     print('wrote', len(ALL), 'pages')
+    global GENERATED
+    GENERATED = {p['fn'] for p in ALL}
     # shared bits on every page: footer links, language links, sitemap
     n = 0
     for fn in sorted(os.listdir(ROOT)):
@@ -133,6 +199,9 @@ def main():
         path = os.path.join(ROOT, fn)
         s = open(path, encoding='utf-8').read()
         t = footer_links(s) if 'lang="es"' not in s[:80] else s
+        t = ensure_main(t)
+        if fn not in GENERATED and 'lang="es"' not in t[:80]:
+            t = related_block(t, fn)
         if fn in PAIRS:
             t = hreflang_pair(t, fn, PAIRS[fn])
         if t != s:

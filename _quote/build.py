@@ -129,8 +129,7 @@ def build_assets():
                 f.write(code)
             src = tmp
         if eb:
-            loader = []
-            subprocess.run([eb, src, '--minify', '--target=es2017,safari13', '--legal-comments=none', '--outfile=' + dst] + loader,
+            subprocess.run([eb, src, '--minify', '--target=es2017,safari13', '--legal-comments=none', '--outfile=' + dst],
                            check=True, capture_output=True)
         else:
             shutil.copyfile(src, dst)
@@ -142,10 +141,17 @@ def build_assets():
     if os.path.exists(tech):
         v['tech'] = short_hash(tech)
         dst = os.path.join(ROOT, 'assets', 'vendor', 'gltf.min.js')
+        # the loader and the meshopt decoder the compressed character needs, in one file
+        tmp = os.path.join(OUT, '.gltf.src.js')
+        with open(tmp, 'w', encoding='utf-8') as f:
+            for part in ['GLTFLoader.js', 'meshopt_decoder.js']:
+                with open(os.path.join(SRC, 'vendor', part), encoding='utf-8') as g:
+                    f.write(g.read() + '\n')
         if eb:
-            subprocess.run([eb, os.path.join(SRC, 'vendor', 'GLTFLoader.js'), '--minify', '--target=es2017,safari13', '--legal-comments=none', '--outfile=' + dst], check=True, capture_output=True)
+            subprocess.run([eb, tmp, '--minify', '--target=es2017,safari13', '--legal-comments=none', '--outfile=' + dst], check=True, capture_output=True)
         else:
-            shutil.copyfile(os.path.join(SRC, 'vendor', 'GLTFLoader.js'), dst)
+            shutil.copyfile(tmp, dst)
+        os.remove(tmp)
     return v
 
 
@@ -214,8 +220,22 @@ def chips_html(items):
     return '\n'.join('        <span class="chip">' + a + (' <b>' + b + '</b>' if b else '') + c + '</span>' for a, b, c in items)
 
 
+# window, solar and screen pages show the model home without pigeon mesh and spinners, so their poster does too
+PLAIN_ALT = {'en': ('alt="3D model of a High Desert home with clean windows, washed solar panels, pigeon mesh and spinners"',
+                    'alt="3D model of a High Desert home with clean windows and washed solar panels"'),
+             'es': ('alt="Modelo 3D de una casa del High Desert con ventanas limpias, paneles solares lavados, malla contra palomas y espantapájaros"',
+                    'alt="Modelo 3D de una casa del High Desert con ventanas limpias y paneles solares lavados"')}
+
+
+def poster_of(conf):
+    return 'com-4x5' if conf['mode'] == 'com' else 'home-plain-4x5' if conf['mode'] in ('win', 'sol', 'scr') else 'home-4x5'
+
+
 def hero_for(conf, cta, media, lang):
-    """Swap the shared hero's chips and photo tabs for the ones that fit this page."""
+    """Swap the shared hero's chips, photo tabs and poster for the ones that fit this page."""
+    if poster_of(conf) == 'home-plain-4x5':
+        a, b = PLAIN_ALT[lang]
+        media = media.replace('assets/quote/home-4x5.webp', 'assets/quote/home-plain-4x5.webp').replace(a, b)
     f = focus(conf)
     items = CHIPS.get(lang, {}).get(f)
     if items:
@@ -254,7 +274,7 @@ def tiles_for(conf, steps):
 
 def css_block(conf_v, conf):
     """The stylesheet, plus a preload for the hero poster so the picture paints before the 3D even starts loading."""
-    poster = 'com-4x5' if conf['mode'] == 'com' else 'home-4x5'
+    poster = poster_of(conf)
     return ('<link href="assets/quote/quote.css?v=' + conf_v['quote.css'] + '" rel="stylesheet">\n'
             '  <link rel="preload" as="image" href="assets/quote/' + poster + '.webp" fetchpriority="high">')
 

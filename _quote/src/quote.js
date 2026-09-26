@@ -265,7 +265,9 @@ function propSync(){var c=propIsCom(),bld=st.ctype===1,key=c?(bld?"b":"s"):"h";c
   var see=c?(bld?L("See it on my building","Verlo en mi edificio"):L("See it on my storefront","Verlo en mi local")):L("See it on my home","Verlo en mi casa");
   $$(".tq-intro .open3d[data-mode='tour']").forEach(function(x){x.textContent=see;});
   var lay=doc.querySelector("#wipe .lay.r3d");if(lay){var g=lay.querySelector(".r3d-go");if(g)g.textContent=see;lay.setAttribute("aria-label",c?L("Open the 3D preview of your storefront","Abrir la vista 3D de tu local"):L("Open the 3D preview of your home","Abrir la vista 3D de tu casa"));}
-  var po=$("r3dPoster");if(po){var w1="assets/quote/"+(c?"com":"home")+"-4x5.webp";if(po.getAttribute("src")!==w1)po.setAttribute("src",w1);}
+  /* the home poster is the page's own (window, solar and screen pages have one without pigeon mesh), so it's only swapped for a storefront */
+  var po=$("r3dPoster");if(po){if(!po.getAttribute("data-home")){var s0=po.getAttribute("src");po.setAttribute("data-home",/com-4x5/.test(s0)?"assets/quote/home-4x5.webp":s0);}
+    var w1=c?"assets/quote/com-4x5.webp":po.getAttribute("data-home");if(po.getAttribute("src")!==w1)po.setAttribute("src",w1);}
   var mb=doc.querySelector('#modes [data-m="r3d"]');if(mb)mb.textContent=c?L("3D storefront","Local en 3D"):L("3D home","Casa en 3D");
   TABS.r3d.note=c?L("A storefront finished the way we leave yours. Tap it to set up your own.","Un local terminado como dejamos el tuyo. Tócalo para armar el tuyo."):L("A model home finished the way we leave yours. Tap it to try your own.","Una casa modelo terminada como dejamos la tuya. Tócala para probar con la tuya.");
   if(heroTab==="r3d"&&$("wnote"))$("wnote").textContent=TABS.r3d.note;
@@ -603,7 +605,7 @@ function makePdf(logo,home){
 function homeShot(){
   if(!api||!api.snap)return null;
   var biz=comOnly();
-  try{var url=api.snap(900,480,{type:"image/jpeg",q:.86,com:biz}),b64=url.split(",")[1],bin=atob(b64),u=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);
+  try{var url=api.snap(900,480,{type:"image/jpeg",q:.86,com:biz,allRoof:true}),b64=url.split(",")[1],bin=atob(b64),u=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);
     if(u[0]!==0xFF||u[1]!==0xD8)return null;
     var info=api.state(),A=st.arrays>1?", "+st.arrays+" sections":"";
     if(biz)return {bytes:u,w:900,h:480,caption:(st.ctype?"Your building as set up in our 3D builder: ":"Your storefront as set up in our 3D builder: ")+comLine()+"."};
@@ -752,6 +754,10 @@ else if(restoreQ())hydrate();
 if("IntersectionObserver" in window){var seen=false;new IntersectionObserver(function(en,o){if(en[0].isIntersecting&&!seen){seen=true;track("view_price");o.disconnect();}}).observe($("price"));}
 render();
 setTab("r3d");
-if(doc.readyState==="complete")setTimeout(autoLoad,300);else window.addEventListener("load",function(){setTimeout(autoLoad,300);});
+/* the 3D starts once the hero poster is on screen and the page is idle, so neither the first paint nor the first taps wait on it */
+function whenIdle(f){if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else setTimeout(f,600);}
+function afterPoster(f){var po=$("r3dPoster"),go=function(){requestAnimationFrame(function(){requestAnimationFrame(function(){whenIdle(f);});});};
+  if(po&&po.decode)po.decode().then(go,go);else go();}
+if(doc.readyState==="complete")afterPoster(autoLoad);else window.addEventListener("load",function(){afterPoster(autoLoad);});
 window.__tq=core; /* for testing and for the 3D module */
 })();

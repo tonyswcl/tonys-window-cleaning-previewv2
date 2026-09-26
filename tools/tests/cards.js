@@ -12,11 +12,17 @@ fs.mkdirSync('cards',{recursive:true});
 const styles=[[0,1,false,{yaw:.62,tilt:.22,dist:.95}],[1,1,false,{yaw:.62,tilt:.22,dist:.95}],[2,1,true,{yaw:.62,tilt:.22,dist:.95}],[3,2,false,{yaw:.62,tilt:.2,dist:.95}],[4,1,false,{yaw:.62,tilt:.22,dist:.95}],[5,1,false,{yaw:.62,tilt:.22,dist:.95},0],[6,1,false,{yaw:.62,tilt:.22,dist:.95},2,2,2]].filter(x=>!process.env.STYLES||process.env.STYLES.split(',').includes(String(x[0])));
 for(const [i,stories,grids,cam,hood,roof,rc] of styles){await set({look:{style:i,hood:hood===undefined?1:hood,stories:stories,grids:grids,roof:roof||0,rc:rc||0}});save('style-'+i,await p.evaluate(c=>window.__tq.api.snap(480,320,c),cam));}
 if(process.env.STYLES){console.log('errors',errs);await b.close();return;}
+if(!process.env.POSTERS){
 for(const h of [0,1,2,3,4]){await set({look:{style:h===4?4:0,hood:h,stories:1,grids:false}});save('hood-'+h,await p.evaluate(c=>window.__tq.api.snap(480,320,c),{yaw:h===3?.35:.55,tilt:.42,dist:h===2?2.4:2.1}));}
 const probs=[['win',{}],['hw',{}],['scr',{scr:true}],['sol',{sol:true}],['pig',{pig:true}]];
 for(const [k,f] of probs){await set(Object.assign({look:{style:0,hood:1,stories:1,grids:false}},f));save('prob-'+k,await p.evaluate(k=>window.__tq.api.probSnap(k,480,320),k));}
 await set({look:{style:3,hood:1,stories:2,grids:false}});save('prob-large',await p.evaluate(c=>window.__tq.api.snap(480,320,c),{yaw:.62,tilt:.2,dist:.95}));
+}
 // posters for the hero, before 3D loads: pristine model home, lawn street
-await set({look:{style:0,hood:1,stories:1,grids:false},pig:true});
+await set({look:{style:0,hood:1,stories:1,grids:false,roof:0,rc:0},pig:true});
 for(const [n,w,h,o] of [['home-4x5',1200,1500,{yaw:.6,tilt:.3,dist:1.0}],['home-16x10',1440,900,{yaw:.62,tilt:.2,dist:1.05}]])save(n,await p.evaluate(a=>window.__tq.api.snap(a[0],a[1],a[2]),[w,h,o]));
+// the same hero without mesh and spinners, for window, solar and screen pages, whose live hero shows none (build.py picks it by page mode)
+await p.evaluate(()=>window.__tq.api.pref('win'));await set({look:{style:0,hood:1,stories:1,grids:false,roof:0,rc:0},pig:false});
+save('home-plain-4x5',await p.evaluate(a=>window.__tq.api.snap(a[0],a[1],a[2]),[1200,1500,{yaw:.6,tilt:.3,dist:1.0}]));
+await p.evaluate(()=>window.__tq.api.pref('home'));
 console.log('errors',errs);await b.close();})();
