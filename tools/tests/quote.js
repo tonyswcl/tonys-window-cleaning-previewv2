@@ -6,9 +6,9 @@ await ctx.route(/googletagmanager|google-analytics|facebook|clarity|fonts\.g|thr
 await ctx.route(/formspree\.io/,r=>{posts.push(JSON.parse(r.request().postData()));r.fulfill({status:200,contentType:'application/json',body:'{"ok":true}'});});
 const p=await ctx.newPage();const errs=[];p.on('pageerror',e=>errs.push(e.message));
 await p.goto('http://localhost:8765/pigeon-proofing-hesperia.html');await p.waitForTimeout(700);
-const T=async()=>{await p.waitForTimeout(500);return p.$eval('#ttotal',e=>e.textContent);};const SV=()=>p.$eval('#save',e=>e.hidden?'':e.innerText.replace(/\n/g,' | '));
+const T=async()=>{await p.waitForTimeout(500);return p.$eval('#ttotal',e=>e.textContent);};const SV=()=>p.$eval('#tlines',e=>e.innerText.replace(/\n/g,' | '));
 ok('pigeon $650',await T()==='$650',await T());
-ok('savings include roof from $599: $711',/You save \$711/.test(await SV()),await SV());
+ok('no inflated savings claim, included work shown as Free and Included',!/You save/.test(await p.$eval('.ticket',e=>e.innerText))&&/solar panels washed \| Free/.test(await SV())&&/Roof soft wash \| Included/.test(await SV()),await SV());
 await p.click('[data-body="pig"] [data-seg="pkg"] [data-v="1"]');await p.waitForTimeout(300);
 ok('package note',/3 washes every 3 months at \$112/.test(await p.$eval('#pkgNote',e=>e.textContent)),await p.$eval('#pkgNote',e=>e.textContent));
 ok('package line on ticket',/A year of cleanings/.test(await p.$eval('#tlines',e=>e.innerText)));

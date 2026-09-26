@@ -1,7 +1,7 @@
 /* Tony's quick quote: price tool, 3D preview, plan, text and send.
    Everything is scoped under .tq so it never touches the rest of the site.
    Source lives in _quote/src. Run _quote/build.py after editing. */
-.tq{--paper:#f6fafc;--surface:#fff;--surface-2:#eaf6fc;--line:#d3e6f0;--ink:#103050;--ink-2:#44607a;--ink-3:#7890a5;
+.tq{--paper:#f6fafc;--surface:#fff;--surface-2:#eaf6fc;--line:#d3e6f0;--ink:#103050;--ink-2:#44607a;--ink-3:#5b7287;
   --sky:#c0e0f0;--gold:#f0b040;--gold-text:#8f5d08;--gold-wash:#fdf4e2;--ok:#1b7a4c;--ok-wash:#e5f4ec;--no:#a13b1f;
   --hero-a:#eaf6fc;--hero-b:#cfe8f5;--shadow:0 1px 2px rgba(16,48,80,.05),0 12px 30px -14px rgba(16,48,80,.16);
   --display:"Sora",system-ui,sans-serif;--body:"Plus Jakarta Sans",system-ui,sans-serif;
@@ -396,7 +396,7 @@ html.tq-lock,html.tq-lock body{overflow:hidden!important}
 .tq .obd-in{width:min(460px,100%);background:rgba(255,255,255,.97);color:#103050;border-radius:18px;padding:16px 16px 14px;box-shadow:0 18px 40px -18px rgba(0,0,0,.55);border-top:5px solid #f0b040}
 .tq .obd-h{display:block;font:800 19px/1.2 var(--display)}
 .tq .obd-in p{font-size:14px;color:#44607a;margin:4px 0 8px}
-.tq .obd-l{font:800 12px var(--display);letter-spacing:.08em;text-transform:uppercase;color:#7890a5;margin:10px 0 6px}
+.tq .obd-l{font:800 12px var(--display);letter-spacing:.08em;text-transform:uppercase;color:#5b7287;margin:10px 0 6px}
 .tq .obd-row{display:flex;flex-wrap:wrap;gap:6px}
 .tq .obd-row button{border:2px solid #d3e6f0;background:#fff;border-radius:999px;padding:7px 12px;font:700 14px var(--display);color:#44607a}
 .tq .obd-row button[aria-pressed="true"]{border-color:#f0b040;background:#fdf4e2;color:#103050}
@@ -494,3 +494,19 @@ html.tq-lock,html.tq-lock body{overflow:hidden!important}
   .tq .try button{font-size:11.5px;padding:6px 10px 6px 24px}
   .tq .try button::before{left:8px;width:9px;height:9px;margin-top:-4.5px}
 }
+
+/* home or business, the first question in the welcome */
+.tq .obd-row.kind{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0 2px}
+.tq .obd-row.kind button{display:flex;flex-direction:column;align-items:flex-start;gap:2px;border-radius:12px;padding:10px 12px;text-align:left}
+.tq .obd-row.kind button b{font:800 15px var(--display);color:var(--ink)}
+.tq .obd-row.kind button span{font:600 12.5px/1.35 var(--body);color:var(--ink-3)}
+/* a business sees its storefront tab first */
+.tq .ov-tabs.biz [data-hmode="com"]{order:-1}
+/* start over, under the ticket */
+.tq .qreset{display:block;margin:10px auto 0;border:0;background:none;padding:6px 8px;font:600 13px var(--body);color:var(--ink-3);text-decoration:underline;text-underline-offset:3px}
+.tq .qreset:hover{color:var(--ink)}
+/* one suggestion for the service being shopped */
+.tq .often{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin-top:14px;padding:12px 14px;border:1px dashed var(--line);border-radius:12px;background:var(--surface-2);font-size:14px;line-height:1.45;color:var(--ink-2)}
+.tq .often span{flex:1 1 220px}
+.tq .often-add{flex:0 0 auto;background:var(--surface);border:2px solid var(--gold);border-radius:999px;padding:6px 13px;font:700 13.5px var(--display);color:var(--ink)}
+.tq .often-add:hover{background:var(--gold-wash)}

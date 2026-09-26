@@ -11,9 +11,9 @@ ok('hreflang pair present',(await p.$$eval('link[rel="alternate"][hreflang]',l=>
 const lines=await p.$eval('#tlines',e=>e.innerText.replace(/\n/g,' | '));
 ok('ticket in Spanish',/Control de palomas, hasta 12 paneles/.test(lines)&&/Gratis/.test(lines),lines);
 ok('total $650',await p.$eval('#ttotal',e=>e.textContent)==='$650');
-ok('savings in Spanish',/Ahorras/.test(await p.$eval('#save',e=>e.innerText)));
+ok('included work in Spanish',/Gratis/.test(await p.$eval('#tlines',e=>e.innerText))&&/Incluido/.test(await p.$eval('#tlines',e=>e.innerText)));
 ok('proof line en Google',/en Google/.test(await p.$eval('#proof',e=>e.textContent)));
-ok('plan buttons in Spanish',/por visita, 25% menos/.test(await p.$eval('[data-seg="plan"]',e=>e.innerText)));
+ok('plan buttons in Spanish, no discount claimed where none applies',/\$112 por visita/.test(await p.$eval('[data-seg="plan"]',e=>e.innerText))&&!/% menos/.test(await p.$eval('[data-seg="plan"]',e=>e.innerText)),await p.$eval('[data-seg="plan"]',e=>e.innerText.replace(/\n/g,' ')));
 ok('wait list in Spanish',/Palomas/.test(await p.$eval('#waitList',e=>e.innerText))&&/Nidos fuera/.test(await p.$eval('#waitList',e=>e.innerText)));
 ok('days in Spanish',/^(dom|lun|mar|mié|jue|vie|sáb)$/.test(await p.$eval('#days .day span',e=>e.textContent)));
 await p.click('[data-seg="time"] [data-v="2"]');await p.waitForTimeout(200);
@@ -23,7 +23,7 @@ ok('message to Tony stays English',/Pigeon proofing, up to 12 panels/.test(msg)&
 await p.fill('#zipIn','92345');await p.dispatchEvent('#zipIn','input');ok('ZIP answer in Spanish',/Sí, vamos a Hesperia/.test(await p.$eval('#zres',e=>e.innerText)));
 /* the 3D: welcome cards, tour notes and the panel in Spanish */
 await p.click('.tq-intro [data-mode="tour"]');await p.waitForTimeout(2000);
-ok('welcome in Spanish',/Vamos a armar tu casa/.test(await p.$eval('.obd',e=>e.innerText)));
+ok('welcome in Spanish, home or business first',/Vamos a armar tu lugar/.test(await p.$eval('.obd',e=>e.innerText))&&/Mi negocio/.test(await p.$eval('.obd',e=>e.innerText)));
 await p.click('.obd [data-obd="next"]');await p.waitForTimeout(300);ok('problem cards in Spanish',/Palomas/.test(await p.$eval('.obd',e=>e.innerText)));
 await p.click('.obd [data-obd="build"]');await p.waitForTimeout(2500);await p.evaluate(()=>window.__tq.api.settle());await p.waitForTimeout(600);
 ok('tour note in Spanish, Tony speaking',/Hola, soy Tony/.test(await p.$eval('#ovMsg',e=>e.innerText))&&/Así está tu casa hoy/.test(await p.$eval('#ovMsg',e=>e.innerText)),await p.$eval('#ovMsg',e=>e.innerText.slice(0,120)));

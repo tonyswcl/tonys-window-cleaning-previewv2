@@ -470,7 +470,8 @@ var world=new T.Group();scene.add(world);
 var me=null,nbs=[],birds=[],spinners=[],cover={},builtKey="",nbKey="";
 /* the model home on the page is always the finished one: panels washed, mesh on, spinners turning */
 function showPanels(){return st.sol||st.pig||mode==="sol"||mode==="pig"||mode==="show";}
-function pigLook(){return !!st.pig||mode==="pig"||mode==="show";}
+/* the model on the page shows the pigeon work only where pigeons are the subject: pigeon pages and the general home pages */
+function pigLook(){return !!st.pig||mode==="pig"||(mode==="show"&&(pageMode==="pig"||pageMode==="home"));}
 function cfgMe(){return {pv:showPanels(),hood:h3.hood,style:h3.style,stories:st.stories,roof:h3.roof,rc:h3.rc,wc:h3.wc,tc:h3.tc,grids:h3.grids,more:st.more,n:st.panels,arrays:st.arrays,sizes:st.arrays>1?st.arr.slice(0,st.arrays):null,
   custom:h3.custom,editing:!!(ED&&ED.t==="home"),cv:h3.cv};}
 function keyOf(c){return [c.pv,c.hood,c.style,c.stories,c.roof,c.rc,c.wc,c.tc,c.grids,c.custom?"":c.more,c.n,c.arrays,c.sizes?c.sizes.join("."):"",c.custom?"c"+c.cv:"",c.editing?"e":""].join("-");}
@@ -1148,6 +1149,7 @@ var mode="show",pageMode=C.mode||"home",tl=0,auto=true,heroOn=false,heroVis=true
 var story={win:[],sol:[],scr:[]};
 function setMode(m,keepT,glide){
   if(ED&&!((m==="home"&&ED.t==="home")||(m==="com"&&ED.t==="shop")))edStop();
+  if(obdOpen&&m!=="home")obdShow(false); /* the welcome belongs to the home view; another tab closes it */
   if(!me)buildMe();
   mode=m;if(!keepT)tl=0;auto=true;say("");h3.focus=null;askSel=null;askOpen=false;
   flight=null;focusShot=null;if(!worker)makeWorker();
@@ -1226,15 +1228,17 @@ function drive(dt){weather(dt);TX.ripple.offset.x=(TX.ripple.offset.x+dt*.012)%1
 function frame(dt){
   var pristine=mode==="show"||mode==="home";drive(dt);
   if(ED){if(com&&ED.t==="shop"){com.grime.visible=false;if(com.patio)com.patio.visible=false;if(com.patio2)com.patio2.visible=false;}else edHide(true);return;}
-  if(comOn()){comFrame(dt);return;}
-  screens.forEach(function(s){s.g.visible=false;});
+  if(comOn()){if(worker){worker.visible=false;hideTools();}comFrame(dt);return;}
+  /* screen and window pages show the finished screens on the model; everywhere else they stay out of the way */
+  var showScr=mode==="show"&&(pageMode==="scr"||pageMode==="win");
+  screens.forEach(function(s){s.g.visible=showScr;if(showScr){screenLook(s,false);s.g.position.set(s.x0,0,.14);s.g.rotation.set(0,0,0);}});
   if(mode!=="sol")me.panels.forEach(function(p){p.dust.visible=false;});
   applyBefore(dt);
   /* in the tour, pigeons sit on your roof until you tap Fix it, then the mesh and spinners go on */
   var homePig=befOn&&(probs().indexOf("pig")>=0||forceProb==="pig"),pst=homePig?(broken("pig",1)?0:broken("pig",2)?1:2):-1;
   if(homePig){if(!birds.length)buildBirds();if(h3.stage!==pst){h3.stage=pst;birdTargets(!!forceProb||dt===0);}}
   /* pigeon mesh, clips, spinners, coverage */
-  var finished=!!st.pig||mode==="show",meshOn=mode==="pig"?h3.stage>=1:homePig?pst>=1:finished,spinOn=mode==="pig"?h3.stage>=2:homePig?pst>=2:(finished||(!st.pig&&st.spin>0));
+  var finished=!!st.pig||(mode==="show"&&pigLook()),meshOn=mode==="pig"?h3.stage>=1:homePig?pst>=1:finished,spinOn=mode==="pig"?h3.stage>=2:homePig?pst>=2:(finished||(!st.pig&&st.spin>0));
   var messOn=mode==="pig"?h3.stage<1:homePig?pst<1:false;
   me.ms=me.ms===undefined?1:me.ms;var msT=meshOn?1:0;if(dt===0)me.ms=msT;else{me.ms+=(msT-me.ms)*Math.min(1,dt*2.4);if(Math.abs(me.ms-msT)<.003)me.ms=msT;}
   me.skirt.forEach(function(s){s.visible=me.ms>.02;s.scale.y=H*Math.min(1,me.ms*1.4);s.position.y=s.userData.y0+s.scale.y/2;});
@@ -1418,7 +1422,12 @@ function pigAuto(){
 
 /* ---------- storefronts and office buildings: the commercial side, and the crew's walk up sales tool ---------- */
 var comG=null,comKey="",com=null;
-function comOn(){return mode==="com"||(mode==="show"&&pageMode==="com");}
+/* home or business: the quote decides (a storefront picked in the quote), the page's own type until then */
+function isCom(){return C.propCom!==undefined?!!C.propCom:pageMode==="com";}
+function comOn(){return mode==="com"||(mode==="show"&&isCom());}
+/* a business sees its storefront first and the home services only as one more tab */
+function tabsSync(){var biz=isCom(),tb=doc.querySelector("#ov .ov-tabs");if(tb)tb.classList.toggle("biz",biz);
+  $$("#ov .ov-tabs [data-hmode]").forEach(function(b){var m=b.getAttribute("data-hmode");b.hidden=biz&&m!=="com"&&m!=="home";});}
 /* the storefront or the house, whichever this view is about */
 function ensureScene(){if(comOn()){buildCom();world.visible=false;comG.visible=true;comShadow();}else{world.visible=true;if(comG&&comG.visible){comG.visible=false;fitShadow(true);}}}
 function comKeyOf(){return [st.ctype,st.cpanes,st.cdoors,st.cstk,st.cin,st.bsq,st.bst,st.bwin,h3.cst,h3.cwc,h3.cac,h3.cname,h3.sv,ED&&ED.t==="shop"?"e":""].join("|");}
@@ -1738,12 +1747,14 @@ el.addEventListener("webglcontextlost",function(e){e.preventDefault();lost=true;
 el.addEventListener("webglcontextrestored",function(){lost=false;$("ovLoad").hidden=true;first=true;if(quality>1)setQuality(quality-1);start();});
 
 /* ---------- callouts that point at the details ---------- */
-var CALL=ES?{glass:"Agua purificada, seca sin manchas",panel:"Paneles lavados sin rayas, $7 cada uno",mesh:"Malla rígida de acero, clips al marco, nada perforado",spin:"Espantapájaros en las ventilas, con abrazaderas",tile:"Lavado suave de techo, gratis con el control de palomas"}:{glass:"Purified water, dries spot free",panel:"Panels washed streak free, $7 each",mesh:"Rigid steel mesh, frame clips, nothing drilled",spin:"Spinners on the vents, held with hose clamps",tile:"Roof soft wash, free with pigeon proofing"};
-var ORDERS={pig:["mesh","spin","panel","glass"],win:["glass","panel","mesh","spin"],sol:["panel","mesh","glass","spin"],scr:["glass","mesh","panel","spin"],home:["glass","panel","mesh","spin"]};
+var CALL=ES?{screen:"Malla nueva, hecha en el lugar",glass:"Agua purificada, seca sin manchas",panel:"Paneles lavados sin rayas, $7 cada uno",mesh:"Malla rígida de acero, clips al marco, nada perforado",spin:"Espantapájaros en las ventilas, con abrazaderas",tile:"Lavado suave de techo, gratis con el control de palomas"}:{screen:"New mesh, re-meshed on site",glass:"Purified water, dries spot free",panel:"Panels washed streak free, $7 each",mesh:"Rigid steel mesh, frame clips, nothing drilled",spin:"Spinners on the vents, held with hose clamps",tile:"Roof soft wash, free with pigeon proofing"};
+/* each page points out only what its model shows: no mesh or spinner callouts where there is no mesh or spinner */
+var ORDERS={pig:["mesh","spin","panel","glass"],win:["glass","screen","panel"],sol:["panel","glass"],scr:["screen","glass"],home:["glass","panel","mesh","spin"]};
 var anc={};
 function anchors(){
   anc={};if(!me)return;
   if(demoWin){anc.glass={p:toWorld(demoWin.g,0,.1,.12),n:V(Math.sin(demoWin.ang),0,Math.cos(demoWin.ang))};}
+  if(scrWin&&pageMode!=="pig"&&pageMode!=="home"&&pageMode!=="sol"){anc.screen={p:toWorld(scrWin.g,scrWin.gw/4,.05,.16),n:V(Math.sin(scrWin.ang),0,Math.cos(scrWin.ang))};}
   var gp=me.groups.filter(function(g){return g.face>0;})[0];
   if(gp){var nF=me.F.localToWorld(V(0,1,0)).sub(me.F.localToWorld(V(0,0,0))).normalize();
     anc.panel={p:toWorld(me.F,gp.center[0]+.4,me.TT+H+.05,gp.center[1]-.2),n:nF};
@@ -1811,13 +1822,21 @@ function guideFrame(dt){
 
 /* ---------- try it: one tap on the picture adds the thing you're looking at ---------- */
 var tryKey="";
-function tryList(){var list=[];
-  if(mode==="win")list.push(["inside",st.inside?L("✓ Inside windows on, +$49","✓ Por dentro incluido, +$49"):L("See it with the inside too, +$49","Verlo con el interior también, +$49"),!!st.inside]);
-  if(mode==="sol"){if(!st.pig)list.push(["pig",L("Pigeons around? Add mesh and free spinners, $450","¿Hay palomas? Malla y espantapájaros gratis, $450"),false]);
-    list.push(["spin",st.pig?L("✓ Spinners included","✓ Espantapájaros incluidos"):st.spin?"✓ "+st.spin+L(" spinner"+(st.spin>1?"s":"")+" on the vents, "+money(st.spin*P.spinner)," espantapájaros en las ventilas, "+money(st.spin*P.spinner)):L("Keep birds off after the wash: spinners, $50 each","Que no se paren las aves: espantapájaros, $50 cada uno"),!!(st.pig||st.spin)]);}
-  if(mode==="pig")[["mesh",L("Mesh","Malla")],["clips",L("Clips, not screws","Clips, no tornillos")],["spin",L("Spinners","Espantapájaros")]].forEach(function(q){list.push([q[0],q[1],h3.focus===q[0]]);});
+function lastStep(){var S=steps();return !!S&&stepAt(S)===S.length-1;}
+/* try it: while the job runs nothing is offered. When it's done, one tap adds it if it isn't on the quote yet,
+   and one related job is there to look at, never more than two */
+function tryList(){var list=[],end=lastStep();
+  if(mode==="win"){if(end&&!st.win)list.push(["add:win",L("Add window cleaning to my quote","Agregar ventanas a mi cotización"),false]);
+    if(end||h3.view===1)list.push(["inside",st.inside?L("✓ Inside windows on, +$49","✓ Por dentro incluido, +$49"):L("Add the inside too, +$49","Agregar por dentro, +$49"),!!st.inside]);
+    if(end&&h3.view===0&&!st.scr)list.push(["see:scr",L("Torn screens? See screen repair","¿Mosquiteros rotos? Ver reparación"),false]);}
+  if(mode==="sol"&&end){if(!st.sol&&!st.pig)list.push(["add:sol",L("Add solar cleaning to my quote, $7 a panel","Agregar limpieza solar a mi cotización, $7 por panel"),false]);
+    if(!st.pig)list.push(["see:pig",L("Seeing pigeons under your panels? See pigeon proofing","¿Ves palomas debajo de tus paneles? Ver control de palomas"),false]);}
+  if(mode==="scr"&&end){if(!st.scr)list.push(["add:scr",L("Add screen repair to my quote","Agregar mosquiteros a mi cotización"),false]);
+    if(!st.win)list.push(["see:win",L("Want the glass done too? See window cleaning","¿El vidrio también? Ver limpieza de ventanas"),false]);}
+  if(mode==="pig"){[["mesh",L("Mesh","Malla")],["clips",L("Clips, not screws","Clips, no tornillos")],["spin",L("Spinners","Espantapájaros")]].forEach(function(q){list.push([q[0],q[1],h3.focus===q[0]]);});
+    if(!st.pig&&h3.stage>=2)list.push(["add:pig",L("Add pigeon proofing to my quote, $450","Agregar control de palomas a mi cotización, $450"),false]);}
   return list;}
-function tryChips(){var el=$("try");if(!el)return;var show=overlay&&!ED&&!obdOpen&&(mode==="win"||mode==="sol"||mode==="pig"),list=show?tryList():[];
+function tryChips(){var el=$("try");if(!el)return;var show=overlay&&!ED&&!obdOpen&&(mode==="win"||mode==="sol"||mode==="scr"||mode==="pig"),list=show?tryList():[];
   var key=mode+"|"+list.map(function(x){return x[0]+x[1]+x[2];}).join("|");if(key===tryKey)return;tryKey=key;el.hidden=!list.length;
   el.innerHTML=list.map(function(x){return '<button type="button" data-try="'+x[0]+'" aria-pressed="'+x[2]+'">'+x[1]+'</button>';}).join("");askRender();}
 var FOCUS_T=ES?{mesh:"<b>Malla rígida de acero.</b> Resistente al óxido, nunca alambre de gallinero. Corre por todo el borde de cada arreglo y queda pegada a la teja, así nada se mete por debajo.",
@@ -1833,9 +1852,11 @@ function tryAct(k){
   if(k==="inside"){st.inside=!st.inside;if(st.inside)st.win=true;var goIn=st.inside&&h3.view!==1;
     if(goIn){h3.view=1;if(!room)buildRoom();fade(function(){tl=0;user=false;resetHaze();if(room)resetRoom();goal=preset();cur=null;});}
     C.render();track("try_inside",{on:st.inside});return;}
-  if(k==="pig"){st.pig=true;st.sol=true;st.spin=0;C.render();setMode("pig",false,true);track("try_pigeon_from_solar");return;}
-  if(k==="spin"){if(st.pig){tonySay(L("<b>Spinners come with your pigeon proofing.</b> "+C.free()+" free, extras are $"+P.spinner+".","<b>Los espantapájaros vienen con tu control de palomas.</b> "+C.free()+" gratis, los extra son $"+P.spinner+"."));return;}
-    st.spin=st.spin?0:2;st.sol=true;C.render();track("try_spinners",{on:!!st.spin});}
+  /* look at a related job: same home, the camera glides over */
+  if(k.indexOf("see:")===0){var to=k.slice(4);track("try_see",{from:mode,to:to});setMode(to,false,true);return;}
+  /* add this job to the quote, and say what it did to the price */
+  if(k.indexOf("add:")===0){var sv=k.slice(4);st[sv]=true;if(sv==="pig")st.spin=0;if(C.pick)C.pick(sv);C.render();var t=C.totals();
+    tonySay(L("<b>Added.</b> ","<b>Agregado.</b> ")+'<span class="tot">'+L("Your quote now: ","Tu cotización ahora: ")+(t.from?L("from ","desde "):"")+money(t.total)+"</span>","ok");track("try_add",{service:sv});return;}
 }
 
 /* ---------- ask Tony: the questions people ask on the porch, answered in his words ---------- */
@@ -1951,7 +1972,8 @@ var obdOpen=false,obdDone=false,obd=doc.createElement("div");obd.className="obd"
 function pics(o,list,cur){return '<div class="obd-row pics" data-o="'+o+'">'+list.map(function(x,i){var v=x[2]!==undefined?x[2]:i;return '<button type="button" data-v="'+v+'" aria-pressed="'+(v===cur)+'"><img src="assets/quote/'+o+'-'+v+'.webp" alt="" width="300" height="200" loading="lazy" decoding="async"><b>'+x[0]+'</b><span>'+x[1]+'</span></button>';}).join("")+"</div>";}
 function chips(o,list,cur){return '<div class="obd-row" data-o="'+o+'">'+list.map(function(x,i){return '<button type="button" data-v="'+(o==="stories"?i+1:i)+'" aria-pressed="'+((o==="stories"?i+1:i)===cur)+'">'+x+'</button>';}).join("")+"</div>";}
 function obdRender(){
-  var P1='<div class="obd-in" data-p="1"><b class="obd-h">'+L("Let\'s get your home right","Vamos a armar tu casa")+'</b><p>'+L("Three taps and the model looks like your place.","Tres toques y el modelo se parece a tu casa.")+'</p>'+
+  var P1='<div class="obd-in" data-p="1"><b class="obd-h">'+L("Let\'s get your place right","Vamos a armar tu lugar")+'</b><p>'+L("Three taps and the model looks like your place.","Tres toques y el modelo se parece a tu lugar.")+'</p>'+
+    '<div class="obd-row kind"><button type="button" data-obd="home" aria-pressed="true"><b>'+L("My home","Mi casa")+'</b><span>'+L("Windows, solar, screens, pigeons","Ventanas, solar, mosquiteros, palomas")+'</span></button><button type="button" data-obd="biz" aria-pressed="false"><b>'+L("My business","Mi negocio")+'</b><span>'+L("Storefront or office building","Local u edificio de oficinas")+'</span></button></div>'+
     '<div class="obd-l">'+L("Which looks most like your home?","¿Cuál se parece más a tu casa?")+'</div>'+pics("style",ES?[["Nueva","Estuco, teja, cochera al frente"],["Rancho","Un piso, larga y baja"],["Clásica","Tablilla, porche, ventanas con cuadrícula"],["Casa de lago","Dos pisos grandes, ventanas en arco"],["Cabaña de montaña","Techo inclinado, madera, pinos"]]:[["New build","Stucco, tile roof, garage up front"],["Ranch","Single story, long and low"],["Classic","Siding, porch, window grids"],["Lake estate","Big two story, arched windows"],["Mountain cabin","Steep roof, wood siding, pines"]],h3.style)+
     '<div class="obd-l">'+L("Stories","Pisos")+'</div>'+chips("stories",ES?["1 piso","2 pisos"]:["1 story","2 story"],st.stories)+
     '<div class="obd-l">'+L("And your street?","¿Y tu calle?")+'</div>'+pics("hood",ES?[["Patios de desierto","Piedra y bardas de bloque. Como las colonias nuevas de Victorville",0],["Pasto y árboles","Patios verdes, árboles de sombra. Como Jess Ranch",1],["En el lago","Patio trasero al agua. Como Spring Valley Lake",3],["Terreno grande","Lotes amplios, espacio de sobra. Como Oak Hills",2],["Montaña","Pinos, piedra, un camino de dos carriles. Como Crestline o Wrightwood",4]]:[["Desert yards","Rock yards, block walls. Like newer Victorville tracts",0],["Lawns and trees","Green yards, shade trees. Like Jess Ranch",1],["On the lake","Backyard on the water. Like Spring Valley Lake",3],["Acreage","Big lots, room to spread out. Like Oak Hills",2],["Mountain","Pines, granite, a two lane road. Like Crestline or Wrightwood",4]],h3.hood)+
@@ -1977,6 +1999,8 @@ obd.addEventListener("change",function(e){if(e.target&&e.target.closest(".obd-pc
 stageEl.appendChild(obd);
 function obdShow(on){obdOpen=on;obd.hidden=!on;ov.classList.toggle("obd-on",on);if(on){obdRender();say("");track("onboard_open");}secLabels();}
 obd.addEventListener("click",function(e){var t=e.target;if(!t.closest)return;
+  var ka=t.closest(".obd-row.kind [data-obd]");if(ka&&ka.getAttribute("data-obd")==="biz"){C.pickCom(0);obdDone=true;track("onboard_business");fade(function(){obdShow(false);setMode("com");});return;}
+  if(ka)return;
   var b=t.closest(".obd-row button");if(b){var o=b.parentNode.getAttribute("data-o"),v=+b.getAttribute("data-v");if(o==="stories")v=+b.getAttribute("data-v");
     if(o==="stories")st.stories=v;else if(o==="style"){h3.style=v;if(v===3){st.stories=2;st.large=true;h3.estateLarge=true;}else if(h3.estateLarge){st.large=false;h3.estateLarge=false;}if(v===1)st.stories=1;h3.grids=v===2;}else h3[o]=v;
     $$("button",b.parentNode).forEach(function(x){x.setAttribute("aria-pressed",String(x===b));});    $$('[data-o="stories"] button',obd).forEach(function(x){x.setAttribute("aria-pressed",String(+x.getAttribute("data-v")===st.stories));});C.render();return;}
@@ -2076,11 +2100,12 @@ function sync(){
 }
 buildMe();
 return {
-  open:function(m){overlay=true;if(C.CFG.tech&&worker)loadRig(C.CFG.tech);perf.hold=performance.now()+1500;perf.n=0;wxFetch();wxChip();$("ovLoad").hidden=true;attach(stageEl);var tour=m==="tour";if(tour)m=pageMode==="com"?"com":"home";if(["home","win","sol","scr","pig","com"].indexOf(m)<0)m="home";setMode(m);if(tour&&!obdDone&&m==="home")obdShow(true);start();},
+  open:function(m){overlay=true;if(C.CFG.tech&&worker)loadRig(C.CFG.tech);perf.hold=performance.now()+1500;perf.n=0;wxFetch();wxChip();$("ovLoad").hidden=true;attach(stageEl);var tour=m==="tour";if(tour)m=isCom()?"com":"home";tabsSync();if(["home","win","sol","scr","pig","com"].indexOf(m)<0)m="home";setMode(m);if(tour&&!obdDone&&m==="home")obdShow(true);start();},
   close:function(){if(ED)edStop();overlay=false;obdShow(false);panelMin(false);say("");secEl.forEach(function(d){d.hidden=true;});Object.keys(hsEl).forEach(function(k){hsEl[k].hidden=true;});h3.spinOv=null;if(h3.view===1)h3.view=0;setMode("show");attach(heroHost);$("ocall").hidden=true;},
   hero:function(on){heroOn=on;if(on&&!overlay){if(!worker)makeWorker();if(mode!=="show")setMode("show");else ensureScene();attach(heroHost);start();}},
   sync:sync,
   pref:function(m){pageMode=m;},
+  prop:function(c){var was=isCom();C.propCom=!!c;tabsSync();if(was!==!!c&&!overlay&&mode==="show"){ensureScene();cur=null;goal=null;}},
   homeDesc:homeDesc,
   bizName:function(){return h3.cname;},
   /* for tests: where a spot on the wall being edited lands on screen, and what's on it */
@@ -2103,7 +2128,7 @@ return {
   tuneHead:function(o){var r=worker&&worker.userData.rig;if(!r)return false;for(var k in o)HW[k]=o[k];for(var bk in r.B)r.B[bk].quaternion.copy(r.bind[bk]);r.holder.position.set(0,0,0);worker.updateMatrixWorld(true);headwear(r,HW);return true;},
   techAt:function(){return worker?worker.getWorldPosition(new T.Vector3()).toArray():null;},
   peek:function(o){focusShot=o;user=false;flight=null;cur=null;goal=o;},
-  state:function(){return {rig:!!(worker&&worker.userData.rig),styleName:["New build","Ranch","Classic","Lake estate"][h3.style],mode:mode,tl:tl,h3:JSON.parse(JSON.stringify(h3)),spinners:spinners.length,birds:birds.length,nbs:nbs.length,W:me&&me.W,style:me&&me.S.id};}
+  state:function(){return {rig:!!(worker&&worker.userData.rig),styleName:STYLE_N[h3.style],mode:mode,tl:tl,h3:JSON.parse(JSON.stringify(h3)),spinners:spinners.length,birds:birds.length,nbs:nbs.length,W:me&&me.W,style:me&&me.S.id};}
 };
 };
 })();

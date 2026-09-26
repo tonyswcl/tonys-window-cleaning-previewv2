@@ -29,6 +29,9 @@ await p.click('#askb');await p.waitForTimeout(300);console.log('ask Tony chips',
 await p.evaluate(()=>{const s=window.__tq.st;s.pig=false;s.spin=0;s.sol=true;window.__tq.render();});
 await p.click('.ov-tabs [data-hmode="sol"]');await p.evaluate(()=>window.__tq.api.seek(4));await shot('14-solar',2500);
 console.log('solar chips',await p.$$eval('#try button',l=>l.map(x=>x.textContent).join(' / ')));
-await p.click('#try [data-try="spin"]');await p.waitForTimeout(600);console.log('spinners only on the ticket',/2 reflective spinners on the roof vents/.test(await p.$eval('#tlines',e=>e.innerText)),await p.$eval('#ttotal',e=>e.textContent));
-await p.click('.ov-tabs [data-hmode="win"]');await p.waitForTimeout(1500);await p.click('#try [data-try="inside"]');await p.waitForTimeout(1500);console.log('inside added from the picture',await p.evaluate(()=>window.__tq.st.inside),await p.$eval('#ovMsg',e=>e.innerText.slice(0,90)));
+console.log('no sales chips while the wash runs',await p.$$eval('#try button',l=>l.length)===0);
+await p.click('#ovNav .nx');await p.waitForTimeout(900);console.log('solar chips when done',await p.$$eval('#try button',l=>l.map(x=>x.textContent).join(' / ')));
+await p.click('#try [data-try="see:pig"]');await p.waitForTimeout(1500);console.log('pigeon view from the solar suggestion, not added to the quote',await p.evaluate(()=>[window.__tq.api.state().mode,window.__tq.st.pig].join(' ')));
+await p.evaluate(()=>{const s=window.__tq.st;s.spin=2;window.__tq.render();});console.log('spinners only on the ticket',/2 reflective spinners on the roof vents/.test(await p.$eval('#tlines',e=>e.innerText)),await p.$eval('#ttotal',e=>e.textContent));
+await p.click('.ov-tabs [data-hmode="win"]');await p.waitForTimeout(1500);await p.evaluate(()=>window.__tq.api.seek(9.4));await p.waitForTimeout(900);await p.click('#try [data-try="inside"]');await p.waitForTimeout(1500);console.log('inside added from the picture',await p.evaluate(()=>window.__tq.st.inside),await p.$eval('#ovMsg',e=>e.innerText.slice(0,90)));
 console.log(errs.join(' | ')||'no errors');await b.close();})();

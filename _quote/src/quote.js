@@ -44,9 +44,11 @@ var P={win:[0,149,249],more:[0,39,39],covers:[0,"10 to 12","18 to 20"],coverMax:
 /* ---------- state ---------- */
 var MAIN=["win","sol","pig","scr"], EXTRA=["hw","roof","pc","gut","pw","ad","gr","com"], ALL=MAIN.concat(EXTRA);
 var st={stories:1,more:false,inside:false,large:false,pkg:0,panels:16,arrays:1,arr:[16,8,6],spin:0,wins:12,winsSet:false,screens:4,frames:false,pet:1,panes:6,day:"",time:-1,plan:0,wait:0,
-  ctype:0,cfreq:0,cterm:0,cin:false,cpanes:8,cdoors:2,cstk:0,bsq:12,bst:2,bwin:48};
+  ctype:0,cfreq:0,cterm:0,cin:false,cpanes:8,cdoors:2,cstk:0,bsq:12,bst:2,bwin:48,planBy:""};
 ALL.forEach(function(k){st[k]=false;});
 (CFG.svc&&CFG.svc.length?CFG.svc:["win"]).forEach(function(k){if(ALL.indexOf(k)>=0)st[k]=true;});
+/* what this page starts with, for Start over; which services the person turned on themselves; the last one they turned on */
+var ST0=JSON.stringify(st),picked={},lastPick="";
 var LIMIT={stories:[1,2],panels:[1,99],wins:[3,80],arrays:[1,3],arr0:[1,60],arr1:[1,60],arr2:[1,60],spin:[0,20],screens:[1,40],pet:[0,1],panes:[1,60],plan:[0,3],time:[-1,2],wait:[0,3],pkg:[0,1],
   ctype:[0,1],cfreq:[0,2],cterm:[0,2],csched:[0,4],cpanes:[1,60],cdoors:[0,12],cstk:[0,40],bsq:[1,300],bst:[1,20],bwin:[4,990]};
 /* the storefront schedule is one row of five: how often we come and how long you sign for, folded into cfreq and cterm */
@@ -58,6 +60,18 @@ function setArrays(a){a=clamp("arrays",a);if(a===st.arrays)return;
   if(a>1&&st.arrays===1){var n=Math.max(a,st.panels);for(var i=0;i<3;i++)st.arr[i]=i<a?Math.floor(n/a)+(i<n%a?1:0):Math.max(1,st.arr[i]);}
   st.arrays=a;sumPanels();}
 function sumPanels(){if(st.arrays>1){var n=0;for(var i=0;i<st.arrays;i++)n+=st.arr[i];st.panels=clamp("panels",n);}}
+
+/* one set of rules for choices that only make sense together, run before every render so no path can leave a stale one behind */
+function normalize(){
+  /* the pigeon "year of cleanings" is the every 3 months plan; one setting shown in two places */
+  if(!st.pig&&st.planBy==="pkg"){st.plan=0;st.planBy="";}
+  st.pkg=st.pig&&st.plan===3?1:0;
+  /* spinners on their own ride along with a solar wash; with no solar and no pigeon proofing there's nothing to add them to */
+  if(!st.pig&&!st.sol)st.spin=0;
+}
+/* home or business: the 3D, its buttons and the PDF picture all follow this */
+function propIsCom(){return !!st.com&&(comOnlyNow()||lastPick==="com");}
+function comOnlyNow(){return ALL.every(function(k){return k==="com"||k==="gr"||k==="ad"||!st[k];});}
 
 function cents(n){return Math.round(n*100)/100;}
 function money(n){n=cents(n);var neg=n<0;n=Math.abs(n);
@@ -82,7 +96,7 @@ function items(lang){ITEM_ES=(lang||LANG)==="es";
     if(st.pkg)add(ix("A year of cleanings: 3 more washes, every 3 months, "+n+" panels × $"+P.panel,"Un año de lavados: 3 lavados más, cada 3 meses, "+n+" paneles × $"+P.panel),0,{note:money(n*P.panel)+ix(" a visit"," por visita"),later:3*n*P.panel});}
   else if(st.sol)add(ix(n+" solar panel"+pl(n)+" × $"+P.panel,n+" panel"+(n>1?"es":"")+" solar"+(n>1?"es":"")+" × $"+P.panel),n*P.panel);
   /* spinners on their own, added to a wash or a window clean when there is no pigeon proofing to bring the free ones */
-  if(!st.pig&&st.spin>0&&(st.sol||st.win))add(ix(st.spin+" reflective spinner"+pl(st.spin)+" on the roof vents × $"+P.spinner,st.spin+" espantapájaros reflectantes en las ventilas × $"+P.spinner),st.spin*P.spinner);
+  if(!st.pig&&st.spin>0&&st.sol)add(ix(st.spin+" reflective spinner"+pl(st.spin)+" on the roof vents × $"+P.spinner,st.spin+" espantapájaros reflectantes en las ventilas × $"+P.spinner),st.spin*P.spinner);
   if(st.scr){var each=P.mesh[st.pet],sub=cents(st.screens*each+(st.frames?st.screens*P.frame:0));
     add(ix(st.screens+" "+P.meshName[st.pet]+" screen"+pl(st.screens)+" × "+money(each),st.screens+" mosquitero"+pl(st.screens)+", "+MESH_ES[st.pet]+" × "+money(each)),cents(st.screens*each));
     if(st.frames)add(ix("New frames and clips, "+st.screens+" × $"+P.frame,"Marcos y clips nuevos, "+st.screens+" × $"+P.frame),st.screens*P.frame);
@@ -114,12 +128,6 @@ function totals(lang){
   var it=items(lang),sub=0;it.forEach(function(x){sub+=x.v;});sub=cents(sub);
   var early=st.day&&sub>0?cents(sub*P.early):0;
   return {it:it,sub:sub,early:early,total:cents(sub-early),from:it.some(function(x){return x.from;})};
-}
-function savings(t){
-  var a=[];
-  if(st.pig){a.push([L("Solar wash for your "+st.panels+" panels, free with pigeon proofing","Lavado solar de tus "+st.panels+" paneles, gratis con el control de palomas"),st.panels*P.panel]);a.push([L("Roof soft wash, included (from $"+P.roof+" on its own)","Lavado suave de techo, incluido (desde $"+P.roof+" por separado)"),P.roof]);}
-  if(t.early)a.push([L("Booked on our website, 10% off","Reservado en nuestro sitio, 10% menos"),t.early]);
-  return a;
 }
 /* what each maintenance visit costs, split so discounts land where they belong:
    windows always get the plan discount, solar only when it isn't paired with pigeon proofing
@@ -158,9 +166,9 @@ function setKey(k,v){
   if(k==="cterm"&&v&&!st.cfreq)st.cfreq=1; /* an agreement means we come back, so one time turns into monthly */
   if(k==="cfreq"&&!v)st.cterm=0;
   if(k==="ctype")track("pick_commercial",{type:v?"building":"storefront"});
-  if(k==="pkg"){if(v&&!st.plan)st.plan=3;track("pick_pigeon_package",{year:v});}
+  if(k==="pkg"){st.plan=v?3:(st.plan===3?0:st.plan);st.planBy=v?"pkg":"";track("pick_pigeon_package",{year:v});render();return;}
   st[k]=v;
-  if(k==="plan")track("pick_plan",{plan:v});
+  if(k==="plan"){st.planBy="user";track("pick_plan",{plan:v});}
   if(k==="time")track("pick_time",{time:v});
   render();
 }
@@ -181,14 +189,15 @@ doc.addEventListener("click",function(e){
     else if(k3==="panels"&&st.arrays>1){st.arr[0]=clamp("arr0",st.arr[0]+d3);sumPanels();}
     else st[k3]=clamp(k3,st[k3]+d3);
     if(k3==="wins"){st.winsSet=true;st.more=st.wins>P.coverMax[st.stories];if(!st.win)st.win=true;}
-    if(k3==="spin"&&!st.pig&&!st.sol&&!st.win)st.sol=true;
+    if(k3==="spin"&&!st.pig&&!st.sol)st.sol=true;
     if((k3==="panels"||/^arr/.test(k3))&&!st.sol&&!st.pig)st.sol=true;render();return;}
   var tile=t.closest("[data-svc]");
-  if(tile){var k4=tile.getAttribute("data-svc");if(ALL.indexOf(k4)<0)return;st[k4]=!st[k4];
+  if(tile){var k4=tile.getAttribute("data-svc");if(ALL.indexOf(k4)<0)return;st[k4]=!st[k4];if(st[k4]){picked[k4]=true;lastPick=k4;}else if(lastPick===k4)lastPick="";
     if(st[k4]&&k4==="hw"&&!st.win)st.win=true;
     if(st[k4]&&k4==="pig")st.spin=0; /* the free spinners come with it, extras start at none */
     if(st[k4]){var m={win:"win",sol:"sol",pig:"pig",scr:"scr"}[k4];if(m)core.mode=m;if(m&&api)api.pref(m);}
     track("select_service",{service:k4,on:st[k4]});render();return;}
+  if(t.closest("#resetQ")){resetQuote();return;}
   if(t.closest("#moreSvc")){var x=$("xtiles"),open=x.hidden;x.hidden=!open;$("moreSvc").setAttribute("aria-expanded",String(open));if(open)track("more_services");return;}
   var o3=t.closest(".open3d");
   if(o3){e.preventDefault();open3d(o3.getAttribute("data-mode")||core.mode);return;}
@@ -197,6 +206,7 @@ doc.addEventListener("click",function(e){
 /* ---------- render ---------- */
 var shown=0,anim=null,firstRender=true;
 function render(){
+  normalize();
   if(st.winsSet)st.more=st.wins>P.coverMax[st.stories];
   $$("[data-svc]").forEach(function(x){var k=x.getAttribute("data-svc");if(ALL.indexOf(k)>=0)x.setAttribute("aria-pressed",String(st[k]));});
   $$("[data-body]").forEach(function(x){x.hidden=!st[x.getAttribute("data-body")];});
@@ -235,13 +245,9 @@ function render(){
   t.it.forEach(function(x){var d=doc.createElement("div");d.className="tline"+(x.note?" inc":"");var a=doc.createElement("span");a.textContent=x.t;var b2=doc.createElement("b");
     b2.textContent=x.note||((x.from?L("from ","desde "):"")+money(x.v));d.appendChild(a);d.appendChild(b2);tl.appendChild(d);});
   if(t.early){var d2=doc.createElement("div");d2.className="tline early-l";var a2=doc.createElement("span");a2.textContent=L("Booked on our website, 10% off","Reservado en nuestro sitio, 10% menos");var b3=doc.createElement("b");b3.textContent=money(-t.early);d2.appendChild(a2);d2.appendChild(b3);tl.appendChild(d2);}
-  var sv=savings(t),box=$("save");box.textContent="";box.hidden=!sv.length;
-  if(sv.length){var tot=0;sv.forEach(function(x){tot+=x[1];});var h=doc.createElement("b");h.textContent=L("You save ","Ahorras ")+money(tot);box.appendChild(h);
-    sv.forEach(function(x){var r=doc.createElement("span");r.textContent=x[0]+": "+money(x[1]);box.appendChild(r);});}
   $("fromNote").hidden=!t.from;
   /* one line from a public Google review, picked for the service on the quote */
   var pr=$("proof");if(pr){var q=proofFor();pr.hidden=!q||!anyOn;pr.textContent="";if(q){var qq=doc.createElement("q");qq.textContent=q[0];pr.appendChild(qq);var who=doc.createElement("span");who.textContent=" "+q[1]+L(" on Google"," en Google");pr.appendChild(who);}}
-  $("earlyTip").hidden=!!st.day||!anyOn;
   $("early").className="early"+(st.day?" on":"");
   $("earlyTxt").textContent=st.day?L("Booked on our website: 10% off, "+money(t.early)+" saved.","Reservado en nuestro sitio: 10% menos, "+money(t.early)+" de ahorro."):L("Book on our website and save an extra 10%. Pick your day below.","Reserva en nuestro sitio y ahorra un 10% extra. Elige tu día abajo.");
   var a0=shown,t0=performance.now(),target=t.total;if(anim)cancelAnimationFrame(anim);
@@ -249,9 +255,46 @@ function render(){
   else (function step(now){var q=Math.min(1,(now-t0)/380),v=q>=1?target:a0+(target-a0)*(1-Math.pow(1-q,3));shown=v;paint(q>=1?target:Math.round(v),q>=1);if(q<1)anim=requestAnimationFrame(step);})(t0);
   /* a quote with nothing priced yet, like an office building, reads as a free walkthrough instead of $0 */
   function paint(v,final){var walk=final&&target===0&&t.it.length>0,txt=walk?L("Free walkthrough","Recorrido gratis"):(t.from&&final?L("from ","desde "):"")+money(v);$("ttotal").textContent=txt;var dt=$("dockTotal");if(dt)dt.textContent=walk?L("Quote","Cotizar"):money(v);}
-  days();planBox(t);waitBox(t);msg(totals("en"));
+  days();planBox(t);waitBox(t);often();msg(totals("en"));
+  propSync();saveQ();
   if(api)api.sync();
 }
+/* the words and pictures that say home or storefront follow what's picked, so a storefront never opens on a house */
+var propNow=null;
+function propSync(){var c=propIsCom(),bld=st.ctype===1,key=c?(bld?"b":"s"):"h";core.propCom=c;if(key===propNow)return;propNow=key;
+  var see=c?(bld?L("See it on my building","Verlo en mi edificio"):L("See it on my storefront","Verlo en mi local")):L("See it on my home","Verlo en mi casa");
+  $$(".tq-intro .open3d[data-mode='tour']").forEach(function(x){x.textContent=see;});
+  var lay=doc.querySelector("#wipe .lay.r3d");if(lay){var g=lay.querySelector(".r3d-go");if(g)g.textContent=see;lay.setAttribute("aria-label",c?L("Open the 3D preview of your storefront","Abrir la vista 3D de tu local"):L("Open the 3D preview of your home","Abrir la vista 3D de tu casa"));}
+  var po=$("r3dPoster");if(po){var w1="assets/quote/"+(c?"com":"home")+"-4x5.webp";if(po.getAttribute("src")!==w1)po.setAttribute("src",w1);}
+  var mb=doc.querySelector('#modes [data-m="r3d"]');if(mb)mb.textContent=c?L("3D storefront","Local en 3D"):L("3D home","Casa en 3D");
+  TABS.r3d.note=c?L("A storefront finished the way we leave yours. Tap it to set up your own.","Un local terminado como dejamos el tuyo. Tócalo para armar el tuyo."):L("A model home finished the way we leave yours. Tap it to try your own.","Una casa modelo terminada como dejamos la tuya. Tócala para probar con la tuya.");
+  if(heroTab==="r3d"&&$("wnote"))$("wnote").textContent=TABS.r3d.note;
+  var th=doc.querySelector("#three .sec-h");if(th){th.querySelector("h2").textContent=c?L("See it on your storefront in 3D","Velo en tu local en 3D"):L("See it on your home in 3D","Velo en tu casa en 3D");
+    th.querySelector("p").textContent=c?L("Set your panes, doors and stickers. Watch the glass get done.","Pon tus vidrios, puertas y calcomanías. Mira cómo queda el vidrio."):L("Pick your home. Watch the job get done.","Elige tu casa. Mira cómo se hace el trabajo.");}
+  var p3=doc.querySelector("#three .p3-img img");if(p3){var w2="assets/quote/"+(c?"com":"home")+"-16x10.webp";if(p3.getAttribute("src")!==w2)p3.setAttribute("src",w2);}
+  $$("#three .p3-btns,#three .p3-s").forEach(function(x){x.hidden=c;});
+  if(api&&api.prop)api.prop(c);
+}
+/* a refresh keeps the quote for a couple of hours in this tab; Start over puts the page back the way it opened */
+var SKEY="tq:"+location.pathname;
+function saveQ(){try{sessionStorage.setItem(SKEY,JSON.stringify({t:Date.now(),q:token(),pb:st.planBy||"",lp:lastPick,pk:Object.keys(picked)}));}catch(e){}}
+function restoreQ(){try{var nv=performance.getEntriesByType&&performance.getEntriesByType("navigation")[0];if(!nv||(nv.type!=="reload"&&nv.type!=="back_forward"))return false;
+  var sv=JSON.parse(sessionStorage.getItem(SKEY)||"null");if(!sv||Date.now()-sv.t>72e5||!loadToken("#"+sv.q))return false;
+  st.planBy=sv.pb||"";lastPick=sv.lp||"";(sv.pk||[]).forEach(function(k){picked[k]=true;});return true;}catch(e){return false;}}
+function resetQuote(){var d=JSON.parse(ST0);for(var k in d)st[k]=Array.isArray(d[k])?d[k].slice():d[k];picked={};lastPick="";
+  try{sessionStorage.removeItem(SKEY);}catch(e){}track("start_over");render();var q=$("quote");if(q)q.scrollIntoView({behavior:reduce?"auto":"smooth"});}
+
+/* what goes with what: one suggestion under the options, for the service being shopped, only while it isn't on the quote yet.
+   Pigeon proofing already includes the solar wash, the roof wash and the cleanup, so it suggests nothing. */
+var OFTEN={win:[["scr",L("Screens torn or brittle? Re-meshed on site the same visit, from $53.99.","¿Mosquiteros rotos o quebradizos? Malla nueva en el lugar, la misma visita, desde $53.99."),L("Add screens","Agregar mosquiteros")]],
+  sol:[["pig",L("Pigeons nesting under the panels? Proofing is $450 up to 12 panels, and this wash comes with it.","¿Palomas anidando debajo de los paneles? El control es $450 hasta 12 paneles, y este lavado va incluido."),L("Add pigeon proofing","Agregar control de palomas")]],
+  scr:[["win",L("Want the glass done while the screens are out? Windows from $149, screens washed and back in.","¿Quieres el vidrio limpio mientras los mosquiteros están fuera? Ventanas desde $149, mosquiteros lavados y de vuelta."),L("Add windows","Agregar ventanas")]],
+  com:[["ad",L("Old decals or peeling vinyl on the glass? Removal from $129.","¿Calcomanías viejas o vinil despegado en el vidrio? Quitarlas desde $129."),L("Add decal removal","Agregar quitar calcomanías")]]};
+function often(){var box=$("often");if(!box)return;var main=[CFG.svc&&CFG.svc[0],lastPick,"pig","sol","win","scr","com"].filter(function(k){return k&&OFTEN[k]&&st[k];})[0],pick=null;
+  if(main&&!(main==="sol"&&st.pig))OFTEN[main].forEach(function(o){if(!pick&&!st[o[0]])pick=o;});
+  box.hidden=!pick;if(!pick){box.textContent="";return;}
+  if(box.getAttribute("data-k")===pick[0])return;box.setAttribute("data-k",pick[0]);box.textContent="";
+  var tx=doc.createElement("span");tx.textContent=pick[1];var bt=doc.createElement("button");bt.type="button";bt.setAttribute("data-svc",pick[0]);bt.className="often-add";bt.textContent="+ "+pick[2];box.appendChild(tx);box.appendChild(bt);}
 
 /* public Google reviews, the same ones on the reviews page, one line each. Pigeon quotes get a pigeon review, and so on. */
 var PROOF={pig:[["Got the job done in one day at the best price.","Henry R."],["I recommend them to any one looking to get their solar pigeon proofed in the High Desert.","Oswaldo F."],["He cleaned my solar panels and whole roof, installed wire around the panels and he also installed the spinners for the pigeons.","Hailey B."]],
@@ -284,7 +327,7 @@ function schedule(t,plan,lang){var es=(lang||"en")==="es";
   var freq=P.planFreq[plan],off=P.planOff[plan],rp=recurParts(),per=rp.win+rp.sol,each=cents(rp.win*(1-off)+rp.sol*(rp.solOff?1-off:1)),start=parseIso(st.day);
   if(!freq)return {plan:0,freq:0,visits:[],per:per,each:per,off:0,year:t.total,save:0};
   var n=12/freq,v=[];
-  for(var i=0;i<n;i++)v.push({i:i,date:start?addMonths(start,i*freq):null,amt:i===0?t.total:each,label:i===0?(es?"Primera visita, todo lo de tu cotización":"First visit, everything on your quote"):(es?"Visita de mantenimiento":"Maintenance visit")+(off?", "+Math.round(off*100)+(es?"% menos":"% off"):"")});
+  for(var i=0;i<n;i++)v.push({i:i,date:start?addMonths(start,i*freq):null,amt:i===0?t.total:each,label:i===0?(es?"Primera visita, todo lo de tu cotización":"First visit, everything on your quote"):(es?"Visita de mantenimiento":"Maintenance visit")+offTxt({off:off,per:per,each:each},es)});
   return {plan:plan,freq:freq,visits:v,per:per,each:each,off:off,n:n,year:cents(t.total+each*(n-1)),save:cents((per-each)*(n-1))};
 }
 /* what each plan does for you, in plain words */
@@ -293,17 +336,36 @@ var PLAN_WHY=["One clean, then it's on you to remember when it's time again.",
   "Tony texts you once a year when it's time. Regular price, nothing to remember.",
   "Spring and fall. 15% off every visit after the first, and your price is locked for the year.",
   "Every season, and the best value. 25% off every visit after the first, price locked for the year. Glass and panels never fall far behind, so hard water and dust never get the chance to set in."];
+/* how a plan's discount lands on this quote: on everything, on the windows only (pigeon customers keep $7 a panel), or on nothing */
+function planOffKind(){var rp=recurParts();if(!rp.win&&!rp.sol)return "none";if(!rp.sol||rp.solOff)return "full";return rp.win?"part":"none";}
+function offTxt(sc,es){var k=planOffKind(),d=cents(sc.per-sc.each);if(!sc.off||d<=0)return "";
+  return k==="full"?", "+Math.round(sc.off*100)+(es?"% menos":"% off"):k==="part"?", "+money(d)+(es?" menos":" off"):"";}
+var PLAN_WHY_NONE=["One clean, then it's on you to remember when it's time again.","Tony texts you once a year when it's time. Regular price, nothing to remember.",
+  "Spring and fall. Panel washes stay at $7 a panel, and each visit doubles as a spinner, clip and mesh check.",
+  "Every season, which is what panels need out here. $7 a panel a visit, and every visit doubles as a spinner, clip and mesh check."];
+var PLAN_WHY_NONE_ES=["Una limpieza, y luego te toca a ti acordarte cuándo vuelve a tocar.","Tony te manda un mensaje una vez al año cuando toca. Precio normal, nada que recordar.",
+  "Primavera y otoño. Los lavados de paneles siguen a $7 por panel, y cada visita sirve para revisar espantapájaros, clips y malla.",
+  "Cada temporada, que es lo que necesitan los paneles aquí. $7 por panel por visita, y cada visita sirve para revisar espantapájaros, clips y malla."];
+var PLAN_WHY_PART=["One clean, then it's on you to remember when it's time again.","Tony texts you once a year when it's time. Regular price, nothing to remember.",
+  "Spring and fall. 15% off the windows on every visit after the first, and your price is locked for the year. Panel washes stay at $7 a panel.",
+  "Every season, and the best value. 25% off the windows on every visit after the first, price locked for the year. Panel washes stay at $7 a panel."];
+var PLAN_WHY_PART_ES=["Una limpieza, y luego te toca a ti acordarte cuándo vuelve a tocar.","Tony te manda un mensaje una vez al año cuando toca. Precio normal, nada que recordar.",
+  "Primavera y otoño. 15% menos en las ventanas en cada visita después de la primera, y tu precio queda fijo por el año. Los lavados de paneles siguen a $7 por panel.",
+  "Cada temporada, y el mejor valor. 25% menos en las ventanas en cada visita después de la primera, precio fijo por el año. Los lavados de paneles siguen a $7 por panel."];
 function planBox(t){
-  var box=$("planbox"),ol=$("visits"),per=recurring();
-  /* each plan button shows what it costs for this quote */
+  var box=$("planbox"),ol=$("visits"),per=recurring(),none=!per,kind=planOffKind();
+  /* a quote with nothing that comes back (a storefront, screens, specialty work) has no plan to pick */
+  ["planLab","planWhy","planNote"].forEach(function(id){var e=$(id);if(e)e.hidden=none;});$$("[data-seg='plan']").forEach(function(g){g.hidden=none;});
+  var pn=$("planNone");if(pn){pn.hidden=!none;pn.textContent=st.com?L("Storefront schedules are set above, with the discount for monthly, every 2 weeks or an agreement.","Los horarios del local se eligen arriba, con el descuento mensual, cada 2 semanas o por contrato."):L("Plans cover window and solar cleaning. This quote is a one time job.","Los planes cubren ventanas y paneles solares. Esta cotización es de una sola vez.");}
+  /* each plan button shows what it costs for this quote, and a discount only where it really applies */
   $$("[data-seg='plan'] button[data-v]").forEach(function(b){var v=+b.getAttribute("data-v"),sm=b.querySelector("small");if(!sm)return;
-    var sc=schedule(t,v);sm.textContent=!per?(v?L("windows or solar","ventanas o solar"):L("just this visit","solo esta visita")):v===0?L("just this visit","solo esta visita"):v===1?money(sc.per)+L(" next year"," el próximo año"):money(sc.each)+L(" a visit, "," por visita, ")+Math.round(sc.off*100)+L("% off","% menos");});
-  $("planWhy").textContent=(ES?PLAN_WHY_ES:PLAN_WHY)[st.plan];
-  $("pdfBtn").textContent=L("Download my "+(st.plan?"plan":"quote")+" (PDF)","Descargar mi "+(st.plan?"plan":"cotización")+" (PDF)");
-  if(!st.plan){box.hidden=true;return;}
+    var sc=schedule(t,v);sm.textContent=none?"":v===0?L("just this visit","solo esta visita"):v===1?money(sc.per)+L(" next year"," el próximo año"):money(sc.each)+L(" a visit"," por visita")+offTxt(sc,ES);});
+  $("planWhy").textContent=(kind==="none"?(ES?PLAN_WHY_NONE_ES:PLAN_WHY_NONE):kind==="part"?(ES?PLAN_WHY_PART_ES:PLAN_WHY_PART):(ES?PLAN_WHY_ES:PLAN_WHY))[st.plan];
+  var onPlan=!!st.plan&&!none;
+  $("pdfBtn").textContent=L("Download my "+(onPlan?"plan":"quote")+" (PDF)","Descargar mi "+(onPlan?"plan":"cotización")+" (PDF)");
+  if(!onPlan){box.hidden=true;return;}
   box.hidden=false;ol.textContent="";
   var sc=schedule(t,undefined,LANG);
-  if(!per){$("plantot").textContent=L("Plans cover window and solar cleaning. Add one of those above to build a plan.","Los planes cubren ventanas y paneles solares. Agrega uno de esos arriba para armar un plan.");return;}
   sc.visits.forEach(function(v){var li=doc.createElement("li");var a=doc.createElement("span");a.textContent=(v.date?fmt(v.date,true,ES):(v.i===0?L("Your first visit","Tu primera visita"):L("Month ","Mes ")+(v.i*sc.freq+1)))+" · "+v.label;
     var b=doc.createElement("b");b.textContent=money(v.amt);li.appendChild(a);li.appendChild(b);ol.appendChild(li);});
   var pigNote=st.pig?L(" Solar upkeep is counted by panels: "," El mantenimiento solar se cuenta por paneles: ")+st.panels+" × $"+P.panel+" = "+money(st.panels*P.panel)+L(" a visit."," por visita."):"";
@@ -327,12 +389,13 @@ var WAIT_ES={win:["Vidrio claro ahora, y el agua dura nunca toma ventaja.","El p
 var WAIT_WHEN_ES=["Reservar ahora","En 3 meses","En 6 meses","En un año"],WAIT_NAME_ES={win:"Ventanas",sol:"Paneles solares",pig:"Palomas",scr:"Mosquiteros",hw:"Agua dura"};
 function waitBox(t){
   var ul=$("waitList");if(!ul)return;ul.textContent="";
-  var keys=["pig","sol","win","scr","hw"].filter(function(k){return st[k]&&!(k==="sol"&&st.pig);});if(!keys.length)keys=["win","sol"];
+  var keys=["pig","sol","win","scr","hw"].filter(function(k){return st[k]&&!(k==="sol"&&st.pig);}),ww=$("waitWrap");
+  if(ww)ww.hidden=!keys.length&&!!st.com;if(!keys.length)keys=["win","sol"];
   keys.forEach(function(k){var li=doc.createElement("li");li.className="w"+st.wait;var b=doc.createElement("b");b.textContent=(ES?WAIT_NAME_ES:WAIT_NAME)[k];li.appendChild(b);
     var sp=doc.createElement("span");sp.textContent=(ES?WAIT_ES:WAIT)[k][st.wait];li.appendChild(sp);ul.appendChild(li);});
   var q=schedule(t,3),per=recurring();
-  $("waitNote").textContent=st.wait===0?L("Book on our website today and the 10% is yours.","Reserva en nuestro sitio hoy y el 10% es tuyo."):
-    (per?L("Like landscaping, glass and panels need upkeep, not one visit. Every 3 months keeps you ahead and saves "+money(q.save)+" over the year.","Como el jardín, el vidrio y los paneles necesitan mantenimiento, no una sola visita. Cada 3 meses te mantiene adelante y ahorra "+money(q.save)+" al año."):L("Like landscaping, upkeep beats catching up. Tony can put you on a reminder so it never gets this far.","Como el jardín, mantener es mejor que ponerse al corriente. Tony te puede poner un recordatorio para que no llegue a tanto."));
+  $("waitNote").textContent=st.wait===0?"":
+    (per?L("Like landscaping, glass and panels need upkeep, not one visit. Every 3 months keeps you ahead"+(q.save>0?" and saves "+money(q.save)+" over the year.":"."),"Como el jardín, el vidrio y los paneles necesitan mantenimiento, no una sola visita. Cada 3 meses te mantiene adelante"+(q.save>0?" y ahorra "+money(q.save)+" al año.":".")):L("Like landscaping, upkeep beats catching up. Tony can put you on a reminder so it never gets this far.","Como el jardín, mantener es mejor que ponerse al corriente. Tony te puede poner un recordatorio para que no llegue a tanto."));
 }
 
 /* ---------- step 3: details once, then text, email or the form, all written out for Tony ---------- */
@@ -417,8 +480,8 @@ function token(){var f=0;FLAGS.forEach(function(k,i){if(st[k])f|=1<<i;});
   return "q"+f.toString(36)+"-"+st.stories+st.pet+st.plan+(st.time+1)+"-"+st.panels+"-"+st.spin+"-"+st.screens+"-"+st.panes+
     (st.arrays>1?"-a"+st.arr.slice(0,st.arrays).join("."):"")+
     (st.com?"-c"+st.ctype+st.cfreq+(st.cin?1:0)+st.cterm+"."+[st.cpanes,st.cdoors,st.cstk,st.bsq,st.bst,st.bwin].join("."):"")+(st.day?"-d"+st.day.replace(/-/g,""):"");}
-function loadToken(){
-  var m=/^#q([0-9a-z]{1,5})-([12])([01])([0-3])([0-3])-(\d{1,2})-(\d{1,2})-(\d{1,2})-(\d{1,2})(?:-a(\d{1,2}(?:\.\d{1,2}){1,2}))?(?:-c([01])([0-2])([01])([0-2])?\.(\d{1,2})\.(\d{1,2})\.(\d{1,2})\.(\d{1,3})\.(\d{1,2})\.(\d{1,3}))?(?:-d(\d{8}))?$/.exec(location.hash||"");
+function loadToken(h){
+  var m=/^#q([0-9a-z]{1,5})-([12])([01])([0-3])([0-3])-(\d{1,2})-(\d{1,2})-(\d{1,2})-(\d{1,2})(?:-a(\d{1,2}(?:\.\d{1,2}){1,2}))?(?:-c([01])([0-2])([01])([0-2])?\.(\d{1,2})\.(\d{1,2})\.(\d{1,2})\.(\d{1,3})\.(\d{1,2})\.(\d{1,3}))?(?:-d(\d{8}))?$/.exec(h===undefined?(location.hash||""):h);
   if(!m)return false;
   var f=parseInt(m[1],36);if(!(f>=0)||f>=(1<<FLAGS.length))return false;
   FLAGS.forEach(function(k,i){st[k]=!!(f&(1<<i));});
@@ -463,7 +526,7 @@ function makePdf(logo,home){
   rect(0,0,612,110,[234,246,252]);rect(0,108,612,3,[240,176,64]);
   if(logo)ops.push("q 64 0 0 64 48 "+(792-94)+" cm /Im1 Do Q");
   text(logo?126:48,52,"Tony's Window Cleaning",22,true,ink);
-  text(logo?126:48,74,(st.plan?"Your service plan":"Your quote")+" · "+fmt(TODAY,true),12,false,soft);
+  text(logo?126:48,74,(st.plan&&per?"Your service plan":"Your quote")+" · "+fmt(TODAY,true),12,false,soft);
   text(564,52,PHONE,14,true,ink,"r");text(564,72,"twindowclean.com",11,false,soft,"r");
   y=140;
   text(48,y,name?"Prepared for "+name:"Prepared for you",15,true,ink);y+=18;if(street){text(48,y,street,11,false,soft);y+=14;}
@@ -475,7 +538,7 @@ function makePdf(logo,home){
   if(st.arrays>1&&(st.sol||st.pig)){need(16);text(60,y,st.arr.slice(0,st.arrays).map(function(n,i){return "Section "+(i+1)+": "+n+" panels";}).join("   "),10,false,soft);y+=18;}
   if(t.early){need(18);text(48,y,"Booked on our website, 10% off",11,false,green);text(564,y,money(-t.early),11,true,green,"r");y+=18;}
   need(60);line(48,y,564,ink,1.4);y+=24;text(48,y,"Total",13,true,ink);text(564,y,(t.from?"from ":"")+money(t.total),20,true,ink,"r");y+=26;
-  var sv=savings(t);if(sv.length){var tot=0;sv.forEach(function(x){tot+=x[1];});text(564,y,"You save "+money(tot),11,true,green,"r");y+=22;}
+  if(t.early){text(564,y,"You save "+money(t.early)+" booking online",11,true,green,"r");y+=22;}
   var day=dayText();if(day){need(18);text(48,y,"Requested day: "+day,11,true,ink);y+=20;}
   var hl=homeLine();need(16);text(48,y,propLabel()+": "+hl,10,false,soft);y+=16;
   var nt=fld("fnotes");if(nt){wrap("Notes: "+nt,10,516).forEach(function(ln){need(14);text(48,y,ln,10,false,soft);y+=14;});y+=4;}
@@ -483,15 +546,15 @@ function makePdf(logo,home){
   if(st.pig){head("If you booked these on their own");
     var sep=[["Solar panel wash, "+st.panels+" panels × $"+P.panel,st.panels*P.panel],["Roof soft wash, from",P.roof],[free()+" reflective spinners × $"+P.spinner,free()*P.spinner]],sepT=0;
     sep.forEach(function(r){need(16);text(48,y,r[0],10.5,false,ink);text(564,y,money(r[1]),10.5,false,soft,"r");sepT+=r[1];y+=16;});
-    need(20);text(48,y,"Included with your pigeon proofing",11,true,green);text(564,y,"You keep "+money(sepT),11,true,green,"r");y+=20;
+    need(20);text(48,y,"All three come with your pigeon proofing at no charge.",11,true,green);y+=20;
     if(st.pkg){para("Your year of cleanings: 3 more washes every 3 months at "+money(st.panels*P.panel)+" each ("+st.panels+" panels × $"+P.panel+"). Panels need it out here anyway, and every visit is the right time to check the spinners, clips and mesh, so nothing gets missed.",10,ink);}}
   /* the four ways to keep it up, priced for this home */
   if(per){head("Keeping it up: your options");
     need(18);text(48,y,"Plan",9,true,soft);text(240,y,"Visits a year",9,true,soft);text(450,y,"Each visit after the first",9,true,soft,"r");text(564,y,"About a year",9,true,soft,"r");y+=16;
     [0,1,2,3].forEach(function(v){var q=schedule(t,v);need(18);if(v===st.plan)rect(44,y-12,524,17,[253,244,226]);
       text(48,y,P.planName[v]+(v===3?"  (best value)":""),11,v===st.plan,ink);text(240,y,v===0?"1":v===1?"1 + reminder":String(q.n),11,false,ink);
-      text(450,y,v===0?"-":v===1?money(q.per)+" next year":money(q.each)+" ("+Math.round(q.off*100)+"% off)",11,false,ink,"r");text(564,y,money(q.year),11,true,ink,"r");y+=18;});
-    var q3=schedule(t,3);y+=2;para("Every 3 months saves "+money(q3.save)+" over the year compared with booking each visit on its own, and the price is locked for the year.",10,green);
+      text(450,y,v===0?"-":v===1?money(q.per)+" next year":money(q.each)+offTxt(q,false).replace(/^, (.*)$/," ($1)"),11,false,ink,"r");text(564,y,money(q.year),11,true,ink,"r");y+=18;});
+    var q3=schedule(t,3);y+=2;para(q3.save>0?"Every 3 months saves "+money(q3.save)+" over the year compared with booking each visit on its own, and the price is locked for the year.":"Every 3 months keeps the panels at full output, and every visit doubles as a spinner, clip and mesh check.",10,green);
     if(st.plan&&sc.visits.length){head("Your plan: "+P.planName[st.plan].toLowerCase());
       sc.visits.forEach(function(v){need(17);text(48,y,(v.date?fmt(v.date,true):(v.i===0?"First visit":"Month "+(v.i*sc.freq+1)))+" · "+v.label,11,false,ink);text(564,y,money(v.amt),11,true,ink,"r");y+=17;});}}
   /* storefront schedules, priced for this storefront */
@@ -599,9 +662,9 @@ if(zi)zi.addEventListener("input",function(){
 doc.addEventListener("click",function(e){var a=e.target.closest&&e.target.closest('a.zlink[href="#tq-send"]');if(a){e.preventDefault();$("tq-send").scrollIntoView({behavior:reduce?"auto":"smooth"});setTimeout(function(){$("fstreet").focus({preventScroll:true});},reduce?0:500);}});
 
 /* ---------- hero: live 3D first, then real finished jobs you can swipe ---------- */
-var TABS=ES?{r3d:{lbl:"3D en vivo",note:"Una casa modelo terminada como dejamos la tuya. Tócala para probar con la tuya."},win:{lbl:"Ventanas",note:"Trabajos reales terminados. Desliza para ver más."},sol:{lbl:"Solar",note:"Trabajos reales terminados. Desliza para ver más."},pig:{lbl:"Control de palomas",note:"Trabajos reales terminados. Desliza para ver más."}}:
+var TABS=ES?{r3d:{lbl:"3D en vivo",note:"Una casa modelo terminada como dejamos la tuya. Tócala para probar con la tuya."},win:{lbl:"Ventanas",note:"Trabajos reales terminados. Desliza para ver más."},sol:{lbl:"Solar",note:"Trabajos reales terminados. Desliza para ver más."},pig:{lbl:"Control de palomas",note:"Trabajos reales terminados. Desliza para ver más."},scr:{lbl:"Mosquiteros",note:"Trabajos reales terminados. Desliza para ver más."}}:
   {r3d:{lbl:"Live 3D",note:"A model home finished the way we leave yours. Tap it to try your own."},
-  win:{lbl:"Windows",note:"Real finished jobs. Swipe for more."},sol:{lbl:"Solar",note:"Real finished jobs. Swipe for more."},pig:{lbl:"Pigeon proofing",note:"Real finished jobs. Swipe for more."}};
+  win:{lbl:"Windows",note:"Real finished jobs. Swipe for more."},sol:{lbl:"Solar",note:"Real finished jobs. Swipe for more."},pig:{lbl:"Pigeon proofing",note:"Real finished jobs. Swipe for more."},scr:{lbl:"Screens",note:"Real finished jobs. Swipe for more."}};
 var heroTab="r3d",box=$("wipe"),curCar=null;
 $$(".car",box).forEach(function(c){
   var tr=c.querySelector(".track"),n=tr.children.length,dots=c.querySelector(".dots");
@@ -627,7 +690,11 @@ $$(".r3d",box).forEach(function(r){r.addEventListener("keydown",function(e){if(e
 var api=null,loading=false,pend=[],ov=$("ov"),lastFocus=null;
 var core={st:st,CFG:CFG,P:P,$:$,$$:$$,reduce:reduce,money:money,track:track,free:free,render:render,totals:totals,
   mode:CFG.mode||"home",close:function(){close3d();},
-  ie:function(){var v=zi&&zi.value;return !!(v&&v.length===5&&ieCity(v));},comVisit:function(){return comVisit();},comOffName:comOffName,bldgPrice:bldgPrice,schedule:schedule,recurring:recurring};
+  ie:function(){var v=zi&&zi.value;return !!(v&&v.length===5&&ieCity(v));},
+  /* "My business" in the welcome: a storefront quote, without the home services the page only started with */
+  /* a service added from inside the 3D counts as the person's own pick */
+  pick:function(k){picked[k]=true;lastPick=k;},
+  pickCom:function(type){st.com=true;st.ctype=type?1:0;["win","sol","pig","scr","hw","roof","pc","gut","pw"].forEach(function(k){if(!picked[k])st[k]=false;});picked.com=true;lastPick="com";render();},comVisit:function(){return comVisit();},comOffName:comOffName,bldgPrice:bldgPrice,schedule:schedule,recurring:recurring};
 function script(src,ok,bad){var s=doc.createElement("script");s.src=src;s.async=true;s.onload=ok;s.onerror=bad;doc.head.appendChild(s);}
 function load3d(cb){
   if(api){if(cb)cb();return;}if(cb)pend.push(cb);if(loading)return;loading=true;
@@ -642,20 +709,29 @@ function autoLoad(){
   if(slow)return;
   load3d(function(){api.hero(heroTab==="r3d"&&ov.hidden);});
 }
+/* the 3D fills a phone screen, so Back (or a swipe back) closes it instead of leaving the page */
+var ovHist=false,afterPop=null;
 function open3d(mode){
   if(!ov)return;hydrate();lastFocus=doc.activeElement;ov.hidden=false;doc.documentElement.classList.add("tq-lock");
+  if(!ovHist){try{if("scrollRestoration" in history)history.scrollRestoration="manual";history.pushState({tq3d:1},"");ovHist=true;}catch(e){}}
   track("view_3d",{mode:mode});try{$("ovX").focus({preventScroll:true});}catch(e){}
   if(!api){var l=$("ovLoad");l.hidden=false;l.textContent="Loading 3D…";}
   load3d(function(){api.open(mode);});
 }
-function close3d(){
-  if(!ov||ov.hidden)return;if(api)api.close();ov.hidden=true;doc.documentElement.classList.remove("tq-lock");
+function close3d(fromPop,then){
+  if(!ov||ov.hidden){if(then)then();return;}if(api)api.close();ov.hidden=true;doc.documentElement.classList.remove("tq-lock");
   if(api)api.hero(heroTab==="r3d");
   if(lastFocus&&lastFocus.focus)try{lastFocus.focus({preventScroll:true});}catch(e){}
+  /* closed with the button: step back over the entry the 3D added, then do whatever comes next once the browser has settled */
+  if(ovHist&&!fromPop){ovHist=false;afterPop=then||null;try{history.back();}catch(e){afterPop=null;if(then)then();}return;}
+  ovHist=false;if(then)then();
 }
+window.addEventListener("popstate",function(){if(ov&&!ov.hidden){ovHist=false;close3d(true);}var f=afterPop;afterPop=null;
+  /* the browser would put the scroll back where it was when the 3D opened; do the next step first, then hand scrolling back to it */
+  setTimeout(function(){if(f)f();setTimeout(function(){try{if("scrollRestoration" in history)history.scrollRestoration="auto";}catch(e){}},900);},30);});
 if(ov){
-  $("ovX").addEventListener("click",close3d);
-  $("ovCta").addEventListener("click",function(e){e.preventDefault();close3d();var q=$("quote");if(q)q.scrollIntoView({behavior:reduce?"auto":"smooth"});});
+  $("ovX").addEventListener("click",function(){close3d();});
+  $("ovCta").addEventListener("click",function(e){e.preventDefault();close3d(false,function(){var q=$("quote");if(q)q.scrollIntoView({behavior:reduce?"auto":"smooth"});});});
   doc.addEventListener("keydown",function(e){
     if(ov.hidden)return;
     if(e.key==="Escape"){close3d();return;}
@@ -667,6 +743,7 @@ if(ov){
 /* ---------- start ---------- */
 if(CFG.street)$("fstreet").placeholder=CFG.street;
 if(loadToken()){hydrate();$("shared").hidden=false;setTimeout(function(){var q=$("quote");if(q)q.scrollIntoView({block:"start"});},60);}
+else if(restoreQ())hydrate();
 /* a link can land straight in the 3D: twindowclean.com/pigeon-proofing.html?see=pig, or #see-pig. Search snippets and ads use these. */
 (function(){var m=/[?&]see=(tour|home|win|sol|scr|pig|com)\b/.exec(location.search)||/^#see-(tour|home|win|sol|scr|pig|com)$/.exec(location.hash||"");if(!m)return;
   var want=m[1];if(want==="win"||want==="sol"||want==="pig"||want==="scr")st[want]=true;

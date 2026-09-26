@@ -96,7 +96,12 @@ def frag(name, lang='en'):
     if not os.path.exists(path):
         path = os.path.join(FRAG, name)
     with open(path, encoding='utf-8') as f:
-        return f.read().rstrip('\n')
+        html = f.read().rstrip('\n')
+    if '<!-- tq-solar -->' in html:
+        # one panel count and sections control, the same in every place it shows
+        solar = re.sub(r'^<!--.*?-->\n', '', frag('solar.html', lang), flags=re.S)
+        html = re.sub(r'( *)<!-- tq-solar -->', lambda m: '\n'.join(m.group(1) + x for x in solar.split('\n')), html)
+    return html
 
 
 def short_hash(path):
@@ -168,6 +173,85 @@ def com_swap(html):
             .replace('See it on my home', 'See it on my storefront'))
 
 
+# ---------- what each page leads with: its own service, then only the ones that go with it ----------
+def focus(conf):
+    """The service a page is about, for its hero chips, photo tabs and model: home pages cover everything."""
+    svc, mode = conf['svc'], conf['mode']
+    if mode == 'com':
+        return 'com'
+    if 'hw' in svc:
+        return 'hw'
+    if svc and svc[0] in ('pc', 'ad', 'gr'):
+        return svc[0]
+    if mode == 'home':
+        return 'pig' if svc == ['pig'] else 'home'
+    return mode
+
+
+# the hero's photo tabs, in order: the 3D first, then the page's service, then what's related to it
+TABS = {'home': ['r3d', 'win', 'sol', 'pig'], 'win': ['r3d', 'win', 'scr'], 'hw': ['r3d', 'win', 'scr'], 'pc': ['r3d', 'win'], 'ad': ['r3d', 'win'], 'gr': ['r3d', 'win'],
+        'sol': ['r3d', 'sol', 'pig'], 'pig': ['r3d', 'pig', 'sol'], 'scr': ['r3d', 'scr', 'win'], 'com': ['r3d', 'win']}
+
+CHIPS = {
+    'en': {
+        'win': [('Single story', '$149', ''), ('Two story', '$249', ''), ('Inside', '+$49', ''), ('Screens, tracks and sills', 'included', '')],
+        'hw': [('Hard water', 'from $12', '/pane'), ('Windows', '$149', ''), ('Two story', '$249', ''), ('Inside', '+$49', '')],
+        'pc': [('New construction', '$249', ''), ('Two story', '$349', ''), ('Inside and out', '', ''), ('Tempered glass', 'tested first', '')],
+        'ad': [('Decal removal', 'from $129', ''), ('Up to 3 panes', '', ''), ('Windows', '$149', '')],
+        'gr': [('Graffiti removal', 'from $129', ''), ('Etched glass check', '$89', ''), ('Windows', '$149', '')],
+        'sol': [('Solar', '$7', '/panel'), ('20 panels', '$140', ''), ('Nobody walks', 'on your panels', ''), ('Pigeon proofing', '$450', '')],
+        'pig': [('Pigeon proofing', '$450', ''), ('Up to', '12 panels', ''), ('Past 12', '+$50', '/panel'), ('Solar wash', 'included', ''), ('Warranty', '2 years', '')],
+        'scr': [('Charcoal fiberglass', '$53.99', ''), ('All weather', '$64.99', ''), ('New frames', '+$10', ''), ('Window cleaning', '$149', '')],
+    },
+    'es': {
+        'win': [('Un piso', '$149', ''), ('Dos pisos', '$249', ''), ('Por dentro', '+$49', ''), ('Mosquiteros, rieles y repisas', 'incluidos', '')],
+        'sol': [('Solar', '$7', '/panel'), ('20 paneles', '$140', ''), ('Nadie camina', 'sobre tus paneles', ''), ('Control de palomas', '$450', '')],
+        'pig': [('Control de palomas', '$450', ''), ('Hasta', '12 paneles', ''), ('Después de 12', '+$50', '/panel'), ('Lavado solar', 'incluido', ''), ('Garantía', '2 años', '')],
+    }}
+
+
+def chips_html(items):
+    return '\n'.join('        <span class="chip">' + a + (' <b>' + b + '</b>' if b else '') + c + '</span>' for a, b, c in items)
+
+
+def hero_for(conf, cta, media, lang):
+    """Swap the shared hero's chips and photo tabs for the ones that fit this page."""
+    f = focus(conf)
+    items = CHIPS.get(lang, {}).get(f)
+    if items:
+        cta = re.sub(r'(      <div class="chips">\n).*?(\n      </div>)', lambda m: m.group(1) + chips_html(items) + m.group(2), cta, count=1, flags=re.S)
+    keep = TABS.get(f, TABS['home'])
+    btns = {k: v for v, k in re.findall(r'(        <button type="button" data-m="(\w+)"[^\n]*\n)', media)}
+    lays = {k: v for v, k in re.findall(r'(        <div class="lay car" data-lay="(\w+)" hidden>\n.*?\n        </div>\n)', media, flags=re.S)}
+    for k, v in lays.items():
+        media = media.replace(v, '')
+    for k, v in btns.items():
+        media = media.replace(v, '')
+    order_btns = ''.join(btns[k] for k in keep if k in btns)
+    media = re.sub(r'(      <div class="modes" id="modes" role="group" aria-label="[^"]*">\n)', lambda m: m.group(1) + order_btns, media, count=1)
+    anchor = '        <span class="lbl" id="wlbl">'
+    media = media.replace(anchor, ''.join(lays[k] for k in keep if k in lays) + anchor, 1)
+    return cta, media
+
+
+# the four service tiles, with the page's own service first
+TILE_ORDER = {'win': ['win', 'scr', 'sol', 'pig'], 'hw': ['win', 'scr', 'sol', 'pig'], 'sol': ['sol', 'pig', 'win', 'scr'],
+              'pig': ['pig', 'sol', 'win', 'scr'], 'scr': ['scr', 'win', 'sol', 'pig']}
+
+
+def tiles_for(conf, steps):
+    order = TILE_ORDER.get(focus(conf))
+    if not order:
+        return steps
+    tiles = {k: v for v, k in re.findall(r'(      <button type="button" class="tile" data-svc="(\w+)".*?</button>\n)', steps, flags=re.S)}
+    if set(tiles) != set(order):
+        return steps
+    first = steps.index(tiles['win'])
+    for v in tiles.values():
+        steps = steps.replace(v, '')
+    return steps[:first] + ''.join(tiles[k] for k in order) + steps[first:]
+
+
 def css_block(conf_v, conf):
     """The stylesheet, plus a preload for the hero poster so the picture paints before the 3D even starts loading."""
     poster = 'com-4x5' if conf['mode'] == 'com' else 'home-4x5'
@@ -179,11 +263,12 @@ def blocks(conf, v):
     lang = conf.get('lang', 'en')
     three_card = {'pig': 'card-pig.html', 'win': 'card-win.html', 'sol': 'card-sol.html', 'scr': 'card-scr.html', 'com': 'card-com.html'}.get(conf['mode'], 'card-home.html')
     if lang != 'en':
-        steps = '\n\n'.join([lazy_bodies(frag('steps.html', lang), conf['svc']), frag('zip.html', lang), frag('three-head.html', lang) + '\n' + frag(three_card, lang) + '\n' + frag('three-tail.html', lang)])
+        steps = '\n\n'.join([lazy_bodies(tiles_for(conf, frag('steps.html', lang)), conf['svc']), frag('zip.html', lang), frag('three-head.html', lang) + '\n' + frag(three_card, lang) + '\n' + frag('three-tail.html', lang)])
         tail = ('<div class="tq" data-nosnippet>\n' + lazy_ov(frag('ov.html', lang)) + '\n' + frag('dock.html', lang) + '\n</div>\n'
                 '<script>window.TQ=' + json.dumps(dict(conf, **({'tech': v['tech']} if v.get('tech') else {})), separators=(',', ':')) + ';</script>\n'
                 '<script src="assets/quote/quote.js?v=' + v['quote.js'] + '" defer></script>')
-        return {'css': css_block(v, conf), 'cta': frag('cta.html', lang), 'media': frag('media.html', lang), 'steps': steps, 'tail': tail}
+        cta_es, media_es = hero_for(conf, frag('cta.html', lang), frag('media.html', lang), lang)
+        return {'css': css_block(v, conf), 'cta': cta_es, 'media': media_es, 'steps': steps, 'tail': tail}
     head, media, cta = frag('three-head.html'), frag('media.html'), frag('cta.html')
     if conf['mode'] == 'com':
         head = com_swap(head).replace('<h2>See it on your home in 3D</h2><p>Pick your home. Watch the job get done.</p>', '<h2>See it on your storefront in 3D</h2><p>Set your panes, doors and stickers. Watch the glass get done.</p>')
@@ -198,7 +283,8 @@ def blocks(conf, v):
         <span class="chip">Every 2 weeks <b>25% off</b></span>
         <span class="chip">Partitions and mirrors <b>+$50</b></span>
         <span class="chip">Vinyl stickers <b>$10</b> each</span>''')
-    steps = '\n\n'.join([lazy_bodies(frag('steps.html'), conf['svc']), frag('zip.html'), head + '\n' + frag(three_card) + '\n' + frag('three-tail.html')])
+    cta, media = hero_for(conf, cta, media, 'en')
+    steps = '\n\n'.join([lazy_bodies(tiles_for(conf, frag('steps.html')), conf['svc']), frag('zip.html'), head + '\n' + frag(three_card) + '\n' + frag('three-tail.html')])
     tail = ('<div class="tq" data-nosnippet>\n' + lazy_ov(frag('ov.html')) + '\n' + frag('dock.html') + '\n</div>\n'
             '<script>window.TQ=' + json.dumps(dict(conf, **({'tech': v['tech']} if v.get('tech') else {})), separators=(',', ':')) + ';</script>\n'
             '<script src="assets/quote/quote.js?v=' + v['quote.js'] + '" defer></script>')

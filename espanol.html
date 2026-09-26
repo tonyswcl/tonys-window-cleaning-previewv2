@@ -50,7 +50,7 @@
 
   <link href="style.css" rel="stylesheet">
   <!-- tq:css -->
-<link href="assets/quote/quote.css?v=97a652499f" rel="stylesheet">
+<link href="assets/quote/quote.css?v=b7d93ddb71" rel="stylesheet">
   <link rel="preload" as="image" href="assets/quote/home-4x5.webp" fetchpriority="high">
 <!-- /tq:css -->
 
@@ -551,17 +551,17 @@
           <div class="opt" data-sec="1" hidden><span>Sección 2</span><div class="stepper" data-step="arr1"><button type="button" data-d="-1" aria-label="Menos paneles en la sección 2">−</button><output class="num">8</output><button type="button" data-d="1" aria-label="Más paneles en la sección 2">+</button></div></div>
           <div class="opt" data-sec="2" hidden><span>Sección 3</span><div class="stepper" data-step="arr2"><button type="button" data-d="-1" aria-label="Menos paneles en la sección 3">−</button><output class="num">6</output><button type="button" data-d="1" aria-label="Más paneles en la sección 3">+</button></div></div>
         </div>
+        <div class="often" id="often" hidden></div>
       </div>
       <div class="card ticket" aria-live="polite">
         <div id="tlines"></div>
         <div class="ttotal"><span>Total</span><b id="ttotal" class="num">$149</b></div>
-        <div class="save" id="save" hidden></div>
         <p class="from-note" id="fromNote" hidden>Los trabajos especiales son un precio inicial. Tony lo confirma por escrito antes de empezar.</p>
         <p class="proof" id="proof" hidden></p>
-        <a class="early-tip" id="earlyTip" href="#day">Reserva en línea y ahorra 10% →</a>
         <div class="guar"><span aria-hidden="true">✓</span><span><b>Satisfacción garantizada.</b> Si algo no queda bien, lo repetimos antes de irnos.</span></div>
         <ul class="trust"><li>Inspección gratis</li><li>Sin cargo por viaje en el High Desert</li><li>Tarjeta, efectivo o cheque</li></ul>
-        <a class="qb qb-gold" href="#day" style="width:100%;margin-top:14px">Elige un día →</a>
+        <a class="qb qb-gold" href="#day" style="width:100%;margin-top:14px">Elige un día, ahorra 10% →</a>
+        <button type="button" class="qreset" id="resetQ">Empezar de nuevo</button>
       </div>
     </div>
   </div>
@@ -583,10 +583,11 @@
         <p class="small" id="dayRule">Tony confirma por mensaje de texto, y si tu día se llena te ofrece el más cercano.</p>
       </div>
       <div class="card plan">
-        <div class="lab">Cada cuánto</div>
+        <div class="lab" id="planLab">Cada cuánto</div>
         <div class="plans" data-seg="plan"><button type="button" data-v="0" aria-pressed="true"><b>Una vez</b><small>solo esta visita</small></button><button type="button" data-v="1" aria-pressed="false"><b>Una vez al año</b><small></small></button><button type="button" data-v="2" aria-pressed="false"><b>Dos veces al año</b><small></small></button><button type="button" data-v="3" aria-pressed="false"><b>Cada 3 meses</b><i>Mejor valor</i><small></small></button></div>
         <p class="small strong" id="planWhy"></p>
-        <p class="small">El polvo del desierto y el agua dura vuelven, igual que crece el pasto. Con un plan, Tony te manda un mensaje antes de cada visita, para que no tengas que acordarte.</p>
+        <p class="small" id="planNote">El polvo del desierto y el agua dura vuelven, igual que crece el pasto. Con un plan, Tony te manda un mensaje antes de cada visita, para que no tengas que acordarte.</p>
+        <p class="small strong" id="planNone" hidden></p>
         <div class="planbox" id="planbox" hidden><div class="lab">Tu plan</div><ol class="visits" id="visits"></ol><p class="plantot" id="plantot"></p></div>
         <button type="button" class="qb qb-ghost qb-sm pdf" id="pdfBtn">Descargar mi cotización (PDF)</button>
         <p class="small" id="pdfNote" aria-live="polite"></p>
@@ -599,11 +600,12 @@
         <p><b>Tony confirma por mensaje.</b> Trae todo, se acomoda a tu día, y tú no mueves un dedo.</p>
         <p><b>No pagas nada ahora.</b> Tarjeta, efectivo o cheque cuando el trabajo esté hecho y lo hayas revisado.</p>
       </div>
-      <div class="lab" style="margin-top:14px">Qué pasa si esperas</div>
-      <div class="seg2 wrapok" data-seg="wait"><button type="button" data-v="0" aria-pressed="true">Reservar ahora</button><button type="button" data-v="1" aria-pressed="false">3 meses</button><button type="button" data-v="2" aria-pressed="false">6 meses</button><button type="button" data-v="3" aria-pressed="false">Un año</button></div>
-      <ul class="waitlist" id="waitList"></ul>
-      <p class="small strong" id="waitNote"></p>
-      <a class="qb qb-gold qb-sm" href="#day" id="waitGo" style="margin-top:10px">Elegir mi día y ahorrar 10% →</a>
+      <div id="waitWrap">
+        <div class="lab" style="margin-top:14px">Qué pasa si esperas</div>
+        <div class="seg2 wrapok" data-seg="wait"><button type="button" data-v="0" aria-pressed="true">Reservar ahora</button><button type="button" data-v="1" aria-pressed="false">3 meses</button><button type="button" data-v="2" aria-pressed="false">6 meses</button><button type="button" data-v="3" aria-pressed="false">Un año</button></div>
+        <ul class="waitlist" id="waitList"></ul>
+        <p class="small strong" id="waitNote"></p>
+      </div>
     </div>
   </div>
 </section>
@@ -928,7 +930,7 @@
         <div class="orow"><span>Marcos</span><div class="sw" data-hseg="tc"><button type="button" data-v="0" aria-pressed="true" aria-label="Marcos blancos" style="background:#f5f3ee"></button><button type="button" data-v="1" aria-pressed="false" aria-label="Marcos crema" style="background:#e9dcc0"></button><button type="button" data-v="2" aria-pressed="false" aria-label="Marcos bronce" style="background:#5b4a3b"></button></div></div>
       </div>
       <div class="og" data-og="solar" hidden>
-        <div class="orow"><span>Paneles solares</span><div class="stepper" data-step="panels"><button type="button" data-d="-1" aria-label="Menos paneles">−</button><output class="num">16</output><button type="button" data-d="1" aria-label="Más paneles">+</button></div><b class="ptotal num" hidden></b></div>
+        <div class="orow"><span>Tus paneles</span><div class="stepper" data-step="panels"><button type="button" data-d="-1" aria-label="Menos paneles">−</button><output class="num">16</output><button type="button" data-d="1" aria-label="Más paneles">+</button></div><b class="ptotal num" hidden></b></div>
         <div class="orow"><span>Secciones</span><div class="seg2" data-seg="arrays"><button type="button" data-v="1" aria-pressed="true">1</button><button type="button" data-v="2" aria-pressed="false">2</button><button type="button" data-v="3" aria-pressed="false">3</button></div></div>
         <div class="orow" data-sec="0" hidden><span>Sección 1</span><div class="stepper" data-step="arr0"><button type="button" data-d="-1" aria-label="Menos paneles en la sección 1">−</button><output class="num">8</output><button type="button" data-d="1" aria-label="Más paneles en la sección 1">+</button></div></div>
         <div class="orow" data-sec="1" hidden><span>Sección 2</span><div class="stepper" data-step="arr1"><button type="button" data-d="-1" aria-label="Menos paneles en la sección 2">−</button><output class="num">8</output><button type="button" data-d="1" aria-label="Más paneles en la sección 2">+</button></div></div>
@@ -947,7 +949,7 @@
       <button type="button" class="replay" data-hact="replay">▶ Verlo otra vez</button>
     </div>
     <div class="ops" data-for="sol" hidden>
-      <div class="orow big"><span>Tus paneles</span><div class="stepper" data-step="panels"><button type="button" data-d="-1" aria-label="Menos paneles">−</button><output class="num">16</output><button type="button" data-d="1" aria-label="Más paneles">+</button></div><b class="ptotal num" hidden></b></div>
+      <div class="orow"><span>Tus paneles</span><div class="stepper" data-step="panels"><button type="button" data-d="-1" aria-label="Menos paneles">−</button><output class="num">16</output><button type="button" data-d="1" aria-label="Más paneles">+</button></div><b class="ptotal num" hidden></b></div>
       <div class="orow"><span>Secciones</span><div class="seg2" data-seg="arrays"><button type="button" data-v="1" aria-pressed="true">1</button><button type="button" data-v="2" aria-pressed="false">2</button><button type="button" data-v="3" aria-pressed="false">3</button></div></div>
       <div class="orow" data-sec="0" hidden><span>Sección 1</span><div class="stepper" data-step="arr0"><button type="button" data-d="-1" aria-label="Menos paneles en la sección 1">−</button><output class="num">8</output><button type="button" data-d="1" aria-label="Más paneles en la sección 1">+</button></div></div>
       <div class="orow" data-sec="1" hidden><span>Sección 2</span><div class="stepper" data-step="arr1"><button type="button" data-d="-1" aria-label="Menos paneles en la sección 2">−</button><output class="num">8</output><button type="button" data-d="1" aria-label="Más paneles en la sección 2">+</button></div></div>
@@ -996,7 +998,11 @@
       <div class="orow col"><span>La historia</span><div class="seg2 wrapok" data-hseg="stage"><button type="button" data-v="0" aria-pressed="false">Hoy</button><button type="button" data-v="1" aria-pressed="false">Limpieza + malla</button><button type="button" data-v="2" aria-pressed="true">+ Espantapájaros gratis</button><button type="button" data-v="3" aria-pressed="false">Lo que cubre 1</button><button type="button" data-v="4" aria-pressed="false">El vecino</button></div></div>
       <div class="orow"><span>Espantapájaros <button type="button" class="one" data-hact="try1">Prueba con 1</button></span><div class="stepper" data-hstep="spin"><button type="button" data-d="-1" aria-label="Menos espantapájaros">−</button><output class="num">3</output><button type="button" data-d="1" aria-label="Más espantapájaros">+</button></div></div>
       <div class="orow"><span>Mostrar lo que cubre cada uno</span><button type="button" class="switch" data-hsw="cov" role="switch" aria-checked="true" aria-label="Mostrar la cobertura de los espantapájaros"></button></div>
-      <div class="orow"><span>Paneles solares</span><div class="stepper" data-step="panels"><button type="button" data-d="-1" aria-label="Menos paneles">−</button><output class="num">16</output><button type="button" data-d="1" aria-label="Más paneles">+</button></div><b class="ptotal num" hidden></b></div>
+      <div class="orow"><span>Tus paneles</span><div class="stepper" data-step="panels"><button type="button" data-d="-1" aria-label="Menos paneles">−</button><output class="num">16</output><button type="button" data-d="1" aria-label="Más paneles">+</button></div><b class="ptotal num" hidden></b></div>
+      <div class="orow"><span>Secciones</span><div class="seg2" data-seg="arrays"><button type="button" data-v="1" aria-pressed="true">1</button><button type="button" data-v="2" aria-pressed="false">2</button><button type="button" data-v="3" aria-pressed="false">3</button></div></div>
+      <div class="orow" data-sec="0" hidden><span>Sección 1</span><div class="stepper" data-step="arr0"><button type="button" data-d="-1" aria-label="Menos paneles en la sección 1">−</button><output class="num">8</output><button type="button" data-d="1" aria-label="Más paneles en la sección 1">+</button></div></div>
+      <div class="orow" data-sec="1" hidden><span>Sección 2</span><div class="stepper" data-step="arr1"><button type="button" data-d="-1" aria-label="Menos paneles en la sección 2">−</button><output class="num">8</output><button type="button" data-d="1" aria-label="Más paneles en la sección 2">+</button></div></div>
+      <div class="orow" data-sec="2" hidden><span>Sección 3</span><div class="stepper" data-step="arr2"><button type="button" data-d="-1" aria-label="Menos paneles en la sección 3">−</button><output class="num">8</output><button type="button" data-d="1" aria-label="Más paneles en la sección 3">+</button></div></div>
     </div>
     </template>
     <div class="osum" id="osum"></div>
@@ -1010,7 +1016,7 @@
 </nav>
 </div>
 <script>window.TQ={"svc":["win"],"mode":"home","lang":"es","tech":"f0de9ec2e6"};</script>
-<script src="assets/quote/quote.js?v=77a22a6e42" defer></script>
+<script src="assets/quote/quote.js?v=37b439038e" defer></script>
 <!-- /tq:tail -->
 </body>
 </html>
