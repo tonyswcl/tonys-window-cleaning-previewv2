@@ -30,7 +30,7 @@ ok('tour note in Spanish, Tony speaking',/Hola, soy Tony/.test(await p.$eval('#o
 ok('ask Tony in Spanish',/Pregúntale a Tony/.test(await p.$eval('#askb',e=>e.textContent)));
 ok('nav labels in Spanish',/Siguiente|Arreglarlo/.test(await p.$eval('#ovNav .nx',e=>e.textContent)));
 ok('grab bar in Spanish',/Personalizar mi casa/.test(await p.$eval('#ovGrab',e=>e.textContent)));
-await p.click('.ov-tabs [data-hmode="pig"]');await p.waitForTimeout(1500);
+await p.click('.ov-tabs [data-hmode="pig"]');await p.waitForFunction(()=>/Hoy:/.test(document.querySelector('#ovMsg').innerText),null,{timeout:20000}).catch(()=>{});await p.waitForTimeout(500);
 ok('pigeon story in Spanish',/Hoy:/.test(await p.$eval('#ovMsg',e=>e.innerText)));
 ok('pigeon chips in Spanish',/Malla.*Clips, no tornillos.*Espantapájaros/.test(await p.$eval('#try',e=>e.innerText.replace(/\n/g,' '))),await p.$eval('#try',e=>e.innerText));
 ok('summary in Spanish',/Tu cotización ahora mismo/.test(await p.$eval('#osum',e=>e.innerText)));

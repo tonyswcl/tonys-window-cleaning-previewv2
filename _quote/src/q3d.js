@@ -18,7 +18,7 @@ var R=new T.WebGLRenderer({antialias:true,powerPreference:"high-performance"});
 var PR0=Math.min(window.devicePixelRatio||1,small?1.75:2,navigator.deviceMemory&&navigator.deviceMemory<=4?1.5:3);
 R.setPixelRatio(PR0);
 R.outputEncoding=T.sRGBEncoding;R.toneMapping=T.ACESFilmicToneMapping;R.toneMappingExposure=1.02;
-R.shadowMap.enabled=true;R.shadowMap.type=T.PCFSoftShadowMap;
+R.shadowMap.enabled=true;R.shadowMap.type=T.PCFSoftShadowMap;R.localClippingEnabled=true;
 var ANI=Math.min(8,R.capabilities.getMaxAnisotropy()||1);
 var scene=new T.Scene(),cam=new T.PerspectiveCamera(34,1,.05,1500);
 var UP=new T.Vector3(0,1,0);
@@ -326,11 +326,12 @@ function makeHouse(cfg,main){
     box(gw+.2,gh+.2,.1,trim,0,0,.03,w);
     var gl=box(gw,gh,.06,M.glass,0,0,.07,w,true);
     box(.05,gh,.08,trim,0,0,.09,w,true);
-    if(cfg.grids){[-1,1].forEach(function(sd){var cx=sd*gw/4;box(.022,gh,.02,trim,cx,0,.105,w,true);box(gw/2-.05,.022,.02,trim,cx,0,.105,w,true);});}
-    var sillM=main&&o.demo?trim.clone():trim,sill=box(gw+.32,.08,.2,sillM,0,-gh/2-.14,.08,w);if(sillM!==trim)sill.userData.dyn=true;
+    /* grids sit between the panes of glass, so they read through it and the squeegee runs over them */
+    if(cfg.grids){[-1,1].forEach(function(sd){var cx=sd*gw/4;box(.022,gh,.002,trim,cx,0,.1015,w,true);box(gw/2-.05,.022,.002,trim,cx,0,.1015,w,true);});}
+    var sill=box(gw+.32,.08,.2,trim,0,-gh/2-.14,.08,w);
     if(o.arch){var ag=new T.CircleGeometry(gw/2,24,0,Math.PI),am=new T.Mesh(ag,M.glass);am.position.set(0,gh/2+.1,.072);w.add(am);
       var ring=new T.Mesh(new T.RingGeometry(gw/2,gw/2+.1,24,1,0,Math.PI),trim);ring.position.set(0,gh/2+.1,.08);w.add(ring);box(gw+.2,.1,.1,trim,0,gh/2+.08,.03,w);}
-    var rec={g:w,gw:gw,gh:gh,gl:gl,sill:sill,sillM:sillM,ang:ang,f:o.f,u:o.u,v:y,sz:o.sz,s:o.s===undefined?1:o.s};h.wins.push(rec);return rec;
+    var rec={g:w,gw:gw,gh:gh,gl:gl,sill:sill,ang:ang,f:o.f,u:o.u,v:y,sz:o.sz,s:o.s===undefined?1:o.s};h.wins.push(rec);return rec;
   }
   var gy0=S.big?1.55:1.5,gw1=S.big?1.5:1.3,gh1=S.big?1.7:1.08;
   var sum=items.reduce(function(q,k){return q+iw[k];},0),gap=(W-sum)/(items.length+1),x=-W/2+gap;
@@ -401,7 +402,7 @@ function makeHouse(cfg,main){
     for(k=0;k<gp2.n;k++){var c=k%gp2.cols,rw2=Math.floor(k/gp2.cols),px=ox+c*PW,pz=zTop+rw2*PD+PD/2;
       var fr=new T.Mesh(G.frame,M.pframe);fr.position.set(px,py,pz);fr.castShadow=true;par.add(fr);
       var ce=new T.Mesh(G.cell,M.cell);ce.position.set(px,py+.024,pz);par.add(ce);
-      if(main){var dm2=new T.Mesh(G.cell,M.dust.clone());dm2.userData.dyn=true;dm2.position.set(px,py+.03,pz);dm2.renderOrder=3;dm2.visible=false;par.add(dm2);
+      if(main){var dmm=M.dust.clone();dmm.userData.own=true;dmm.clippingPlanes=[new T.Plane()];var dm2=new T.Mesh(G.cell,dmm);dm2.userData.dyn=true;dm2.position.set(px,py+.03,pz);dm2.renderOrder=3;dm2.visible=false;par.add(dm2);
         h.panels.push({face:gp2.face,par:par,x:px,z:pz,row:rw2,col:c,dust:dm2});}
       if(!occ[c+","+(rw2-1)])h.edges.push([px,pz-PD/2,0,-1,gp2.face]);if(!occ[c+","+(rw2+1)])h.edges.push([px,pz+PD/2,0,1,gp2.face]);
       if(!occ[(c-1)+","+rw2])h.edges.push([px-PW/2,pz,1,-1,gp2.face]);if(!occ[(c+1)+","+rw2])h.edges.push([px+PW/2,pz,1,1,gp2.face]);}
@@ -807,11 +808,10 @@ function birdTargets(snap){
 }
 
 /* ---------- demo pieces: dirty glass, screens, dusty panels ---------- */
-var demoWin=null,scrWin=null,haze=null,screens=[],sillDust=new T.Color(0xcbbfa7);
+var demoWin=null,scrWin=null,screens=[];M.sillDust=Std({color:0xc9bb9c,roughness:1});
 function prepDemo(){
-  var w=demoWin;if(!w)return;
-  var hc=hazeCanvas(256,212,5),ht=tx(hc,false),hm=new T.Mesh(G.plane,new T.MeshBasicMaterial({map:ht,transparent:true,depthWrite:false}));
-  hm.scale.set(w.gw,w.gh,1);hm.position.z=.103;hm.visible=false;w.g.add(hm);haze={c:hc,t:ht,m:hm,w:w,last:null};
+  var w=demoWin;if(!w)return;WP=null;SCP=null;
+  w.sillDust=box(w.gw+.3,.004,.19,M.sillDust,0,-w.gh/2-.1+.003,.08,w.g,true);w.sillDust.userData.dyn=true;w.sillDust.visible=false;
   screens=[];
   var list=[demoWin].concat(me.wins.filter(function(x){return x!==demoWin&&x.ang===0&&(!h3.custom||x.s);}));
   list.forEach(function(w2,i){var s=makeScreen(w2);s.idx=i;screens.push(s);});
@@ -846,7 +846,8 @@ M.grime=new T.MeshBasicMaterial({map:tx(cv(256,212,function(g,w,h){var r=rng(17)
 M.poop=Std({color:0xf3f1ea,roughness:1});M.nest=Std({color:0x7b6446,roughness:1,flatShading:true});
 function prepBefore(){
   grime=[];poop=[];nests=[];befPts={};var r=rng(st.panels*13+h3.style+5);
-  me.wins.forEach(function(w){if(w.ang!==0)return;var m=new T.Mesh(G.plane,M.grime);m.scale.set(w.gw,w.gh,1);m.position.z=.104;m.visible=false;m.renderOrder=2;w.g.add(m);grime.push(m);});
+  me.wins.forEach(function(w){if(w.ang!==0)return;var gm=M.grime.clone();gm.userData.own=true;gm.clippingPlanes=[new T.Plane()];var m=new T.Mesh(G.plane,gm);m.scale.set(w.gw,w.gh,1);m.position.z=.104;m.visible=false;m.renderOrder=2;m.userData.w=w;w.g.add(m);grime.push(m);});
+  grime.sort(function(a,b){return a.parent.position.x-b.parent.position.x;});
   var d=new T.Object3D();
   [1,-1].forEach(function(fc){var f=fc>0?me.F:me.B,list=[],nl=[],tw=[];
     /* white droppings on the tile, heaviest along the ridge where they perch, and on the panels */
@@ -854,15 +855,16 @@ function prepBefore(){
     me.panels.forEach(function(p){if(p.face!==fc)return;var n=r()<.65?1+((r()*3)|0):0;for(var i=0;i<n;i++)list.push([p.x+(r()-.5)*.8,me.TT+H+.03,p.z+(r()-.5)*1.4,.025+r()*.045,1]);});
     if(fc>0&&list.length)befPts.poop={par:f,p:V(list[0][0],list[0][1]+.05,list[0][2])};
     var im=new T.InstancedMesh(G.ball,M.poop,Math.max(1,list.length));im.count=list.length;
-    list.forEach(function(q,i){d.position.set(q[0],q[1],q[2]);d.rotation.set(0,r()*3,0);d.scale.set(q[3],q[4]?.006:.028,q[3]*(.7+r()*.5));d.updateMatrix();im.setMatrixAt(i,d.matrix);});
+    im.userData.items=[];list.forEach(function(q,i){d.position.set(q[0],q[1],q[2]);d.rotation.set(0,r()*3,0);d.scale.set(q[3],q[4]?.006:.028,q[3]*(.7+r()*.5));d.updateMatrix();im.setMatrixAt(i,d.matrix);im.userData.items.push(d.matrix.clone());});
     im.visible=false;im.frustumCulled=false;f.add(im);poop.push(im);
     /* nests stuffed under the edges of the panels: a clump and some sticks poking out */
     me.edges.filter(function(e){return e[4]===fc;}).sort(function(){return r()-.5;}).slice(0,fc>0?4:3).forEach(function(e){var ox=e[2]?e[3]*.16:0,oz=e[2]?0:e[3]*.16;nl.push([e[0]+ox,me.TT+.06,e[1]+oz]);
       for(var k=0;k<5;k++)tw.push([e[0]+ox*1.4+(r()-.5)*.3,me.TT+.05+r()*.06,e[1]+oz*1.4+(r()-.5)*.3,r()*3]);});
     if(fc>0&&nl.length){befPts.nest={par:f,p:V(nl[0][0],nl[0][1]+.08,nl[0][2])};befPts.smell={par:f,p:V((nl[1]||nl[0])[0],(nl[1]||nl[0])[1]+.3,(nl[1]||nl[0])[2])};}
     var nm=new T.InstancedMesh(G.bush[1],M.nest,Math.max(1,nl.length)),tm=new T.InstancedMesh(G.box,M.nest,Math.max(1,tw.length));nm.count=nl.length;tm.count=tw.length;
-    nl.forEach(function(q,i){d.position.set(q[0],q[1],q[2]);d.rotation.set(0,r()*3,0);d.scale.set(.24,.1,.2);d.updateMatrix();nm.setMatrixAt(i,d.matrix);});
-    tw.forEach(function(q,i){d.position.set(q[0],q[1],q[2]);d.rotation.set(0,q[3],(r()-.5)*.5);d.scale.set(.32,.012,.012);d.updateMatrix();tm.setMatrixAt(i,d.matrix);});
+    nm.userData.items=[];tm.userData.items=[];
+    nl.forEach(function(q,i){d.position.set(q[0],q[1],q[2]);d.rotation.set(0,r()*3,0);d.scale.set(.24,.1,.2);d.updateMatrix();nm.setMatrixAt(i,d.matrix);nm.userData.items.push(d.matrix.clone());});
+    tw.forEach(function(q,i){d.position.set(q[0],q[1],q[2]);d.rotation.set(0,q[3],(r()-.5)*.5);d.scale.set(.32,.012,.012);d.updateMatrix();tm.setMatrixAt(i,d.matrix);tm.userData.items.push(d.matrix.clone());});
     [nm,tm].forEach(function(m){m.visible=false;m.frustumCulled=false;m.castShadow=true;f.add(m);nests.push(m);});});
 }
 /* which problems are on this home, in the order the tour walks them */
@@ -872,19 +874,42 @@ function stopIdx(k,ph){var TS=tourStops();for(var i=0;i<TS.length;i++)if(TS[i].k
 function tourAt(){var TS=tourStops();return Math.min(stepAt(steps()),TS.length-1);}
 /* is this problem still showing? before its Fix it step, yes */
 function broken(k,ph){if(forceProb)return forceProb===k;if(!tourOn())return false;var j=stopIdx(k,ph||1);return j>=0&&tourAt()<j;}
+/* the tour's fixes, done the way the work is done: each window squeegeed clean top to bottom, one after another; each screen washed or
+   given its new mesh from the top down with its window; each panel brushed down its length, a column at a time; the droppings and
+   nests picked up one by one. Nothing fades. bef runs 0 to 1 at a working pace; item i of n takes its turn in it */
+function stag(P,i,n,w){w=w||1.6;return clamp01((P*(n+w)-i)/w);}
+/* clip a mesh to the part past a line at fraction p from a to b (points in its own space); keepA keeps the other side */
+function clipLine(m,a,b,p,keepA){var pl=m.material.clippingPlanes&&m.material.clippingPlanes[0];if(!pl)return;m.updateMatrixWorld(true);
+  var A=m.localToWorld(a.clone()),Bw=m.localToWorld(b.clone()),n=Bw.clone().sub(A).normalize();if(keepA)n.negate();pl.setFromNormalAndCoplanarPoint(n,A.lerp(Bw,p));}
+/* a screen part way through: the old mesh below the line, the fresh one above it */
+function screenSweep(sc,p){var top=V(0,sc.gh/2,0),bot=V(0,-sc.gh/2,0);
+  if(!sc.cl||sc.cl.pet!==st.pet){if(sc.cl)[sc.cl.o,sc.cl.d,sc.cl.n].forEach(function(mt){mt.dispose();});
+    var pg=new T.PlaneGeometry(sc.gw,sc.gh,1,1),uv=pg.attributes.uv.array;for(var i=0;i<uv.length;i+=2){uv[i]*=sc.gw/.1;uv[i+1]*=sc.gh/.1;}
+    var mk=function(b){var mt=b.clone();mt.clippingPlanes=[new T.Plane()];return mt;};sc.cl={pet:st.pet,o:mk(M.scrOld),d:mk(M.scrDmg),n:mk(st.pet?M.scrA:M.scrC)};
+    if(!sc.nw){sc.nw=new T.Mesh(pg,sc.cl.n);sc.g.add(sc.nw);}else{sc.nw.geometry.dispose();sc.nw.geometry=pg;sc.nw.material=sc.cl.n;}}
+  var on=p>0&&p<1;sc.nw.visible=on;if(!on)return;sc.mesh.material=sc.cl.o;sc.dmg.material=sc.cl.d;
+  [sc.mesh,sc.dmg].forEach(function(m){clipLine(m,top,bot,p,false);});clipLine(sc.nw,top,bot,p,true);}
 function applyBefore(dt){
   var on=tourOn(),P2=on?probs():[],snap=!!forceProb||dt===0;
   var tgt={win:broken("win")?0:1,scr:broken("scr")?0:1,sol:(broken("sol")||broken("pig"))?0:1,pig:broken("pig")?0:1};
-  for(var k in bef){bef[k]=snap?tgt[k]:bef[k]+(tgt[k]-bef[k])*Math.min(1,dt*2.2);if(Math.abs(bef[k]-tgt[k])<.01)bef[k]=tgt[k];}
+  /* a fix plays out over a few seconds; stepping back puts the problem back twice as fast */
+  for(var k in bef){if(snap)bef[k]=tgt[k];else if(tgt[k]>bef[k])bef[k]=Math.min(tgt[k],bef[k]+dt/2.6);else bef[k]=Math.max(tgt[k],bef[k]-dt/1.3);}
   befOn=on&&(P2.length>0||!!forceProb);
-  var hasWin=P2.indexOf("win")>=0||forceProb==="win",hasScr=P2.indexOf("scr")>=0||forceProb==="scr";
-  M.grime.opacity=1-bef.win;grime.forEach(function(m){m.visible=befOn&&hasWin&&bef.win<.99;});
-  if(befOn&&(hasWin||hasScr)){screens.forEach(function(sc){sc.g.visible=true;var torn=hasScr&&bef.scr<.5,dirty=!torn&&hasWin&&bef.win<.5;screenLook(sc,torn?true:dirty?"dirty":false);
-    var hang=torn&&sc.w===scrWin;sc.g.position.set(sc.x0,hang?-.1:0,.14);sc.g.rotation.set(0,0,hang?-.26:0);});}
+  var hasWin=P2.indexOf("win")>=0||forceProb==="win",hasScr=P2.indexOf("scr")>=0||forceProb==="scr",nG=grime.length;
+  grime.forEach(function(m,i){var q=stag(bef.win,i,nG);m.visible=befOn&&hasWin&&q<.999;if(m.visible)clipLine(m,V(0,.5,0),V(0,-.5,0),q,false);});
+  if(befOn&&(hasWin||hasScr)){screens.forEach(function(sc){sc.g.visible=true;var gi=grime.findIndex?grime.findIndex(function(m){return m.userData.w===sc.w;}):-1,
+      q=hasScr?stag(bef.scr,sc.idx||0,screens.length):stag(bef.win,Math.max(0,gi),nG),torn=hasScr,before=torn?true:hasWin?"dirty":false;
+    if(sc.cl&&sc.mesh.material===sc.cl.o)sc.old=null;screenLook(sc,q>=1?false:before);screenSweep(sc,q);
+    /* a torn screen hanging out of its channel goes back in square before the new mesh goes on */
+    var hang=torn&&sc.w===scrWin?1-smooth(q/.25):0;sc.g.position.set(sc.x0,-.1*hang,.14);sc.g.rotation.set(0,0,-.26*hang);});}
+  else screens.forEach(function(sc){if(sc.nw)sc.nw.visible=false;if(sc.cl&&sc.mesh.material===sc.cl.o){sc.old=null;screenLook(sc,false);}});
   var dusty=befOn&&(P2.indexOf("sol")>=0||P2.indexOf("pig")>=0||forceProb==="sol"||forceProb==="pig");
-  if(dusty)me.panels.forEach(function(p){p.dust.visible=bef.sol<.99;p.dust.material.opacity=1-bef.sol;});
+  if(dusty){var ps=me.panels.slice().sort(function(a,b){return a.face-b.face||a.x-b.x||a.z-b.z;}),nP=ps.length;
+    ps.forEach(function(p,i){var q=stag(bef.sol,i,nP,2.5);p.dust.visible=q<.999;p.dust.material.opacity=1;if(p.dust.visible)clipLine(p.dust,V(0,0,-.82),V(0,0,.82),q,false);});}
   var pigNow=befOn&&(P2.indexOf("pig")>=0||forceProb==="pig");
-  poop.concat(nests).forEach(function(m){m.visible=pigNow&&bef.pig<.5;});
+  poop.concat(nests).forEach(function(m){var it=m.userData.items||[],n=it.length;m.visible=pigNow&&bef.pig<.999&&n>0;if(!m.visible||m.userData.at===bef.pig)return;m.userData.at=bef.pig;
+    var sc2=new T.Vector3(),q=new T.Quaternion(),pp=new T.Vector3(),mx=new T.Matrix4();
+    it.forEach(function(M0,i){var f=1-stag(bef.pig,i,n,3);M0.decompose(pp,q,sc2);sc2.multiplyScalar(Math.max(1e-3,f));mx.compose(pp,q,sc2);m.setMatrixAt(i,mx);});m.instanceMatrix.needsUpdate=true;});
 }
 /* where to tap for what each problem does */
 var DM=ES?{win:["El polvo y las manchas de los aspersores se hornean con el sol y opacan la luz que entra.","Los mosquiteros grises y polvosos tapan más luz de lo que la gente cree, y la tierra se regresa al vidrio limpio."],hw:"Las manchas blancas son minerales que deja el agua de riego. Si se dejan, marcan el vidrio.",scr:["Las rasgaduras dejan entrar bichos y polvo, y solo crecen con el viento.","El sol pone quebradiza la malla del constructor, así que se cuelga y se suelta del marco."],sol:["Una capa de polvo bloquea el sol de las celdas, y aquí casi no llueve para quitarla.","Tu app solar lo muestra: la producción baja entre lavados."],pig:["El excremento mancha la teja y los paneles, y se junta rápido donde se paran las aves.","Los nidos debajo de los paneles guardan ramitas secas y basura pegadas al cableado.","El olor. El excremento y los nidos viejos sueltan un olor fuerte a amoniaco que empeora con el calor del verano. Limpiamos todo y desinfectamos, para que el olor se vaya con ellas.","Las palomas regresan al mismo techo, y una pareja se vuelve una parvada."]}:{win:["Dust and sprinkler spots bake on in the sun and dull the light coming in.","Gray, dusty screens block more light than most people think, and the dirt washes back onto clean glass."],
@@ -899,33 +924,10 @@ function dmgPos(k,i){var w=demoWin,sw=scrWin,q;
   if(k==="sol"){var ps=me.panels.filter(function(p){return p.face>0;});q=ps[i*Math.max(1,ps.length-1)]||me.panels[i]||me.panels[0];return q&&toWorld(q.par,q.x,me.TT+H+.1,q.z);}
   if(k==="pig"){var b=[befPts.poop,befPts.nest,befPts.smell][i];if(b)return toWorld(b.par,b.p.x,b.p.y,b.p.z);if(i===3)return V(0,me.wallH+me.rise+.6,0);}
   return null;}
-/* where the squeegee is at time t, and wipe everything it passed since the last frame */
-function sweepAt(t,t0,dur,passes,v0,dv){var p=clamp01((t-t0)/dur),idx=Math.min(passes-1,Math.floor(p*passes)),fr=p*passes-idx;return [(idx%2?.5-fr:-.5+fr)*.86,v0-idx*dv,idx];}
-function sweep(hz,t,t0,dur,passes,v0,dv,wpx){
-  var from=Math.max(hz.done===undefined?t0:hz.done,t0),pi=null;
-  for(var tt=from;tt<=t+1e-6;tt+=.015){var q=sweepAt(tt,t0,dur,passes,v0,dv);if(pi!==null&&q[2]!==pi)hz.last=null;pi=q[2];wipeHaze(hz,q[0],q[1],wpx);}
-  hz.done=t;return sweepAt(t,t0,dur,passes,v0,dv);
-}
-/* the scrub: the applicator works the glass in overlapping arcs and leaves a milky soap film with tiny bubbles */
-function scrubAt(p){var row=p*3.2,x=Math.sin(row*Math.PI)*.4,y=.4-.8*Math.min(1,p*1.06)+.07*Math.cos(row*Math.PI*2);return [x,y];}
-function scrub(hz,t,t0,dur){var from=Math.max(hz.sdone===undefined?t0:hz.sdone,t0),g=hz.c.getContext("2d"),W=hz.c.width,Hh=hz.c.height;
-  for(var tt=from;tt<=t+1e-6;tt+=.02){var q=scrubAt(clamp01((tt-t0)/dur)),x=(q[0]+.5)*W,y=(.5-q[1])*Hh;
-    if(hz.slast){g.globalCompositeOperation="source-over";g.strokeStyle="rgba(236,242,247,.42)";g.lineCap="round";g.lineWidth=W*.13;g.beginPath();g.moveTo(hz.slast[0],hz.slast[1]);g.lineTo(x,y);g.stroke();
-      g.strokeStyle="rgba(255,255,255,.35)";g.lineWidth=2;for(var k=0;k<3;k++){var ox=(Math.sin(tt*37+k*2.1))*W*.05,oy=(Math.cos(tt*29+k*1.7))*W*.05;g.beginPath();g.arc(x+ox,y+oy,1.5+k,0,7);g.stroke();}}
-    hz.slast=[x,y];}
-  hz.sdone=t;hz.t.needsUpdate=true;return scrubAt(clamp01((t-t0)/dur));}
-/* the squeegee: fanned pulls from the top corner, each one bowed the way a real pull is, the blade angle following the stroke */
-function fanAt(p,passes){var idx=Math.min(passes-1,Math.floor(p*passes)),fr=p*passes-idx,dir=idx%2?-1:1,u=dir*(-.5+fr)*.88,v=.4-idx*(.8/passes)-.16*Math.sin(fr*Math.PI)*(1-idx/passes);return [u,v,idx,dir,fr];}
-function fan(hz,t,t0,dur,passes,wpx){var from=Math.max(hz.done===undefined?t0:hz.done,t0),pi=null;
-  for(var tt=from;tt<=t+1e-6;tt+=.012){var q=fanAt(clamp01((tt-t0)/dur),passes);if(pi!==null&&q[2]!==pi)hz.last=null;pi=q[2];wipeHaze(hz,q[0],q[1],wpx);}
-  hz.done=t;return fanAt(clamp01((t-t0)/dur),passes);}
-function resetHaze(){haze.sdone=undefined;haze.slast=null;haze.done=undefined;haze.clear=false;var g=haze.c.getContext("2d"),n=hazeCanvas(256,212,5);g.globalCompositeOperation="copy";g.drawImage(n,0,0);g.globalCompositeOperation="source-over";haze.t.needsUpdate=true;haze.last=null;}
-function wipeHaze(hz,u,v,wpx){var g=hz.c.getContext("2d"),W=hz.c.width,Hh=hz.c.height,x=(u+.5)*W,y=(.5-v)*Hh;
-  g.globalCompositeOperation="destination-out";g.strokeStyle="#000";g.lineCap="round";g.lineWidth=wpx;g.beginPath();
-  if(hz.last){g.moveTo(hz.last[0],hz.last[1]);}else g.moveTo(x-.1,y);g.lineTo(x,y);g.stroke();g.globalCompositeOperation="source-over";hz.last=[x,y];hz.t.needsUpdate=true;}
-
+/* every job starts over from its first stroke */
+function resetHaze(){[WP,RP,SCP,SPL].forEach(function(p){if(p)p.done=undefined;});}
 /* ---------- the tech: straw hat, blue shirt, two arms that reach ---------- */
-var worker=null,tools={};
+var worker=null,tools={},TOOLS={};
 function makeWorker(){
   var w=new T.Group(),body=new T.Group(),head=new T.Group(),m;w.add(body);head.position.y=1.6;body.add(head);
   function part(geo,mat,sx,sy,sz,x,y,z,to){m=new T.Mesh(geo,mat);m.scale.set(sx,sy,sz);m.position.set(x,y,z);m.castShadow=true;(to||body).add(m);return m;}
@@ -960,14 +962,35 @@ function makeWorker(){
     [u,sl,f,el].forEach(function(o){o.castShadow=true;w.add(o);});w.add(hd);return {u:u,sl:sl,f:f,el:el,h:hd,sd:sd};}
   w.userData={L:arm(-1),R:arm(1),body:body,head:head,torso:torso,legs:legs,dip:0,look:null};
   w.visible=false;scene.add(w);
-  /* tools */
-  var sq=new T.Group();box(.36,.03,.03,M.chan,0,0,.02,sq,true);box(.35,.012,.012,M.rubber,0,0,.004,sq,true);
-  var bead=new T.Mesh(G.box,new T.MeshBasicMaterial({color:0xf4fbff,transparent:true,opacity:.7,depthWrite:false}));bead.scale.set(.37,.006,.006);bead.position.set(0,-.009,.002);sq.add(bead);tools.bead=bead;
-  sq.visible=false;scene.add(sq);tools.sq=sq;
-  /* the applicator: a T bar with a wet sleeve, what lays the soap on before the squeegee */
-  var mop=new T.Group();box(.34,.05,.05,new T.MeshStandardMaterial({color:0xe9eef2,roughness:.95}),0,0,.03,mop,true);box(.3,.02,.02,M.chan,0,.03,.05,mop,true);mop.visible=false;scene.add(mop);tools.mop=mop;
-  var hd=new T.Mesh(G.cyl,M.pole);hd.scale.x=hd.scale.z=.014;hd.visible=false;scene.add(hd);tools.handle=hd;
-  var tw=new T.Mesh(G.box,M.towel);tw.scale.set(.16,.05,.1);tw.visible=false;scene.add(tw);tools.towel=tw;
+  /* tools, each built around the spot the hand holds: +X runs from the grip to the working edge, +Y along the edge.
+     A held tool is placed from where the hand really is, so it can never float away from it */
+  function tool(){var g=new T.Group();g.visible=false;scene.add(g);return g;}
+  function hbar(g,x0,x1,r,m){var c=new T.Mesh(G.cyl,m);c.scale.set(r,x1-x0,r);c.rotation.z=-Math.PI/2;c.position.set((x0+x1)/2,0,0);c.castShadow=true;g.add(c);return c;}
+  /* the squeegee: rubber grip, brass channel, a blade that meets the glass at x = .186 */
+  var sq=tool();hbar(sq,-.07,.12,.016,M.rubber);hbar(sq,.12,.158,.009,M.chan);box(.024,.36,.022,M.chan,.168,0,0,sq,true);box(.014,.352,.007,M.rubber,.183,0,0,sq,true);
+  var bead=new T.Mesh(G.box,new T.MeshBasicMaterial({color:0xf4fbff,transparent:true,opacity:.7,depthWrite:false}));bead.scale.set(.006,.36,.01);bead.position.set(.19,0,0);sq.add(bead);tools.bead=bead;tools.sq=sq;
+  /* the applicator: a T bar with a soaked sleeve that lays the water on before the squeegee */
+  var mop=tool();hbar(mop,-.08,.15,.014,M.pole);box(.02,.3,.02,M.chan,.158,0,0,mop,true);var slv=new T.Mesh(G.cyl,Std({color:0xe8eef1,roughness:1}));slv.scale.set(.04,.34,.04);slv.position.set(.2,0,0);slv.castShadow=true;mop.add(slv);tools.mop=mop;
+  /* a folded towel, laid flat under the palm */
+  var tw=new T.Mesh(G.box,M.towel);tw.scale.set(.15,.018,.11);tw.visible=false;tw.castShadow=true;scene.add(tw);tools.towel=tw;
+  /* the bucket the applicator lives in between panes */
+  var bk=new T.Group(),bkm=Std({color:0x2c6fb3,roughness:.55});var bb=new T.Mesh(G.cyl,bkm);bb.scale.set(.15,.3,.15);bb.position.y=.15;bb.castShadow=true;bk.add(bb);
+  var bw=new T.Mesh(G.cyl,Std({color:0x8fb9cf,roughness:.08,metalness:.1}));bw.scale.set(.138,.01,.138);bw.position.y=.265;bk.add(bw);var bh=new T.Mesh(G.clamp,M.chan);bh.scale.set(2,2,1);bh.rotation.y=Math.PI/2;bh.position.y=.3;bk.add(bh);
+  bk.visible=false;scene.add(bk);tools.bucket=bk;
+  /* a cordless hand vac with a crevice nozzle, for window tracks: the nozzle's tip is at x = .28 */
+  var vac=tool(),vb=Std({color:0x39424c,roughness:.5});hbar(vac,-.05,.06,.019,M.rubber);hbar(vac,.05,.19,.046,vb);hbar(vac,.11,.13,.048,Std({color:0xb8322a,roughness:.45}));box(.1,.036,.012,vb,.23,0,0,vac,true);
+  /* screen repair: a spline roller (a small steel wheel on a wooden handle, the wheel's rim at x = .162) and a utility knife (tip at x = .078) */
+  var rol=tool();hbar(rol,-.06,.05,.016,Std({color:0x9c6b3c,roughness:.7}));hbar(rol,.05,.14,.005,M.chan);var rwh=new T.Mesh(G.cyl,M.chan);rwh.scale.set(.022,.008,.022);rwh.position.set(.14,0,0);rwh.castShadow=true;rol.add(rwh);
+  var kn=tool();hbar(kn,-.05,.05,.011,Std({color:0xe0b020,roughness:.5}));box(.028,.012,.0015,M.chan,.064,0,0,kn,true);
+  TOOLS={sq:{g:sq,reach:.186,len:.36},app:{g:mop,reach:.238,len:.34},vac:{g:vac,reach:.28,len:.036},roller:{g:rol,reach:.14},knife:{g:kn,reach:.075}};
+  /* the folding table screens get re-meshed on, a roll of new mesh, the old mesh balled up, and the spline as it's pulled out */
+  var tb=new T.Group(),tm=Std({color:0xd9d6cf,roughness:.8});box(.8,.035,1.5,tm,0,.742,0,tb,true);
+  [[-1,-1],[1,-1],[-1,1],[1,1]].forEach(function(c){var lg=new T.Mesh(G.cyl,M.chan);lg.scale.set(.016,.725,.016);lg.position.set(c[0]*.34,.3625,c[1]*.66);lg.castShadow=true;tb.add(lg);});
+  box(.7,.025,.025,M.chan,0,.2,-.66,tb,true);box(.7,.025,.025,M.chan,0,.2,.66,tb,true);tb.visible=false;scene.add(tb);tools.table=tb;
+  var rl=new T.Mesh(G.cyl,Std({color:0x2a2c30,roughness:.9}));rl.scale.set(.04,.82,.04);rl.rotation.z=Math.PI/2;rl.castShadow=true;var rg=new T.Group();rg.add(rl);rg.visible=false;scene.add(rg);tools.roll=rg;
+  var wdg=new T.IcosahedronGeometry(.085,1),wda=wdg.attributes.position.array,wr=rng(71);for(var wi=0;wi<wda.length;wi+=3){var wf=.75+wr()*.45;wda[wi]*=wf;wda[wi+1]*=wf*.8;wda[wi+2]*=wf;}wdg.computeVertexNormals();
+  var wad=new T.Mesh(wdg,Std({color:0xa39a86,roughness:1,flatShading:true}));wad.castShadow=true;wad.visible=false;scene.add(wad);tools.wad=wad;
+  var cord=new T.Mesh(G.cyl,Std({color:0x18181a,roughness:.8}));cord.visible=false;scene.add(cord);tools.cord=cord;
   var pole=new T.Mesh(G.cyl,M.pole);pole.scale.x=pole.scale.z=.022;pole.visible=false;scene.add(pole);tools.pole=pole;
   var hu=new T.Mesh(G.cyl,M.hose);hu.scale.x=hu.scale.z=.018;hu.visible=false;scene.add(hu);tools.hoseUp=hu; /* the hose along the pole, down to the roof */
   var br=new T.Group();box(.52,.05,.11,M.cart,0,.06,0,br,true);box(.5,.05,.09,M.rubber,0,.025,0,br,true);br.visible=false;scene.add(br);tools.brush=br;
@@ -996,7 +1019,8 @@ function reach(side,targetW,noLook){
 }
 function rest(side){var w=worker,b=w.userData.body.position,r=w.userData.rig;
   if(r){var m=rigArm(side),sl=w.worldToLocal(m.A.getWorldPosition(new T.Vector3())),d=m.d,L2=(d.a+d.f)*.96,t=performance.now()/1000,sw=Math.sin(t*.9+(side==="L"?0:1.3))*.012;
-    return reach(side,w.localToWorld(V(sl.x+(side==="L"?-.07:.07),sl.y-L2,sl.z+.03+sw)),true);}
+    var out=reach(side,w.localToWorld(V(sl.x+(side==="L"?-.07:.07),sl.y-L2,sl.z+.03+sw)),true),dw=function(x,y,z){return V(x,y,z).transformDirection(w.matrixWorld);};
+    handTo(anatOf(side),dw(0,-1,.1),dw((side==="L"?1:-1)*(GRIP.pz||1),0,.12));curl(anatOf(side),GRIP.rc,GRIP.rt);return out;}
   return reach(side,w.localToWorld(V((side==="L"?-.29:.29)+b.x,.86+b.y,.05)),true);}
 function lookAtW(p){worker.userData.look=p.clone();look();}
 /* legs follow the body down: feet stay on the ground and the knees bend forward */
@@ -1032,6 +1056,8 @@ function loadRig(ver){if(rigAsked)return;rigAsked=true;
 }
 function buildRig(g){
   var u=worker.userData,root=g.scene,B={},want=["Hips","Spine","Spine1","Spine2","Neck","Head","HeadTop_End","LeftShoulder","RightShoulder","LeftArm","LeftForeArm","LeftHand","RightArm","RightForeArm","RightHand","LeftUpLeg","LeftLeg","LeftFoot","RightUpLeg","RightLeg","RightFoot"];
+  /* the fingers and toes too, so the hands can close around a handle and the feet can sit flat on a roof */
+  ["Left","Right"].forEach(function(sd){FING.forEach(function(f){for(var i=1;i<=3;i++)want.push(sd+"Hand"+f+i);});want.push(sd+"ToeBase");});
   root.traverse(function(n){if(n.isBone){var k=n.name.replace(/^mixamorig\d*:?/,"");if(want.indexOf(k)>=0&&!B[k])B[k]=n;}
     if(n.isMesh){n.castShadow=true;n.receiveShadow=false;n.frustumCulled=false;var nm=n.name||"";
       /* Tony's work clothes, from his photos: royal blue long sleeve, dark pants, black shoes. The cloth folds stay, from the normal map. */
@@ -1048,8 +1074,13 @@ function buildRig(g){
   var len=function(a,b){return wp(a).distanceTo(wp(b));};
   var rig={root:root,holder:holder,B:B,dip:0,L:{a:len(B.LeftArm,B.LeftForeArm),f:len(B.LeftForeArm,B.LeftHand)},R:{a:len(B.RightArm,B.RightForeArm),f:len(B.RightForeArm,B.RightHand)},
     legL:{a:len(B.LeftUpLeg,B.LeftLeg),f:len(B.LeftLeg,B.LeftFoot),foot:worker.worldToLocal(wp(B.LeftFoot))},legR:{a:len(B.RightUpLeg,B.RightLeg),f:len(B.RightLeg,B.RightFoot),foot:worker.worldToLocal(wp(B.RightFoot))},
-    mixer:null,last:0,bind:{},bob:0,walk:0};
+    mixer:null,last:0,bind:{},bob:0,walk:0,feet:{Left:{t:1},Right:{t:1}}};
+  ["Left","Right"].forEach(function(sd){var d=sd==="Left"?rig.legL:rig.legR;if(B[sd+"ToeBase"])d.toe=worker.worldToLocal(wp(B[sd+"ToeBase"])).sub(d.foot);});
   for(var bk in B)rig.bind[bk]=B[bk].quaternion.clone();
+  /* his proportions, for working out how he has to stand to reach something */
+  worker.updateMatrixWorld(true);rig.hipInv=new T.Matrix4().copy(B.Hips.matrixWorld).invert().multiply(worker.matrixWorld);
+  var lo=function(b){return worker.worldToLocal(wp(b));},sl=lo(B.RightArm);
+  rig.dims={hips:lo(B.Hips),sp:lo(B.Spine),sp1:lo(B.Spine1),shL:lo(B.RightArm).add(V(0,-.02,0)),shR:lo(B.LeftArm).add(V(0,-.02,0)),sy:sl.y-.02,arm:rig.R.a+rig.R.f};
   headwear(rig,HW);
   var idle=g.animations.filter(function(a){return /idle|breath/i.test(a.name);})[0];
   if(idle){rig.mixer=new T.AnimationMixer(root);rig.mixer.clipAction(idle).play();}
@@ -1083,7 +1114,7 @@ function headwear(r,o){var B=r.B,wp=function(b){return b.getWorldPosition(new T.
 function rotW(bone,axisW,ang){if(!bone||!ang)return;var q=new T.Quaternion().setFromAxisAngle(axisW,ang).multiply(bone.getWorldQuaternion(new T.Quaternion())),pq=bone.parent.getWorldQuaternion(new T.Quaternion()).invert();
   bone.quaternion.copy(pq.multiply(q));bone.updateMatrixWorld(true);}
 function rigIdle(t,walk){var r=worker.userData.rig,B=r.B;for(var bk in B)B[bk].quaternion.copy(r.bind[bk]);if(r.mixer){var dt=r.last?Math.min(.05,t-r.last):0;r.last=t;r.mixer.update(dt);}
-  r.dip=0;r.walk=walk||0;r.holder.rotation.set(0,0,0);
+  r.dip=0;r.bend=0;r.walk=walk||0;r.holder.rotation.set(0,0,0);
   /* standing, his weight drifts from foot to foot; walking, he bobs a little with each step */
   r.bob=walk?Math.abs(Math.sin(walk))*.022-.011:Math.sin(t*1.1)*.003;r.holder.position.set(walk?Math.sin(walk)*.018:Math.sin(t*.55)*.02,r.bob,0);
   worker.updateMatrixWorld(true);
@@ -1098,20 +1129,330 @@ function rigLook(p){var r=worker.userData.rig,H=r&&r.B.Head;if(!H)return;var hl=
   rotW(r.B.Neck,Y,yaw*.4);rotW(H,Y,yaw*.6);rotW(r.B.Neck,X,pitch*.35);rotW(H,X,pitch*.65);}
 /* the scenes name hands by screen side ("L" is the figure's -x side), which is the rig's anatomical right */
 function rigArm(side){var r=worker.userData.rig,a=side==="L"?"Right":"Left";return {A:r.B[a+"Arm"],F:r.B[a+"ForeArm"],H:r.B[a+"Hand"],d:side==="L"?r.R:r.L};}
-function rigReach(side,targetW){var r=worker.userData.rig,m=rigArm(side),A=m.A,F=m.F,H=m.H,d=m.d;
-  var S=A.getWorldPosition(new T.Vector3()),hint=POLE[side].clone().transformDirection(worker.matrixWorld),j=ik2(S,targetW,d.a,d.f,hint);
+function rigReach(side,targetW,X){var r=worker.userData.rig,m=rigArm(side),A=m.A,F=m.F,H=m.H,d=m.d;
+  var S=A.getWorldPosition(new T.Vector3()),hint=POLE[side].clone().transformDirection(worker.matrixWorld);
+  /* holding a handle, the elbow only moves off its natural spot when that would leave the forearm running along the handle */
+  if(X){var j0=ik2(S,targetW,d.a,d.f,hint),c=Math.abs(j0[1].clone().sub(j0[0]).normalize().dot(X)),wq=smooth((c-.5)/.35);
+    if(wq>0)hint=hint.clone().multiplyScalar(1-wq).addScaledVector(elbowFor(S,targetW,X,d.a,d.f,hint),wq);}
+  var j=ik2(S,targetW,d.a,d.f,hint);
   turnBone(A,F.getWorldPosition(new T.Vector3()),j[0]);turnBone(F,H.getWorldPosition(new T.Vector3()),j[1]);return H.getWorldPosition(new T.Vector3());}
-function rigLegs(){var r=worker.userData.rig,B=r.B,ph=r.walk||0;r.holder.position.y=(r.bob||0)-.3*r.dip;worker.updateMatrixWorld(true);
-  if(r.dip>0)rotW(B.Spine,V(1,0,0).transformDirection(worker.matrixWorld),.35*r.dip);
-  [["Left","legL",Math.PI],["Right","legR",0]].forEach(function(p){var U=B[p[0]+"UpLeg"],K=B[p[0]+"Leg"],Fo=B[p[0]+"Foot"],d=r[p[1]],a=ph+p[2],sw=ph?Math.sin(a):0,lift=ph?Math.max(0,Math.cos(a))*.09:0,
-      tgt=worker.localToWorld(d.foot.clone().add(V(0,lift,.2*sw))),hint=V(0,0,1).transformDirection(worker.matrixWorld);
-    var j=ik2(U.getWorldPosition(new T.Vector3()),tgt,d.a,d.f,hint);turnBone(U,K.getWorldPosition(new T.Vector3()),j[0]);turnBone(K,Fo.getWorldPosition(new T.Vector3()),j[1]);});}
-function QZ(a){return new T.Quaternion().setFromAxisAngle(V(0,0,1),a);}
-function crouch(k){var b=worker.userData.body,e=smooth(k);if(worker.userData.rig){worker.userData.rig.dip=e;}b.position.y=-.3*e;b.rotation.x=.16*e;worker.updateMatrixWorld(true);legs();}
-var hoseKey="";
-function hose(a,b,c){var k=[a.x,a.z,b.x,c.x].map(function(v){return v.toFixed(2);}).join();if(k!==hoseKey){hoseKey=k;if(tools.hose){scene.remove(tools.hose);tools.hose.geometry.dispose();}
-  var mid=b.clone().add(V(0,.1,.4)),down=V((b.x+c.x)/2,.05,(b.z+c.z)/2+.3),curve=new T.CatmullRomCurve3([a,b,mid,down,c]);tools.hose=new T.Mesh(new T.TubeGeometry(curve,48,.018,6,false),M.hose);tools.hose.castShadow=true;scene.add(tools.hose);}tools.hose.visible=true;}
+/* the elbow for a fist around a handle along X: of all the places the elbow can sit, the one where the forearm meets the handle
+   square, the way a hand really holds a tool, as long as that's within reason of where an elbow naturally goes */
+function elbowFor(S,W,X,l1,l2,hint){var d=W.clone().sub(S),len=Math.max(.12,Math.min(d.length(),l1+l2-.002)),u=d.normalize();
+  var ca=(l1*l1+len*len-l2*l2)/(2*l1*len),sa=Math.sqrt(Math.max(0,1-ca*ca)),C=S.clone().addScaledVector(u,l1*ca),r=l1*sa;
+  var p1=hint.clone().addScaledVector(u,-hint.dot(u));if(p1.lengthSq()<1e-6||r<1e-4)return hint;p1.normalize();var p2=new T.Vector3().crossVectors(u,p1);
+  var a=S.clone().addScaledVector(u,len).sub(C).dot(X),b=p1.dot(X)*r,c=p2.dot(X)*r,R2=Math.hypot(b,c);if(R2<1e-6)return hint;
+  var q=a/R2;if(q>1||q<-1)return hint;var f0=Math.atan2(c,b),ac=Math.acos(q),best=0,bd=1e9;
+  [f0+ac,f0-ac].forEach(function(f){var g=Math.abs(Math.atan2(Math.sin(f),Math.cos(f)));if(g<bd){bd=g;best=f;}});
+  if(bd>1.2)return hint;return p1.multiplyScalar(Math.cos(best)).addScaledVector(p2,Math.sin(best));}
+/* ---------- hands that hold things ----------
+   The model's hand bones run along +Y to the fingertips with the palm facing +Z; a finger curls toward the palm by turning about its own +X.
+   On the right hand +X points from the little finger to the index finger, on the left hand the other way. */
+var FING=["Thumb","Index","Middle","Ring","Pinky"],GRIP={rc:.2,rt:.12,pz:1,gy:.082,gz:.032,c1:1.05,c2:1.35,c3:.9,t1:.35,t2:.45,t3:.35,tAx:"z"};
+function anatOf(side){return side==="L"?"Right":"Left";}
+function curl(anat,k,thumb){var r=worker.userData.rig,B=r.B,X=V(1,0,0),tAx=GRIP.tAx==="z"?V(0,0,1):GRIP.tAx==="y"?V(0,1,0):V(1,0,0),tk=thumb===undefined?k:thumb;
+  ["Index","Middle","Ring","Pinky"].forEach(function(f,fi){var sp=1+(fi-1.5)*.06;[GRIP.c1,GRIP.c2,GRIP.c3].forEach(function(a,i){var b=B[anat+"Hand"+f+(i+1)];if(b)b.quaternion.multiply(new T.Quaternion().setFromAxisAngle(X,a*k*sp));});});
+  [GRIP.t1,GRIP.t2,GRIP.t3].forEach(function(a,i){var b=B[anat+"HandThumb"+(i+1)];if(b)b.quaternion.multiply(new T.Quaternion().setFromAxisAngle(tAx,a*tk*(anat==="Left"?-1:1)));});}
+/* turn the hand to a world orientation given where the fingers point and where the palm faces; the forearm takes part of the twist, the way a real wrist does */
+function handTo(anat,Y,Z){var r=worker.userData.rig,H=r.B[anat+"Hand"],F=r.B[anat+"ForeArm"];Y=Y.clone().normalize();var X=new T.Vector3().crossVectors(Y,Z).normalize();Z=new T.Vector3().crossVectors(X,Y).normalize();
+  var want=new T.Quaternion().setFromRotationMatrix(new T.Matrix4().makeBasis(X,Y,Z)),fq=F.getWorldQuaternion(new T.Quaternion()),rel=fq.clone().invert().multiply(want);
+  /* split the twist about the forearm's own axis: 60% on the forearm, the rest in the wrist */
+  var ax=V(0,1,0),ang=2*Math.atan2(rel.y,rel.w);
+  if(isFinite(ang)){if(ang>Math.PI)ang-=2*Math.PI;if(ang<-Math.PI)ang+=2*Math.PI;F.quaternion.multiply(new T.Quaternion().setFromAxisAngle(ax,ang*.6));F.updateMatrixWorld(true);}
+  var pq=H.parent.getWorldQuaternion(new T.Quaternion()).invert();H.quaternion.copy(pq.multiply(want));H.updateMatrixWorld(true);}
+/* hold a handle: G is where the handle sits in the fist, A points from there toward the tool head. Returns the grip point the hand really reached */
+function grip(side,G,A,open){var u=worker.userData;if(!u.rig){reach(side,G,true);return G.clone();}
+  var anat=anatOf(side),m=rigArm(side),d=m.d,X=(anat==="Right"?A.clone():A.clone().negate()).normalize();shrug(side,G);
+  /* With the forearm square to the handle, the fist's grip point sits a fixed distance from the elbow, a little off the line of
+     the forearm, so the reach is a two bone solve to G with that as the second bone, and the forearm turned back by that little
+     angle gives the wrist. A forearm that can't be quite square leaves the fist a little off, so aim again by what's left */
+  var S=m.A.getWorldPosition(new T.Vector3()),L2=Math.hypot(d.f+GRIP.gy,GRIP.gz),al=Math.atan2(GRIP.gz,d.f+GRIP.gy),h0=POLE[side].clone().transformDirection(worker.matrixWorld);
+  /* where the elbow goes is settled once, from the grip itself, so the correction below only ever moves the aim */
+  var hint=h0,j0=ik2(S,G,d.a,L2,h0),c=Math.abs(j0[1].clone().sub(j0[0]).normalize().dot(X)),wq=smooth((c-.5)/.35);
+  if(wq>0)hint=h0.clone().multiplyScalar(1-wq).addScaledVector(elbowFor(S,G,X,d.a,L2,h0),wq);
+  function solve(T0){var j=ik2(S,T0,d.a,L2,hint),E=j[0],f=j[1].clone().sub(E).normalize().applyAxisAngle(X,-al),W=E.clone().addScaledVector(f,d.f);
+    /* a handle that runs too close to the line of the forearm sits diagonally across the palm instead, the way a hand really
+       takes it; the fist keeps at least 55 degrees to the forearm */
+    var Xh=X,cf=X.dot(f);if(Math.abs(cf)>.57){var xp=X.clone().addScaledVector(f,-cf);if(xp.lengthSq()>1e-6)Xh=f.clone().multiplyScalar(Math.sign(cf)*.57).addScaledVector(xp.normalize(),.82).normalize();}
+    var Y=f.clone().addScaledVector(Xh,-f.dot(Xh));if(Y.lengthSq()<1e-6)Y=V(0,-1,0);Y.normalize();var Z=new T.Vector3().crossVectors(Xh,Y);
+    return {E:E,W:W,Y:Y,Z:Z,at:W.clone().addScaledVector(Y,GRIP.gy).addScaledVector(Z,GRIP.gz)};}
+  var Tg=G.clone(),best=null,be=1e9;
+  for(var it=0;it<5;it++){var q=solve(Tg),e=G.clone().sub(q.at),el=e.length();if(el<be){be=el;best=q;}if(el<.002)break;Tg.add(e);}
+  turnBone(m.A,m.F.getWorldPosition(new T.Vector3()),best.E);turnBone(m.F,m.H.getWorldPosition(new T.Vector3()),best.W);
+  handTo(anat,best.Y,best.Z);curl(anat,open?.35:1);
+  return m.H.getWorldPosition(new T.Vector3()).addScaledVector(best.Y,GRIP.gy).addScaledVector(best.Z,GRIP.gz);}
+/* a flat hand on a surface, palm toward it (a towel under it), fingers pointing along F. With tip, P is where the fingertips
+   press the towel into an edge or a corner, the way a frame gets detailed */
+function palmOn(side,P,N,F,tip){var u=worker.userData;if(!u.rig){return reach(side,P.clone().addScaledVector(N,.04),true);}
+  var anat=anatOf(side),m=rigArm(side),Z=N.clone().negate().normalize(),Y=F.clone().addScaledVector(Z,-F.dot(Z)).normalize(),tk=tip?.085:0;
+  var W=P.clone().addScaledVector(N,.035).addScaledVector(Y,-.07-tk);shrug(side,W);rigReach(side,W);handTo(anat,Y,Z);curl(anat,tip?.06:.18,.1);
+  return m.H.getWorldPosition(new T.Vector3()).addScaledVector(Y,.07+tk);}
+/* reaching high, the shoulder lifts with the arm, a few centimeters that a straight arm alone doesn't have */
+function shrug(side,W){var r=worker.userData.rig,m=rigArm(side),S=m.A.getWorldPosition(new T.Vector3()),mx=m.d.a+m.d.f,dd=S.distanceTo(W);
+  if(dd<mx*.95||W.y<S.y)return;var el=Math.min(.55,(dd-mx*.95)*5),cl=r.B[anatOf(side)+"Shoulder"];rotW(cl,V(0,0,1).transformDirection(worker.matrixWorld),anatOf(side)==="Right"?-el:el);}
+/* ---------- feet that stay where they're put ----------
+   Each foot stands on a spot on the ground. When the body moves or turns far enough from it, that foot takes a step: it lifts,
+   swings and lands where it belongs, one foot at a time. No sliding, and on a roof each foot sits on the slope. */
+var groundFn=null,FR=0,frameDt=0;
+function groundY(x,z){return groundFn?groundFn(x,z):0;}
+function feetPlan(){var r=worker.userData.rig;if(r.fr===FR)return;var dt=r.fr===undefined?0:frameDt;r.fr=FR;
+  var pos=worker.position,vel=r.lastPos?pos.clone().sub(r.lastPos).multiplyScalar(dt>0?1/dt:0):V(0,0,0);r.lastPos=pos.clone();if(vel.length()>6)vel.set(0,0,0);r.vel=r.vel?r.vel.lerp(vel,Math.min(1,dt*8)):vel;
+  ["Left","Right"].forEach(function(sd){var f=r.feet[sd],d=sd==="Left"?r.legL:r.legR,h=worker.localToWorld(V(d.foot.x,0,d.foot.z));h.y=groundY(h.x,h.z);f.home=h;
+    if(!f.p||f.p.distanceTo(h)>1.1){f.p=h.clone();f.t=1;}});
+  var a=r.feet.Left,b=r.feet.Right;
+  if(a.t>=1&&b.t>=1){var da=a.p.distanceTo(a.home),db=b.p.distanceTo(b.home),sd=da>=db?"Left":"Right",f=r.feet[sd];
+    if(Math.max(da,db)>.11){f.from=f.p.clone();f.to=f.home.clone().addScaledVector(V(r.vel.x,0,r.vel.z),.32);f.to.y=groundY(f.to.x,f.to.z);f.t=0;}}
+  ["Left","Right"].forEach(function(sd){var f=r.feet[sd];if(f.t<1){f.t=Math.min(1,f.t+dt/.26);f.p=f.from.clone().lerp(f.to,smooth(f.t));f.lift=Math.sin(Math.PI*f.t)*.075;}else f.lift=0;});
+  r.stepPh=(a.t<1?a.t:0)+(b.t<1?b.t:0);}
+function rigLegs(){var r=worker.userData.rig,B=r.B,bd=r.bend||0;r.holder.position.y=(r.bob||0)-.3*r.dip+(r.hipDrop||0);r.holder.position.z=-.12*Math.sin(bd);worker.updateMatrixWorld(true);
+  /* bending over hinges mostly at the hips, the back rounding a little on top, the seat going back to keep him balanced */
+  if(bd>0){var X=V(1,0,0).transformDirection(worker.matrixWorld);rotW(B.Hips,X,.6*bd);rotW(B.Spine,X,.22*bd);rotW(B.Spine1,X,.18*bd);}
+  feetPlan();
+  var fwd=V(0,0,1).transformDirection(worker.matrixWorld);fwd.y=0;fwd.normalize();
+  [["Left","legL"],["Right","legR"]].forEach(function(p){var U=B[p[0]+"UpLeg"],K=B[p[0]+"Leg"],Fo=B[p[0]+"Foot"],d=r[p[1]],f=r.feet[p[0]];
+    var tgt=f.p.clone().add(V(0,d.foot.y+(f.lift||0),0)),hint=fwd.clone().add(V(0,.15,0));
+    var j=ik2(U.getWorldPosition(new T.Vector3()),tgt,d.a,d.f,hint);turnBone(U,K.getWorldPosition(new T.Vector3()),j[0]);turnBone(K,Fo.getWorldPosition(new T.Vector3()),j[1]);
+    /* the foot lies flat on whatever it stands on, toes pointing where he faces, and lifts at the toe mid step */
+    var TB=B[p[0]+"ToeBase"];if(TB&&d.toe){var ank=Fo.getWorldPosition(new T.Vector3()),tl=d.toe.clone(),tw=worker.localToWorld(d.foot.clone().add(tl)).sub(worker.localToWorld(d.foot.clone()));
+      var toe=ank.clone().add(tw);toe.y=groundY(toe.x,toe.z)+(d.foot.y+tl.y)+(f.lift||0)*.6;turnBone(Fo,TB.getWorldPosition(new T.Vector3()),toe);}});}
+function crouch(k,bend){var b=worker.userData.body,r=worker.userData.rig;bend=bend||0;if(r){r.dip=k;r.bend=bend;}b.position.y=-.3*Math.min(1,k);b.rotation.x=.16*Math.min(1,k)+bend*.5;worker.updateMatrixWorld(true);legs();}
 function hideTools(){for(var k in tools)tools[k].visible=false;}
+
+/* ---------- the work system ----------
+   A job is a surface (a pane of glass, a sill, a panel array, a screen), the tools, and a plan: timed clips that say where each
+   tool goes on the surface. One plan drives everything: where Tony stands and faces, how low he gets, the tool in his hand, and the
+   dirt the tool takes off. Nothing below knows a window's size or a roof's pitch. It all comes from the model, so a bigger window,
+   a taller one, a split array or a different camera still plays out right. */
+var WSTAT={miss:0};
+/* a flat surface in some group's space: origin o, U across it, V up it, N out of it toward the worker; w by h meters */
+function surf(g,o,U,V,N,w,h){return {g:g,o:o,U:U,V:V,N:N,w:w,h:h};}
+function sAt(S,u,v,off){var p=S.o.clone().addScaledVector(S.U,u).addScaledVector(S.V,v).addScaledVector(S.N,off||0);return toWorld(S.g,p.x,p.y,p.z);}
+function sDir(S,d){S.g.updateMatrixWorld(true);return d.clone().transformDirection(S.g.matrixWorld);}
+/* the dirt on a surface, as a canvas the size of the surface. It only changes where a tool passes over it */
+function layer(S,W,H,paint){var c=cv(W,H,function(){}),t=tx(c,false),m=new T.Mesh(G.plane,new T.MeshBasicMaterial({map:t,transparent:true,depthWrite:false,side:T.DoubleSide}));
+  m.quaternion.setFromRotationMatrix(new T.Matrix4().makeBasis(S.U,S.V,S.N));m.position.copy(S.o).addScaledVector(S.N,.003);m.scale.set(S.w,S.h,1);m.renderOrder=2;m.userData.dyn=true;S.g.add(m);
+  var L={S:S,c:c,t:t,m:m,W:W,H:H,paint:paint};
+  L.reset=function(){var g=c.getContext("2d");g.globalCompositeOperation="copy";g.drawImage(paint(W,H),0,0);g.globalCompositeOperation="source-over";t.needsUpdate=true;};L.reset();return L;}
+function lyXY(L,u,v){return [(u/L.S.w+.5)*L.W,(.5-v/L.S.h)*L.H];}
+var LY_FILL={clean:"#000",wet:"rgba(233,241,247,.5)",water:"rgba(214,232,246,.7)",spline:"rgba(22,22,24,.95)"};
+/* new screen mesh, the tint of the mesh picked on the quote */
+function meshTint(){return st.pet?"rgba(16,17,20,.62)":"rgba(34,36,40,.52)";}
+function lyOp(g,op){g.globalCompositeOperation=op==="clean"?"destination-out":"source-over";g.fillStyle=g.strokeStyle=op==="mesh"?meshTint():LY_FILL[op];}
+/* a swept band: the tool's edge at the start and end of a short move. Clean passes are outlined too, so bands that meet leave no seam */
+function lyPoly(L,pts,op){var g=L.c.getContext("2d");lyOp(g,op);g.lineWidth=1.6;g.lineJoin="round";g.beginPath();
+  pts.forEach(function(p,i){var q=lyXY(L,p[0],p[1]);if(i)g.lineTo(q[0],q[1]);else g.moveTo(q[0],q[1]);});g.closePath();g.fill();if(op==="clean")g.stroke();g.globalCompositeOperation="source-over";L.t.needsUpdate=true;}
+function lyLine(L,a,b,wm,op){var g=L.c.getContext("2d"),p=lyXY(L,a[0],a[1]),q=lyXY(L,b[0],b[1]);lyOp(g,op);g.lineCap="round";g.lineWidth=Math.max(1,wm*L.W/L.S.w);
+  g.beginPath();g.moveTo(p[0],p[1]);g.lineTo(q[0],q[1]);g.stroke();g.globalCompositeOperation="source-over";L.t.needsUpdate=true;}
+/* how much dirt or water is left, 0 to 1, sampled every fourth pixel */
+function lyLeft(L){var d=L.c.getContext("2d").getImageData(0,0,L.W,L.H).data,n=0,k=0;for(var i=3;i<d.length;i+=16){k++;if(d[i]>28)n++;}return n/k;}
+
+/* ---------- plans: timed clips ----------
+   A clip has t0..t1 and gives, for its progress k: body (where he stands, faces, how low), hands, what he looks at, props, and paint */
+function Clip(t0,t1,o){o.t0=t0;o.t1=t1;return o;}
+function clipAt(pl,t){var c=pl.clips[0];for(var i=0;i<pl.clips.length;i++)if(t>=pl.clips[i].t0)c=pl.clips[i];return c;}
+function kOf(c,t){return clamp01((t-c.t0)/Math.max(1e-3,c.t1-c.t0));}
+function pathLen(pts){var L=[0];for(var i=1;i<pts.length;i++)L.push(L[i-1]+Math.hypot(pts[i][0]-pts[i-1][0],pts[i][1]-pts[i-1][1])+Math.abs((pts[i][2]||0)-(pts[i-1][2]||0))*.05+1e-4);return L;}
+function pathAt(pts,cum,k){var d=clamp01(k)*cum[cum.length-1],i=1;while(i<cum.length-1&&cum[i]<d)i++;var a=pts[i-1],b=pts[i],f=clamp01((d-cum[i-1])/Math.max(1e-6,cum[i]-cum[i-1]));
+  return {u:lerp(a[0],b[0],f),v:lerp(a[1],b[1],f),th:lerp(a[2]||0,b[2]||0,f),du:b[0]-a[0],dv:b[1]-a[1]};}
+/* the body, averaged over a moment either side of now, so every move eases in and out without lagging the hands.
+   It never looks past the step the viewer is on, so he doesn't drift while a note waits for Next */
+function bodyAt(pl,t,tmax){var acc=V(0,0,0),fa=V(0,0,0),dip=0,bd=0,n=0,KW=[0,0,.25,.5,.25,0,0];for(var i=0;i<7;i++){var tt=Math.max(0,Math.min(tmax===undefined?1e9:tmax,t+(i-3)*.07)),c=clipAt(pl,tt),b=c.body(kOf(c,tt),tt);acc.add(b.pos);fa.add(b.face);dip+=(b.dip||0)*KW[i];bd+=(b.bend||0)*KW[i];n++;}
+  fa.y=0;if(fa.lengthSq()<1e-6)fa.set(0,0,1);return {pos:acc.multiplyScalar(1/n),face:fa.normalize(),dip:dip,bend:bd};}
+/* paint everything the tools passed over since the last frame, in small steps so nothing is skipped, even after Next jumps ahead.
+   Going back replays the plan from a fresh surface. */
+function planPaint(pl,t){if(pl.done===undefined||t<pl.done-1e-4){if(pl.reset)pl.reset();pl.done=0;}var from=pl.done;if(t<=from+1e-6)return;
+  /* in time order: the stretch up to each event, the event, then on */
+  var cuts=(pl.events||[]).filter(function(e){return e.t>from&&e.t<=t;}).sort(function(a,b){return a.t-b.t;});
+  cuts.concat([{t:t}]).forEach(function(e){var to=e.t;
+    pl.clips.forEach(function(c){if(!c.paint||c.t1<=from||c.t0>to)return;var a=kOf(c,Math.max(from,c.t0)),b=kOf(c,Math.min(to,c.t1)),n=Math.max(1,Math.ceil((b-a)*(c.t1-c.t0)/.01));
+      for(var i=0;i<n;i++)c.paint(a+(b-a)*i/n,a+(b-a)*(i+1)/n);});
+    if(e.fn)e.fn();from=to;});pl.done=t;}
+/* where the hand hangs at rest, without moving it there */
+function restPt(side){var w=worker,r=w.userData.rig;if(!r)return w.localToWorld(V(side==="L"?-.29:.29,.86,.05));var m=rigArm(side),sl=w.worldToLocal(m.A.getWorldPosition(new T.Vector3())),d=m.d;
+  return w.localToWorld(V(sl.x+(side==="L"?-.07:.07),sl.y-(d.a+d.f)*.96+GRIP.gy,sl.z+.08));}
+function shoulderAt(side){var r=worker.userData.rig;return r?rigArm(side).A.getWorldPosition(new T.Vector3()):worker.localToWorld(SHL[side].clone());}
+/* how far a hand ended up from where the job needed it, kept for the tests */
+function missed(key,side,want,got){var dm=got.distanceTo(want);if(dm>WSTAT.miss){WSTAT.miss=dm;WSTAT.info={key:key,sh:+shoulderAt(side).distanceTo(want).toFixed(3)};}}
+/* place a tool from its grip: X along the handle toward the working edge, Y along the edge */
+function placeTool(o,G,A,b){var X=A.clone().normalize(),Y=b.clone().addScaledVector(X,-b.dot(X));if(Y.lengthSq()<1e-6)Y=V(0,1,0).addScaledVector(X,-X.y);Y.normalize();var Z=new T.Vector3().crossVectors(X,Y);
+  o.position.copy(G);o.quaternion.setFromRotationMatrix(new T.Matrix4().makeBasis(X,Y,Z));o.visible=true;}
+/* hold a tool so its edge sits on P along direction b, the handle coming back toward the hand along H */
+function holdTool(side,key,P,b,H,w,free){var tl=TOOLS[key],G=P.clone().addScaledVector(H,tl.reach),A=H.clone().negate();if(w!==undefined&&w<1)G=restPt(side).lerp(G,smooth(w));if(free)G=reachClamp(side,G);
+  var at=grip(side,G,A);if(!free&&(w===undefined||w>=1))missed(key,side,G,at);placeTool(tl.g,at,A,b);return at;}
+/* how a handle comes off an upright surface: straight out, tipped down when the spot is above his shoulder and up when it's below,
+   and trailing the stroke a little so the edge leans into the way it's moving */
+function handleDir(n,P,travel,shY){var h=n.clone().multiplyScalar(.85),q=shY-P.y,dy=Math.max(-.6,Math.min(1.1,q>0?q*2:q*1.1));h.y+=dy;if(travel&&travel.lengthSq()>1e-8)h.addScaledVector(travel.clone().normalize(),-.28);return h.normalize();}
+/* ---------- posture from reach ----------
+   Where a hand has to go decides how he stands: upright when it's an easy arm's length away, otherwise he hinges at the hips, and
+   for anything lower bends his knees as well, only as far as gets the hand there. It works from his own measurements, so it
+   holds for a sill, a bucket, a screen on the ground or a track, whatever the job and wherever it is. */
+var DIMS0={hips:V(0,.95,0),sp:V(0,1.05,0),sp1:V(0,1.17,0),shL:V(-.19,1.39,-.04),shR:V(.19,1.39,-.04),sy:1.39,arm:.49};
+function dims(){var r=worker&&worker.userData.rig;return r&&r.dims||DIMS0;}
+/* effort e from 0 to 1. For waist-high work he hinges at the hips first, to about 30 degrees, then bends his knees as he goes
+   on down. For anything near the ground he squats first and keeps his back straighter, the way you'd get down to it. lo says
+   which, 0 to 1, from how low the hand has to go */
+function effort(e,lo){var bA,dA,bB,dB,q;if(e<.35){bA=e/.35*.55;dA=0;}else{q=(e-.35)/.65;bA=.55+q*.7;dA=q*.5;}
+  if(e<.6){dB=e/.6*.5;bB=e/.6*.3;}else{q=(e-.6)/.4;dB=.5+q*.06;bB=.3+q*.8;}lo=lo||0;return {b:lerp(bA,bB,lo),dr:lerp(dA,dB,lo)};}
+/* the shoulder, in his own space, for a hinge b, a drop dr and a turn of the chest; the same bones the legs and spine then pose */
+function shoulderFK(D,side,b,dr,yaw){function X(v,a){var c=Math.cos(a),s=Math.sin(a);return V(v.x,v.y*c-v.z*s,v.y*s+v.z*c);}
+  var sh=side==="R"?D.shR:D.shL,A=X(sh.clone().sub(D.sp1),b);if(yaw){var c=Math.cos(yaw),s=Math.sin(yaw);A.set(A.x*c+A.z*s,A.y,-A.x*s+A.z*c);}
+  return D.hips.clone().add(V(0,-dr,-.12*Math.sin(b))).add(X(D.sp.clone().sub(D.hips),.6*b)).add(X(D.sp1.clone().sub(D.sp),.82*b)).add(A);}
+function posture1(pos,face,Q,side,Rr){var D=dims(),R=Rr||D.arm*.95+.07,dx=Q.x-pos.x,dz=Q.z-pos.z,lx=dx*face.z-dz*face.x,lz=dx*face.x+dz*face.z,ly=Q.y-pos.y,
+    yaw=Math.max(-.32,Math.min(.32,Math.atan2(lx,Math.max(.2,lz))*.45)),lo=clamp01((.55-ly)/.35);
+  function dist(e){var f=effort(e,lo),q=shoulderFK(D,side,f.b,f.dr,yaw);return Math.hypot(lx-q.x,ly-q.y,lz-q.z);}
+  var e=0,d0=dist(0);
+  if(d0>R){if(dist(1)>R){var bd=d0;for(var i=1;i<=10;i++){var di=dist(i/10);if(di<bd-1e-4){bd=di;e=i/10;}}}
+    else{var a=0,b=1;for(var it=0;it<14;it++){var m=(a+b)/2;if(dist(m)>R)a=m;else b=m;}e=b;}}
+  return {e:e,lo:lo,far:Math.max(0,dist(e)-R)};}
+/* the posture for a hand at Q (side L or R), or for both hands at once when Q2 is where the other one goes */
+/* a flat hand reaches a little less far than a fist on a handle: the palm sits past the wrist only when the fingers point away */
+function palmReach(){return dims().arm*.95+.02;}
+function posture(pos,face,Q,side,Q2,Rr){var p=posture1(pos,face,Q,side==="R"?"R":"L",Rr);if(Q2){var p2=posture1(pos,face,Q2,side==="R"?"L":"R",Rr);if(p2.e>p.e)p=p2;}
+  var f=effort(p.e,p.lo);return {dip:f.dr/.3,bend:f.b,far:p.far};}
+/* a spot to stand, with the posture for a hand at Q (and the other at Q2). Still out of reach, he steps in toward it.
+   (Where he stands is averaged over a moment so he never lurches; how he bends follows the hands as they go) */
+function pose(sp,Q,side,Q2,Rr){var ps=posture(sp.pos,sp.face,Q,side,Q2,Rr),pos=sp.pos;
+  if(ps.far>.004){var f=sp.face.clone();f.y=0;f.normalize();pos=pos.clone().addScaledVector(f,Math.min(.25,ps.far*1.3));pos.y=groundY(pos.x,pos.z);ps=posture(pos,sp.face,Q,side,Q2,Rr);}
+  return {pos:pos,face:sp.face,dip:ps.dip,bend:ps.bend};}
+/* between two stances: the turn goes the short way round at an even rate */
+function lerpPose(a,b,e){var fa=Math.atan2(a.face.x,a.face.z),d=Math.atan2(b.face.x,b.face.z)-fa;while(d>Math.PI)d-=2*Math.PI;while(d<-Math.PI)d+=2*Math.PI;var f=fa+d*e;
+  return {pos:a.pos.clone().lerp(b.pos,e),face:V(Math.sin(f),0,Math.cos(f)),dip:lerp(a.dip||0,b.dip||0,e),bend:lerp(a.bend||0,b.bend||0,e)};}
+/* where to stand to work a spot on a surface with one hand: that shoulder near the spot, an easy arm's length out from it (S.out,
+   or straight off the surface), turned a little toward it, and as low as the hand needs. hand is how far the hand stands off the
+   surface, or a function giving the hand's spot. If it's still out of reach, he steps in closer */
+function stanceUp(S,u,v,side,d,hand,Rr){var n=sDir(S,S.out||S.N),U=sDir(S,S.U);n.y=0;U.y=0;n.normalize();U.normalize();var P=sAt(S,u,v),sg=side==="L"?1:-1,bu=u-sg*.16;
+  d=d||.42;var face=n.clone().negate().addScaledVector(U,(u-bu)*.4).normalize();
+  function at(dd){var pos=sAt(S,bu,v).addScaledVector(n,dd);pos.y=groundY(pos.x,pos.z);return pos;}
+  function handAt(pos){return typeof hand==="function"?hand(P,pos):P.clone().addScaledVector(sDir(S,S.N),hand===undefined?.12:hand);}
+  var pos=at(d),ps=posture(pos,face,handAt(pos),side,null,Rr);
+  if(ps.far>.004&&d>.25){pos=at(Math.max(.25,d-ps.far*1.3));ps=posture(pos,face,handAt(pos),side,null,Rr);}
+  return {pos:pos,face:face,dip:ps.dip,bend:ps.bend};}
+/* turn the chest toward the work; how far he bends over it comes from the posture */
+function leanTo(P){var r=worker.userData.rig;if(!r||!P)return;var lp=worker.worldToLocal(P.clone()),yaw=Math.max(-.32,Math.min(.32,Math.atan2(lp.x,Math.max(.2,lp.z))*.45));
+  rotW(r.B.Spine1,V(0,1,0),yaw);worker.updateMatrixWorld(true);}
+function placeTowel(P,N,F){var tw=tools.towel,Z=N.clone().normalize(),X=F.clone().addScaledVector(Z,-F.dot(Z)).normalize(),Y=new T.Vector3().crossVectors(Z,X);
+  tw.position.copy(P).addScaledVector(Z,.011);tw.quaternion.setFromRotationMatrix(new T.Matrix4().makeBasis(X,Z,Y));tw.visible=true;}
+function handDo(sd,h){if(!h||h.rest){rest(sd);if(h&&h.towel){var rp=restPt(sd);placeTowel(rp,V(0,0,1).transformDirection(worker.matrixWorld),V(0,-1,0));}return;}
+  if(h.tool){holdTool(sd,h.tool,h.P,h.b,h.H,h.w,h.free);return;}
+  if(h.grip){var G=h.grip,full=h.w===undefined||h.w>=1;if(!full)G=restPt(sd).lerp(G,smooth(h.w));var ga=grip(sd,G,h.A,h.open);if(full)missed("grip",sd,G,ga);return;}
+  if(h.palm){var P=h.palm,pf=h.w===undefined||h.w>=1;if(!pf)P=restPt(sd).lerp(P,smooth(h.w));var pa=palmOn(sd,P,h.N,h.F,h.tip);if(pf)missed("palm",sd,P.clone().addScaledVector(h.N,.035),pa);
+    /* the towel goes where the hand really is, under the palm or the fingertips */
+    if(h.towel){var Pt=pa.clone().addScaledVector(h.N,-.035);if(h.tip)Pt.addScaledVector(h.F,-.03);placeTowel(Pt,h.N,h.F);}}}
+/* one frame of a plan: props, body, lean, hands, eyes, then the dirt */
+function runPlan(pl,t){var c=clipAt(pl,t),k=kOf(c,t);if(pl.pre)pl.pre(t);if(c.obj)c.obj(k);
+  var S=overlay&&steps(),hold;if(S){var i=stepAt(S);hold=i+1<S.length?S[i+1]-.002:undefined;}
+  var b=bodyAt(pl,t,hold);worker.visible=true;placeWorker(b.pos,b.face);if(b.dip>.005||b.bend>.005)crouch(b.dip,b.bend);
+  var lk=c.look?c.look(k,t):null;leanTo(lk);
+  var hs=c.hands?c.hands(k,t):{};handDo("L",hs.L);handDo("R",hs.R);
+  if(pl.props)pl.props(t);if(lk)lookAtW(lk);planPaint(pl,t);}
+/* a tool run: the tool's edge follows waypoints [u, v, tilt] across a surface, and cleans, wets or waters what it sweeps */
+function toolRun(S,t0,t1,key,side,pts,op,half,o){o=typeof o==="number"?{d:o}:(o||{});var cum=pathLen(pts),off=o.off===undefined?.004:o.off;
+  function pose(k){var p=pathAt(pts,cum,k),P=sAt(S,p.u,p.v,off),e=sDir(S,S.U.clone().multiplyScalar(Math.sin(p.th)).add(S.V.clone().multiplyScalar(Math.cos(p.th)))),
+      tr=sDir(S,S.U.clone().multiplyScalar(p.du).add(S.V.clone().multiplyScalar(p.dv)));return {p:p,P:P,e:e,tr:tr};}
+  /* which way the handle comes back to the hand: the surface's own rule unless the job gives one */
+  function hdir(q,shY){return o.hdir?o.hdir(q):handleDir(sDir(S,S.N),q.P,q.tr,shY===undefined?shoulderAt(side).y:shY);}
+  /* the tool's own sideways axis: along its edge, or for a blade, the way it cuts */
+  function bOf(q){return o.bdir==="travel"&&q.tr.lengthSq()>1e-10?q.tr.clone().normalize():q.e;}
+  var c=Clip(t0,t1,{S:S,pts:pts,cum:cum,side:side,pose:pose,hdir:hdir,bOf:bOf,
+    body:function(k){var p=pathAt(pts,cum,k);if(o.body)return o.body(k,p);return stanceUp(S,p.u,p.v,side,o.d,function(P,pos){return P.clone().addScaledVector(hdir({P:P,tr:null},pos.y+dims().sy),TOOLS[key].reach);});},
+    hands:function(k){var q=pose(k),h={};h[side]={tool:key,P:q.P,b:bOf(q),H:hdir(q)};return h;},
+    look:function(k){return pose(k).P;}});
+  if(op)c.paint=function(a,b){var p=pathAt(pts,cum,a),q=pathAt(pts,cum,b),sa=Math.sin(p.th)*half,ca=Math.cos(p.th)*half,sb=Math.sin(q.th)*half,cb=Math.cos(q.th)*half;
+    lyPoly(c.layer,[[p.u-sa,p.v-ca],[p.u+sa,p.v+ca],[q.u+sb,q.v+cb],[q.u-sb,q.v-cb]],op);
+    if(op==="wet"&&Math.random()<.5){var g=c.layer.c.getContext("2d"),xy=lyXY(c.layer,q.u+(Math.random()-.5)*half*.6,q.v+(Math.random()-.5)*half*1.4);g.strokeStyle="rgba(255,255,255,.55)";g.lineWidth=1;g.beginPath();g.arc(xy[0],xy[1],1+Math.random()*2.5,0,7);g.stroke();}};
+  return c;}
+/* a towel run: a hand wiping along a path on a surface, taking off what's left in a band of width wm. The fingers point away
+   from his shoulder, the way a hand lies when it reaches; with tip, the fingertips press the towel into edges and corners */
+function palmFwd(S,P,side){var N=sDir(S,S.N),F=P.clone().sub(shoulderAt(side));F.addScaledVector(N,-F.dot(N));return F.lengthSq()>.0025?F.normalize():sDir(S,S.V);}
+function palmRun(S,t0,t1,side,pts,wm,body,tip){var cum=pathLen(pts);
+  var c=Clip(t0,t1,{S:S,pts:pts,cum:cum,side:side,tip:tip,body:body||function(k){var p=pathAt(pts,cum,k);return stanceUp(S,p.u,p.v,side,.32,.035,palmReach());},
+    hands:function(k){var p=pathAt(pts,cum,k),P=sAt(S,p.u,p.v,.006);
+      var o={};o[side]={palm:P,N:sDir(S,S.N),F:palmFwd(S,P,side),towel:true,tip:tip};return o;},
+    look:function(k){var p=pathAt(pts,cum,k);return sAt(S,p.u,p.v);},
+    paint:function(a,b){var p=pathAt(pts,cum,a),q=pathAt(pts,cum,b);lyLine(c.layer,[p.u,p.v],[q.u,q.v],wm,"clean");}});
+  return c;}
+/* walking from one place to another, feet planted and stepping the whole way */
+function moveClip(t0,t1,A,B,o){o=o||{};function at(X){return typeof X==="function"?X():X;}
+  return Clip(t0,t1,{body:function(k){var a=at(A),b=at(B),e=smooth(k),r=lerpPose(a,b,e);
+    /* around something in the way: a curve through a point beside it */
+    if(o.via){var C=o.via.clone().multiplyScalar(2).sub(a.pos.clone().add(b.pos).multiplyScalar(.5));r.pos=a.pos.clone().multiplyScalar((1-e)*(1-e)).addScaledVector(C,2*(1-e)*e).addScaledVector(b.pos,e*e);}return r;},
+    hands:o.hands||function(){return {};},look:o.look||null,obj:o.obj||null});}
+/* ---------- putting a plan together ----------
+   A plan is built on a clock: each piece takes as long as its distance at a working pace, notes wait at the marks */
+function Build(){var B={t:0,clips:[],marks:[0],events:[]};B.at=function(d){var a=B.t;B.t+=d;return [a,B.t];};B.add=function(c){B.clips.push(c);return c;};
+  B.place=function(c,d){var r=B.at(d);c.t0=r[0];c.t1=r[1];return B.add(c);};B.mark=function(){B.marks.push(B.t);};return B;}
+function standAt(sp){return {pos:sp.pos,face:sp.face,dip:0,bend:0};}
+function walkDur(a,b){return Math.max(.35,a.pos.distanceTo(b.pos)/SPD.walk);}
+function plen(pts){var c=pathLen(pts);return c[c.length-1];}
+/* a run's tool where it is at k, handle and all */
+function toolAt(run,k){var q=run.pose(k);return {P:q.P,b:run.bOf?run.bOf(q):q.e,H:run.hdir(q)};}
+function carry(side,key,tq){var h={};h[side]={tool:key,P:tq.P,b:tq.b,H:tq.H,free:true};return h;}
+function hopDur(A,B2){return Math.max(.35,A.look(1).distanceTo(B2.look(0))/1.2);}
+/* a slider's glass: two panes either side of the meeting rail, gap wide */
+function splitPane(S,gap){var w=(S.w-gap)/2;return [-1,1].map(function(sd){return surf(S.g,S.o.clone().addScaledVector(S.U,sd*(gap+w)/2),S.U,S.V,S.N,w,S.h);});}
+/* the same tool coming off the end of one run, clear of the frame, and onto the start of the next */
+function toolHop(key,side,A,B2){return Clip(0,0,{body:function(k){return lerpPose(A.body(1),B2.body(0),smooth(k));},
+  hands:function(k){var a=toolAt(A,1),b=toolAt(B2,0),e=smooth(k),n=sDir(A.S,A.S.N);
+    return carry(side,key,{P:a.P.clone().lerp(b.P,e).addScaledVector(n,.1*Math.sin(Math.PI*k)),b:a.b.clone().lerp(b.b,e).normalize(),H:a.H.clone().lerp(b.H,e).normalize()});},
+  look:function(k){return A.look(1).lerp(B2.look(0),smooth(k));}});}
+/* the towel hand lifting off one spot and landing on the next, even from glass onto a sill */
+function palmHop(side,A,B2){function at(run,k){var p=pathAt(run.pts,run.cum,k);return {P:sAt(run.S,p.u,p.v,.006),N:sDir(run.S,run.S.N)};}
+  return Clip(0,0,{body:function(k){return lerpPose(A.body(1),B2.body(0),smooth(k));},
+    hands:function(k){var a=at(A,1),b=at(B2,0),e=smooth(k),N=a.N.clone().lerp(b.N,e).normalize(),P=a.P.clone().lerp(b.P,e).addScaledVector(N,.07*Math.sin(Math.PI*k)),
+      F=P.clone().sub(shoulderAt(side));F.addScaledVector(N,-F.dot(N));if(F.lengthSq()<.0025)F=V(0,1,0);var h={};h[side]={palm:P,N:N,F:F.normalize(),towel:true,tip:k<.5?A.tip:B2.tip};return h;},
+    look:function(k){return at(A,1).P.lerp(at(B2,0).P,smooth(k));}});}
+/* where his gear rides on him, following his hips when he bends: the squeegee in a holster at his right hip, the towel tucked in his belt beside it */
+function hipsM(){var r=worker.userData.rig;return r&&r.hipInv?new T.Matrix4().multiplyMatrices(r.B.Hips.matrixWorld,r.hipInv):worker.matrixWorld;}
+function holsterPose(){var M=hipsM();return {P:V(-.235,.72,.07).applyMatrix4(M),H:V(-.12,.3,-1).transformDirection(M),b:V(0,1,0).transformDirection(M)};}
+function tuckTowel(){if(tools.towel.visible)return;var M=hipsM();placeTowel(V(-.215,.83,0).applyMatrix4(M),V(-1,0,0).transformDirection(M),V(0,-1,0).transformDirection(M));}
+
+/* ---------- the glass, the same on any window ----------
+   Applicator out of the bucket, each pane wetted edge to edge, back in the bucket. Squeegee off the belt, S strokes down each pane,
+   every one overlapping the last, back on the belt. Then the towel around every pane's edges. A slider's two panes are done one at
+   a time, the tools lifting clear of the meeting rail between them, the way it's really done. With mk, a note waits after the
+   wetting and after the squeegee. o: panes [{S,L}], side, sBk (where he stands at the bucket), bucket() and holster() poses */
+function glassJob(B,o){
+  var P=o.panes,side=o.side,app=TOOLS.app,sqT=TOOLS.sq,stand=standAt(o.sBk),wets=[],sqs=[],edges=[],pc=o.pace||1;
+  function wetPts(S,up){var hu=S.w/2,hv=S.h/2,ah=.17,at=.25,ab=2*ah*Math.cos(at),rows=Math.max(2,Math.ceil((S.h-ab)/(ab-.07))+1),ex=hu-.045,pts=[];if(rows%2)rows++;
+    for(var i=0;i<rows;i++){var v=hv-ab/2+.012-(S.h-ab+.024)*i/(rows-1);if(up)v=-v;if(i%2===0)pts.push([-ex,v,at],[ex,v,at]);else pts.push([ex,v,-at],[-ex,v,-at]);}return pts;}
+  function sqPts(S){var hu=S.w/2,hv=S.h/2,qh=.18,qt=.3,bh=2*qh*Math.cos(qt),m=Math.max(2,Math.ceil((S.h-bh)/(bh-.05))+1),qe=hu-.004,pts=[];
+    for(var j=0;j<m;j++){var vc=hv-qh-.002-(S.h-2*qh-.004)*j/(m-1),dir=j%2?-1:1,a=-dir*qe,b2=dir*qe;pts.push([a,vc,0],[a+dir*.14,vc,dir*qt],[b2-dir*.14,vc,dir*qt],[b2,vc,0]);}return pts;}
+  function edgePts(S){var hu=S.w/2,hv=S.h/2,e=.028;return [[-hu+e,-hv+e],[-hu+e,hv-e],[hu-e,hv-e],[hu-e,-hv+e],[-hu+e,-hv+e]];}
+  /* the last of the water sits along the frame after the squeegee, with a drip or two at the bottom */
+  function water(S,L){var hu=S.w/2,hv=S.h/2,q=.006;[[[-hu+q,hv-q],[hu-q,hv-q]],[[hu-q,hv-q],[hu-q,-hv+q]],[[-hu+q,-hv+q],[hu-q,-hv+q]],[[-hu+q,-hv+q],[-hu+q,hv-q]]].forEach(function(s2){lyLine(L,s2[0],s2[1],.012,"water");});
+    [[-hu*.7,-hv+.02],[hu*.6,-hv+.03]].forEach(function(d){lyLine(L,[d[0],d[1]+.04],d,.008,"water");});}
+  function handleTop(){var bt=o.bucket();return bt.P.clone().addScaledVector(bt.H,app.reach);}
+  function lifted(k){var bt=o.bucket();return {P:bt.P.clone().add(V(0,.4*(k===undefined?1:k),0)),H:bt.H,b:bt.b};}
+  /* down to the bucket and back up, as far as the handle needs */
+  function dunk(k){var low=pose(o.sBk,handleTop(),side);return k<.5?lerpPose(stand,low,smooth(k/.5)):lerpPose(low,stand,smooth((k-.5)/.5));}
+  var tGrab=B.at(.6);
+  B.add(Clip(tGrab[0],tGrab[1],{body:dunk,hands:function(k){if(k<.5){var h={},bt=o.bucket();h[side]={grip:handleTop(),A:bt.H.clone().negate(),w:k/.5};return h;}return carry(side,"app",lifted(smooth((k-.5)/.5)));},look:handleTop}));
+  P.forEach(function(p,i){var r=toolRun(p.S,0,0,"app",side,wetPts(p.S,i%2===1),"wet",.17);r.layer=p.L;wets.push(r);});
+  B.place(Clip(0,0,{body:function(k){return lerpPose(stand,wets[0].body(0),smooth(k));},hands:function(k){return carry(side,"app",blendTool(lifted(),toolAt(wets[0],0),k,side));},look:function(){return wets[0].look(0);}}),walkDur(stand,wets[0].body(0))+.25);
+  wets.forEach(function(r,i){if(i)B.place(toolHop("app",side,wets[i-1],r),hopDur(wets[i-1],r));B.place(r,Math.max(1.2,plen(r.pts)/SPD.wet)/pc);});
+  var wl=wets[wets.length-1];
+  B.place(Clip(0,0,{body:function(k){return lerpPose(wl.body(1),stand,smooth(k));},hands:function(k){return carry(side,"app",blendTool(toolAt(wl,1),lifted(),k,side));},look:handleTop}),walkDur(wl.body(1),stand)+.25);
+  var tPut=B.at(.6);
+  B.add(Clip(tPut[0],tPut[1],{body:dunk,hands:function(k){if(k<.5)return carry(side,"app",lifted(1-smooth(k/.5)));var h={},bt=o.bucket();h[side]={grip:handleTop(),A:bt.H.clone().negate(),w:1-(k-.5)/.5};return h;},look:handleTop}));
+  if(o.mk)B.mark();
+  P.forEach(function(p,i){var r=toolRun(p.S,0,0,"sq",side,sqPts(p.S),"clean",.18);r.layer=p.L;sqs.push(r);});
+  var tDraw=B.at(Math.max(.6,walkDur(stand,sqs[0].body(0))+.2));
+  B.add(Clip(tDraw[0],tDraw[1],{body:function(k){return lerpPose(stand,sqs[0].body(0),smooth(k));},
+    hands:function(k){var hs=o.holster(),h={};if(k<.3){h[side]={grip:hs.P.clone().addScaledVector(hs.H,sqT.reach),A:hs.H.clone().negate(),w:k/.3};return h;}return carry(side,"sq",blendTool(hs,toolAt(sqs[0],0),(k-.3)/.7,side));},
+    look:function(){return sqs[0].look(0);}}));
+  sqs.forEach(function(r,i){if(i)B.place(toolHop("sq",side,sqs[i-1],r),hopDur(sqs[i-1],r));B.place(r,Math.max(1.4,plen(r.pts)/SPD.sq)/pc);var S=P[i].S,L=P[i].L;B.events.push({t:r.t1,fn:function(){water(S,L);}});});
+  if(o.mk)B.mark();
+  P.forEach(function(p,i){var r=palmRun(p.S,0,0,side,edgePts(p.S),.075,null,true);r.layer=p.L;edges.push(r);});
+  var sl=sqs[sqs.length-1],tTow=B.at(.7);
+  B.add(Clip(tTow[0],tTow[1],{body:function(k){return lerpPose(sl.body(1),edges[0].body(0),smooth(k));},
+    hands:function(k){if(k<.45)return carry(side,"sq",blendTool(toolAt(sl,1),o.holster(),k/.45,side));var e0=edges[0],p=pathAt(e0.pts,e0.cum,0),Pp=sAt(e0.S,p.u,p.v,.006),h={};
+      h[side]={palm:Pp,N:sDir(e0.S,e0.S.N),F:palmFwd(e0.S,Pp,side),towel:true,tip:true,w:(k-.45)/.55};return h;},
+    look:function(){return edges[0].look(0);}}));
+  edges.forEach(function(r,i){if(i)B.place(palmHop(side,edges[i-1],r),hopDur(edges[i-1],r));B.place(r,Math.max(.8,plen(r.pts)/SPD.towel)/pc);});
+  var appOn=[tGrab[0]+(tGrab[1]-tGrab[0])*.5,tPut[0]+(tPut[1]-tPut[0])*.5],sqOn=[tDraw[0]+(tDraw[1]-tDraw[0])*.3,tTow[0]+(tTow[1]-tTow[0])*.45];
+  return {wets:wets,sqs:sqs,edges:edges,last:edges[edges.length-1],
+    props:function(tt){if(!(tt>=appOn[0]&&tt<appOn[1])){var bt=o.bucket();placeTool(app.g,bt.P.clone().addScaledVector(bt.H,app.reach),bt.H.clone().negate(),bt.b);}
+      if(!(tt>=sqOn[0]&&tt<sqOn[1])){var hs=o.holster();placeTool(sqT.g,hs.P.clone().addScaledVector(hs.H,sqT.reach),hs.H.clone().negate(),hs.b);}}};}
 
 /* ---------- inside a room, looking at the window and its track ---------- */
 var room=null;
@@ -1128,12 +1469,8 @@ function buildRoom(){
   box(fw,.06,.2,M.vinyl,0,y1-.03,0,g,true);box(.06,fh,.2,M.vinyl,-ow+.03,(y0+y1)/2,0,g,true);box(.06,fh,.2,M.vinyl,ow-.03,(y0+y1)/2,0,g,true);
   box(.05,fh-.1,.05,M.vinyl,0,(y0+y1)/2+.02,.03,g,true);
   var gl=new T.Mesh(G.plane,M.iglass);gl.scale.set(fw-.12,fh-.12,1);gl.position.set(0,(y0+y1)/2+.02,.02);g.add(gl);
-  var hc=hazeCanvas(256,212,9),ht=tx(hc,false),hm=new T.Mesh(G.plane,new T.MeshBasicMaterial({map:ht,transparent:true,depthWrite:false,opacity:.85}));
-  hm.scale.set(fw-.12,fh-.12,1);hm.position.set(0,(y0+y1)/2+.02,.035);g.add(hm);
-  /* the track, where the muddy puddle sits */
+  /* the track, where the muddy puddle sits (the inside plan paints it) */
   box(fw,.02,.2,M.alum,0,y0+.005,0,g,true);box(fw,.035,.012,M.alum,0,y0+.03,-.05,g,true);box(fw,.035,.012,M.alum,0,y0+.03,.05,g,true);
-  var pc=puddleCanvas(),pt=tx(pc,false),pm=new T.Mesh(G.plane,new T.MeshBasicMaterial({map:pt,transparent:true,depthWrite:false}));
-  pm.rotation.x=-Math.PI/2;pm.scale.set(fw-.1,.1,1);pm.position.set(0,y0+.018,0);g.add(pm);
   box(fw+.3,.04,.2,M.vinyl,0,y0-.03,.16,g,true);
   /* a plant and a little light, so it reads as a room */
   var pot=new T.Mesh(G.cyl,M.cart);pot.scale.set(.18,.32,.18);pot.position.set(2.2,.16,.7);g.add(pot);
@@ -1141,7 +1478,7 @@ function buildRoom(){
   var pl=new T.PointLight(0xfff1dc,.6,12);pl.position.set(.5,2.5,3);g.add(pl);
   box(8,1.7,.2,M.cmu,0,.85,-5,g);
   g.visible=false;g.updateMatrixWorld(true);
-  room={g:g,Z:Z,center:toWorld(g,0,(y0+y1)/2,0),haze:{c:hc,t:ht,m:hm,last:null},puddle:{c:pc,t:pt,m:pm},y0:y0,ow:ow,fw:fw,fh:fh};
+  room={g:g,Z:Z,center:toWorld(g,0,(y0+y1)/2,0),y0:y0,ow:ow,fw:fw,fh:fh};
 }
 
 /* ---------- modes and timelines ---------- */
@@ -1151,7 +1488,7 @@ function setMode(m,keepT,glide){
   if(ED&&!((m==="home"&&ED.t==="home")||(m==="com"&&ED.t==="shop")))edStop();
   if(obdOpen&&m!=="home")obdShow(false); /* the welcome belongs to the home view; another tab closes it */
   if(!me)buildMe();
-  mode=m;if(!keepT)tl=0;auto=true;say("");h3.focus=null;askSel=null;askOpen=false;
+  mode=m;if(!keepT)tl=0;auto=true;say("");h3.focus=null;askSel=null;askOpen=false;groundFn=null;
   flight=null;focusShot=null;if(!worker)makeWorker();
   ensureScene();
   if(keyOf(cfgMe())!==builtKey)buildMe();
@@ -1159,7 +1496,7 @@ function setMode(m,keepT,glide){
   else{birds.forEach(function(b){world.remove(b.m);});birds=[];buildNeighbors();}
   if((m==="win"||m==="sol"||m==="scr")&&!worker)makeWorker();
   if(m==="win"&&h3.view===1&&!room)buildRoom();
-  if(m==="win"){resetHaze();if(room)resetRoom();}
+  resetHaze();
   if(m==="sol")me.panels.forEach(function(p){p.dust.material.opacity=1;});
   ov.setAttribute("data-mode",m);
   $$(".ov-tabs [data-hmode]").forEach(function(b){b.setAttribute("aria-selected",String(b.getAttribute("data-hmode")===m));});
@@ -1171,8 +1508,7 @@ function setMode(m,keepT,glide){
   if(!keepT)user=false;goal=preset();if(!keepT&&!glide){cur=null;}
   syncControls();summary();tryKey="";
 }
-function resetRoom(){room.haze.done=undefined;room.haze.clear=false;var pg=room.puddle.c.getContext("2d"),np=puddleCanvas();pg.clearRect(0,0,256,32);pg.drawImage(np,0,0);room.puddle.t.needsUpdate=true;var g=room.haze.c.getContext("2d"),n=hazeCanvas(256,212,9);g.globalCompositeOperation="copy";g.drawImage(n,0,0);g.globalCompositeOperation="source-over";room.haze.t.needsUpdate=true;room.haze.last=null;room.puddle.m.material.opacity=1;}
-function replay(){tl=0;user=false;h3.focus=null;askSel=null;focusShot=null;if(mode==="win"){resetHaze();if(room)resetRoom();}if(mode==="sol")me.panels.forEach(function(p){p.dust.material.opacity=1;});if(mode==="pig"){h3.stage=0;auto=true;birdTargets(false);}track("replay_3d",{mode:mode});}
+function replay(){tl=0;user=false;h3.focus=null;askSel=null;focusShot=null;resetHaze();if(mode==="sol")me.panels.forEach(function(p){p.dust.material.opacity=1;});if(mode==="pig"){h3.stage=0;auto=true;birdTargets(false);}track("replay_3d",{mode:mode});}
 
 /* each frame, put everything where the timeline says it should be */
 /* ---------- conditions: today's sky and wind from the nearest weather station, or pick sunny, windy or cloudy ---------- */
@@ -1227,7 +1563,7 @@ function drive(dt){weather(dt);TX.ripple.offset.x=(TX.ripple.offset.x+dt*.012)%1
   mover.g.visible=on;if(!on)return;mover.g.position.set(x,0,mover.zs+dir*1.75);mover.g.rotation.y=dir>0?Math.PI/2:-Math.PI/2;}
 function frame(dt){
   var pristine=mode==="show"||mode==="home";drive(dt);
-  if(ED){if(com&&ED.t==="shop"){com.grime.visible=false;if(com.patio)com.patio.visible=false;if(com.patio2)com.patio2.visible=false;}else edHide(true);return;}
+  if(ED){if(com&&ED.t==="shop"){com.grime.forEach(function(o){o.visible=false;});if(com.patio)com.patio.visible=false;if(com.patio2)com.patio2.visible=false;}else edHide(true);return;}
   if(comOn()){if(worker){worker.visible=false;hideTools();}comFrame(dt);return;}
   /* screen and window pages show the finished screens on the model; everywhere else they stay out of the way */
   var showScr=mode==="show"&&(pageMode==="scr"||pageMode==="win");
@@ -1262,8 +1598,10 @@ function frame(dt){
     var fl=flying?Math.sin(tl*22+b.ph)*.9:0;b.m.userData.w[0].rotation.z=fl;b.m.userData.w[1].rotation.z=-fl;
   });
   /* haze off unless the window demo is running */
-  haze.m.visible=mode==="win"&&h3.view===0&&tl<9.3;clearView();
-  if(demoWin)demoWin.sillM.color.copy(me.mats.trim.color);
+  /* the window job's dirt, the sill dust and the bucket only exist while the outside window demo runs */
+  if(SCP&&mode!=="scr")scrRestore();
+  if(SPL&&mode!=="sol")SPL.G.forEach(function(q){q.L.m.visible=false;});
+  if(WP){var wv=mode==="win"&&h3.view===0;WP.panes.forEach(function(p){p.L.m.visible=wv;});WP.Ls.m.visible=wv;if(!wv&&demoWin&&demoWin.sillDust)demoWin.sillDust.visible=false;}clearView();
   if(room)room.g.visible=mode==="win"&&h3.view===1;
   if(worker){worker.visible=false;hideTools();}
   if(worker&&(mode==="show"||(mode==="home"&&!obdOpen)))guideFrame(dt);
@@ -1289,9 +1627,9 @@ function liftView(dt){var m=$("ovMsg"),want=0;if(overlay&&ED&&!edbar.hidden){if(
 /* notes wait for the reader: each one holds until Next, and Back steps back */
 function steps(){
   if(ED)return null;
-  if(mode==="win")return h3.view===1?[0,1.2,5.0,8.4]:[0,1.4,3.3,6.7,7.9,9.3];
-  if(mode==="sol"){var n=me.panels.filter(function(p){return p.face>0;}).length,per=Math.min(.55,11/Math.max(1,n));return [0,1.4,1.4+n*per+.6];}
-  if(mode==="scr")return [0,1,3.6];
+  if(mode==="win")return h3.view===1&&room?roomJob().steps:winJob().steps;
+  if(mode==="sol")return me.panels.length?solJob().steps:null;
+  if(mode==="scr")return scrJob().steps;
   if(mode==="pig")return [0,2.2,5.6,9,12.4];
   if(mode==="home"&&overlay&&!obdOpen)return tourStops().map(function(x,i){return i;});
   if(mode==="com"&&overlay)return comStops().map(function(x,i){return i;});
@@ -1299,107 +1637,437 @@ function steps(){
 }
 function stepAt(S){var i=0;for(var k=0;k<S.length;k++)if(tl>=S[k]-1e-4)i=k;return i;}
 function advance(dt){var S=overlay&&steps();if(!S){tl+=dt;return;}var i=stepAt(S),hold=i+1<S.length?S[i+1]-.001:Infinity;if(tl<hold)tl=Math.min(hold,tl+dt);}
-function rewind(t){tl=t;if(mode==="win"){resetHaze();if(room)resetRoom();}if(mode==="pig")auto=true;}
+function rewind(t){tl=t;resetHaze();if(mode==="pig")auto=true;}
 function stepNav(){var nav=$("ovNav");if(!nav)return;var S=overlay&&steps();nav.hidden=!S;if(!S)return;var i=stepAt(S),last=i===S.length-1,holding=!last&&tl>=S[i+1]-.0015;
   var c=(i+1)+L(" of "," de ")+S.length;if($("ovStep").textContent!==c)$("ovStep").textContent=c;
   var nx=nav.querySelector(".nx"),lbl=last?L("Watch again","Ver otra vez"):L("Next ›","Siguiente ›");if(mode==="home"&&!obdOpen||mode==="com"){var cs=(mode==="com"?comStops():tourStops())[i];if(cs&&cs.ph===0)lbl=L("Fix it ›","Arreglarlo ›");else if(last)lbl=L("Start over","Empezar de nuevo");}if(nx.textContent!==lbl)nx.textContent=lbl;nx.classList.toggle("ready",holding);
   nav.querySelector("[data-hact='prev']").disabled=i===0;}
 
+/* ---------- window cleaning, outside ----------
+   The screen comes out and leans on the wall, the glass is wetted edge to edge, squeegeed in overlapping S passes, the edges and
+   sill are toweled, and the screen is wiped and goes back in. Every place, pass and duration comes from this window's size and
+   height and from walking and wiping speeds, so a wider or taller window just takes a little longer. */
+var WP=null,RP=null,SPL=null,SPD={walk:1.05,wet:1.8,sq:1.3,towel:1.6,sill:1.1,vac:.9,roll:1,knife:1.6};
+function dustCanvas(W,H,seed){var r=rng(seed);return cv(W,H,function(g){g.clearRect(0,0,W,H);g.fillStyle="rgba(190,176,146,.5)";g.fillRect(0,0,W,H);blot(g,W,H,r,10,"160,140,104",.25,26);dots(g,W,H,r,Math.round(W*H/40),"120,100,70",.15,.4,1,2);});}
+/* a tool on its way between two places (belt, bucket, the glass): through a ready spot in front of the chest, never past arm's reach */
+function readyPose(side){var P=worker.localToWorld(V(side==="L"?-.12:.12,1.18,.38));return {P:P,H:V(0,-.35,-1).transformDirection(worker.matrixWorld),b:V(0,1,0)};}
+function blendTool(a,b2,k,side){var r=readyPose(side),f=function(x,y,q){q=smooth(q);return {P:x.P.clone().lerp(y.P,q),b:x.b.clone().lerp(y.b,q).normalize(),H:x.H.clone().lerp(y.H,q).normalize()};};
+  return k<.5?f(a,r,k*2):f(r,b2,(k-.5)*2);}
+function reachClamp(side,G){var S=shoulderAt(side),r=worker.userData.rig,m=r?(rigArm(side).d.a+rigArm(side).d.f+GRIP.gy)*.97:.6,d=G.clone().sub(S),l=d.length();return l>m?S.addScaledVector(d,m/l):G;}
+/* ---------- a screen in his hands ----------
+   Where a screen is through a job, in its window's space: keyframes, and turns, where it rides in front of his chest as he turns
+   around with it so it never swings through him. Taking it out of its window and setting it back are the same on every job. */
+function ScreenPath(w,sc){var P={SP:[],TR:[]},sw=sc.gw,sh=sc.gh,x0=sc.x0;
+  function lp(a,b,k){k=smooth(k);return {x:lerp(a.x,b.x,k),y:lerp(a.y,b.y,k),z:lerp(a.z,b.z,k),rx:lerp(a.rx,b.rx,k),ry:lerp(a.ry||0,b.ry||0,k)};}
+  function pivotTop(top,z,rx){return {x:x0,y:top-sh/2*Math.cos(rx),z:z-sh/2*Math.sin(rx),rx:rx,ry:0};}
+  /* in its channel, lifted into the top of the channel, bottom tipped out, and carried in front of him */
+  P.pIn={x:x0,y:0,z:.14,rx:0,ry:0};P.pUp=pivotTop(sh/2+.02,.14,0);P.pTilt=pivotTop(sh/2+.02,.14,-.32);P.cIn={x:x0,y:-.12,z:.42,rx:0,ry:0};
+  P.key=function(t,p){P.SP.push([t,p]);};
+  /* carried through a turn from spot A to spot B: the screen stays d out in front of his chest the whole way round, lat0 to lat1 off
+     to his right */
+  P.turn=function(t0,t1,A,B,ry0,ry1,y0,y1,d,lat0,lat1){var al=w.g.worldToLocal(A.pos.clone()),bl=w.g.worldToLocal(B.pos.clone());lat0=lat0||0;lat1=lat1||0;
+    P.TR.push({t0:t0,t1:t1,fn:function(k){var e=smooth(k),ry=lerp(ry0,ry1,e),fx=-Math.sin(ry),fz=-Math.cos(ry),rt=lerp(lat0,lat1,e);
+      return {x:lerp(al.x,bl.x,e)+fx*d-fz*rt,y:lerp(y0,y1,e),z:lerp(al.z,bl.z,e)+fz*d+fx*rt,rx:0,ry:ry};}});};
+  P.at=function(tt){for(var j=0;j<P.TR.length;j++){var q=P.TR[j];if(tt>=q.t0&&tt<q.t1)return q.fn((tt-q.t0)/(q.t1-q.t0));}
+    var S=P.SP;for(var i=1;i<S.length;i++)if(tt<S[i][0])return lp(S[i-1][1],S[i][1],(tt-S[i-1][0])/Math.max(1e-3,S[i][0]-S[i-1][0]));return S[S.length-1][1];};
+  P.set=function(p){sc.g.position.set(p.x,p.y,p.z);sc.g.rotation.set(p.rx,p.ry||0,0);sc.g.visible=true;sc.g.updateMatrixWorld(true);};
+  /* where a hand goes on a side rail, vv up from the middle: now, or where it will be at time tt */
+  P.rail=function(tt,sd,vv){var p=P.at(tt),m=new T.Matrix4().makeRotationFromEuler(new T.Euler(p.rx,p.ry||0,0));m.setPosition(p.x,p.y,p.z);return w.g.localToWorld(V(sd*(sw/2+.004),vv,.012).applyMatrix4(m));};
+  P.hand=function(sd,w0,vv){sc.g.updateMatrixWorld(true);return {grip:toWorld(sc.g,sd*(sw/2+.004),vv,.012),A:V(0,1,0).transformDirection(sc.g.matrixWorld),w:w0===undefined?1:w0};};
+  P.hands=function(w0,vv){return {L:P.hand(1,w0,vv),R:P.hand(-1,w0,vv)};};
+  /* standing at sp holding both rails at vv, bent as far as the rails need */
+  P.hold=function(sp,tt,vv){return pose(sp,P.rail(tt,1,vv),"L",P.rail(tt,-1,vv));};
+  /* turning with it, he faces the way it does */
+  P.facing=function(A,B,k,tt){var ry=P.at(tt).ry||0;return {pos:A.pos.clone().lerp(B.pos,smooth(k)),face:V(-Math.sin(ry),0,-Math.cos(ry)).transformDirection(w.g.matrixWorld),dip:0,bend:0};};
+  P.mid=function(){return toWorld(sc.g,0,0,0);};
+  /* out of the window: hands on, lifted into the top channel, bottom tipped out, down in front of him as he steps back */
+  P.out=function(B,sIn,sOut,vv){var r=B.at(1.05),t0=r[0];P.key(t0,P.pIn);P.key(t0+.35,P.pIn);P.key(t0+.55,P.pUp);P.key(t0+.8,P.pTilt);P.key(r[1],P.cIn);
+    B.add(Clip(r[0],r[1],{body:function(k,tt){return P.hold(lerpPose(sIn,sOut,smooth((tt-t0-.8)/.25)),tt,vv);},hands:function(k){return P.hands(clamp01(k*1.05/.35),vv);},look:P.mid}));};
+  /* back in: stepped up to the window, top into the channel, bottom in, and let go */
+  P.inn=function(B,sOut,sIn,sBack,vv){var r=B.at(.5);P.key(r[0],P.cIn);P.key(r[0]+.2,P.pTilt);P.key(r[0]+.35,P.pUp);P.key(r[1],P.pIn);
+    B.add(Clip(r[0],r[1],{body:function(k,tt){return P.hold(lerpPose(sOut,sIn,smooth(k)),tt,vv);},hands:function(){return P.hands(1,vv);},look:P.mid}));
+    r=B.at(.35);B.add(Clip(r[0],r[1],{body:function(k,tt){return lerpPose(P.hold(sIn,tt,vv),sBack,smooth(k));},hands:function(k){return P.hands(1-smooth(k),vv);},look:P.mid}));};
+  return P;}
+function winPlan(w,sc){
+  var S=surf(w.g,V(0,0,.1),V(1,0,0),V(0,1,0),V(0,0,1),w.gw,w.gh),hu=w.gw/2,hv=w.gh/2,gy=-w.v,side="L";
+  /* a slider: two panes either side of the meeting rail, each with its own dirt */
+  var panes=splitPane(S,.05).map(function(ps,i){return {S:ps,L:layer(ps,160,Math.max(64,Math.round(160*ps.h/ps.w)),function(W,H){return hazeCanvas(W,H,5+i);})};});
+  var sh=sc.gh,sw=sc.gw,x0=sc.x0,lean=.22,leanX=-(hu+sw/2+.28),bkX=-(hu+.2),bkZ=.56;
+  var SS=surf(sc.g,V(0,0,.016),V(1,0,0),V(0,1,0),V(0,0,1),sw,sh),Ls=layer(SS,128,Math.round(128*sh/sw),function(W,H){return dustCanvas(W,H,31);});
+  var n=sDir(S,S.N);n.y=0;n.normalize();var inF=n.clone().negate();
+  function spot(u,d,face){var p=toWorld(w.g,u,gy,d);p.y=groundY(p.x,p.z);return {pos:p,face:face||inF,dip:0,bend:0};}
+  /* the screen: out of its channel, carried aside and leaned on the wall; later wiped and set back */
+  var SC=ScreenPath(w,sc),VH=.1,cOut={x:leanX,y:-.12,z:.42,rx:0,ry:0},pLean={x:leanX,y:gy+sh*Math.cos(lean)/2,z:.035+sh*Math.sin(lean)/2,rx:-lean,ry:0};
+  var B=Build(),sIn=spot(x0-.02,.56),sOut=spot(x0-.02,.78),sLeanC=spot(leanX+.03,.78),sLean=spot(leanX+.03,.64),sBk=spot(bkX-.14,bkZ+.3);
+  /* 1. the screen out and leaning on the wall */
+  SC.out(B,sIn,sOut,VH);
+  var r=B.at(walkDur(sOut,sLeanC));SC.key(r[1],cOut);B.add(moveClip(r[0],r[1],sOut,sLeanC,{hands:function(){return SC.hands(1,VH);},look:SC.mid}));
+  r=B.at(.55);SC.key(r[1],pLean);var tLean=r[1];B.add(Clip(r[0],r[1],{body:function(k,tt){return SC.hold(lerpPose(sLeanC,sLean,smooth(k)),tt,VH);},hands:function(){return SC.hands(1,VH);},look:SC.mid}));
+  r=B.at(.35);B.add(Clip(r[0],r[1],{body:function(k){return lerpPose(SC.hold(sLean,tLean,VH),sLean,smooth(k));},hands:function(k){return SC.hands(1-smooth(k),VH);},look:SC.mid}));
+  r=B.at(walkDur(sLean,sBk));B.add(moveClip(r[0],r[1],sLean,sBk));
+  B.mark();
+  /* 2 and 3. the glass */
+  var G=glassJob(B,{panes:panes,side:side,sBk:sBk,mk:true,holster:holsterPose,bucket:function(){var P=toWorld(w.g,bkX,gy,bkZ);P.y=groundY(P.x,P.z)+.2;return {P:P,H:V(0,1,0),b:sDir(S,S.U)};}});
+  /* 4. the sill, right to left, wiped with the towel */
+  var sill=surf(w.g,V(0,-hv-.1,.1),V(1,0,0),V(0,0,-1),V(0,1,0),w.gw+.3,.18);sill.out=V(0,0,1);var sillPts=[[hu+.12,0],[-(hu+.12),0]];
+  var sillRun=palmRun(sill,0,0,side,sillPts,.1,function(k){return stanceUp(sill,lerp(sillPts[0][0],sillPts[1][0],k),0,side,.34,.035,palmReach());});sillRun.paint=null;
+  B.place(palmHop(side,G.last,sillRun),hopDur(G.last,sillRun));B.place(sillRun,Math.max(.8,plen(sillPts)/SPD.sill));var tSill=[sillRun.t0,sillRun.t1];
+  B.mark();
+  /* 5. the screen: one hand takes it off the wall and holds it up in front of him while the other wipes it down, lifting it as the
+     wiping goes lower so his hand stays about chest high. Then both hands, back to the window and into its channel */
+  var FL=V(Math.sin(.9),0,Math.cos(.9)),hx=leanX+.45,hz=.9,sHold=spot(hx,hz,sDir(S,FL)),sGrab=spot(leanX-.05,.72),ryH=Math.atan2(-FL.x,-FL.z);
+  function pHold(k){return {x:hx+FL.x*.34-FL.z*.1,y:gy+.98+.37*k,z:hz+FL.z*.34+FL.x*.1,rx:0,ry:ryH};}
+  var cG={x:leanX-.05,y:gy+.98,z:.72-.34,rx:0,ry:0};
+  var zz=[],zr=Math.max(3,Math.ceil((sh-.1)/.13)),zx=sw/2-.06;for(var z=0;z<=zr;z++){var zv=sh/2-.06-(sh-.12)*z/zr;if(z%2)zz.push([zx,zv],[-zx,zv]);else zz.push([-zx,zv],[zx,zv]);}
+  var zc=pathLen(zz);function zAt(k){var p=pathAt(zz,zc,k);return sAt(SS,p.u,p.v,.035);}
+  var scrRun=palmRun(SS,0,0,side,zz,.17,function(k){return pose(sHold,zAt(k),side,null,palmReach());});scrRun.layer=Ls;
+  var hw=scrRun.hands;scrRun.hands=function(k){var h=hw(k);h.R=SC.hand(-1,1,VH);return h;};
+  function towelHand(){var h={};h[side]={rest:true,towel:true};return h;}
+  B.place(moveClip(0,0,function(){return sillRun.body(1);},sGrab,{hands:towelHand,look:SC.mid}),walkDur(sillRun.body(1),sGrab)+.2);
+  r=B.at(.5);B.add(Clip(r[0],r[1],{body:function(k,tt){return lerpPose(sGrab,pose(sGrab,SC.rail(tt,-1,VH),"R"),smooth(k));},hands:function(k){var h=towelHand();h.R=SC.hand(-1,smooth(k),VH);return h;},look:SC.mid}));
+  /* off the wall and up in front of him, then around with him */
+  r=B.at(.5);SC.key(r[0],pLean);SC.key(r[1],cG);B.add(Clip(r[0],r[1],{body:function(k,tt){return pose(sGrab,SC.rail(tt,-1,VH),"R");},hands:function(){var h=towelHand();h.R=SC.hand(-1,1,VH);return h;},look:SC.mid}));
+  r=B.at(.8);SC.turn(r[0],r[1],sGrab,sHold,0,ryH,gy+.98,gy+.98,.34,0,.1);SC.key(r[1],pHold(0));
+  B.add(Clip(r[0],r[1],{body:function(k,tt){return pose(SC.facing(sGrab,sHold,k,tt),SC.rail(tt,-1,VH),"R");},
+    hands:function(k){var h=towelHand();if(k>.6){var P=sAt(SS,zz[0][0],zz[0][1],.006);h[side]={palm:P,N:sDir(SS,SS.N),F:palmFwd(SS,P,side),towel:true,w:(k-.6)/.4};}h.R=SC.hand(-1,1,VH);return h;},look:SC.mid}));
+  B.place(scrRun,Math.max(1.2,plen(zz)/SPD.towel));SC.key(scrRun.t0,pHold(0));SC.key(scrRun.t1,pHold(1));
+  r=B.at(.6);B.add(Clip(r[0],r[1],{body:function(k,tt){return pose(sHold,SC.rail(tt,1,VH),"L",SC.rail(tt,-1,VH));},hands:function(k){var h={L:k<.25?{rest:true,towel:true}:SC.hand(1,(k-.25)/.75,VH),R:SC.hand(-1,1,VH)};return h;},look:SC.mid}));
+  r=B.at(walkDur(sHold,sOut)+.3);SC.turn(r[0],r[1],sHold,sOut,ryH,0,pHold(1).y,SC.cIn.y,.34,.1,0);SC.key(r[1],SC.cIn);
+  B.add(Clip(r[0],r[1],{body:function(k,tt){return SC.hold(SC.facing(sHold,sOut,k,tt),tt,VH);},hands:function(){return SC.hands(1,VH);},look:SC.mid}));
+  var sBack=spot(x0-.02,.9);SC.inn(B,sOut,sIn,sBack,VH);
+  /* done: a step back to where he can see the whole window, turned half toward you */
+  function fin(){var p=spot(x0+.25,1.15),f=camGround().sub(p.pos);f.y=0;if(f.lengthSq()<1e-4)f=inF.clone();p.face=inF.clone().lerp(f.normalize(),.55).normalize();return p;}
+  B.place(moveClip(0,0,sBack,fin),.7);
+  B.mark();
+  B.add(Clip(B.t,1e9,{body:fin,hands:function(){return {};},look:function(){return cam.position.clone();}}));
+  return {panes:panes,Ls:Ls,S:S,clips:B.clips,steps:B.marks,events:B.events,
+    left:function(){return panes.reduce(function(a,p){return a+lyLeft(p.L);},0)/panes.length;},
+    reset:function(){panes.forEach(function(p){p.L.reset();});Ls.reset();},
+    pre:function(tt){SC.set(SC.at(tt));var f=tt<tSill[0]?1:tt>tSill[1]?0:1-(tt-tSill[0])/(tSill[1]-tSill[0]),sd=w.sillDust;if(sd){var wd2=(w.gw+.3)*f;sd.visible=f>.002;sd.scale.x=Math.max(.001,wd2);sd.position.x=-(w.gw+.3)/2+wd2/2;}
+      var bk=tools.bucket;bk.position.copy(toWorld(w.g,bkX,gy,bkZ));bk.position.y=groundY(bk.position.x,bk.position.z);bk.rotation.y=w.ang;bk.visible=true;},
+    props:function(tt){G.props(tt);tuckTowel();}};}
+/* the window job for the window on screen, built once per window */
+function winJob(){var w=demoWin,sc=screens[0];if(!WP||WP.w!==w){WP=winPlan(w,sc);WP.w=w;}return WP;}
 function winOutside(){
-  var w=demoWin,sc=screens[0],t=tl;worker.visible=true;
-  var n=V(Math.sin(w.ang),0,Math.cos(w.ang)),side=V(Math.cos(w.ang),0,-Math.sin(w.ang)),wc=toWorld(w.g,0,0,0);
-  placeWorker(V(wc.x,0,wc.z).addScaledVector(n,.55).addScaledVector(side,-.3),n.clone().negate());
-  /* screen comes off, then goes back in */
-  var off=smooth((t-.4)/.9)*(1-smooth((t-8.0)/.9));
-  sc.g.visible=true;screenLook(sc,false);
-  sc.g.position.set(sc.x0+(-(w.gw/2+.6)-sc.x0)*off,-.2*off,.14+.3*off);sc.g.rotation.set(-.12*off,.5*off,0);
-  if(t<1.4||t>7.9){var sp=toWorld(sc.g,-sc.gw/2+.05,0,0),sp2=toWorld(sc.g,sc.gw/2-.05,0,0);
-    if(off>.01&&off<.99){reach("L",sp);reach("R",sp2);}else{rest("L");rest("R");}}
-  /* soap on in arcs, then fanned squeegee pulls from the top, then the sill */
-  var wq=w.g.getWorldQuaternion(new T.Quaternion());
-  if(t>=1.4&&t<3.3){var sp3=scrub(haze,t,1.4,1.9),P1=toWorld(w.g,sp3[0]*w.gw,sp3[1]*w.gh,.1);tools.mop.visible=true;tools.mop.position.copy(P1);tools.mop.quaternion.copy(wq).multiply(QZ(.35*Math.sin(t*9)));
-    var h1=reach("R",P1.clone().addScaledVector(n,.18));tools.handle.visible=true;setBone(tools.handle,P1.clone().addScaledVector(n,.04),h1);tools.handle.scale.x=tools.handle.scale.z=.014;rest("L");}
-  else if(t>=3.3&&t<6.7){var pt=fan(haze,t,3.3,3.4,4,256*.36/w.gw),u=pt[0],v=pt[1],dir=pt[3],fr=pt[4];
-    var P2=toWorld(w.g,u*w.gw,v*w.gh,.1),tang=Math.atan2(-.16*Math.PI*Math.cos(fr*Math.PI),.88*dir);tools.sq.visible=true;tools.sq.position.copy(P2);tools.sq.quaternion.copy(wq).multiply(QZ(tang+(dir>0?-.55:.55)));
-    tools.bead.material.opacity=.45+.35*Math.abs(Math.sin(t*14));
-    var hand=reach("R",P2.clone().addScaledVector(n,.2));tools.handle.visible=true;setBone(tools.handle,P2.clone().addScaledVector(n,.03),hand);tools.handle.scale.x=tools.handle.scale.z=.014;rest("L");}
-  else if(t>=6.7&&t<7.9){var q=clamp01((t-6.8)/1.0),sx=(-.5+q)*w.gw,SP=toWorld(w.g,sx,-w.gh/2-.1,.14);crouch(Math.min(clamp01((t-6.7)/.3),clamp01((7.9-t)/.3)));
-    tools.towel.visible=true;var hh=reach("L",SP);tools.towel.position.copy(hh);rest("R");
-    w.sillM.color.copy(sillDust).lerp(me.mats.trim.color,q);}
-  if(t<6.7)w.sillM.color.copy(sillDust);
-  if(t>=6.7&&!haze.clear){haze.c.getContext("2d").clearRect(0,0,256,212);haze.t.needsUpdate=true;haze.clear=true;}
+  var pl=winJob(),sc=screens[0],M5=pl.steps;screenLook(sc,false);runPlan(pl,tl);pl.panes.forEach(function(p){p.L.m.visible=true;});pl.Ls.m.visible=true;
   var one=st.stories===1;
-  say(msgAt(ES?[[0,"<b>1.</b> Primero quito los mosquiteros y los tallo."],[1.4,"<b>2.</b> Agua purificada con el aplicador, la trabajo hasta que la tierra se suelta."],[3.3,"<b>3.</b> Jalador en pasadas en abanico desde la esquina de arriba. El agua purificada no deja nada que manche."],[6.7,"<b>4.</b> Bordes, repisas y rieles limpios. Va incluido, no es extra."],[7.9,"<b>5.</b> Mosquitero de vuelta. Vidrio que seca claro y se queda claro más tiempo."],[9.3,"<b>Listo.</b> "+(one?"$149 un piso":"$249 dos pisos")+", mosquiteros, rieles y repisas incluidos. Toca <b>Por dentro</b> y te enseño la parte que casi todos se saltan."]]:[[0,"<b>1.</b> I pull the screens first and scrub them."],[1.4,"<b>2.</b> Purified water on with the applicator, worked in until the dirt lets go."],
-    [3.3,"<b>3.</b> Squeegee in fanned strokes from the top corner. Purified water leaves nothing behind to spot."],
-    [6.7,"<b>4.</b> Edges, sills and tracks wiped out. That's included, not an add on."],[7.9,"<b>5.</b> Screen back in. Glass that dries clear and stays clear longer."],
-    [9.3,"<b>Done.</b> "+(one?"$149 single story":"$249 two story")+", screens, tracks and sills included. Tap <b>Inside</b> and I'll show you the part most crews skip."]]),t>9.3?"ok":"");
+  say(msgAt(ES?[[0,"<b>1.</b> Primero el mosquitero: sale de su canal y lo recargo en la pared para lavarlo."],[M5[1],"<b>2.</b> Agua purificada con el aplicador, de orilla a orilla, hasta que la tierra se suelta."],
+      [M5[2],"<b>3.</b> El jalador: una franja seca arriba, luego pasadas en S que se enciman hasta abajo. El agua purificada no deja nada que manche."],[M5[3],"<b>4.</b> Toalla en las orillas y esquinas, luego la repisa. Va incluido, no es extra."],
+      [M5[4],"<b>5.</b> Mosquitero limpio y de vuelta en su canal."],[M5[5],"<b>Listo.</b> "+(one?"$149 un piso":"$249 dos pisos")+", mosquiteros, rieles y repisas incluidos. Toca <b>Por dentro</b> y te enseño la parte que casi todos se saltan."]]
+    :[[0,"<b>1.</b> Screen out first. It lifts out of its channel and leans on the wall to be washed."],[M5[1],"<b>2.</b> Purified water on with the applicator, edge to edge, until the dirt lets go."],
+      [M5[2],"<b>3.</b> Squeegee: a dry strip along the top, then S strokes down the glass, each one overlapping the last. Purified water leaves nothing behind to spot."],
+      [M5[3],"<b>4.</b> Towel along the edges and corners, then the sill. That's included, not an add on."],[M5[4],"<b>5.</b> Screen wiped down and back in its channel."],
+      [M5[5],"<b>Done.</b> "+(one?"$149 single story":"$249 two story")+", screens, tracks and sills included. Tap <b>Inside</b> and I'll show you the part most crews skip."]]),tl>=M5[5]?"ok":"");
 }
+
+/* ---------- window cleaning, inside ----------
+   He walks in with his gear and does the inside glass the same way as the outside, pane by pane. Then the track, where most crews
+   leave the wash water standing: he vacuums it out with a hand vac and runs the towel along both rails until it's dry */
+function roomPlan(rm){
+  var g=rm.g,y0=rm.y0,ow=rm.ow,side="L";
+  var S=surf(g,V(0,y0+rm.fh/2+.02,.024),V(1,0,0),V(0,1,0),V(0,0,1),rm.fw-.12,rm.fh-.12);
+  var panes=splitPane(S,.05).map(function(ps,i){return {S:ps,L:layer(ps,160,Math.round(160*ps.h/ps.w),function(W,H){return hazeCanvas(W,H,9+i);})};});
+  /* the track: its floor between the two rails, looked at from above; he works it from the room side */
+  var St=surf(g,V(0,y0+.02,0),V(1,0,0),V(0,0,-1),V(0,1,0),rm.fw-.1,.1);St.out=V(0,0,1);
+  /* the puddle and grit on the floor of the channel; under the rails and jambs it can't be seen or reached, so it isn't painted there */
+  var Lt=layer(St,256,32,function(){var c=puddleCanvas(),x=c.getContext("2d");x.clearRect(0,0,256,3);x.clearRect(0,29,256,3);x.clearRect(0,0,4,32);x.clearRect(252,0,4,32);return c;});
+  var inF=sDir(S,V(0,0,-1));
+  function spot(x,z,face){var p=toWorld(g,x,0,z);p.y=groundY(p.x,p.z);return {pos:p,face:face||inF,dip:0,bend:0};}
+  var bkX=-(ow+.35),bkZ=.5,sBk=spot(bkX-.14,bkZ+.3),B=Build();
+  /* the hand vac waits on the inside sill, lying on its side */
+  function vacRest(){var A=sDir(S,V(1,0,0)),Gp=toWorld(g,.5,y0-.01+.046,.17);return {P:Gp.clone().addScaledVector(A,TOOLS.vac.reach),H:A.clone().negate(),b:sDir(S,V(0,0,1))};}
+  function vacGrip(){var v=vacRest();return v.P.clone().addScaledVector(v.H,TOOLS.vac.reach);}
+  function vacUp(k){var v=vacRest();v.P.y+=.16*(k===undefined?1:k);return v;}
+  /* the nozzle held down into the track, the vac angled up toward him and trailing its stroke a little */
+  function vacDir(q){var h=sDir(St,V(0,.85,.55)).normalize();if(q&&q.tr&&q.tr.lengthSq()>1e-8)h.addScaledVector(q.tr.clone().normalize(),-.15);return h.normalize();}
+  /* 1. in the door with the bucket already set down by the wall */
+  var walkIn=spot(-2.3,1.5,sDir(S,V(1,0,0)));B.place(moveClip(0,0,walkIn,sBk),walkDur(walkIn,sBk)+.3);B.mark();
+  /* 2. the glass */
+  var G=glassJob(B,{panes:panes,side:side,sBk:sBk,pace:1.3,holster:holsterPose,bucket:function(){return {P:toWorld(g,bkX,.2,bkZ),H:V(0,1,0),b:sDir(S,V(1,0,0))};}});
+  B.mark();
+  /* 3. the track: he leans in and shows you the puddle */
+  var sTrack=function(){return stanceUp(St,0,0,side,.55,.14);};
+  function showHand(k){var h={},P=sAt(St,.05,0,.14),w0=smooth((k-.4)/.45);h[side]=w0>0?{palm:P,N:sDir(St,St.N),F:palmFwd(St,P,side),w:w0}:{rest:true};return h;}
+  var r=B.at(1.5);B.add(Clip(r[0],r[1],{body:function(k){return lerpPose(G.last.body(1),sTrack(),smooth(Math.min(1,k*1.5)));},hands:showHand,look:function(){return sAt(St,0,0);}}));
+  B.mark();
+  /* 4. the hand vac off the sill, two passes down the track, back on the sill; then the towel along both rails */
+  var ue=St.w/2-.025,vacRun=toolRun(St,0,0,"vac",side,[[ue,.018,0],[-ue,.018,0],[-ue,-.018,0],[ue,-.018,0]],"clean",.018,{d:.5,hdir:vacDir});vacRun.layer=Lt;
+  var towRun=palmRun(St,0,0,side,[[ue,-.038],[-ue,-.038],[-ue,.038],[ue,.038],[ue,-.038]],.022,null,true);towRun.layer=Lt;
+  var sVac=spot(.34,.62);
+  r=B.at(.6);var tVp=r;B.add(Clip(r[0],r[1],{body:function(k){return pose(lerpPose(sTrack(),sVac,smooth(Math.min(1,k*1.8))),vacGrip(),side);},
+    hands:function(k){var h={};if(k<.5){h[side]={grip:vacGrip(),A:vacRest().H.clone().negate(),w:k/.5};return h;}return carry(side,"vac",vacUp(smooth((k-.5)/.5)));},look:vacGrip}));
+  B.place(Clip(0,0,{body:function(k){return lerpPose(pose(sVac,vacGrip(),side),vacRun.body(0),smooth(k));},hands:function(k){return carry(side,"vac",blendTool(vacUp(),toolAt(vacRun,0),k,side));},look:function(){return vacRun.look(0);}}),walkDur(sVac,vacRun.body(0))+.3);
+  B.place(vacRun,Math.max(1.6,plen(vacRun.pts)/SPD.vac));
+  B.place(Clip(0,0,{body:function(k){return lerpPose(vacRun.body(1),pose(sVac,vacGrip(),side),smooth(k));},hands:function(k){return carry(side,"vac",blendTool(toolAt(vacRun,1),vacUp(),k,side));},look:vacGrip}),walkDur(vacRun.body(1),sVac)+.3);
+  r=B.at(.6);var tVd=r;B.add(Clip(r[0],r[1],{body:function(){return pose(sVac,vacGrip(),side);},
+    hands:function(k){var h={};if(k<.5)return carry(side,"vac",vacUp(1-smooth(k/.5)));h[side]={grip:vacGrip(),A:vacRest().H.clone().negate(),w:1-(k-.5)/.5};return h;},look:vacGrip}));
+  B.place(Clip(0,0,{body:function(k){return lerpPose(pose(sVac,vacGrip(),side),towRun.body(0),smooth(k));},
+    hands:function(k){var h={},p=pathAt(towRun.pts,towRun.cum,0),P=sAt(St,p.u,p.v,.006);h[side]=k<.3?{rest:true}:{palm:P,N:sDir(St,St.N),F:palmFwd(St,P,side),towel:true,tip:true,w:(k-.3)/.7};return h;},look:function(){return towRun.look(0);}}),.7);
+  B.place(towRun,Math.max(1.2,plen(towRun.pts)/SPD.towel));var tDone=B.t;
+  /* done: he steps back out of the way, turned half toward you */
+  function fin(){var p=spot(-.95,1.0),f=camGround().sub(p.pos);f.y=0;if(f.lengthSq()<1e-4)f=inF.clone();p.face=inF.clone().lerp(f.normalize(),.55).normalize();return p;}
+  B.place(moveClip(0,0,function(){return towRun.body(1);},fin),1.1);
+  B.add(Clip(B.t,1e9,{body:fin,hands:function(){return {};},look:function(){return cam.position.clone();}}));
+  var vacOn=[tVp[0]+(tVp[1]-tVp[0])*.5,tVd[0]+(tVd[1]-tVd[0])*.5];
+  return {panes:panes,Lt:Lt,clips:B.clips,steps:B.marks,events:B.events,tDone:tDone,
+    left:function(){return panes.reduce(function(a,p){return a+lyLeft(p.L);},0)/panes.length;},
+    reset:function(){panes.forEach(function(p){p.L.reset();});Lt.reset();},
+    pre:function(){var bk=tools.bucket;bk.position.copy(toWorld(g,bkX,0,bkZ));bk.rotation.y=0;bk.visible=true;},
+    props:function(tt){G.props(tt);if(!(tt>=vacOn[0]&&tt<vacOn[1])){var v=vacRest();placeTool(TOOLS.vac.g,v.P.clone().addScaledVector(v.H,TOOLS.vac.reach),v.H.clone().negate(),v.b);}tuckTowel();}};}
+function roomJob(){if(!RP)RP=roomPlan(room);return RP;}
 function winInside(){
-  var t=tl,rm=room;worker.visible=true;
-  placeWorker(V(-.45,0,rm.Z+.62),V(0,0,-1));
-  if(t>=1.2&&t<4.8){var pt=sweep(rm.haze,t,1.2,3.6,3,.3,.3,256*.36/(rm.fw-.12)),u=pt[0],v=pt[1],idx=pt[2];
-    var P2=toWorld(rm.g,u*(rm.fw-.12),(rm.y0+rm.fh/2+.02)+v*(rm.fh-.12),.045);tools.sq.visible=true;tools.sq.position.copy(P2);tools.sq.quaternion.copy(QZ(idx%2?1.3:1.84));
-    var hand=reach("R",P2.clone().add(V(0,0,.2)));tools.handle.visible=true;setBone(tools.handle,P2.clone().add(V(0,0,.03)),hand);tools.handle.scale.x=tools.handle.scale.z=.014;rest("L");}
-  else if(t<5.4){rest("L");rest("R");}
-  else if(t>=5.4&&t<8.4){var q=clamp01((t-5.5)/2.7),x=(-.5+q)*(rm.fw-.2),TP=toWorld(rm.g,x,rm.y0+.03,.02);crouch(Math.min(clamp01((t-5.4)/.3),clamp01((8.4-t)/.3)));
-    var hh=reach("R",TP.clone().add(V(0,.22,.18)));tools.handle.visible=true;setBone(tools.handle,TP.clone().add(V(0,.02,0)),hh);tools.handle.scale.x=tools.handle.scale.z=.018;tools.towel.visible=true;tools.towel.position.copy(TP).add(V(0,.02,0));rest("L");
-    var pg=rm.puddle.c.getContext("2d");pg.clearRect(0,0,(q*256)|0,32);rm.puddle.t.needsUpdate=true;}
-  else{rest("L");rest("R");}
-  if(t>=4.8&&!rm.haze.clear){rm.haze.c.getContext("2d").clearRect(0,0,256,212);rm.haze.t.needsUpdate=true;rm.haze.clear=true;}
-  if(t>=8.4){var pg2=rm.puddle.c.getContext("2d");pg2.clearRect(0,0,256,32);rm.puddle.t.needsUpdate=true;}
-  say(msgAt(ES?[[0,"<b>Por dentro.</b> Todas las ventanas de la casa por $49, en la misma visita."],[1.2,"La misma agua purificada y el mismo jalador en el vidrio de adentro."],[5.0,"<b>El riel.</b> Casi todos dejan el agua del lavado ahí como un charco de lodo. Abres la ventana y la mugre sigue."],[8.4,"<b>Yo aspiro y seco cada riel.</b> Abre tus ventanas y corren limpias. "+(st.inside?"Las ventanas por dentro ya están en tu cotización.":"Toca el botón de arriba y lo agrego por $49.")]]:[[0,"<b>Inside.</b> Every window in the house for $49, same visit."],[1.2,"Same purified water and squeegee on the inside glass."],
-    [5.0,"<b>The track.</b> Most crews leave the wash water sitting in it as a muddy puddle. Open the window and the gunk is still there."],
-    [8.4,"<b>I vacuum and wipe every track dry.</b> Open your windows and they slide clean. "+(st.inside?"Inside windows are on your quote.":"Tap the chip up top and I'll add it for $49.")]]),t>=8.4?"ok":"");
+  var pl=roomJob(),M4=pl.steps;runPlan(pl,tl);
+  say(msgAt(ES?[[0,"<b>Por dentro.</b> Todas las ventanas de la casa por $49, en la misma visita."],[M4[1],"La misma agua purificada y el mismo jalador en el vidrio de adentro."],[M4[2],"<b>El riel.</b> Casi todos dejan el agua del lavado ahí como un charco de lodo. Abres la ventana y la mugre sigue."],[M4[3],"<b>Yo aspiro y seco cada riel.</b> Abre tus ventanas y corren limpias. "+(st.inside?"Las ventanas por dentro ya están en tu cotización.":"Toca el botón de arriba y lo agrego por $49.")]]:[[0,"<b>Inside.</b> Every window in the house for $49, same visit."],[M4[1],"Same purified water and squeegee on the inside glass."],
+    [M4[2],"<b>The track.</b> Most crews leave the wash water sitting in it as a muddy puddle. Open the window and the gunk is still there."],
+    [M4[3],"<b>I vacuum and wipe every track dry.</b> Open your windows and they slide clean. "+(st.inside?"Inside windows are on your quote.":"Tap the chip up top and I'll add it for $49.")]]),tl>=M4[3]?"ok":"");
 }
+/* ---------- solar ----------
+   He works from the roof below each array with a water fed pole: the soft brush goes up each column and back down the other half of
+   it while purified water runs through, and he side steps along the roof as he goes, feet on the tiles, the pole along his right
+   side and both hands on it. The back sections get the same after he crosses the roof beside the arrays, never on them. */
+/* the roof under his feet: the lowest of the roof planes wherever he stands */
+function roofGround(){var fs=[];["F","B","SR","SL"].forEach(function(k){var f=me.faces[k];if(!f)return;f.updateMatrixWorld(true);fs.push([f.localToWorld(V(0,me.TT,0)),V(0,1,0).transformDirection(f.matrixWorld)]);});
+  return function(x,z){var y=1e9;fs.forEach(function(q){var P0=q[0],n=q[1];if(n.y<.2)return;var yy=P0.y-(n.x*(x-P0.x)+n.z*(z-P0.z))/n.y;if(yy<y)y=yy;});return y<1e8?y:0;};}
+function solPlan(){
+  var side="L",B=Build(),gps=me.groups.filter(function(g){return me.panels.some(function(p){return inG(g,p);});});
+  function inG(g,p){return p.par===(g.face>0?me.F:me.B)&&p.x>=g.rect[0]&&p.x<=g.rect[1]&&p.z>=g.rect[2]&&p.z<=g.rect[3];}
+  gps.sort(function(a,b){return b.face-a.face||a.cx-b.cx;});
+  var gr0=groundFn;groundFn=roofGround();
+  /* each array: its dust as one layer over the panels, and the brush's path: up one half of each column and down the other */
+  var G=gps.map(function(g){var par=g.face>0?me.F:me.B,ps=me.panels.filter(function(p){return inG(g,p);}),zc=me.zTop+g.rows*PD/2,
+      S=surf(par,V(g.cx,me.TT+H+.036,zc),V(1,0,0),V(0,0,-1),V(0,1,0),g.cols*PW,g.rows*PD);
+    var r0=rng(40+g.idx),L=layer(S,Math.round(64*g.cols),Math.round(106*g.rows),function(W,Hh){return cv(W,Hh,function(c){ps.forEach(function(p){
+      var u=p.x-g.cx,v=zc-p.z,x0=(u-.475)/S.w+.5,y0=.5-(v+.82)/S.h;c.drawImage(TX.dust.image,x0*W,y0*Hh,.95/S.w*W,1.64/S.h*Hh);});});});
+    var H2=Math.PI/2,pts=[],cols={};ps.forEach(function(p){var c=Math.round((p.x-g.cx)/PW*2)/2;if(!cols[c])cols[c]=[1e9,-1e9];var v=zc-p.z;cols[c][0]=Math.min(cols[c][0],v-.84);cols[c][1]=Math.max(cols[c][1],v+.84);});
+    var cl=[];Object.keys(cols).map(Number).sort(function(a,b){return a-b;}).forEach(function(c){var u=c*PW,lo=cols[c][0],hi=cols[c][1];pts.push([u-.25,lo,H2],[u-.25,hi,H2],[u+.25,hi,H2],[u+.25,lo,H2]);cl.push({u:u,v:(lo+hi)/2});});
+    return {g:g,par:par,S:S,L:L,pts:pts,cum:pathLen(pts),cl:cl,zc:zc};});
+  /* where he stands: on the roof below the column he's on, side on to the pole the way a long pole is held, so it runs from beside
+     his right hip across in front of him to his left hand and on up to the brush. Q is the brush, when known */
+  var SIDE=.84;
+  function stand(q,u,Q){var z=Math.min(me.L/2-.3,q.g.bottom+.8),p=toWorld(q.par,q.g.cx+u+.2,me.TT,z);p.y=groundY(p.x,p.z);
+    var F=V(0,0,-1).transformDirection(q.par.matrixWorld);if(Q){F=Q.clone().sub(p);}F.y=0;F.normalize();var rt=V(-F.z,0,F.x),face=F.clone().multiplyScalar(Math.cos(SIDE)).addScaledVector(rt,Math.sin(SIDE)).normalize();
+    return {pos:p,face:face,dip:0,bend:0};}
+  /* a point in his own space, for a stance that isn't posed yet */
+  function onSpot(sp,l){var f=sp.face,lf=V(f.z,0,-f.x);return sp.pos.clone().addScaledVector(lf,l.x).add(V(0,l.y,0)).addScaledVector(f,l.z);}
+  var ANK=V(-.16,.98,.12),LHD=V(.1,1.15,.35);
+  function grips(A,Q,C){var d=A.clone().sub(Q).normalize(),s=Math.max(.25,Math.min(.6,C.clone().sub(A).dot(d.clone().negate())));return {d:d,U:A.clone().addScaledVector(d,-s)};}
+  /* stand for the pole with the brush at Q, bent as far as both hands on it need */
+  function poleStance(q,u,Q){var sp=stand(q,u,Q),A=onSpot(sp,ANK),gg=grips(A,Q,onSpot(sp,LHD));return pose(sp,A,"L",gg.U);}
+  function brushAt(q,k){var p=pathAt(q.pts,q.cum,k);return {P:sAt(q.S,p.u,p.v,-.012),u:p.u};}
+  /* the pole from the brush's back to beside his right hip: his right hand there, his left further up it where the pole crosses in front
+     of his chest */
+  function poleHands(Q){var A=worker.localToWorld(ANK.clone()),gg=grips(A,Q,worker.localToWorld(LHD.clone()));return {A:A,d:gg.d,L:{grip:A,A:gg.d.clone().negate()},R:{grip:gg.U,A:gg.d.clone().negate()}};}
+  var total=G.reduce(function(s,q){return s+q.cum[q.cum.length-1];},0),spd=Math.max(1.8,total/14),last={butt:null,P:null,wash:false,par:G[0].par};
+  /* a clip with the pole in hand: brush(k,tt) says where the brush is; the pole and both hands follow from it */
+  function pc(o){var c=Clip(0,0,{body:o.body,look:o.look,paint:o.paint});c.q=o.q;c.wash=!!o.wash;
+    c.hands=function(k,tt){var P=o.brush(k,tt),par=(o.q||G[0]).par,Q=placeBrush(P,par),ph=poleHands(Q),butt=ph.A.clone().addScaledVector(ph.d,.6);
+      tools.pole.visible=true;setBone(tools.pole,butt,Q);tools.pole.scale.x=tools.pole.scale.z=.022;last.butt=butt;last.P=P;last.wash=c.wash;last.par=par;return {L:ph.L,R:ph.R};};
+    return c;}
+  var runs=[],tBack=null,tDone,hoseVia=null;
+  /* 0. up on the roof, pole in hand, brush on the lowest panel */
+  var q0=G[0];B.place(pc({q:q0,body:function(){var b=brushAt(q0,0);return poleStance(q0,b.u,b.P);},brush:function(){return brushAt(q0,0).P;},look:function(){return brushAt(q0,.3).P;}}),1.4);
+  B.mark();
+  G.forEach(function(q,i){
+    if(i){var p0=G[i-1],prev=runs[runs.length-1];
+      if(q.g.face!==p0.g.face){B.mark();tBack=B.t;
+        /* over the ridge beside the arrays: along the roof, up, across, and down the far side to the next array */
+        var xs=Math.min(me.W/2-.25,Math.max.apply(null,G.map(function(o){return o.g.face>0?o.g.rect[1]:-o.g.rect[0];}))+.7);
+        var a0=stand(p0,brushAt(p0,1).u,brushAt(p0,1).P),b0=stand(q,brushAt(q,0).u,brushAt(q,0).P);
+        var w1=toWorld(p0.par,xs,me.TT,Math.min(me.L/2-.3,p0.g.bottom+.8)),w2=toWorld(p0.par,xs,me.TT,-me.L/2+.35),w3=toWorld(q.par,-xs,me.TT,-me.L/2+.35),w4=toWorld(q.par,-xs,me.TT,Math.min(me.L/2-.3,q.g.bottom+.8));
+        var way=[a0.pos,w1,w2,w3,w4,b0.pos].map(function(v){var c=v.clone();c.y=groundY(c.x,c.z);return c;}),wl=0;for(var j=1;j<way.length;j++)wl+=way[j].distanceTo(way[j-1]);
+        B.place(pc({q:q,body:function(k){var e=smooth(k)*wl,j=1,acc=0;while(j<way.length-1&&acc+way[j].distanceTo(way[j-1])<e){acc+=way[j].distanceTo(way[j-1]);j++;}
+            var sg=way[j].distanceTo(way[j-1]),f=clamp01((e-acc)/Math.max(1e-4,sg)),pos=way[j-1].clone().lerp(way[j],f),dir=way[j].clone().sub(way[j-1]);dir.y=0;if(dir.lengthSq()<1e-6)dir=a0.face.clone();
+            pos.y=groundY(pos.x,pos.z);return {pos:pos,face:dir.normalize(),dip:0,bend:0};},
+          brush:function(){return worker.localToWorld(V(-.2,1.55,.9));},look:function(){return worker.localToWorld(V(0,.3,2));}}),Math.min(7,Math.max(3,wl/1.1)));
+        hoseVia=[way[3],toWorld(me.F,xs,me.TT+.06,-me.L/2),way[2]];
+      }else{B.place(pc({q:q,body:function(k){var a=poleStance(p0,brushAt(p0,1).u,brushAt(p0,1).P),b=poleStance(q,brushAt(q,0).u,brushAt(q,0).P);return lerpPose(a,b,smooth(k));},
+          brush:function(k){var a=brushAt(p0,1).P,b=brushAt(q,0).P,up=V(0,1,0);return a.lerp(b,smooth(k)).addScaledVector(up,.25*Math.sin(Math.PI*k));},look:function(k){return brushAt(q,0).P;}}),Math.max(1,stand(p0,brushAt(p0,1).u).pos.distanceTo(stand(q,brushAt(q,0).u).pos)/.7));}}
+    var run=pc({q:q,wash:true,body:function(k){var b=brushAt(q,k);return poleStance(q,b.u,b.P);},brush:function(k){return brushAt(q,k).P;},look:function(k){return brushAt(q,Math.min(1,k+.04)).P;},
+      paint:function(a,b){var p=pathAt(q.pts,q.cum,a),s2=pathAt(q.pts,q.cum,b);lyPoly(q.L,[[p.u-.26,p.v],[p.u+.26,p.v],[s2.u+.26,s2.v],[s2.u-.26,s2.v]],"clean");}});
+    B.place(run,Math.max(2.5,q.cum[q.cum.length-1]/spd));runs.push(run);});
+  B.mark();tDone=B.t;
+  /* done: the brush comes down to rest on the roof below the array and he turns a little toward you */
+  var ql=G[G.length-1];
+  var fc=pc({q:ql,body:function(k,tt){var s=poleStance(ql,brushAt(ql,1).u,brushAt(ql,1).P),f=camGround().sub(s.pos);f.y=0;if(f.lengthSq()>1e-4)s.face=s.face.clone().lerp(f.normalize(),.35*smooth((tt-tDone)/1.2)).normalize();return s;},
+    brush:function(k,tt){var e=smooth((tt-tDone)/1.2),a=brushAt(ql,1).P,rest=toWorld(ql.par,ql.g.cx+brushAt(ql,1).u,me.TT+.03,Math.min(me.L/2-.3,ql.g.bottom+.8)-.9);return a.lerp(rest,e);},look:function(){return cam.position.clone();}});
+  fc.t0=B.t;fc.t1=1e9;B.add(fc);
+  groundFn=gr0;
+  /* the brush, flat on whatever it's on, and the pole and hands that follow from it */
+  function placeBrush(P,par){var br=tools.brush,N=V(0,1,0).transformDirection(par.matrixWorld),U=V(1,0,0).transformDirection(par.matrixWorld);br.position.copy(P);
+    br.quaternion.setFromRotationMatrix(new T.Matrix4().makeBasis(U,N,new T.Vector3().crossVectors(U,N)));br.visible=true;return P.clone().addScaledVector(N,.07);}
+  var g0=G[0].g,cart=V(g0.cx+2.2,0,me.front+2.2),eave=toWorld(me.F,g0.cx+.6,me.TT,me.L/2+OV*.6),ladder=toWorld(me.F,g0.cx+1.5,me.TT,me.L/2+OV*.45);
+  return {G:G,clips:B.clips,steps:B.marks,events:B.events,tBack:tBack,tDone:tDone,ground:roofGround(),me:me,n:me.panels.length,
+    left:function(){return G.reduce(function(a,q){return a+lyLeft(q.L);},0)/Math.max(1,G.length);},
+    reset:function(){G.forEach(function(q){q.L.reset();});},
+    pre:function(){tools.cart.visible=true;tools.cart.position.copy(cart);
+      /* the ladder he came up, leaning on the eave by the cart */
+      var top=ladder.clone().add(V(0,.85,0)),bot=V(ladder.x,0,ladder.z+.95),ld=ladderMesh(top.distanceTo(bot));ld.position.copy(bot);ld.lookAt(top);ld.visible=true;},
+    qAt:function(tt){var c=clipAt(this,tt);return c.q||G[0];},
+    props:function(tt){if(!last.butt)return;
+      /* the hose runs from the pole's end down to the roof by his boot, over the ridge when he's on the back, over the eave and down to the cart */
+      var drop=worker.localToWorld(V(.32,.04,.12));drop.y=groundY(drop.x,drop.z)+.03;tools.hoseUp.visible=true;setBone(tools.hoseUp,last.butt,drop);tools.hoseUp.scale.x=tools.hoseUp.scale.z=.018;
+      hosePath([drop].concat(hoseVia&&tt>=tBack+1?hoseVia:[],[eave,cart.clone().add(V(0,.9,0))]));
+      var wa=tools.water.geometry.attributes.position.array,B2=last.P;tools.water.visible=last.wash;
+      if(last.wash){for(var k=0;k<60;k++){var ph=(tl*3+k*.37)%1;wa[k*3]=B2.x+Math.sin(k*12.9)*.28;wa[k*3+1]=B2.y+.05+ph*.25-ph*ph*.35;wa[k*3+2]=B2.z+Math.cos(k*7.1)*.14+ph*.1;}tools.water.geometry.attributes.position.needsUpdate=true;}}};}
+function solJob(){if(!SPL||SPL.me!==me||SPL.n!==me.panels.length)SPL=solPlan();return SPL;}
+/* a hose along a few points, rebuilt only when it has moved a hand's width */
+var hoseK2="";
+function hosePath(pts){var k=pts.map(function(v){return (v.x*20|0)+","+(v.z*20|0);}).join("|");if(k!==hoseK2){hoseK2=k;if(tools.hose){scene.remove(tools.hose);tools.hose.geometry.dispose();}
+  var all=[pts[0]];for(var i=1;i<pts.length;i++){var a=pts[i-1],b=pts[i],m=a.clone().lerp(b,.5);m.y=Math.max(m.y,Math.min(a.y,b.y))+.05;all.push(m,b);}
+  tools.hose=new T.Mesh(new T.TubeGeometry(new T.CatmullRomCurve3(all),60,.018,6,false),M.hose);tools.hose.castShadow=true;scene.add(tools.hose);}tools.hose.visible=true;}
+/* an aluminum extension ladder of a given length, built once; its length runs along +z */
+function ladderMesh(len){var o=tools.ladder;if(o&&Math.abs(o.userData.len-len)<.01)return o;if(o){scene.remove(o);o.traverse(function(m){if(m.geometry&&m.geometry!==G.box&&m.geometry!==G.cyl)m.geometry.dispose();});}
+  o=new T.Group();o.userData.len=len;[-1,1].forEach(function(sd){box(.035,.075,len,M.chan,sd*.21,0,len/2,o,true);});
+  for(var z=.28;z<len-.1;z+=.3){var rg=new T.Mesh(G.cyl,M.chan);rg.scale.set(.016,.42,.016);rg.rotation.z=Math.PI/2;rg.position.set(0,0,z);rg.castShadow=true;o.add(rg);}
+  o.visible=false;scene.add(o);tools.ladder=o;return o;}
 function solar(){
-  var t=tl,list=me.panels.filter(function(p){return p.face>0;}),back=me.panels.filter(function(p){return p.face<0;});
-  list.sort(function(a,b){return a.row-b.row||(a.row%2?b.x-a.x:a.x-b.x);});
-  var n=list.length,per=Math.min(.55,11/Math.max(1,n)),start=1.4,end=start+n*per;
-  me.panels.forEach(function(p){p.dust.visible=true;});
-  /* the brush glides along one continuous path, and each panel clears as the brush passes over it */
-  var u=clamp01((t-start)/(end-start))*Math.max(0,n-1);
-  list.forEach(function(p,i){p.dust.material.opacity=t<start?1:1-smooth((u-i+.35)/.7);});
-  back.forEach(function(p){p.dust.material.opacity=1-smooth((t-end)/.8);});
-  var gp=me.groups.filter(function(g){return g.face>0;})[0];
-  if(gp){worker.visible=true;
-    var feet=toWorld(me.F,gp.cx,me.TT-.02,Math.min(me.L/2-.35,gp.bottom+.7));placeWorker(feet,V(0,0,-1));
-    tools.cart.visible=true;tools.cart.position.set(gp.cx+2.2,0,me.front+2.2);
-    var ia=Math.min(n-1,Math.floor(u)),ib=Math.min(n-1,ia+1),fr=u-ia,pa=list[ia],pb=list[ib],same=pa.row===pb.row,ef=same?fr:smooth(fr);
-    var bx=lerp(pa.x,pb.x,ef),bz=lerp(pa.z,pb.z,ef)+(t>start&&t<end?Math.sin(tl*9)*.12:0);
-    var B=toWorld(me.F,bx,me.TT+H+.08,bz),chest=worker.localToWorld(V(0,1.25,.32)),d=B.clone().sub(chest).normalize(),poleBot=chest.clone().addScaledVector(d,-.55);
-    tools.pole.visible=true;setBone(tools.pole,poleBot,B);tools.pole.scale.x=tools.pole.scale.z=.022;
-    /* the hose follows the pole down to the roof beside his right boot, then runs over the eave to the cart. Never through him. */
-    var drop=worker.localToWorld(V(.32,.04,.12));tools.hoseUp.visible=true;setBone(tools.hoseUp,poleBot,drop);tools.hoseUp.scale.x=tools.hoseUp.scale.z=.018;
-    hose(drop,toWorld(me.F,gp.cx+.6,me.TT,me.L/2+OV*.6),tools.cart.position.clone().add(V(0,.9,0)));
-    reach("L",chest.clone().addScaledVector(d,-.1));reach("R",chest.clone().addScaledVector(d,.45));
-    lookAtW(B);tools.brush.visible=true;tools.brush.position.copy(B);tools.brush.quaternion.copy(me.F.getWorldQuaternion(new T.Quaternion()));
-    var wa=tools.water.geometry.attributes.position.array,on=t>=start&&t<end;tools.water.visible=on;
-    if(on){for(var k=0;k<60;k++){var ph=(tl*3+k*.37)%1;wa[k*3]=B.x+Math.sin(k*12.9)*.28;wa[k*3+1]=B.y+.05+ph*.25-ph*ph*.35;wa[k*3+2]=B.z+Math.cos(k*7.1)*.14+ph*.1;}tools.water.geometry.attributes.position.needsUpdate=true;}
-  }
+  var pl=solJob(),M3=pl.steps;groundFn=pl.ground;me.panels.forEach(function(p){p.dust.visible=false;});pl.G.forEach(function(q){q.L.m.visible=true;});runPlan(pl,tl);
   var price=st.pig?L("free with your pigeon proofing","gratis con tu control de palomas"):money(st.panels*P.panel);
   var secTxt=st.arrays>1?L(" In "+st.arrays+" sections: "," En "+st.arrays+" secciones: ")+st.arr.slice(0,st.arrays).join(", ")+L(" panels."," paneles."):"";
   var spinTxt=!st.pig&&st.spin?L(" Plus "+st.spin+" spinner"+(st.spin>1?"s":"")+" on the vents, "+money(st.spin*P.spinner)+", so the birds don't move in after I leave."," Más "+st.spin+" espantapájaros en las ventilas, "+money(st.spin*P.spinner)+", para que las aves no se instalen cuando me vaya."):"";
-  say(msgAt(ES?[[0,"<b>Tus "+st.panels+" paneles</b> bajo una capa de polvo del desierto."+secTxt+" Aquí casi no llueve para enjuagarlos, y la producción baja un poco cada mes."],[start,"<b>Agua purificada por un cepillo suave</b> en una pértiga, fila por fila. Nunca camino sobre tus paneles."],[end+.6,"<b>Secan sin manchas ni rayas.</b> Tus "+st.panels+" paneles: "+price+". Reviso todo el arreglo mientras estoy arriba."+spinTxt]]:[[0,"<b>Your "+st.panels+" panels</b> under a layer of desert dust."+secTxt+" Up here there's almost no rain to rinse it off, so your output drifts down a little every month."],
-    [start,"<b>Purified water through a soft brush</b> on a water fed pole, row by row. I never walk on your panels."],
-    [end+.6,"<b>Dries spot free, no streaks.</b> Your "+st.panels+" panels: "+price+". I look over the whole array while I'm up there."+spinTxt]]),t>end+.6?"ok":"");
+  var list=ES?[[0,"<b>Tus "+st.panels+" paneles</b> bajo una capa de polvo del desierto."+secTxt+" Aquí casi no llueve para enjuagarlos, y la producción baja un poco cada mes."],[M3[1],"<b>Agua purificada por un cepillo suave</b> en una pértiga, panel por panel. Nunca camino sobre tus paneles."]]
+    :[[0,"<b>Your "+st.panels+" panels</b> under a layer of desert dust."+secTxt+" Up here there's almost no rain to rinse it off, so your output drifts down a little every month."],[M3[1],"<b>Purified water through a soft brush</b> on a water fed pole, panel by panel. I never walk on your panels."]];
+  if(pl.tBack!==null)list.push([pl.tBack,L("<b>The back section too.</b> I cross the roof beside the panels, never on them, and give it the same wash.","<b>También la sección de atrás.</b> Cruzo el techo por un lado de los paneles, nunca encima, y le doy el mismo lavado.")]);
+  list.push([pl.tDone,L("<b>Dries spot free, no streaks.</b> Your "+st.panels+" panels: "+price+". I look over the whole array while I'm up there.","<b>Secan sin manchas ni rayas.</b> Tus "+st.panels+" paneles: "+price+". Reviso todo el arreglo mientras estoy arriba.")+spinTxt]);
+  say(msgAt(list),tl>=pl.tDone?"ok":"");
 }
+/* ---------- screen repair ----------
+   The torn screen comes out and goes onto a folding table set up behind him, where it's re-meshed the way it's really done: the old
+   spline pulled out of its channel, the old mesh balled up, new mesh rolled out over the frame, new spline rolled into the channel
+   all the way around, and the extra mesh trimmed off. He walks around the table to reach each side. Then it goes back in. */
+var SCP=null;
+function scrPlan(w,sc){
+  var gy=-w.v,sw=sc.gw,sh=sc.gh,x0=sc.x0,side="L",B=Build(),PI=Math.PI,a=sw/2-.018,b=sh/2-.018,mg=.05,ku=sw/2+mg,kv=sh/2+mg;
+  var SS=surf(sc.g,V(0,0,.016),V(1,0,0),V(0,1,0),V(0,0,1),sw,sh);
+  /* the spline in its channel, and the new mesh as it goes on, with its extra all around until that's trimmed */
+  var SLy=layer(SS,128,Math.round(128*sh/sw),function(W,H){return cv(W,H,function(g){g.strokeStyle=LY_FILL.spline;g.lineWidth=Math.max(1.5,.007*W/sw);g.strokeRect((.5-a/sw)*W,(.5-b/sh)*H,2*a/sw*W,2*b/sh*H);});});
+  var SX=surf(sc.g,V(0,0,.018),V(1,0,0),V(0,1,0),V(0,0,1),sw+2*mg,sh+2*mg),SN=layer(SX,128,Math.round(128*(sh+2*mg)/(sw+2*mg)),function(W,H){return cv(W,H,function(){});});
+  /* the table: long side straight out from the house, the end by the house the one he works from first */
+  var xt=x0+.1,zt=1.95;
+  function tw(x,y,z){return toWorld(w.g,xt+x,gy+y,zt+z);}
+  function dW(x,z){return V(x,0,z).transformDirection(w.g.matrixWorld);}
+  function spot(x,z,face){var p=toWorld(w.g,x,gy,z);p.y=groundY(p.x,p.z);return {pos:p,face:face,dip:0,bend:0};}
+  var inF=dW(0,-1),FACE=[dW(0,1),dW(1,0),dW(0,-1),dW(-1,0)];
+  /* where he stands at each side of the table to work a point P: 0 the end by the house, 1 the side on his right from there,
+     2 the end by the street, 3 the other side. His working shoulder lines up with the point */
+  function sideSpot(si,P){var l=w.g.worldToLocal(P.clone()),x,z;
+    if(si===0){x=l.x+.16;z=zt-1.0;}else if(si===1){x=xt-.72;z=l.z-.16;}else if(si===2){x=l.x-.16;z=zt+1.05;}else{x=xt+.72;z=l.z+.16;}
+    return spot(x,z,FACE[si].clone());}
+  /* the screen: out of the window as on the outside job, carried around with him, laid on the table top first */
+  var SC=ScreenPath(w,sc),cT={x:xt,y:gy+1.15,z:zt-1.0+.36,rx:0,ry:PI},pTable={x:xt,y:gy+.7725,z:zt+.02,rx:PI/2,ry:PI},pStand={x:xt,y:gy+.7725+sh/2+.01,z:zt+.02-sh/2,rx:0,ry:PI};
+  var scrMid=SC.mid,hold=SC.hold,rails=SC.hands;
+  var VH=.1,VL=-sh/2+.14;
+  var sIn=spot(x0-.02,.56,inF),sOut=spot(x0-.02,.78,inF),sNear=spot(xt,zt-1.0,FACE[0]);SC.key(0,SC.pIn);
+  /* 1. up to the window */
+  var sWalk=spot(x0+1.1,1.3,inF),r=B.at(walkDur(sWalk,sIn)+.2);B.add(moveClip(r[0],r[1],sWalk,sIn,{look:scrMid}));
+  B.mark();
+  /* 2. out of its channel, around to the table and laid down on it */
+  SC.out(B,sIn,sOut,VH);
+  r=B.at(1.3);var tTab0=r[0];SC.turn(r[0],r[1],sOut,sNear,0,PI,SC.cIn.y,cT.y,.36);SC.key(r[1],cT);
+  B.add(Clip(r[0],r[1],{body:function(k,tt){return hold(SC.facing(sOut,sNear,k,tt),tt,lerp(VH,VL,smooth(k)));},hands:function(k){return rails(1,lerp(VH,VL,smooth(k)));},look:scrMid}));
+  r=B.at(.9);SC.key(r[1],pTable);B.add(Clip(r[0],r[1],{body:function(k,tt){return hold(sNear,tt,VL);},hands:function(){return rails(1,VL);},look:scrMid}));
+  r=B.at(.35);var tLaid=r[0];B.add(Clip(r[0],r[1],{body:function(k,tt){return lerpPose(hold(sNear,tLaid,VL),sNear,smooth(k));},hands:function(k){return rails(1-smooth(k),VL);},look:scrMid}));
+  /* the old spline: a pull at one corner and it comes up out of the channel all the way around */
+  var loop=[[a,-b],[-a,-b],[-a,b],[a,b],[a,-b]],lc=pathLen(loop);
+  function loopPt(k){var p=pathAt(loop,lc,k);return sAt(SS,p.u,p.v,.006);}
+  var gripC=function(){return sAt(SS,a,-b,.012);},pullTo=function(){return worker.localToWorld(V(-.22,1.15,.32));};
+  r=B.at(.45);B.add(Clip(r[0],r[1],{body:function(){return pose(sideSpot(0,gripC()),gripC(),side);},hands:function(k){var h={};h[side]={grip:gripC(),A:sDir(SS,SS.V),open:true,w:k};return h;},look:gripC}));
+  r=B.at(1.4);var tPull=r;B.add(Clip(r[0],r[1],{body:function(k){return pose(sideSpot(0,gripC()),gripC().lerp(pullTo(),smooth(k)),side);},
+    hands:function(k){var h={};h[side]={grip:gripC().lerp(pullTo(),smooth(k)),A:sDir(SS,SS.V),open:false};return h;},look:function(k){return loopPt(smooth(k));},
+    paint:function(k0,k1){var p=pathAt(loop,lc,smooth(k0)),q=pathAt(loop,lc,smooth(k1));lyLine(SLy,[p.u,p.v],[q.u,q.v],.02,"clean");}}));
+  /* the old mesh, pulled off toward him and balled up in both hands, then dropped by the table */
+  var mOff={p:V(0,-sh/2-.2,.34),s:.12};
+  function meshAt(k){var e=smooth(k);return {p:V(0,0,0).lerp(mOff.p,e),s:lerp(1,mOff.s,e)};}
+  function meshPt(k,u){var m=meshAt(k);return toWorld(sc.g,m.p.x+u*m.s,m.p.y+(-sh/2+.05)*m.s,m.p.z+.01);}
+  r=B.at(1.5);var tBall=r;B.add(Clip(r[0],r[1],{body:function(k){return pose(sNear,meshPt(k*.8,0),side);},
+    hands:function(k){var kk=clamp01((k-.25)/.75),h={};h.L={grip:meshPt(kk,.18),A:sDir(SS,SS.U),w:clamp01(k/.25),open:kk<.1};h.R={grip:meshPt(kk,-.18),A:sDir(SS,SS.U),w:clamp01(k/.25),open:kk<.1};return h;},look:function(k){return meshPt(clamp01((k-.25)/.75),0);}}));
+  var drop=tw(-.42,0,-.86);drop.y=groundY(drop.x,drop.z)+.07;
+  function wadAt(tt){var k=clamp01((tt-tBall[1])/.55),inH=meshPt(1,0);if(tt<tBall[1])return inH;var over=drop.clone().add(V(0,.5,0));if(k<.6)return inH.lerp(over,smooth(k/.6));return over.lerp(drop,Math.pow((k-.6)/.4,2));}
+  r=B.at(.7);var tD=r[0];B.add(Clip(r[0],r[1],{body:function(k){return pose(sNear,wadAt(tD+Math.min(k,.5)*.7),side);},hands:function(k){var h={},P=wadAt(tD+k*.7);if(k<.55)h.L={grip:P.clone().add(V(0,.04,0)),A:dW(1,0),w:1};if(k<.25)h.R={grip:P.clone().add(V(0,-.04,0)),A:dW(1,0),w:1-k/.25};return h;},look:function(){return drop;}}));
+  /* new mesh rolled out over the frame: the roll is pushed up the table and the mesh lies down behind it */
+  var z0r=-.66,z1r=.66;
+  function rollZ(tt){return lerp(z0r,z1r,smooth(clamp01((tt-tRoll[0])/(tRoll[1]-tRoll[0]))));}
+  var sRoll0=spot(xt+.64,zt+z0r-.34,FACE[0]),tRoll;
+  B.place(moveClip(0,0,standAt(sNear),sRoll0,{via:toWorld(w.g,xt+.62,gy,zt-.95)}),1.0);
+  r=B.at(2.3);tRoll=r;
+  /* his palm on the back of the roll, over its top, fingers pointing the way it rolls */
+  function rollHand(tt){var z=rollZ(tt),c=tw(.28,.76+.04,z),bk=dW(0,-1),N=bk.clone().add(V(0,1,0)).normalize();return {P:c.clone().addScaledVector(N,.045),N:N,F:dW(0,1).add(V(0,1,0)).normalize()};}
+  B.add(Clip(r[0],r[1],{body:function(k,tt){var z=rollZ(tt);return pose(spot(xt+.64,zt+z-.34,FACE[0]),rollHand(tt).P,side,null,palmReach());},
+    hands:function(k,tt){var q=rollHand(tt),h={};h[side]={palm:q.P,N:q.N,F:q.F,w:clamp01(k*6)};return h;},look:function(k,tt){return tw(0,.76,rollZ(tt)+.15);},
+    /* only the strip laid since the last frame, so the mesh goes down once, evenly */
+    paint:function(k0,k1){var va=Math.max(-kv,lerp(z0r,z1r,smooth(k0))-.02),vb=Math.min(kv,lerp(z0r,z1r,smooth(k1))-.02);if(vb<=va)return;
+      var g=SN.c.getContext("2d"),p=lyXY(SN,-ku,vb),q=lyXY(SN,ku,va);g.fillStyle=meshTint();g.fillRect(p[0],p[1],q[0]-p[0],Math.max(1,q[1]-p[1]));SN.t.needsUpdate=true;}}));
+  B.mark();
+  /* 3. the new spline, rolled into the channel all the way around, walking the table; then the extra mesh cut off the same way */
+  function lapRuns(key,pts4,op,half,off,hd){return [3,0,1,2].map(function(si,i){var out=FACE[si].clone().negate();
+    return toolRun(SS,0,0,key,side,pts4[i],op,half,{off:off,bdir:key==="knife"?"travel":null,
+      body:function(k,p){var P=sAt(SS,p.u,p.v);return pose(sideSpot(si,P),P.clone().addScaledVector(hd(out,null),TOOLS[key].reach),side);},
+      hdir:function(q){return hd(out,q);}});});}
+  var up=V(0,1,0);
+  function rollerDir(out){return up.clone().multiplyScalar(.8).addScaledVector(out,.55).normalize();}
+  function knifeDir(out,q){var h=up.clone().multiplyScalar(.75).addScaledVector(out,.35);if(q&&q.tr&&q.tr.lengthSq()>1e-10)h.addScaledVector(q.tr.clone().normalize(),-.3);return h.normalize();}
+  var H2=PI/2,rl=lapRuns("roller",[[[-a,b,H2],[-a,-b,H2]],[[-a,-b,0],[a,-b,0]],[[a,-b,H2],[a,b,H2]],[[a,b,0],[-a,b,0]]],"spline",.0035,.024,rollerDir);
+  var kl=lapRuns("knife",[[[-(sw/2+.02),kv,H2],[-(sw/2+.02),-kv,H2]],[[-ku,-(sh/2+.02),0],[ku,-(sh/2+.02),0]],[[sw/2+.02,-kv,H2],[sw/2+.02,kv,H2]],[[ku,sh/2+.02,0],[-ku,sh/2+.02,0]]],"clean",.045,.002,knifeDir);
+  rl.forEach(function(x){x.layer=SLy;});kl.forEach(function(x){x.layer=SN;});
+  /* round a corner of the table: the tool comes up off the frame, he walks around, it goes back down */
+  function corner(key,A,Bn,si){var via=si===3?toWorld(w.g,xt+.62,gy,zt-.95):si===0?toWorld(w.g,xt-.62,gy,zt-.95):toWorld(w.g,xt-.62,gy,zt+.95);
+    var c=toolHop(key,side,A,Bn),bd=moveClip(0,0,function(){return A.body(1);},function(){return Bn.body(0);},{via:via});c.body=bd.body;return c;}
+  var pockets={roller:function(){var M=hipsM();return {P:V(-.17,.72,-.13).applyMatrix4(M),H:V(0,1,0).transformDirection(M),b:V(1,0,0).transformDirection(M)};},
+    knife:function(){var M=hipsM();return {P:V(.17,.78,.1).applyMatrix4(M),H:V(0,1,0).transformDirection(M),b:V(0,0,1).transformDirection(M)};}};
+  function drawTool(key,run,from){var c=Clip(0,0,{body:function(k){return lerpPose(from(),run.body(0),smooth(k));},
+    hands:function(k){var pk=pockets[key](),h={};if(k<.35){h[side]={grip:pk.P.clone().addScaledVector(pk.H,TOOLS[key].reach),A:pk.H.clone().negate(),w:k/.35};return h;}return carry(side,key,blendTool(pk,toolAt(run,0),(k-.35)/.65,side));},
+    look:function(){return run.look(0);}});return c;}
+  function stowTool(key,run,to){return Clip(0,0,{body:function(k){return lerpPose(run.body(1),to(),smooth(k));},hands:function(k){return k<.7?carry(side,key,blendTool(toolAt(run,1),pockets[key](),k/.7,side)):{};},look:function(){return run.look(1);}});}
+  var endRoll=function(){return spot(xt+.64,zt+z1r-.34,FACE[0]);};
+  B.place(drawTool("roller",rl[0],endRoll),1.0);var tRoller0=B.t;
+  rl.forEach(function(x,i){if(i)B.place(corner("roller",rl[i-1],x,[3,0,1,2][i-1]),Math.max(.75,walkDur(rl[i-1].body(1),x.body(0))+.1));B.place(x,Math.max(.6,plen(x.pts)/SPD.roll));});
+  var rLast=rl[rl.length-1];
+  B.place(Clip(0,0,{body:function(k){return lerpPose(rLast.body(1),kl[0].body(0),smooth(k));},hands:function(k){return k<.45?carry(side,"roller",blendTool(toolAt(rLast,1),pockets.roller(),k/.45,side)):k<.6?{}:carry(side,"knife",blendTool(pockets.knife(),toolAt(kl[0],0),(k-.6)/.4,side));},look:function(){return kl[0].look(0);}}),1.3);
+  var tSwap=[B.t-1.3,B.t];
+  kl.forEach(function(x,i){if(i)B.place(corner("knife",kl[i-1],x,[3,0,1,2][i-1]),Math.max(.75,walkDur(kl[i-1].body(1),x.body(0))+.1));B.place(x,Math.max(.5,plen(x.pts)/SPD.knife));});
+  var kLast=kl[kl.length-1];
+  B.mark();
+  /* 4. back to the end by the house, the screen stood up off the table, carried back and set in its channel */
+  B.place(stowTool("knife",kLast,function(){return spot(xt+.72,zt+.6,FACE[3]);}),.6);
+  B.place(moveClip(0,0,function(){return spot(xt+.72,zt+.6,FACE[3]);},sNear,{via:toWorld(w.g,xt+.72,gy,zt-.95)}),Math.max(1.2,walkDur(spot(xt+.72,zt+.6,FACE[3]),sNear)+.4));
+  r=B.at(.45);var tG=r[0];B.add(Clip(r[0],r[1],{body:function(k,tt){return lerpPose(sNear,hold(sNear,tt,VL),smooth(k));},hands:function(k){return rails(smooth(k),VL);},look:scrMid}));
+  r=B.at(.9);SC.key(r[0],pTable);SC.key(r[1],pStand);B.add(Clip(r[0],r[1],{body:function(k,tt){return hold(sNear,tt,VL);},hands:function(){return rails(1,VL);},look:scrMid}));
+  /* off the table his hands slide up to the middle of the rails, where he carries it and sets it in */
+  r=B.at(.6);SC.key(r[1],cT);B.add(Clip(r[0],r[1],{body:function(k,tt){return hold(sNear,tt,lerp(VL,VH,smooth(k)));},hands:function(k){return rails(1,lerp(VL,VH,smooth(k)));},look:scrMid}));
+  r=B.at(1.4);var tTab1=r[0];SC.turn(r[0],r[1],sNear,sOut,PI,0,cT.y,SC.cIn.y,.36);SC.key(r[1],SC.cIn);
+  B.add(Clip(r[0],r[1],{body:function(k,tt){return hold(SC.facing(sNear,sOut,k,tt),tt,VH);},hands:function(){return rails(1,VH);},look:scrMid}));
+  var sBack=spot(x0-.02,.9,inF);SC.inn(B,sOut,sIn,sBack,VH);
+  function fin(){var p=spot(x0+.55,1.2,inF),f=camGround().sub(p.pos);f.y=0;if(f.lengthSq()<1e-4)f=inF.clone();p.face=inF.clone().lerp(f.normalize(),.55).normalize();return p;}
+  B.place(moveClip(0,0,sBack,fin),.8);
+  B.add(Clip(B.t,1e9,{body:fin,hands:function(){return {};},look:function(){return cam.position.clone();}}));
+  var rollOn=[tRoller0-1.0*.65,tSwap[0]+1.3*.45],knOn=[tSwap[0]+1.3*.6,kLast.t1+.6*.7];
+  return {SLy:SLy,SN:SN,clips:B.clips,steps:B.marks,events:B.events,tTab:[tTab0,tTab1+.7],
+    reset:function(){SLy.reset();SN.reset();},
+    pre:function(tt){SC.set(SC.at(tt));var off=tt>=tBall[0],mk=off?meshAt(clamp01((tt-tBall[0]-.375)/(1.125))):null;
+      var flat=tt>=tLaid-.3?0:1;
+      [sc.mesh,sc.dmg].forEach(function(m,i){if(!off){m.position.set(0,0,0);m.scale.set(1,1,flat);m.visible=i?sc.old===true:true;return;}
+        m.visible=tt<tBall[1]&&(i?sc.old===true:true);m.position.copy(mk.p);m.scale.set(mk.s,mk.s,0);});
+      var tb=tools.table;tb.position.copy(tw(0,0,0));tb.position.y=groundY(tb.position.x,tb.position.z);tb.rotation.y=w.ang;tb.visible=true;
+      var rg=tools.roll,z=tt<tRoll[0]?z0r:rollZ(tt);rg.position.copy(tw(0,.76+.04,z));rg.rotation.set(0,w.ang,0);rg.children[0].rotation.set(-(z-z0r)/.04,0,Math.PI/2);rg.visible=true;
+      if(tt>=tBall[1]-.02){tools.wad.position.copy(wadAt(tt));tools.wad.visible=true;}},
+    props:function(tt){
+      /* the old spline, from his hand back to where it's still in the channel */
+      if(tt>=tPull[0]&&tt<tPull[1]){tools.cord.visible=true;setBone(tools.cord,rigHand(side),loopPt(smooth((tt-tPull[0])/(tPull[1]-tPull[0]))));tools.cord.scale.x=tools.cord.scale.z=.0035;}
+      if(!(tt>=rollOn[0]&&tt<rollOn[1])){var pr=pockets.roller();placeTool(TOOLS.roller.g,pr.P.clone().addScaledVector(pr.H,TOOLS.roller.reach),pr.H.clone().negate(),pr.b);}
+      if(!(tt>=knOn[0]&&tt<knOn[1])){var pk=pockets.knife();placeTool(TOOLS.knife.g,pk.P.clone().addScaledVector(pk.H,TOOLS.knife.reach),pk.H.clone().negate(),pk.b);}}};}
+function scrJob(){var w=scrWin,sc=screens.filter(function(s){return s.w===w;})[0]||screens[0];if(!SCP||SCP.sc!==sc){SCP=scrPlan(w,sc);SCP.sc=sc;SCP.w=w;}return SCP;}
+/* the hand's world position, for anything that hangs from it */
+function rigHand(side){var r=worker.userData.rig;return r?rigArm(side).H.getWorldPosition(new T.Vector3()):worker.localToWorld(V(side==="L"?-.3:.3,.85,.1));}
+function scrRestore(){var p=SCP;if(!p)return;var sc=p.sc;[sc.mesh,sc.dmg].forEach(function(m,i){m.position.set(0,0,0);m.scale.set(1,1,1);m.visible=i?sc.old===true:true;});p.SLy.m.visible=false;p.SN.m.visible=false;}
 function screensDemo(){
-  var t=tl,w=scrWin,n=V(Math.sin(w.ang),0,Math.cos(w.ang)),side=V(Math.cos(w.ang),0,-Math.sin(w.ang)),wc=toWorld(w.g,0,0,0);
-  var sc=screens.filter(function(s){return s.w===w;})[0]||screens[0],others=screens.filter(function(s){return s!==sc;}).slice(0,Math.max(0,st.screens-1));
+  var pl=scrJob(),sc=pl.sc,w=pl.w,M4=pl.steps,others=screens.filter(function(s){return s!==sc;}).slice(0,Math.max(0,st.screens-1)),done=tl>=M4[3];
   screens.forEach(function(s){s.g.visible=false;});
-  /* the tech stands just past the window's edge, so the glass stays in view the whole time */
-  var wx=w.gw/2+.35;
-  worker.visible=true;placeWorker(V(wc.x,0,wc.z).addScaledVector(n,.5).addScaledVector(side,wx),n.clone().negate());
-  var swapped=t>=3.6;
-  others.forEach(function(s){s.g.visible=true;screenLook(s,!swapped);s.g.position.set(s.x0,0,.14);s.g.rotation.set(0,0,0);});
-  sc.g.visible=true;
-  /* old screen comes out toward the window's edge in front of him, turned to face you; the new one goes back the same way */
-  var out=smooth((t-1.0)/1.1),inn=smooth((t-2.5)/1.1),k=t<2.3?out:1-inn,dx=w.gw/2-sc.x0;
-  screenLook(sc,t<2.3);sc.g.position.set(sc.x0+dx*k,-.2*k,.14+.3*k);sc.g.rotation.set(0,-.35*k,0);
-  if(t>=.9&&t<3.8){reach("L",toWorld(sc.g,-sc.gw/2+.28,-.12,.02));reach("R",toWorld(sc.g,sc.gw/2-.04,.08,.02));}else{rest("L");rest("R");}
+  others.forEach(function(s){s.g.visible=true;screenLook(s,!done);s.g.position.set(s.x0,0,.14);s.g.rotation.set(0,0,0);});
+  screenLook(sc,true);pl.SLy.m.visible=true;pl.SN.m.visible=true;runPlan(pl,tl);
   var fact=ES?(st.pet?"<b>Todo clima, $64.99.</b> Poliéster recubierto de vinil, 5 veces más fuerte y mucho más resistente al sol. Aguanta sol, viento y mascotas.":"<b>Fibra de vidrio gris, $53.99.</b> La vista más clara y buen paso de aire. Bien para ventanas con sombra."):(st.pet?"<b>All weather, $64.99.</b> Heavy vinyl coated polyester, 5x stronger and far more UV stable. Takes sun, wind and pets.":"<b>Charcoal fiberglass, $53.99.</b> Clearest view and good airflow. Fine for shaded windows.");
   if(st.frames)fact+=L(" New frames and clips on all "+st.screens+", $10 more a screen."," Marcos y clips nuevos en los "+st.screens+", $10 más por mosquitero.");
-  say(msgAt(ES?[[0,"<b>Malla vieja del constructor</b> después de unos veranos del High Desert: decolorada, quebradiza, rota."],[1,"<b>La quito y pongo malla nueva ahí mismo.</b> Unos 15 a 20 minutos por mosquitero, en la misma visita, nada se va al taller."],[3.6,fact]]:[[0,"<b>Old builder mesh</b> after a few High Desert summers: faded, brittle, torn."],[1,"<b>I strip it and re-mesh it right here.</b> About 15 to 20 minutes a screen, same visit, nothing goes to a shop."],[3.6,fact]]),t>=3.6?"ok":"");
+  say(msgAt(ES?[[0,"<b>Malla vieja del constructor</b> después de unos veranos del High Desert: decolorada, quebradiza, rota."],[M4[1],"<b>La quito y pongo malla nueva ahí mismo.</b> Fuera el cordón y la malla vieja, malla nueva extendida sobre el marco."],[M4[2],"<b>Cordón nuevo metido en el canal</b> y la malla que sobra recortada. Unos 15 a 20 minutos por mosquitero, en la misma visita, nada se va al taller."],[M4[3],fact]]
+    :[[0,"<b>Old builder mesh</b> after a few High Desert summers: faded, brittle, torn."],[M4[1],"<b>I strip it and re-mesh it right here.</b> Old spline and mesh out, new mesh rolled out over the frame."],[M4[2],"<b>New spline rolled into the channel</b>, then the extra mesh trimmed off. About 15 to 20 minutes a screen, same visit, nothing goes to a shop."],[M4[3],fact]]),done?"ok":"");
 }
 function pigAuto(){
   if(h3.focus){focusShot=pigShot(h3.focus);say(FOCUS_T[h3.focus],"ok");return;}
@@ -1522,9 +2190,10 @@ function buildCom(force){
     for(var t2=0;t2<6;t2++)tree(g,-Wb/2-4+t2*(Wb+8)/5,Db/2+5.2,1.1);
     c.W=Wb;c.H=Hb;c.D=Db;c.cy=Math.min(Hb*.45,8);c.name="building";
   }
-  /* grime on the glass, one overlay per pane, fades when you tap Fix it */
-  var gm=M.grime.clone();gm.userData.own=true;c.grime=gm;if(editing)gm.visible=false;
-  panes.forEach(function(p){var o=new T.Mesh(G.plane,gm);o.scale.set(p.w,p.h,1);o.renderOrder=2;if(p.g){o.position.set(0,0,.055);p.g.add(o);}else{o.position.set(p.x,p.y,p.door?Db/2+.08:Db/2+.06);g.add(o);}});
+  /* grime on the glass, one overlay per pane, squeegeed off top to bottom a pane at a time when you tap Fix it */
+  c.grime=[];panes.forEach(function(p){var mt=M.grime.clone();mt.userData.own=true;mt.clippingPlanes=[new T.Plane()];var o=new T.Mesh(G.plane,mt);o.scale.set(p.w,p.h,1);o.renderOrder=2;o.visible=!editing;
+    if(p.g){o.position.set(0,0,.055);p.g.add(o);}else{o.position.set(p.x,p.y,p.door?Db/2+.08:Db/2+.06);g.add(o);}c.grime.push(o);});
+  g.updateMatrixWorld(true);c.grime.sort(function(a,b){return a.getWorldPosition(new T.Vector3()).x-b.getWorldPosition(new T.Vector3()).x;});
   batch({g:comG});
   com=c;
   comShadow();
@@ -1533,12 +2202,17 @@ function comShadow(){if(!com)return;var sc=sun.shadow.camera,S2=Math.max(com.W,c
 function comStops(){var s=[{k:"cover"},{k:"cglass",ph:0},{k:"cglass",ph:1}];if(st.ctype===0&&st.cstk)s.push({k:"cstk",ph:0},{k:"cstk",ph:1});s.push({k:"cend"});return s;}
 function comFixed(k){if(!overlay||mode!=="com")return true;var S=comStops(),i=Math.min(stepAt(steps()),S.length-1);for(var j=0;j<S.length;j++)if(S[j].k===k&&S[j].ph===1)return i>=j;return true;}
 var comK={g:1,s:1};
-function comFrame(dt){if(!com)return;var fg=comFixed("cglass")?1:0,fs=comFixed("cstk")?1:0,a=dt===0?1:Math.min(1,dt*2.2);
-  comK.g+=(fg-comK.g)*a;comK.s+=(fs-comK.s)*a;com.grime.opacity=1-comK.g;com.grime.visible=comK.g<.99;
-  com.stickers.forEach(function(s){s.m.rotation.z=s.rz*(1-comK.s);s.m.material.opacity=.55+.45*comK.s;s.m.material.color.setScalar(.8+.2*comK.s);});
+/* the storefront's fixes play out like the work: the glass squeegeed pane by pane, each old sticker peeled off and its new one laid on straight */
+function comFrame(dt){if(!com)return;var fg=comFixed("cglass")?1:0,fs=comFixed("cstk")?1:0;
+  function step(v,t){return dt===0?t:t>v?Math.min(t,v+dt/2.6):Math.max(t,v-dt/1.3);}
+  comK.g=step(comK.g,fg);comK.s=step(comK.s,fs);var nG=com.grime.length,nS=com.stickers.length;
+  com.grime.forEach(function(o,i){var q=stag(comK.g,i,nG);o.visible=q<.999;if(o.visible)clipLine(o,V(0,.5,0),V(0,-.5,0),q,false);});
+  com.stickers.forEach(function(s,i){var q=stag(comK.s,i,nS,1.4),m=s.m,y0=m.userData.y0===undefined?(m.userData.y0=m.position.y):m.userData.y0,f=q<.5?1-2*q:2*q-1,old=q<.5;
+    /* peeled from the top down, then the new one smoothed on from the top */
+    m.scale.y=.46*Math.max(.001,f);m.position.y=y0+.23*(1-f);m.rotation.z=old?s.rz:0;m.material.opacity=old?.55:1;m.material.color.setScalar(old?.8:1);m.visible=f>.002;});
   if(overlay&&mode==="com")comSay();}
 function comShot(k){var c=com,W=c.W,H=c.H,front=st.ctype===0?0:c.D/2;
-  if(k==="cstk"&&com.stickers[0]){var p=com.stickers[0].m.position;return {tx:p.x,ty:1.6,tz:front,yaw:.25,tilt:.08,dist:fitWH(2.6,1.7)};}
+  if(k==="cstk"&&com.stickers[0]){var p=com.stickers[0].m.getWorldPosition(new T.Vector3());return {tx:p.x,ty:1.5,tz:p.z,yaw:.25,tilt:.08,dist:fitWH(2.2,1.5)};}
   if(k==="cglass")return {tx:0,ty:st.ctype===0?1.9:3,tz:front,yaw:.3,tilt:.08,dist:fitWH(Math.min(W*.4,7),2.6)};
   return {tx:0,ty:c.cy,tz:front-(st.ctype===0?2:c.D*.2),yaw:.42,tilt:st.ctype===0?.2:.28,dist:fitWH(W*.62+3,H*.8+1)};}
 function comSay(){if(edNote&&performance.now()-edNote.t<4500){say(edNote.txt,"ok");return;}var S=comStops(),i=Math.min(stepAt(steps()),S.length-1),cs=S[i],t=C.totals(),shop=st.ctype===0,gl=st.cpanes+st.cdoors,txt,cls="";
@@ -1702,12 +2376,22 @@ function preset(){
   if(mode==="pig"&&h3.stage===3&&spinners[0]){var sp=spinners[0],sc3=toWorld(sp.par,sp.x,me.TT,sp.z+me.L*.5);p={tx:sc3.x,ty:sc3.y,tz:sc3.z,yaw:sp.face>0?.35:Math.PI+.35,tilt:.7,dist:fitWH(me.L*1.25,me.L*.9)};}
   else if(mode==="pig"&&h3.stage===4)p={tx:0,ty:cy,tz:-2,yaw:.45,tilt:.52,dist:fitWH(rad*2.6+(h3.hood===2?18:0),tall*1.4)};
   else if(mode==="pig")p={tx:0,ty:cy,tz:0,yaw:.5,tilt:.44,dist:fitWH(rad*2.1,tall*1.3)};
-  else if(mode==="win"&&h3.view===1&&room)p=tl>=5.0&&tl<9.4&&!user?{tx:room.center.x+.1,ty:room.y0,tz:room.Z+.02,yaw:.25,tilt:.9,dist:fitWH(.75,.45)} /* look down into the track */
-    :{tx:room.center.x,ty:room.center.y-.1,tz:room.center.z,yaw:.42,tilt:.1,dist:fitWH(1.25,.95)};
-  else if(mode==="win"){var ph1=phoneUI(),c=toWorld(demoWin.g,ph1?.12:.08,0,0);p={tx:c.x,ty:c.y-.35,tz:c.z,yaw:demoWin.ang+(ph1?.72:.62),tilt:ph1?.16:.12,dist:fitWH(ph1?1.7:1.75,ph1?1.45:1.3)};}
-  else if(mode==="scr"){var ph2=phoneUI(),c2=toWorld(scrWin.g,.1,0,0);p={tx:c2.x,ty:c2.y-.35,tz:c2.z,yaw:scrWin.ang-(ph2?.7:.6),tilt:ph2?.16:.1,dist:fitWH(ph2?1.7:1.7,ph2?1.45:1.3)};}
-  else if(mode==="sol"){var ph3=phoneUI(),gp=me.groups.filter(function(g){return g.face>0;})[0]||me.groups[0],c3=toWorld(me.F,gp.center[0],me.TT,gp.center[1]+.9);
-    p={tx:c3.x,ty:c3.y,tz:c3.z,yaw:.3,tilt:ph3?.86:.74,dist:fitWH(gp.cols*PW/2+1.6,gp.rows*PD/2+2.3)};}
+  else if(mode==="win"&&h3.view===1&&room){var RJ=roomJob(),rs=RJ.steps,trk=(tl>=rs[2]&&tl<rs[3])||tl>=RJ.tDone+.8,wk=tl>=rs[3]&&tl<RJ.tDone+.8;
+    /* down into the track while it's the subject, a step back while he works it, the whole window otherwise */
+    p=trk?{tx:room.center.x+.1,ty:room.y0,tz:room.Z+.02,yaw:.25,tilt:.9,dist:fitWH(.75,.45)}:wk?{tx:room.center.x+.1,ty:room.y0+.2,tz:room.Z+.15,yaw:.55,tilt:.3,dist:fitWH(1.05,.7)}
+      :{tx:room.center.x,ty:room.center.y-.1,tz:room.center.z,yaw:.42,tilt:.1,dist:fitWH(1.25,.95)};}
+  else if(mode==="win"){var ph1=phoneUI(),c=toWorld(demoWin.g,ph1?.12:.08,0,0);p={tx:c.x,ty:c.y-.35,tz:c.z,yaw:demoWin.ang+(ph1?.72:.62),tilt:ph1?.16:.12,dist:fitWH(ph1?1.7:1.75,ph1?1.45:1.3)};
+    /* while the screen comes out and goes back, the shot widens to take in the wall where it leans */
+    var WT=winJob().steps;if(tl<WT[1]||(tl>=WT[4]&&tl<WT[5])){var sw0=screens[0]?screens[0].gw:.7,hu0=demoWin.gw/2,far=-(hu0+sw0+.28),c2=toWorld(demoWin.g,(far+hu0)/2,0,0);
+      p={tx:c2.x,ty:c2.y-.4,tz:c2.z,yaw:demoWin.ang+(ph1?.5:.45),tilt:ph1?.14:.1,dist:fitWH((hu0-far)/2+.5,ph1?1.5:1.35)};}}
+  else if(mode==="scr"){var ph2=phoneUI(),SJ=scrJob();
+    /* at the table while the screen's on it, at the window otherwise */
+    if(tl>=SJ.tTab[0]&&tl<SJ.tTab[1]){var c4=toWorld(scrWin.g,SJ.sc.x0+.1,-scrWin.v+1.0,1.7);p={tx:c4.x,ty:c4.y,tz:c4.z,yaw:scrWin.ang-(ph2?.6:.55),tilt:ph2?.5:.42,dist:fitWH(ph2?1.35:1.45,ph2?1.35:1.2)};}
+    else{var c2=toWorld(scrWin.g,.1,0,0);p={tx:c2.x,ty:c2.y-.35,tz:c2.z,yaw:scrWin.ang-(ph2?.7:.6),tilt:ph2?.16:.1,dist:fitWH(ph2?1.7:1.7,ph2?1.45:1.3)};}}
+  else if(mode==="sol"){var ph3=phoneUI(),gp=me.groups.filter(function(g){return g.face>0;})[0]||me.groups[0];
+    /* the camera stays on the array he's working, the back one from behind the house */
+    if(me.panels.length&&SPL&&SPL.me===me)gp=SPL.qAt(tl).g;var c3=toWorld(gp.face>0?me.F:me.B,gp.center[0],me.TT,gp.center[1]+.9);
+    p={tx:c3.x,ty:c3.y,tz:c3.z,yaw:(gp.face>0?0:Math.PI)+.3,tilt:ph3?.86:.74,dist:fitWH(gp.cols*PW/2+1.6,gp.rows*PD/2+2.3)};}
   else p={tx:0,ty:cy*.8,tz:me.D*.08,yaw:.55,tilt:.32,dist:fitWH(rad*1.16,tall*1.1)*(mode==="show"?1.03:1)};
   return p;
 }
@@ -1850,7 +2534,7 @@ function pigShot(k){var c;if(k==="spin"&&spinners[0]){var sp=spinners[0];c=toWor
 function tryAct(k){
   if(mode==="pig"){h3.focus=h3.focus===k?null:k;auto=false;user=false;askSel=null;if(h3.focus){h3.stage=k==="spin"?2:1;tl=k==="mesh"?2.3:k==="clips"?4.4:5.7;birdTargets(false);}else{focusShot=null;}syncControls();track("pigeon_focus",{what:k});return;}
   if(k==="inside"){st.inside=!st.inside;if(st.inside)st.win=true;var goIn=st.inside&&h3.view!==1;
-    if(goIn){h3.view=1;if(!room)buildRoom();fade(function(){tl=0;user=false;resetHaze();if(room)resetRoom();goal=preset();cur=null;});}
+    if(goIn){h3.view=1;if(!room)buildRoom();fade(function(){tl=0;user=false;resetHaze();goal=preset();cur=null;});}
     C.render();track("try_inside",{on:st.inside});return;}
   /* look at a related job: same home, the camera glides over */
   if(k.indexOf("see:")===0){var to=k.slice(4);track("try_see",{from:mode,to:to});setMode(to,false,true);return;}
@@ -2029,7 +2713,7 @@ function loop(now){
   raf=requestAnimationFrame(loop);
   if(!overlay){acc+=dt;if(acc<1/30)return;dt=acc;acc=0;}
   size();watchPerf(now);advance(dt);stepNav();
-  frame(dt);camStep(dt,now/1000);liftView(dt);R.render(scene,cam);edButton();tryChips();askRender();callouts(dt,host);secLabels();
+  FR++;frameDt=dt;frame(dt);camStep(dt,now/1000);liftView(dt);R.render(scene,cam);edButton();tryChips();askRender();callouts(dt,host);secLabels();
   if(first&&!overlay){first=false;heroLay.classList.add("live");}
 }
 function start(){if(!raf){last=performance.now();raf=requestAnimationFrame(loop);}}
@@ -2063,7 +2747,7 @@ ov.addEventListener("click",function(e){
   var hb=t.closest("[data-hseg] button[data-v]");
   if(hb){var k=hb.parentNode.getAttribute("data-hseg"),v=+hb.getAttribute("data-v");
     if(k==="stage"){tl=[0,2.2,5.6,9,12.4][v];auto=true;user=false;focusShot=null;h3.focus=null;askSel=null;h3.stage=v;birdTargets(false);track("pigeon_stage",{stage:v});}
-    else if(k==="view"){if(h3.view!==v){h3.view=v;if(v===1&&!room)buildRoom();fade(function(){tl=0;user=false;resetHaze();if(room)resetRoom();goal=preset();cur=null;});track("window_view",{inside:v});}}
+    else if(k==="view"){if(h3.view!==v){h3.view=v;if(v===1&&!room)buildRoom();fade(function(){tl=0;user=false;resetHaze();goal=preset();cur=null;});track("window_view",{inside:v});}}
     else if(k==="style"){h3.style=v;if(v===3){if(st.stories!==2)st.stories=2;if(!st.large){st.large=true;h3.estateLarge=true;}}else{if(h3.estateLarge){st.large=false;h3.estateLarge=false;}if(v===1&&st.stories!==1)st.stories=1;h3.grids=v===2?true:h3.grids;}
       track("home_style",{style:STY[v].id});C.render();return;}
     else{h3[k]=v;C.render();return;}
@@ -2127,8 +2811,11 @@ return {
   /* for tests: where the tech stands, and a camera shot to look at him */
   tuneHead:function(o){var r=worker&&worker.userData.rig;if(!r)return false;for(var k in o)HW[k]=o[k];for(var bk in r.B)r.B[bk].quaternion.copy(r.bind[bk]);r.holder.position.set(0,0,0);worker.updateMatrixWorld(true);headwear(r,HW);return true;},
   techAt:function(){return worker?worker.getWorldPosition(new T.Vector3()).toArray():null;},
+  tuneGrip:function(o){for(var k in o)GRIP[k]=o[k];return JSON.parse(JSON.stringify(GRIP));},
+  /* for tests: how much dirt the current job has left, and the farthest any held tool got from the hand holding it */
+  work:function(){var o={miss:WSTAT.miss,info:WSTAT.info};WSTAT.info=null;if(mode==="win"&&h3.view===0&&WP){o.glass=WP.left();o.screen=lyLeft(WP.Ls);}if(mode==="win"&&h3.view===1&&RP){o.glass=RP.left();o.track=lyLeft(RP.Lt);}if(mode==="sol"&&SPL){o.dust=SPL.left();}if(mode==="scr"&&SCP){o.spline=lyLeft(SCP.SLy);o.mesh=lyLeft(SCP.SN);}WSTAT.miss=0;return o;},
   peek:function(o){focusShot=o;user=false;flight=null;cur=null;goal=o;},
-  state:function(){return {rig:!!(worker&&worker.userData.rig),styleName:STYLE_N[h3.style],mode:mode,tl:tl,h3:JSON.parse(JSON.stringify(h3)),spinners:spinners.length,birds:birds.length,nbs:nbs.length,W:me&&me.W,style:me&&me.S.id};}
+  state:function(){var S=overlay&&worker&&steps();return {steps:S||null,rig:!!(worker&&worker.userData.rig),styleName:STYLE_N[h3.style],mode:mode,tl:tl,h3:JSON.parse(JSON.stringify(h3)),spinners:spinners.length,birds:birds.length,nbs:nbs.length,W:me&&me.W,style:me&&me.S.id};}
 };
 };
 })();
