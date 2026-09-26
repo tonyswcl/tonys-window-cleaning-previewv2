@@ -19,14 +19,14 @@ Everything below is from this account's actual spend and results. Use it instead
 | Pigeon landing page | twindowclean.com/pigeon-proofing.html |
 | Privacy policy (required for lead forms) | twindowclean.com/privacy.html |
 | Google rating | 5.0, 23 reviews (rising — verify current count before writing copy) |
-| Meta Pixel | **None exists.** Verified via API — zero datasets on the account. Must be created in Events Manager before any pixel/retargeting work. |
+| Meta Pixel | `1424363186269397` (named "Tonys Pigeon Proofing - Inland Empire" in Events Manager, but it is the site pixel on every page). Browser events only. The site sends PageView, ViewContent, CustomizeSimulator, QuoteReady, QuoteSubmitted, Lead and Contact, nothing else (`META_MAP` in `_quote/src/quote.js`, tested by `tools/tests/meta.js`). |
 
 ## Services and real pricing
 
 - **Pigeon proofing — from $450.** 2-year pigeon-free warranty. Rust-resistant mesh secured with **clips, not bolts** (bolts void panel warranties and fail in High Desert wind — this is the #1 differentiator and it converts). Includes nest/dropping removal, hauling, sanitizing, perimeter seal. **2 to 3 reflective spinners installed free on every job** (depending on home size; extras $50 each). Use this as added value in pigeon ad copy.
 - **Solar panel cleaning — from $7/panel.** Real invoices run $8/panel. Market rate is $10–12. Never publish a flat minimum that contradicts the per-panel price.
 - **Window cleaning — from $149** single story, **$249** two-story. Screens, tracks, sills included.
-- **Screen re-mesh — $33.99/screen**, pet-proof $46.99, $149 job minimum.
+- **Screen re-mesh — $53.99/screen** charcoal fiberglass, $64.99 all weather, new frames +$10, $149 minimum when screens are the only service. Check `P` in `_quote/src/quote.js` before writing any price.
 - **Proven bundle offer:** pigeon proofing + **FREE solar panel wash + roof wash**. Competitors (SLIK, SunsUp) run this exact hook, so it's market-validated. The wash cost is absorbed into pigeon labor; the customer then converts to $7/panel maintenance washes later.
 
 ## What has actually worked and failed — do not relearn this
@@ -49,6 +49,9 @@ Everything below is from this account's actual spend and results. Use it instead
 3. **Broad Inland Empire targeting fails.** The one campaign that used it produced zero calls at the worst CTR in the account. IE must be targeted by specific ZIP, never by region.
 
 ## Campaign structure that works
+
+The website campaign ("HD Website Explore", planned September 26, launches after "move to main") sends traffic to the site instead of an instant form and optimizes for the custom conversion "Quote sent" (QuoteSubmitted). Its ads, copy and settings are in `tools/ads/ads.json` and the package artifact https://claude.ai/artifact/Qt1117yJHNApzU7gi7dkEL; images in `assets/ads/meta/`. The instant form setup below is the fallback it is judged against (HD Glass: $23.97 a form lead in September).
+
 
 **Objective:** Leads (`OUTCOME_LEADS`)
 **Conversion location:** Instant forms — keeps the lead in-app, no website funnel

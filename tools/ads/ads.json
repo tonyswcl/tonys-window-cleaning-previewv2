@@ -1,0 +1,256 @@
+{
+ "ads": [
+  {
+   "id": "win-a",
+   "set": "test",
+   "photo": "hesperia-tony-window-02",
+   "pos": "center 35%",
+   "kick": "Hesperia \u00b7 Tony on the job",
+   "head": "Screens, tracks and sills come with every window cleaning.",
+   "sub": "Single story $149 \u00b7 Two story $249 \u00b7 Inside +$49",
+   "formats": [
+    {
+     "size": [
+      1080,
+      1350
+     ],
+     "ph": 960,
+     "hs": "58px"
+    },
+    {
+     "size": [
+      1080,
+      1920
+     ],
+     "ph": 1270,
+     "hs": "62px",
+     "padb": 300
+    }
+   ]
+  },
+  {
+   "id": "sol-a",
+   "set": "test",
+   "photo": "hesperia-solar-02",
+   "pos": "center 60%",
+   "kick": "Hesperia \u00b7 halfway through a wash",
+   "head": "Front row washed. Back row still has the dust.",
+   "sub": "Solar panel cleaning $7 a panel \u00b7 purified water",
+   "formats": [
+    {
+     "size": [
+      1080,
+      1350
+     ],
+     "ph": 960,
+     "hs": "58px"
+    },
+    {
+     "size": [
+      1080,
+      1920
+     ],
+     "ph": 1270,
+     "hs": "62px",
+     "padb": 300
+    }
+   ]
+  },
+  {
+   "id": "pig-a",
+   "set": "test",
+   "photo": "oak-hills-pigeon-04",
+   "pos": "center 45%",
+   "kick": "Oak Hills \u00b7 mesh clipped to the frame",
+   "head": "Birds under your panels? This is what the fix looks like.",
+   "sub": "Pigeon proofing $450 up to 12 panels \u00b7 solar wash included",
+   "formats": [
+    {
+     "size": [
+      1080,
+      1350
+     ],
+     "ph": 960,
+     "hs": "58px"
+    },
+    {
+     "size": [
+      1080,
+      1920
+     ],
+     "ph": 1270,
+     "hs": "62px",
+     "padb": 300
+    }
+   ]
+  },
+  {
+   "id": "exp-a",
+   "set": "test",
+   "kind": "phone",
+   "shot": "SHOT",
+   "kick": "Try it on your phone",
+   "head": "Build a home like yours. Watch the job get done. See your price.",
+   "sub": "Windows \u00b7 solar \u00b7 pigeon proofing \u00b7 screens",
+   "formats": [
+    {
+     "size": [
+      1080,
+      1350
+     ],
+     "ph": 0,
+     "hs": "62px",
+     "top": 0,
+     "col": 560,
+     "pw": 470,
+     "px": 566,
+     "py": 70,
+     "padb": 120
+    },
+    {
+     "size": [
+      1080,
+      1920
+     ],
+     "ph": 0,
+     "hs": "60px",
+     "top": 1200,
+     "pw": 500,
+     "px": 290,
+     "py": 70,
+     "padb": 330,
+     "ftb": 250
+    }
+   ]
+  },
+  {
+   "id": "sol-b",
+   "set": "library",
+   "pair": [
+    {
+     "f": "hub-solar-01",
+     "tag": "Before"
+    },
+    {
+     "f": "hub-solar-02",
+     "tag": "After \u00b7 same visit"
+    }
+   ],
+   "kick": "Same array, same visit",
+   "head": "One wash with purified water. It dries without spots.",
+   "sub": "$7 a panel \u00b7 nobody walks on your panels",
+   "formats": [
+    {
+     "size": [
+      1080,
+      1350
+     ],
+     "ph": 960,
+     "hs": "58px"
+    }
+   ]
+  },
+  {
+   "id": "pig-b",
+   "set": "library",
+   "photo": "phelan-pigeon-01",
+   "pos": "center 70%",
+   "kick": "Phelan \u00b7 before the cleanout",
+   "head": "Droppings on the panels usually mean nests underneath.",
+   "sub": "Cleanout, mesh and a solar wash \u00b7 $450 up to 12 panels",
+   "formats": [
+    {
+     "size": [
+      1080,
+      1350
+     ],
+     "ph": 960,
+     "hs": "58px"
+    }
+   ]
+  },
+  {
+   "id": "win-b",
+   "set": "library",
+   "photo": "apple-valley-window-02",
+   "pos": "center 40%",
+   "kick": "Apple Valley \u00b7 corner picture window",
+   "head": "Big glass, the screens, the tracks and the sills. One price.",
+   "sub": "Single story $149 \u00b7 Two story $249",
+   "formats": [
+    {
+     "size": [
+      1080,
+      1350
+     ],
+     "ph": 960,
+     "hs": "58px"
+    }
+   ]
+  },
+  {
+   "id": "loc-1",
+   "set": "carousel",
+   "photo": "victorville-solar-01",
+   "tag": "Victorville \u00b7 full array, washed",
+   "band": false,
+   "formats": [
+    {
+     "size": [
+      1080,
+      1080
+     ],
+     "ph": 1080
+    }
+   ]
+  },
+  {
+   "id": "loc-2",
+   "set": "carousel",
+   "photo": "victorville-pigeon-01",
+   "tag": "Victorville \u00b7 mesh around the array",
+   "band": false,
+   "formats": [
+    {
+     "size": [
+      1080,
+      1080
+     ],
+     "ph": 1080
+    }
+   ]
+  },
+  {
+   "id": "loc-3",
+   "set": "carousel",
+   "photo": "victorville-window-02",
+   "tag": "Victorville \u00b7 two story windows",
+   "band": false,
+   "formats": [
+    {
+     "size": [
+      1080,
+      1080
+     ],
+     "ph": 1080
+    }
+   ]
+  },
+  {
+   "id": "loc-4",
+   "set": "carousel",
+   "photo": "hesperia-window-04",
+   "tag": "Hesperia \u00b7 octagon window",
+   "band": false,
+   "formats": [
+    {
+     "size": [
+      1080,
+      1080
+     ],
+     "ph": 1080
+    }
+   ]
+  }
+ ]
+}

@@ -1097,8 +1097,14 @@ function buildRig(g){
   root.traverse(function(n){if(n.isBone){var k=n.name.replace(/^mixamorig\d*:?/,"");if(want.indexOf(k)>=0&&!B[k])B[k]=n;}
     if(n.isMesh){n.castShadow=true;n.receiveShadow=false;n.frustumCulled=false;var nm=n.name||"";
       /* Tony's work clothes, from his photos: royal blue long sleeve, dark pants, black shoes. The cloth folds stay, from the normal map. */
-      if(/Hoody/i.test(nm))n.material=new T.MeshStandardMaterial({color:new T.Color(0x1646b8).convertSRGBToLinear(),roughness:.9,metalness:0,normalMap:n.material.normalMap,normalScale:new T.Vector2(1.3,1.3),skinning:true});
+      if(/Hoody/i.test(nm))n.material=new T.MeshStandardMaterial({color:new T.Color(0x1b45a4).convertSRGBToLinear(),roughness:.9,metalness:0,normalMap:n.material.normalMap,normalScale:new T.Vector2(1.3,1.3),skinning:true});
       else if(/Pants/i.test(nm))n.material=new T.MeshStandardMaterial({color:new T.Color(0x1b1c20).convertSRGBToLinear(),roughness:.9,metalness:0,normalMap:n.material.normalMap,skinning:true});
+      /* the eyes are their own glossy part of the body (tools/tech/retex.mjs), so they catch a highlight and don't look dead */
+      else if(n.material&&n.material.name==="Ch28_eye"){n.material.roughness=.2;n.material.envMapIntensity=1.3;}
+      /* skin: matte, with little sky reflection, so the nose and forehead don't turn pale and shiny from some angles */
+      else if(n.material&&n.material.name==="Ch28_body"){n.material.roughness=.9;n.material.envMapIntensity=.55;}
+      /* the lashes (the hair cards are gone: short hair is painted on the scalp) stay dark instead of catching the sky */
+      else if(n.material&&n.material.name==="Ch28_hair"){n.material.roughness=1;n.material.envMapIntensity=.1;}
       else if(n.material&&n.material.map)n.material.roughness=Math.max(.6,n.material.roughness);}});
   if(!B.LeftArm||!B.RightArm||!B.LeftUpLeg||!B.Head)return;
   root.updateMatrixWorld(true);
@@ -1129,21 +1135,23 @@ function turnBone(bone,childW,wantW){var bp=bone.getWorldPosition(new T.Vector3(
   bone.quaternion.copy(pq.multiply(q));bone.updateMatrixWorld(true);}
 /* Tony's olive cap and glasses, fitted to the head bone at the bind pose so they turn with his head.
    o: cap height and depth, glasses height and depth, as fractions of the head bone's length */
-var HW={cy:.64,cz:.08,gy:.45,gz:.68,cs:1};
+var HW={cy:.6,cz:.06,ct:.2,gy:.45,gz:.68,cs:1};
 function headwear(r,o){var B=r.B,wp=function(b){return b.getWorldPosition(new T.Vector3());};
   [r.cap,r.glasses].forEach(function(x){if(x&&x.parent)x.parent.remove(x);});
   var hp=wp(B.Head),tp=B.HeadTop_End?wp(B.HeadTop_End):hp.clone().add(V(0,.2,0)),hl=worker.worldToLocal(hp.clone()),hh=worker.worldToLocal(tp.clone()).y-hl.y,k=hh*(o.cs||1);
-  var capM=Std({color:new T.Color(0x57553f).convertSRGBToLinear(),roughness:.9}),cap=new T.Group();
-  var crown=new T.Mesh(new T.SphereGeometry(1,24,12,0,Math.PI*2,0,Math.PI*.5),capM);crown.scale.set(k*.5,k*.4,k*.55);crown.castShadow=true;cap.add(crown);
-  var brim=new T.Mesh(new T.CylinderGeometry(1,1,1,24,1,false,-Math.PI*.5,Math.PI),capM);brim.scale.set(k*.42,k*.03,k*.4);brim.rotation.x=.14;brim.position.set(0,k*.02,k*.42);brim.castShadow=true;cap.add(brim);
-  var band=new T.Mesh(new T.CylinderGeometry(1,1,1,24,1,true),capM);band.scale.set(k*.5,k*.07,k*.55);band.position.y=k*.02;cap.add(band);
-  var btn=new T.Mesh(G.ball,capM);btn.scale.setScalar(k*.045);btn.position.y=k*.4;cap.add(btn);
-  cap.position.set(hl.x,hl.y+hh*o.cy,hl.z+hh*o.cz);worker.add(cap);worker.updateMatrixWorld(true);B.Head.attach(cap);
-  var gl=new T.Group(),fr=Std({color:new T.Color(0x141518).convertSRGBToLinear(),roughness:.4,metalness:.3}),lens=Std({color:0xcfe3ee,roughness:.05,metalness:.1,transparent:true,opacity:.25});
-  [-1,1].forEach(function(sd){var rim=new T.Mesh(new T.TorusGeometry(k*.095,k*.01,6,18),fr);rim.position.x=sd*k*.135;rim.scale.y=.78;gl.add(rim);
-    var ln=new T.Mesh(new T.CircleGeometry(k*.09,18),lens);ln.position.x=sd*k*.135;ln.scale.y=.78;gl.add(ln);
-    var arm=new T.Mesh(G.box,fr);arm.scale.set(k*.016,k*.016,k*.46);arm.position.set(sd*k*.23,0,-k*.23);gl.add(arm);});
-  var br=new T.Mesh(G.box,fr);br.scale.set(k*.08,k*.015,k*.02);gl.add(br);
+  var capM=Std({color:new T.Color(0x4a4b3a).convertSRGBToLinear(),roughness:.9}),cap=new T.Group();
+  /* it sits the way a cap does: down over the back of the head, the front a little higher (ct tilts it back) */
+  var crown=new T.Mesh(new T.SphereGeometry(1,24,12,0,Math.PI*2,0,Math.PI*.5),capM);crown.scale.set(k*.52,k*.46,k*.585);crown.castShadow=true;cap.add(crown);
+  var brim=new T.Mesh(new T.CylinderGeometry(1,1,1,24,1,false,-Math.PI*.5,Math.PI),capM);brim.scale.set(k*.42,k*.03,k*.4);brim.rotation.x=.14+(o.ct||0);brim.position.set(0,k*.02,k*.44);brim.castShadow=true;cap.add(brim);
+  var band=new T.Mesh(new T.CylinderGeometry(1,1,1,24,1,true),capM);band.scale.set(k*.52,k*.07,k*.585);band.position.y=k*.02;cap.add(band);
+  var btn=new T.Mesh(G.ball,capM);btn.scale.setScalar(k*.045);btn.position.y=k*.46;cap.add(btn);
+  cap.position.set(hl.x,hl.y+hh*o.cy,hl.z+hh*o.cz);cap.rotation.x=-(o.ct||0);worker.add(cap);worker.updateMatrixWorld(true);B.Head.attach(cap);
+  var gl=new T.Group(),fr=Std({color:new T.Color(0x2b2d31).convertSRGBToLinear(),roughness:.4,metalness:.3}),lens=Std({color:0xcfe3ee,roughness:.05,metalness:.1,transparent:true,opacity:.25});
+  /* thin frames, a little wider than tall, like his */
+  [-1,1].forEach(function(sd){var rim=new T.Mesh(new T.TorusGeometry(k*.098,k*.0062,6,24),fr);rim.position.x=sd*k*.135;rim.scale.y=.72;gl.add(rim);
+    var ln=new T.Mesh(new T.CircleGeometry(k*.095,24),lens);ln.position.x=sd*k*.135;ln.scale.y=.72;gl.add(ln);
+    var arm=new T.Mesh(G.box,fr);arm.scale.set(k*.011,k*.011,k*.46);arm.position.set(sd*k*.23,0,-k*.23);gl.add(arm);});
+  var br=new T.Mesh(G.box,fr);br.scale.set(k*.075,k*.01,k*.014);gl.add(br);
   gl.position.set(hl.x,hl.y+hh*o.gy,hl.z+hh*o.gz);worker.add(gl);worker.updateMatrixWorld(true);B.Head.attach(gl);
   r.cap=cap;r.glasses=gl;}
 /* turn a bone by an angle about an axis given in world space; its children follow */
@@ -1292,7 +1300,15 @@ function pathAt(pts,cum,k){var d=clamp01(k)*cum[cum.length-1],i=1;while(i<cum.le
   return {u:lerp(a[0],b[0],f),v:lerp(a[1],b[1],f),th:lerp(a[2]||0,b[2]||0,f),du:b[0]-a[0],dv:b[1]-a[1]};}
 /* the body, averaged over a moment either side of now, so every move eases in and out without lagging the hands.
    It never looks past the step the viewer is on, so he doesn't drift while a note waits for Next */
-function bodyAt(pl,t,tmax){var acc=V(0,0,0),fa=V(0,0,0),dip=0,bd=0,n=0,KW=[0,0,.25,.5,.25,0,0];for(var i=0;i<7;i++){var tt=Math.max(0,Math.min(tmax===undefined?1e9:tmax,t+(i-3)*.07)),c=clipAt(pl,tt),b=c.body(kOf(c,tt),tt);acc.add(b.pos);fa.add(b.face);dip+=(b.dip||0)*KW[i];bd+=(b.bend||0)*KW[i];n++;}
+/* the body over a short window, sampled every 35 ms: where he stands and faces is averaged over about 0.4 s, how deep he crouches
+   over a bell shaped window and how far he bends over a narrower one. Getting down to a sill or a bucket, or stepping in instead of
+   reaching, takes the moment it takes a person, never one frame, and close sampling keeps a brief change from showing on every
+   other frame (tools/tests/motion.js). */
+var BODY_N=13,BODY_DT=.035,BODY_H=(BODY_N-1)/2,
+  BODY_KW=(function(){var w=[],s=0;for(var i=0;i<BODY_N;i++){var x=(i-BODY_H)*BODY_DT;w.push(Math.exp(-x*x/(2*.075*.075)));s+=w[i];}return w.map(function(v){return v/s;});})(),
+  /* bend follows the hands more closely (a narrower bell), so a towel on the sill or a hand on the glass doesn't lag */
+  BODY_KB=(function(){var w=[],s=0;for(var i=0;i<BODY_N;i++){var x=(i-BODY_H)*BODY_DT;w.push(Math.exp(-x*x/(2*.05*.05)));s+=w[i];}return w.map(function(v){return v/s;});})();
+function bodyAt(pl,t,tmax){var acc=V(0,0,0),fa=V(0,0,0),dip=0,bd=0,n=0;for(var i=0;i<BODY_N;i++){var tt=Math.max(0,Math.min(tmax===undefined?1e9:tmax,t+(i-BODY_H)*BODY_DT)),c=clipAt(pl,tt),b=c.body(kOf(c,tt),tt);acc.add(b.pos);fa.add(b.face);dip+=(b.dip||0)*BODY_KW[i];bd+=(b.bend||0)*BODY_KB[i];n++;}
   fa.y=0;if(fa.lengthSq()<1e-6)fa.set(0,0,1);return {pos:acc.multiplyScalar(1/n),face:fa.normalize(),dip:dip,bend:bd};}
 /* paint everything the tools passed over since the last frame, in small steps so nothing is skipped, even after Next jumps ahead.
    Going back replays the plan from a fresh surface. */
@@ -1377,7 +1393,7 @@ function handDo(sd,h){if(!h||h.rest){rest(sd);if(h&&h.towel){var rp=restPt(sd);p
 /* one frame of a plan: props, body, lean, hands, eyes, then the dirt */
 function runPlan(pl,t){var c=clipAt(pl,t),k=kOf(c,t);if(pl.pre)pl.pre(t);if(c.obj)c.obj(k);
   var S=overlay&&steps(),hold;if(S){var i=stepAt(S);hold=i+1<S.length?S[i+1]-.002:undefined;}
-  var b=bodyAt(pl,t,hold);worker.visible=true;placeWorker(b.pos,b.face);if(b.dip>.005||b.bend>.005)crouch(b.dip,b.bend);
+  var b=bodyAt(pl,t,hold);LASTB=b;LASTPL=pl;worker.visible=true;placeWorker(b.pos,b.face);if(b.dip>.005||b.bend>.005)crouch(b.dip,b.bend);
   var lk=c.look?c.look(k,t):null;leanTo(lk);
   var hs=c.hands?c.hands(k,t):{};handDo("L",hs.L);handDo("R",typeof hs.R==="function"?hs.R():hs.R);
   if(pl.props)pl.props(t);if(lk)lookAtW(lk);planPaint(pl,t);}
@@ -1671,7 +1687,7 @@ function steps(){
   return null;
 }
 function stepAt(S){var i=0;for(var k=0;k<S.length;k++)if(tl>=S[k]-1e-4)i=k;return i;}
-function advance(dt){var S=overlay&&steps();if(!S){tl+=dt;return;}var i=stepAt(S),hold=i+1<S.length?S[i+1]-.001:Infinity;if(tl<hold)tl=Math.min(hold,tl+dt);}
+function advance(dt){var S=overlay&&steps();if(!S||window.__tqNoHold){tl+=dt;return;} /* tests can let a demo play through its steps */var i=stepAt(S),hold=i+1<S.length?S[i+1]-.001:Infinity;if(tl<hold)tl=Math.min(hold,tl+dt);}
 function rewind(t){tl=t;resetHaze();if(mode==="pig")auto=true;}
 function stepNav(){var nav=$("ovNav");if(!nav)return;var S=overlay&&steps();nav.hidden=!S;if(!S)return;var i=stepAt(S),last=i===S.length-1,holding=!last&&tl>=S[i+1]-.0015;
   var c=(i+1)+L(" of "," de ")+S.length;if($("ovStep").textContent!==c)$("ovStep").textContent=c;
@@ -2762,7 +2778,8 @@ obd.addEventListener("click",function(e){var t=e.target;if(!t.closest)return;
     obdDone=true;obdShow(false);tl=0;user=false;focusShot=null;C.render();}});
 
 /* ---------- render loop ---------- */
-var raf=0,last=0,acc=0,host=heroHost,first=true,lost=false;
+var raf=0,last=0,acc=0,host=heroHost,first=true,lost=false,TRC=null,LASTB=null,LASTPL=null;
+function traceOne(){var r=worker&&worker.userData.rig;if(!r)return;var row=[tl];["Head","LeftHand","RightHand","LeftFoot","RightFoot","Hips"].forEach(function(k){var v=r.B[k].getWorldPosition(new T.Vector3());row.push(+v.x.toFixed(4),+v.y.toFixed(4),+v.z.toFixed(4));});if(LASTB)row.push(+(LASTB.dip||0).toFixed(4),+(LASTB.bend||0).toFixed(4));TRC.push(row);}
 /* if a phone struggles, step the detail down so it stays smooth: sharpness first, then the far streets and soft shadows */
 var quality=3,perf={n:0,t0:0,hold:0};
 function setQuality(q){quality=q;var pr=q>=3?PR0:q===2?Math.max(1,PR0-.5):1;if(Math.abs(R.getPixelRatio()-pr)>.01){R.setPixelRatio(pr);size();}
@@ -2773,12 +2790,14 @@ function watchPerf(now){if(window.__tqFixedQ)return;if(now<perf.hold){perf.t0=no
   if(el>=2000){var fps=perf.n*1000/el;perf.t0=now;perf.n=0;if(fps<24&&quality>0){setQuality(quality-1);perf.hold=now+1200;}}}
 function size(){var w=host.clientWidth,h=host.clientHeight;if(!w||!h)return;var c=R.domElement;if(c.width!==Math.round(w*R.getPixelRatio())||c.height!==Math.round(h*R.getPixelRatio()))R.setSize(w,h,false);if(Math.abs(cam.aspect-w/h)>.001){cam.aspect=w/h;cam.updateProjectionMatrix();goal=preset();limits&&goal&&limits();}}
 function loop(now){
-  raf=0;var dt=Math.min(.05,(now-last)/1000||0);last=now;
+  raf=0;var dt=window.__tqFixedDt||Math.min(.05,(now-last)/1000||0);last=now;
   var running=(overlay||(heroOn&&heroVis&&!doc.hidden))&&!lost;if(!running)return;
   raf=requestAnimationFrame(loop);
-  if(!overlay){acc+=dt;if(acc<1/30)return;dt=acc;acc=0;}
+  /* the page draws at most 30 a second: every other frame on a 60 Hz screen. The small allowance keeps that cadence even,
+     where a strict 1/30 lets frame timing jitter skip a third frame now and then, which reads as stutter. */
+  if(!overlay){acc+=dt;if(acc<1/30-.004)return;dt=acc;acc=0;}
   size();watchPerf(now);advance(dt);stepNav();
-  FR++;frameDt=dt;frame(dt);camStep(dt,now/1000);liftView(dt);R.render(scene,cam);edButton();tryChips();askRender();callouts(dt,host);secLabels();
+  FR++;frameDt=dt;frame(dt);if(TRC)traceOne();camStep(dt,now/1000);liftView(dt);R.render(scene,cam);edButton();tryChips();askRender();callouts(dt,host);secLabels();
   if(first&&!overlay){first=false;heroLay.classList.add("live");}
 }
 function start(){if(!raf){last=performance.now();raf=requestAnimationFrame(loop);}}
@@ -2878,6 +2897,12 @@ return {
   /* for tests: where the tech stands, and a camera shot to look at him */
   tuneHead:function(o){var r=worker&&worker.userData.rig;if(!r)return false;for(var k in o)HW[k]=o[k];for(var bk in r.B)r.B[bk].quaternion.copy(r.bind[bk]);r.holder.position.set(0,0,0);worker.updateMatrixWorld(true);headwear(r,HW);return true;},
   techAt:function(){return worker?worker.getWorldPosition(new T.Vector3()).toArray():null;},
+  techYaw:function(){if(!worker)return null;var d=worker.getWorldDirection(new T.Vector3());return Math.atan2(d.x,d.z);},
+  /* for tests: the plan's own body (before smoothing) from t0 to t1 */
+  bodyRaw:function(t0,t1,st){var pl=LASTPL,o=[];if(!pl)return o;for(var tt=t0;tt<=t1;tt+=st){var c=clipAt(pl,tt),b=c.body(kOf(c,tt),tt);o.push([+tt.toFixed(4),pl.clips.indexOf(c),+(b.dip||0).toFixed(3),+(b.bend||0).toFixed(3),+b.pos.x.toFixed(3),+b.pos.z.toFixed(3)]);}return o;},
+  /* for tests: head, hand and foot positions every frame, to find jumps in his motion */
+  trace:function(on){if(on){TRC=[];return true;}var o=TRC;TRC=null;return o;},
+  techHead:function(){var r=worker&&worker.userData.rig;return r?r.B.Head.getWorldPosition(new T.Vector3()).toArray():null;},
   tuneGrip:function(o){for(var k in o)GRIP[k]=o[k];return JSON.parse(JSON.stringify(GRIP));},
   /* for tests: how much dirt the current job has left, and the farthest any held tool got from the hand holding it */
   work:function(){var o={miss:WSTAT.miss,info:WSTAT.info};WSTAT.info=null;if(mode==="win"&&h3.view===0&&WP){o.glass=WP.left();o.screen=lyLeft(WP.Ls);}if(mode==="win"&&h3.view===1&&RP){o.glass=RP.left();o.track=lyLeft(RP.Lt);}if(mode==="sol"&&SPL){o.dust=SPL.left();}if(mode==="scr"&&SCP){o.spline=lyLeft(SCP.SLy);o.mesh=lyLeft(SCP.SN);}WSTAT.miss=0;return o;},

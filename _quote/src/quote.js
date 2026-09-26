@@ -14,19 +14,20 @@ var FORM="https://formspree.io/f/mdkzdael", PHONE="714-559-0300", SMS="+17145590
 var LANG=CFG.lang||"en",ES=LANG==="es";function L(en,es){return ES?es:en;}
 var ITEM_ES=ES;function ix(en,es){return ITEM_ES?es:en;}
 var COMF_ES=["una vez","mensual","cada 2 semanas"],COMT_ES=["mes a mes","contrato trimestral","contrato anual"],MESH_ES=["fibra de vidrio gris","todo clima"];
-/* what Meta hears. Standard events where one fits, then the three names the campaigns optimize on:
-   CustomizeSimulator (someone shaped the 3D to their home), QuoteReady (they built a price), QuoteSubmitted (they sent it to Tony). */
+/* what Meta hears, and only this: PageView (in the page head), ViewContent (the 3D opened), then the three names the campaigns
+   optimize on: CustomizeSimulator (they picked a service or shaped the 3D to their home), QuoteReady (they saved or shared a price),
+   QuoteSubmitted (they sent it to Tony), plus Lead for the form and Contact for a phone or text tap (see the listener below).
+   Everything else stays out of Meta so the event list is clean for the campaign. */
 var META_MAP={view_3d:["ViewContent",{content_type:"simulator"}],onboard_build:["CustomizeSimulator",{}],edit_done:["CustomizeSimulator",{}],home_style:["CustomizeSimulator",{}],
-  select_service:["CustomizeSimulator",{}],pick_pigeon_package:["CustomizeSimulator",{}],pick_plan:["CustomizeSimulator",{}],
-  download_plan:["QuoteReady",{}],share_quote:["QuoteReady",{}],text_tap:["QuoteSubmitted",{method:"text"}],email_tap:["QuoteSubmitted",{method:"email"}],phone_click:["Contact",{}]};
+  select_service:["CustomizeSimulator",{}],try_add:["CustomizeSimulator",{}],pick_pigeon_package:["CustomizeSimulator",{}],pick_plan:["CustomizeSimulator",{}],
+  download_plan:["QuoteReady",{}],share_quote:["QuoteReady",{}],text_tap:["QuoteSubmitted",{method:"text"}],email_tap:["QuoteSubmitted",{method:"email"}]};
 function track(name,params){try{
   params=params||{};
   if(typeof window.gtag==="function")window.gtag("event",name,params);
   if(typeof window.fbq==="function"){var mm=META_MAP[name];
     if(name==="generate_lead"){window.fbq("track","Lead",{value:params.value,currency:"USD",content_name:"quick quote"});window.fbq("trackCustom","QuoteSubmitted",{method:"form",value:params.value,currency:"USD"});}
     else if(mm){var mp={};for(var k in mm[1])mp[k]=mm[1][k];for(var k2 in params)if(typeof params[k2]!=="object")mp[k2]=params[k2];
-      if(mm[0]==="ViewContent"||mm[0]==="Contact")window.fbq("track",mm[0],mp);else window.fbq("trackCustom",mm[0],mp);}
-    else window.fbq("trackCustom",name,params);}
+      if(mm[0]==="ViewContent")window.fbq("track",mm[0],mp);else window.fbq("trackCustom",mm[0],mp);}}
   if(typeof window.clarity==="function")window.clarity("event",name);
 }catch(e){}}
 
@@ -742,6 +743,27 @@ if(ov){
   });
 }
 
+/* ---------- real work: the photo strip between the 3D and the quote. A tap opens the full photo on top of the page;
+   arrows, a swipe or the keys move through the strip, and the page stays where it was. Without a dialog it just opens the photo. */
+function workBox(){var s=$("work");if(!s)return;var links=$$("a[data-work]",s);if(!links.length||typeof doc.createElement("dialog").showModal!=="function")return;
+  var dlg=null,img,cap,i=0,x0=null;
+  /* the viewer is built on the first tap, so the page carries no empty image until someone wants one */
+  function make(){dlg=doc.createElement("dialog");dlg.className="workbox";dlg.setAttribute("aria-label",L("Job photo","Foto del trabajo"));
+    dlg.innerHTML='<figure><img alt=""><figcaption></figcaption></figure><button type="button" class="wb-x" aria-label="'+L("Close","Cerrar")+'">×</button>'+
+      '<button type="button" class="wb-p" aria-label="'+L("Previous photo","Foto anterior")+'">‹</button><button type="button" class="wb-n" aria-label="'+L("Next photo","Foto siguiente")+'">›</button>';
+    doc.body.appendChild(dlg);img=dlg.querySelector("img");cap=dlg.querySelector("figcaption");
+    dlg.addEventListener("click",function(e){var t=e.target;if(t===dlg||t.className==="wb-x")dlg.close();else if(t.className==="wb-p")show(i-1);else if(t.className==="wb-n")show(i+1);});
+    dlg.addEventListener("keydown",function(e){if(e.key==="ArrowLeft")show(i-1);else if(e.key==="ArrowRight")show(i+1);});
+    img.addEventListener("touchstart",function(e){x0=e.touches[0].clientX;},{passive:true});
+    img.addEventListener("touchend",function(e){if(x0===null)return;var d=e.changedTouches[0].clientX-x0;x0=null;if(Math.abs(d)>40)show(i+(d<0?1:-1));});}
+  function show(k){i=(k+links.length)%links.length;var a=links[i];img.src=a.getAttribute("href");img.alt=a.querySelector("img").alt;cap.textContent=a.parentNode.querySelector("span").textContent;}
+  links.forEach(function(a,k){a.addEventListener("click",function(e){e.preventDefault();if(!dlg)make();show(k);dlg.showModal();track("work_photo",{n:k+1,svc:s.getAttribute("data-work-svc")});});});}
+
+/* phone and text links anywhere on the page (header, footer, buttons) tell Meta someone reached out: Contact. The quote's own
+   text and email buttons report QuoteSubmitted instead. Google hears phone taps from assets/tags.js, not from here. */
+doc.addEventListener("click",function(e){var a=e.target.closest&&e.target.closest('a[href^="tel:"],a[href^="sms:"]');if(!a||a.id==="smsA")return;
+  try{if(typeof window.fbq==="function")window.fbq("track","Contact",{method:/^tel:/.test(a.getAttribute("href"))?"phone":"text"});}catch(x){}},true);
+
 /* ---------- start ---------- */
 if(CFG.street)$("fstreet").placeholder=CFG.street;
 if(loadToken()){hydrate();$("shared").hidden=false;setTimeout(function(){var q=$("quote");if(q)q.scrollIntoView({block:"start"});},60);}
@@ -754,6 +776,7 @@ else if(restoreQ())hydrate();
 if("IntersectionObserver" in window){var seen=false;new IntersectionObserver(function(en,o){if(en[0].isIntersecting&&!seen){seen=true;track("view_price");o.disconnect();}}).observe($("price"));}
 render();
 setTab("r3d");
+workBox();
 /* the 3D starts once the hero poster is on screen and the page is idle, so neither the first paint nor the first taps wait on it */
 function whenIdle(f){if(window.requestIdleCallback)requestIdleCallback(f,{timeout:2000});else setTimeout(f,600);}
 function afterPoster(f){var po=$("r3dPoster"),go=function(){requestAnimationFrame(function(){requestAnimationFrame(function(){whenIdle(f);});});};

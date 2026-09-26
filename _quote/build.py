@@ -272,6 +272,110 @@ def tiles_for(conf, steps):
     return steps[:first] + ''.join(tiles[k] for k in order) + steps[first:]
 
 
+# ---------- the real work strip: 3D first, then real photos, then the quote ----------
+# One data file (_quote/src/photos.json) says what each job photo shows, its service and the town it was taken in.
+# Each page gets a short strip of the photos that fit its service, its own town first, placed between the hero and
+# the quote. Photos the page already shows elsewhere are left out, pages with nothing relevant get no strip.
+with open(os.path.join(SRC, 'photos.json'), encoding='utf-8') as _f:
+    PHOTOS = [p for p in json.load(_f)['photos'] if p['tier'] in ('best', 'job')]
+WORK_SVC = {'win': 'win', 'hw': 'win', 'pc': 'win', 'sol': 'sol', 'pig': 'pig', 'scr': 'scr', 'home': None}
+WORK_SKIP = {'gallery.html'}   # the main gallery is its own page
+WORK_N = 6
+WORK_NAME = {'en': {'win': 'window cleaning', 'sol': 'solar panel cleaning', 'pig': 'pigeon proofing', 'scr': 'screen repair', None: 'work'},
+             'es': {'win': 'limpieza de ventanas', 'sol': 'limpieza de paneles solares', 'pig': 'control de palomas', 'scr': 'reparación de mosquiteros', None: ''}}
+CITY_NAME = {slug: name for slug, name, _ in CITIES}
+
+
+def work_pick(svc, city, used, hero):
+    """The photos for one page: its service (or a mix of windows, solar and pigeons on a general page), its town first,
+    then the strongest, then towns we know before photos with no town. Nothing the page shows elsewhere."""
+    pool = [p for p in PHOTOS if (p['svc'] == svc if svc else p['svc'] in ('win', 'sol', 'pig'))
+            and 'assets/photos/%s.jpg' % p['f'] not in used and ('assets/photos/%s.jpg' % p['f'] not in hero or (city and p['city'] == city))]
+    pool.sort(key=lambda p: (p['city'] != city if city else 0, p['tier'] != 'best', p['city'] is None))
+    if svc:
+        return pool[:WORK_N]
+    out, by = [], {k: [p for p in pool if p['svc'] == k] for k in ('win', 'sol', 'pig')}
+    while len(out) < WORK_N and any(by.values()):
+        for k in ('win', 'sol', 'pig'):
+            if by[k] and len(out) < WORK_N:
+                out.append(by[k].pop(0))
+    return sorted(out, key=lambda p: p['city'] != city if city else 0)   # the town's own photos stay first
+
+
+def work_block(fn, conf, used):
+    lang, f = conf.get('lang', 'en'), focus(conf)
+    if fn in WORK_SKIP or f not in WORK_SVC:
+        return ''
+    svc = WORK_SVC[f]
+    slug = next((k for k, v in CITY_NAME.items() if v == conf.get('city')), None)
+    hero = set(re.findall(r'assets/photos/[\w-]+\.jpg', frag('media.html')))
+    pics = work_pick(svc, slug, used, hero)
+    if len(pics) < 3:   # few photos of this service: the hero's photo tab stays hidden until tapped, so share with it
+        pics = work_pick(svc, slug, used, set())
+    if len(pics) < 3:
+        return ''
+    local = sum(p['city'] == slug for p in pics) if slug else 0
+    city = conf.get('city')
+    if lang == 'es':
+        what = WORK_NAME['es'][svc]
+        h = '¿Quieres ver trabajos de %s que hemos hecho?' % what if what else '¿Quieres ver trabajos que hemos hecho?'
+        lead = 'Fotos de nuestros propios trabajos. Toca una para verla más grande.'
+        nxt = '¿Te gusta lo que ves? <a href="#quote">Arma tu proyecto aquí abajo.</a>'
+        kick, cap_key, alt_key = 'Trabajo real', 'es', 'alt_es'
+    else:
+        what = WORK_NAME['en'][svc]
+        if city and local >= 2:
+            h = "Interested in seeing %s we've done in %s?" % (what, city)
+            lead = 'Photos from our own jobs in %s%s. Tap one to see it bigger.' % (city, ', and a few from nearby towns' if local < len(pics) else '')
+        elif city:
+            h = "Interested in seeing %s we've done?" % what
+            of = ' of this' if svc else ''
+            lead = ("We don't have many %s photos%s yet, so most of these are from other towns we serve. Tap one to see it bigger." if local
+                    else "We don't have %s photos%s yet, so these are from other towns we serve. Tap one to see it bigger.") % (city, of)
+        else:
+            h = "Interested in seeing %s we've done?" % what
+            lead = 'Photos from our own jobs, with the town on each one we know. Tap one to see it bigger.'
+        nxt = 'Like what you see? <a href="#quote">Build your project below.</a>'
+        kick, cap_key, alt_key = 'Real work', 'en', 'alt'
+    items = []
+    for p in pics:
+        w, hh = p['w'], p['h']
+        k = min(360 / w, 480 / hh) if hh >= w else min(480 / w, 360 / hh)
+        tw, th = round(w * k), round(hh * k)
+        cap = ((CITY_NAME[p['city']] + ' · ') if p['city'] else '') + p[cap_key]
+        items.append('      <li><a href="assets/photos/%s.jpg" data-work><img src="assets/photos/t/%s.webp" alt="%s" width="%d" height="%d" loading="lazy" decoding="async"></a><span>%s</span></li>'
+                     % (p['f'], p['f'], p[alt_key].replace('"', '&quot;'), tw, th, cap))
+    return ('<!-- REAL WORK: photos from real jobs, between the 3D and the quote -->\n'
+            '<section class="tq-work" id="work" data-work-svc="%s" data-local="%d">\n  <div class="wrap">\n'
+            '    <span class="where">%s</span>\n    <h2>%s</h2>\n    <p class="work-lead">%s</p>\n'
+            '    <ul class="work-strip">\n%s\n    </ul>\n    <p class="work-next">%s</p>\n  </div>\n</section>\n\n'
+            % (svc or 'mix', local, kick, h, lead, '\n'.join(items), nxt))
+
+
+# ---------- the main gallery: only the best photos, from the same data file ----------
+# A page opts in with an empty <!-- tq:best-win --> (win, sol, pig or scr) block inside a photo grid. The block gets
+# the service's before and after pair, if there is one, then its best photos. The local strips above use the rest.
+with open(os.path.join(SRC, 'photos.json'), encoding='utf-8') as _f:
+    _ALL = json.load(_f)
+BY_F = {p['f']: p for p in _ALL['photos']}
+
+
+def best_block(svc, lang='en', used=()):
+    def card(p, cap):
+        return ('        <figure class="photo-card">\n          <img src="assets/photos/%s.jpg" alt="%s" loading="lazy" decoding="async" width="%d" height="%d">\n'
+                '          <figcaption>%s</figcaption>\n        </figure>' % (p['f'], p['alt' if lang == 'en' else 'alt_es'].replace('"', '&quot;'), p['w'], p['h'], cap))
+    town = lambda p: (CITY_NAME[p['city']] + ' · ') if p['city'] else ''
+    out, seen = [], set()
+    for a, z in _ALL.get('pairs', []):
+        pa, pz = BY_F[a.split('/')[-1][:-4]], BY_F[z.split('/')[-1][:-4]]
+        if pa['svc'] == svc:
+            out += [card(pa, 'Before · ' + town(pa) + pa['en']), card(pz, 'After · Same array, same visit')]
+            seen |= {pa['f'], pz['f']}
+    out += [card(p, town(p) + p['en']) for p in _ALL['photos'] if p['svc'] == svc and p['tier'] == 'best' and p['f'] not in seen
+            and 'assets/photos/%s.jpg' % p['f'] not in used]   # a photo the page already shows in its own sections stays there
+    return '\n'.join(out)
+
+
 def css_block(conf_v, conf):
     """The stylesheet, plus a preload for the hero poster so the picture paints before the 3D even starts loading."""
     poster = poster_of(conf)
@@ -279,11 +383,12 @@ def css_block(conf_v, conf):
             '  <link rel="preload" as="image" href="assets/quote/' + poster + '.webp" fetchpriority="high">')
 
 
-def blocks(conf, v):
+def blocks(conf, v, fn='', used=()):
     lang = conf.get('lang', 'en')
+    work = work_block(fn, conf, set(used))
     three_card = {'pig': 'card-pig.html', 'win': 'card-win.html', 'sol': 'card-sol.html', 'scr': 'card-scr.html', 'com': 'card-com.html'}.get(conf['mode'], 'card-home.html')
     if lang != 'en':
-        steps = '\n\n'.join([lazy_bodies(tiles_for(conf, frag('steps.html', lang)), conf['svc']), frag('zip.html', lang), frag('three-head.html', lang) + '\n' + frag(three_card, lang) + '\n' + frag('three-tail.html', lang)])
+        steps = work + '\n\n'.join([lazy_bodies(tiles_for(conf, frag('steps.html', lang)), conf['svc']), frag('zip.html', lang), frag('three-head.html', lang) + '\n' + frag(three_card, lang) + '\n' + frag('three-tail.html', lang)])
         tail = ('<div class="tq" data-nosnippet>\n' + lazy_ov(frag('ov.html', lang)) + '\n' + frag('dock.html', lang) + '\n</div>\n'
                 '<script>window.TQ=' + json.dumps(dict(conf, **({'tech': v['tech']} if v.get('tech') else {})), separators=(',', ':')) + ';</script>\n'
                 '<script src="assets/quote/quote.js?v=' + v['quote.js'] + '" defer></script>')
@@ -304,7 +409,7 @@ def blocks(conf, v):
         <span class="chip">Partitions and mirrors <b>+$50</b></span>
         <span class="chip">Vinyl stickers <b>$10</b> each</span>''')
     cta, media = hero_for(conf, cta, media, 'en')
-    steps = '\n\n'.join([lazy_bodies(tiles_for(conf, frag('steps.html')), conf['svc']), frag('zip.html'), head + '\n' + frag(three_card) + '\n' + frag('three-tail.html')])
+    steps = work + '\n\n'.join([lazy_bodies(tiles_for(conf, frag('steps.html')), conf['svc']), frag('zip.html'), head + '\n' + frag(three_card) + '\n' + frag('three-tail.html')])
     tail = ('<div class="tq" data-nosnippet>\n' + lazy_ov(frag('ov.html')) + '\n' + frag('dock.html') + '\n</div>\n'
             '<script>window.TQ=' + json.dumps(dict(conf, **({'tech': v['tech']} if v.get('tech') else {})), separators=(',', ':')) + ';</script>\n'
             '<script src="assets/quote/quote.js?v=' + v['quote.js'] + '" defer></script>')
@@ -401,8 +506,14 @@ def main():
                 report.append(fn + ': not converted (run --init ' + fn + ')')
                 continue
         if not check:
-            for name, content in blocks(conf, v).items():
+            # photos the page shows itself (structured data in <script> lists images but shows none)
+            outside = re.sub(r'<script\b.*?</script>', '', re.sub(r'<!-- tq:(\w+) -->.*?<!-- /tq:\1 -->', '', html, flags=re.S), flags=re.S)
+            used = set(re.findall(r'assets/photos/[\w-]+\.jpg', outside))
+            for name, content in blocks(conf, v, fn, used).items():
                 html = replace_block(html, name, content)
+            for name in re.findall(r'<!-- tq:(best-\w+) -->', html):
+                others = re.sub(r'<script\b.*?</script>', '', re.sub(r'<!-- tq:(\w+(?:-\w+)?) -->.*?<!-- /tq:\1 -->', '', html, flags=re.S), flags=re.S)
+                html = replace_block(html, name, best_block(name[5:], conf.get('lang', 'en'), set(re.findall(r'assets/photos/[\w-]+\.jpg', others))))
             with open(path, 'w', encoding='utf-8') as f:
                 f.write(html)
         errs = validate(html, fn)
