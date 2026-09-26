@@ -8,8 +8,10 @@ const set=async(f)=>{await p.evaluate(f=>{const st=window.__tq.st;st.sol=!!f.sol
 const save=(n,u)=>fs.writeFileSync('cards/'+n+'.png',Buffer.from(u.split(',')[1],'base64'));
 fs.mkdirSync('cards',{recursive:true});
 // home styles, on the lawn street
-const styles=[[0,1,false,{yaw:.62,tilt:.22,dist:.95}],[1,1,false,{yaw:.62,tilt:.22,dist:.95}],[2,1,true,{yaw:.62,tilt:.22,dist:.95}],[3,2,false,{yaw:.62,tilt:.2,dist:.95}],[4,1,false,{yaw:.62,tilt:.22,dist:.95}]];
-for(const [i,stories,grids,cam] of styles){await set({look:{style:i,hood:1,stories:stories,grids:grids}});save('style-'+i,await p.evaluate(c=>window.__tq.api.snap(480,320,c),cam));}
+// [style, stories, grids, camera, street, roof]: the older desert home on a desert yard, the manufactured home on acreage with its shingle roof
+const styles=[[0,1,false,{yaw:.62,tilt:.22,dist:.95}],[1,1,false,{yaw:.62,tilt:.22,dist:.95}],[2,1,true,{yaw:.62,tilt:.22,dist:.95}],[3,2,false,{yaw:.62,tilt:.2,dist:.95}],[4,1,false,{yaw:.62,tilt:.22,dist:.95}],[5,1,false,{yaw:.62,tilt:.22,dist:.95},0],[6,1,false,{yaw:.62,tilt:.22,dist:.95},2,2,2]].filter(x=>!process.env.STYLES||process.env.STYLES.split(',').includes(String(x[0])));
+for(const [i,stories,grids,cam,hood,roof,rc] of styles){await set({look:{style:i,hood:hood===undefined?1:hood,stories:stories,grids:grids,roof:roof||0,rc:rc||0}});save('style-'+i,await p.evaluate(c=>window.__tq.api.snap(480,320,c),cam));}
+if(process.env.STYLES){console.log('errors',errs);await b.close();return;}
 for(const h of [0,1,2,3,4]){await set({look:{style:h===4?4:0,hood:h,stories:1,grids:false}});save('hood-'+h,await p.evaluate(c=>window.__tq.api.snap(480,320,c),{yaw:h===3?.35:.55,tilt:.42,dist:h===2?2.4:2.1}));}
 const probs=[['win',{}],['hw',{}],['scr',{scr:true}],['sol',{sol:true}],['pig',{pig:true}]];
 for(const [k,f] of probs){await set(Object.assign({look:{style:0,hood:1,stories:1,grids:false}},f));save('prob-'+k,await p.evaluate(k=>window.__tq.api.probSnap(k,480,320),k));}

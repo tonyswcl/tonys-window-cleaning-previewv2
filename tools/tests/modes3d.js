@@ -25,6 +25,12 @@ await p.click('.ov-tabs [data-hmode="home"]');await p.waitForTimeout(800);await 
 await p.click('[data-hseg="hood"] [data-v="0"]');await shot('13-desert',3500);
 await p.click('[data-otab="home"]');await p.click('[data-hseg="style"] [data-v="4"]');await p.click('[data-otab="street"]');await p.click('[data-hseg="hood"] [data-v="4"]');await shot('13b-mountain',4000);
 console.log('mountain cabin built',JSON.stringify(await p.evaluate(()=>{const s=window.__tq.api.state();return [s.style,s.h3.hood];})));
+/* the added models: a manufactured home on acreage (one story, shingle roof) and an older desert home, then back to the cabin */
+await p.click('[data-otab="home"]');await p.click('[data-hseg="style"] [data-v="6"]');await p.click('[data-otab="street"]');await p.click('[data-hseg="hood"] [data-v="2"]');await shot('13c-manufactured',4000);
+console.log('manufactured home on acreage, one story, shingle',JSON.stringify(await p.evaluate(()=>{const s=window.__tq.api.state();return [s.style,s.h3.hood,window.__tq.st.stories,s.h3.roof];})));
+await p.click('[data-otab="home"]');await p.click('[data-hseg="style"] [data-v="5"]');await shot('13d-older',3500);
+console.log('older desert home built',JSON.stringify(await p.evaluate(()=>{const s=window.__tq.api.state();return [s.style,window.__tq.st.stories];})));
+await p.click('[data-hseg="style"] [data-v="4"]');await p.click('[data-otab="street"]');await p.click('[data-hseg="hood"] [data-v="4"]');await p.waitForTimeout(1500);
 await p.click('#askb');await p.waitForTimeout(300);console.log('ask Tony chips',await p.$$eval('#askp button',l=>l.length));await p.click('#askp button');await p.waitForTimeout(300);console.log('answer shown',/Do I need to be home/.test(await p.$eval('#ovMsg',e=>e.innerText)));await p.click('#askp .back');
 await p.evaluate(()=>{const s=window.__tq.st;s.pig=false;s.spin=0;s.sol=true;window.__tq.render();});
 await p.click('.ov-tabs [data-hmode="sol"]');await p.evaluate(()=>window.__tq.api.seek(4));await shot('14-solar',2500);

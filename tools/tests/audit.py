@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 """On-page SEO audit of every page in the site."""
-import re, json, pathlib, collections, sys
+import re, json, pathlib, collections, sys, html
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 pages = sorted(p for p in ROOT.glob("*.html") if p.name != "404.html")
 
-def txt(m):  return (m.group(1).strip() if m else "")
+# the text of a match, entities decoded, so "&amp;" counts as one character; meta values use the quote they opened with
+def txt(m):  return (html.unescape(m.group(m.lastindex).strip()) if m else "")
 
 rows = []
 for p in pages:
@@ -18,11 +19,11 @@ for p in pages:
     words = len(visible.split())
 
     title = txt(re.search(r"(?is)<title>(.*?)</title>", s))
-    desc  = txt(re.search(r'(?is)<meta\s+name=["\']description["\']\s+content=["\'](.*?)["\']', s))
-    canon = txt(re.search(r'(?is)<link\s+rel=["\']canonical["\']\s+href=["\'](.*?)["\']', s))
-    ogt   = txt(re.search(r'(?is)<meta\s+property=["\']og:title["\']\s+content=["\'](.*?)["\']', s))
-    ogi   = txt(re.search(r'(?is)<meta\s+property=["\']og:image["\']\s+content=["\'](.*?)["\']', s))
-    robots= txt(re.search(r'(?is)<meta\s+name=["\']robots["\']\s+content=["\'](.*?)["\']', s))
+    desc  = txt(re.search(r'(?is)<meta\s+name=["\']description["\']\s+content=(["\'])(.*?)\1', s))
+    canon = txt(re.search(r'(?is)<link\s+rel=["\']canonical["\']\s+href=(["\'])(.*?)\1', s))
+    ogt   = txt(re.search(r'(?is)<meta\s+property=["\']og:title["\']\s+content=(["\'])(.*?)\1', s))
+    ogi   = txt(re.search(r'(?is)<meta\s+property=["\']og:image["\']\s+content=(["\'])(.*?)\1', s))
+    robots= txt(re.search(r'(?is)<meta\s+name=["\']robots["\']\s+content=(["\'])(.*?)\1', s))
 
     h1s = re.findall(r"(?is)<h1[^>]*>(.*?)</h1>", s)
     h1s = [re.sub(r"(?s)<[^>]+>", "", h).strip() for h in h1s]
@@ -30,7 +31,8 @@ for p in pages:
     h3n = len(re.findall(r"(?is)<h3[^>]*>", s))
 
     imgs = re.findall(r"(?is)<img\b[^>]*>", s)
-    no_alt = [i for i in imgs if not re.search(r'alt\s*=\s*["\'][^"\']+["\']', i)]
+    # alt="" is right for a decorative image; missing means no alt attribute at all
+    no_alt = [i for i in imgs if not re.search(r'\balt\s*=', i)]
     no_dim = [i for i in imgs if not (re.search(r'\bwidth\s*=', i) and re.search(r'\bheight\s*=', i))]
     no_lazy= [i for i in imgs if 'loading=' not in i]
 

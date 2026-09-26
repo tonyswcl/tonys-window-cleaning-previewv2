@@ -107,7 +107,7 @@ PAGES.append({
         ('text', 'Price and schedule', 'What it costs in Lake Arrowhead',
          ['$149 single story, $249 two story, screens, tracks and sills included. Inside every window $49, which clears a winter of fireplace haze. Screens from $53.99, all weather $64.99. $149 job minimum for the mountain, no trip fee, 10% off the first visit booked on our website.',
           'Arrowhead days are grouped with Crestline and Running Springs. Vacation rentals are scheduled to the turnover, with a lockbox code and photos texted when the job is done.']),
-        ('cta', 'A view with <span class="grad">nothing in the way</span>', 'Build your quote above. Pick Lake estate in the 3D for a home like yours.', 'Get my price'),
+        ('cta', 'A view with <span class="grad">nothing in the way</span>', 'Build your quote above. Pick Large two story in the 3D for a home like yours.', 'Get my price'),
     ],
     'faq_title': 'Lake Arrowhead questions',
     'faq': [

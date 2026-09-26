@@ -16,6 +16,10 @@ console.log('lines',await p.$$eval('#tlines .tline',a=>a.map(x=>x.innerText.repl
 console.log('total',await p.$eval('#ttotal',e=>e.textContent));
 await p.click('.tq-intro [data-mode="tour"]');await shot('c0');
 for(let i=1;i<7;i++){const lbl=await p.$eval('#ovNav .nx',e=>e.textContent);if(/Start over/.test(lbl))break;console.log('  next',lbl);await p.click('#ovNav .nx');await shot('c'+i);}
+// the auto service shop: office glass plus the service bays
+await p.click('.ov-panel [data-otab="look"]');await p.click('.ov-panel [data-hseg="cst"] [data-v="4"]');await shot('auto');
+console.log('auto shop built',JSON.stringify(await p.evaluate(()=>window.__tq.api.state().h3.cst)));
+await p.click('.ov-panel [data-hseg="cst"] [data-v="0"]');await p.waitForTimeout(800);
 // building
 await p.click('.ov-panel [data-seg="ctype"] [data-v="1"]');await p.waitForTimeout(500);await p.click('.ov-panel [data-step="bst"] [data-d="1"]');await p.click('.ov-panel [data-step="bwin"] [data-d="4"]');
 await shot('b0');console.log('title',await p.$eval('#ovT',e=>e.textContent));console.log('lines',await p.$$eval('#tlines .tline',a=>a.map(x=>x.innerText.replace(/\n/g,' = ')).join(' || ')));

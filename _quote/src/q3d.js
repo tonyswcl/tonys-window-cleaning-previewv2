@@ -103,6 +103,7 @@ var TX={};
   var r=rng(11);
   TX.stucco=tx(cv(256,256,function(g,w,h){g.fillStyle="#fff";g.fillRect(0,0,w,h);blot(g,w,h,r,26,"0,0,0",.035,40);dots(g,w,h,r,5200,"90,80,70",.03,.11,1,2.5);dots(g,w,h,r,2600,"255,255,255",.2,.5,1,2);}),true);
   TX.stuccoB=tx(cv(256,256,function(g,w,h){g.fillStyle="#808080";g.fillRect(0,0,w,h);dots(g,w,h,r,9000,"0,0,0",.1,.35,1,2.5);dots(g,w,h,r,9000,"255,255,255",.1,.35,1,2.5);}),true,true);
+  TX.skirt=tx(cv(128,64,function(g,w,h){g.fillStyle="#fff";g.fillRect(0,0,w,h);for(var x=0;x<w;x+=16){g.fillStyle="rgba(0,0,0,.16)";g.fillRect(x,0,2,h);g.fillStyle="rgba(255,255,255,.5)";g.fillRect(x+2,0,2,h);}}),true);TX.skirt.repeat.set(10,1);
   TX.siding=tx(cv(256,256,function(g,w,h){g.fillStyle="#fff";g.fillRect(0,0,w,h);for(var y=0;y<h;y+=32){var gr=g.createLinearGradient(0,y,0,y+32);gr.addColorStop(0,"rgba(255,255,255,.35)");gr.addColorStop(.85,"rgba(0,0,0,0)");gr.addColorStop(1,"rgba(0,0,0,.2)");g.fillStyle=gr;g.fillRect(0,y,w,32);g.fillStyle="rgba(0,0,0,.28)";g.fillRect(0,y+30,w,2);}dots(g,w,h,r,1500,"80,70,60",.03,.08,1,3);}),true);
   TX.gravel=tx(cv(256,256,function(g,w,h){g.fillStyle="#b39f7a";g.fillRect(0,0,w,h);blot(g,w,h,r,14,"120,100,70",.12,50);dots(g,w,h,r,9000,"92,76,52",.15,.45,1,3);dots(g,w,h,r,5000,"232,220,192",.2,.5,1,2.5);}),true);
   TX.gravelB=tx(cv(256,256,function(g,w,h){g.fillStyle="#808080";g.fillRect(0,0,w,h);dots(g,w,h,r,12000,"0,0,0",.2,.5,1,3);dots(g,w,h,r,8000,"255,255,255",.2,.5,1,3);}),true,true);
@@ -246,7 +247,7 @@ function houseMats(cfg){
   var siding=STY[cfg.style].siding,cabin=!!STY[cfg.style].cabin,wc=new T.Color(WC[cfg.wc]),tc=new T.Color(TC[cfg.tc]),p=PAL[cfg.rc][0];
   if(cabin)wc=wc.lerp(new T.Color(0x8a6444),.72); /* stained wood takes the wall color as a tint, not a paint */
   var m={wall:Std({map:cabin?TX.logs:siding?TX.siding:TX.stucco,bumpMap:siding?null:TX.stuccoB,bumpScale:.012,color:wc,roughness:.95}),
-    base:Std({color:wc.clone().multiplyScalar(.82),roughness:.95}),trim:Std({color:tc,roughness:.6}),
+    base:Std({color:wc.clone().multiplyScalar(.82),roughness:.95}),trim:Std({color:tc,roughness:.6}),skirt:Std({map:TX.skirt,color:wc.clone().lerp(new T.Color(0x9a958c),.4).multiplyScalar(.7),roughness:.9}),
     garage:Std({map:TX.garage,color:cfg.tc===2?0xd9d3c6:0xffffff,roughness:.55}),
     ridge:Std({color:new T.Color().setRGB(p[0]*.85,p[1]*.85,p[2]*.85).convertSRGBToLinear(),roughness:.75}),
     porch:Std({color:new T.Color().setRGB(p[0],p[1],p[2]).convertSRGBToLinear(),roughness:.8})};
@@ -283,9 +284,27 @@ var STY=[
   {id:"classic",roof:"gable",pitch:.52,story:2.7,minW:12,siding:true,front:["win","win","porch","win","win"],chimney:true},
   {id:"estate",roof:"hip",pitch:.36,story:3.2,minW:19,siding:false,front:["win","win","entry","win","gar2","gar1"],big:true},
   /* the mountain cabin: steep gable for snow, wood siding, a covered porch and a stone chimney. Crestline, Wrightwood, Big Bear */
-  {id:"cabin",roof:"gable",pitch:.68,story:2.8,minW:12,siding:true,front:["win","porch","win","win","gar1"],chimney:true,cabin:true}
+  {id:"cabin",roof:"gable",pitch:.68,story:2.8,minW:12,siding:true,front:["win","porch","win","win","gar1"],chimney:true,cabin:true},
+  /* an older desert home, 1970s and 80s: a low hip roof and stucco right up to thin aluminum sliders, no trim around the glass */
+  {id:"older",roof:"hip",pitch:.24,story:2.6,minW:14,siding:false,alum:true,one:true,front:["win","door","win","win","gar2"]},
+  /* a manufactured home on acreage: long and low, lap siding, skirting to the ground, the door up a wood deck with steps. Phelan, Oak Hills, Hesperia */
+  {id:"mfg",roof:"gable",pitch:.2,story:2.5,minW:18,siding:true,alum:true,one:true,shingle:true,skirt:.55,minL:4.4,maxRows:2,front:["deck","win","win","win","win"]}
 ];
-var STYLE_N=["New build","Ranch","Classic","Lake estate","Mountain cabin"],STYLE_ES=["Nueva","Rancho","Clásica","Casa de lago","Cabaña de montaña"];
+var STYLE_N=["New build","Ranch","Classic","Large two story","Mountain cabin","Older desert home","Manufactured home"],STYLE_ES=["Nueva","Rancho","Clásica","Grande de dos pisos","Cabaña de montaña","Casa más antigua","Casa prefabricada"];
+/* picking a style, from the welcome or the panel: its own defaults (stories, the large home flag, grids, a manufactured
+   home's shingles), and whatever it set on its own is put back when another style is picked */
+function pickStyle(v,welcome){var S=STY[v];h3.style=v;
+  if(v===3){if(st.stories!==2)st.stories=2;if(!st.large){st.large=true;h3.estateLarge=true;}}
+  else{if(h3.estateLarge){st.large=false;h3.estateLarge=false;}if((v===1||S.one)&&st.stories!==1)st.stories=1;}
+  if(S.shingle)shingleRoof();else unShingle();
+  h3.grids=v===2?true:welcome||S.alum?false:h3.grids;
+  /* the welcome's own "custom or large home" card follows the large flag */
+  if(welcome){var lc=obd.querySelector('.obd-pc input[value="large"]');if(lc){lc.checked=!!st.large;detSync();}}}
+/* a manufactured home gets a shingle roof; terracotta shingles don't exist, so that color turns charcoal */
+function shingleRoof(){if(!h3.autoRoof)h3.autoRoof={roof:h3.roof,rc:h3.rc};h3.roof=2;if(h3.rc===0)h3.rc=2;h3.autoRoof.set=h3.roof+"|"+h3.rc;}
+function unShingle(){var a=h3.autoRoof;if(!a)return;if(h3.roof+"|"+h3.rc===a.set){h3.roof=a.roof;h3.rc=a.rc;}h3.autoRoof=null;}
+/* how the message to Tony and the PDF describe the home */
+var STYLE_D=["new build home","ranch home","classic home","large two story home","mountain cabin","older desert home","manufactured home"];
 var HOOD_N=["street with desert yards","neighborhood with lawns","acreage","on the lake","in the mountains"];
 var PW=1.02,PD=1.72,H=.2,TOP=.07,OV=.5,RAKE=.35;
 var h3={hood:1,style:0,roof:0,rc:0,wc:0,tc:0,grids:false,view:0,stage:2,cov:true,spinOv:null,estateLarge:false,custom:null,cv:0,shop:null,sv:0,cst:0,cwc:0,cac:0,cname:"",focus:null},ED=null;
@@ -305,13 +324,13 @@ function makeHouse(cfg,main){
   var n=Math.max(1,cfg.n),A=Math.min(cfg.arrays,n),sizes=[],i;
   for(i=0;i<A;i++)sizes.push(cfg.sizes&&cfg.sizes.length===A?cfg.sizes[i]:Math.floor(n/A)+(i<n%A?1:0));
   var faceOf=A===1?[1]:A===2?[1,-1]:[1,1,-1];
-  var groups=sizes.map(function(ng,k){var c=ng<3?ng:Math.max(2,Math.min(10,Math.round(Math.sqrt(2.2*ng))));return {n:ng,idx:k,face:faceOf[k],cols:c,rows:Math.ceil(ng/c)};});
+  var groups=sizes.map(function(ng,k){var c=ng<3?ng:Math.max(2,Math.min(10,Math.round(Math.sqrt(2.2*ng))));if(S.maxRows)c=Math.max(c,Math.min(14,Math.ceil(ng/S.maxRows)));return {n:ng,idx:k,face:faceOf[k],cols:c,rows:Math.ceil(ng/c)};});
   var need=0;[1,-1].forEach(function(sg){var gs=groups.filter(function(q){return q.face===sg;});var tw=gs.reduce(function(s,q){return s+q.cols*PW;},0)+Math.max(0,gs.length-1)*1.4;need=Math.max(need,tw);
     var x=-tw/2;gs.forEach(function(q){q.cx=x+q.cols*PW/2;x+=q.cols*PW+1.4;});});
   var maxRows=Math.max.apply(null,groups.map(function(q){return q.rows;}));
-  var L=Math.max(S.big?6.6:5.4,maxRows*PD+2.6),run=L*Math.cos(a),rise=L*Math.sin(a),D=2*run;
+  var L=Math.max(S.minL||(S.big?6.6:5.4),maxRows*PD+2.6),run=L*Math.cos(a),rise=L*Math.sin(a),D=2*run;
   var items=S.front.slice();if(cfg.more){var li=items.lastIndexOf("win");items.splice(li+1,0,"win");}
-  var iw={win:S.big?1.9:1.6,door:1.4,porch:3.4,entry:2.8,gar2:5.1,gar1:3.0};
+  var iw={win:S.big?1.9:1.6,door:1.4,porch:3.4,entry:2.8,gar2:5.1,gar1:3.0,deck:2.6};
   var frontW=items.reduce(function(s,k){return s+iw[k];},0)+(items.length+1)*.45;
   var W=Math.max(S.minW,frontW,S.roof==="gable"?need+4.5:Math.max(need+1+2*run-2.4*Math.cos(a),D+2.2));
   h.W=W;h.D=D;h.L=L;h.run=run;h.rise=rise;h.wallH=wallH;h.pitch=a;h.story=story;h.groups=groups;
@@ -319,16 +338,19 @@ function makeHouse(cfg,main){
   /* walls */
   box(W,wallH,D,mats.wall,0,wallH/2,0,g);
   box(W+.03,.14,D+.03,mats.base,0,.07,0,g,true);
+  /* a manufactured home sits up on its piers behind skirting */
+  if(S.skirt){box(W+.06,S.skirt,D+.06,mats.skirt,0,S.skirt/2,0,g,true);box(W+.1,.06,D+.1,trim,0,S.skirt+.03,0,g,true);}
   for(var s=1;s<cfg.stories;s++)box(W+.08,.14,D+.08,trim,0,story*s,0,g);
   /* windows */
   function win(x,y,z,ang,gw,gh,o){
     o=o||{};var w=new T.Group();w.position.set(x,y,z);w.rotation.y=ang;g.add(w);if(cfg.editing)w.userData.dyn=true;
-    box(gw+.2,gh+.2,.1,trim,0,0,.03,w);
+    var al=S.alum,fm=al?M.alum:trim;
+    box(gw+(al?.08:.2),gh+(al?.08:.2),.1,fm,0,0,.03,w);
     var gl=box(gw,gh,.06,M.glass,0,0,.07,w,true);
-    box(.05,gh,.08,trim,0,0,.09,w,true);
+    box(.05,gh,.08,fm,0,0,.09,w,true);
     /* grids sit between the panes of glass, so they read through it and the squeegee runs over them */
     if(cfg.grids){[-1,1].forEach(function(sd){var cx=sd*gw/4;box(.022,gh,.002,trim,cx,0,.1015,w,true);box(gw/2-.05,.022,.002,trim,cx,0,.1015,w,true);});}
-    var sill=box(gw+.32,.08,.2,trim,0,-gh/2-.14,.08,w);
+    var sill=al?box(gw+.14,.06,.18,mats.base,0,-gh/2-.13,.08,w):box(gw+.32,.08,.2,trim,0,-gh/2-.14,.08,w);
     if(o.arch){var ag=new T.CircleGeometry(gw/2,24,0,Math.PI),am=new T.Mesh(ag,M.glass);am.position.set(0,gh/2+.1,.072);w.add(am);
       var ring=new T.Mesh(new T.RingGeometry(gw/2,gw/2+.1,24,1,0,Math.PI),trim);ring.position.set(0,gh/2+.1,.08);w.add(ring);box(gw+.2,.1,.1,trim,0,gh/2+.08,.03,w);}
     var rec={g:w,gw:gw,gh:gh,gl:gl,sill:sill,ang:ang,f:o.f,u:o.u,v:y,sz:o.sz,s:o.s===undefined?1:o.s};h.wins.push(rec);return rec;
@@ -338,12 +360,19 @@ function makeHouse(cfg,main){
   var nWin=items.filter(function(k){return k==="win";}).length,wi=0;
   h.obst=[];var cust=cfg.custom;
   items.forEach(function(k){var cx=x+iw[k]/2,z=D/2;x+=iw[k]+gap;
-    h.obst.push(k==="win"?null:k==="door"?[cx-.72,cx+.72,0,2.4]:k==="porch"?[cx-1.85,cx+1.85,0,2.9]:k==="entry"?[cx-1.5,cx+1.5,0,3.3]:[cx-iw[k]/2+.05,cx+iw[k]/2-.05,0,2.6]);
+    h.obst.push(k==="win"?null:k==="door"?[cx-.72,cx+.72,0,2.4]:k==="porch"?[cx-1.85,cx+1.85,0,2.9]:k==="entry"?[cx-1.5,cx+1.5,0,3.3]:k==="deck"?[cx-1.3,cx+1.3,0,2.8]:[cx-iw[k]/2+.05,cx+iw[k]/2-.05,0,2.6]);
     if(k==="win"){wi++;if(!cust)h.front1.push(win(cx,gy0,z,0,gw1,gh1,{arch:S.big,demo:wi===1||wi===nWin,f:0,u:cx,sz:S.big?2:1}));}
     else if(k==="door"){box(1.0,2.15,.08,M.door,cx,1.075,z+.04,g);box(1.2,.1,.1,trim,cx,2.2,z+.05,g);box(.08,2.2,.1,trim,cx-.56,1.1,z+.05,g);box(.08,2.2,.1,trim,cx+.56,1.1,z+.05,g);box(.1,.2,.08,M.pframe,cx+.72,1.9,z+.06,g);h.doorX=cx;}
     else if(k==="porch"){box(1.0,2.15,.08,M.door,cx,1.075,z+.04,g);box(1.2,.1,.1,trim,cx,2.2,z+.05,g);
       box(3.2,.16,2.2,M.concrete,cx,.08,z+1.1,g);[-1.45,1.45].forEach(function(px){box(.14,2.45,.14,trim,cx+px,1.3,z+2.0,g);});
       var pr=box(3.7,.1,2.6,mats.porch,cx,2.62,z+1.2,g);pr.rotation.x=.12;h.doorX=cx;}
+    else if(k==="deck"){/* the door up a few steps: a wood deck with a rail, stairs down to the yard */
+      var fh=S.skirt||.55,dk=M.fence;box(1.0,2.1,.08,M.door,cx,fh+1.05,z+.04,g);box(1.2,.1,.1,trim,cx,fh+2.15,z+.05,g);
+      box(2.4,.07,1.5,dk,cx,fh-.035,z+.78,g);box(2.4,fh-.07,.05,dk,cx,(fh-.07)/2,z+1.5,g);
+      [-1.17,1.17].forEach(function(px){box(.07,.92,.07,dk,cx+px,fh+.46,z+1.48,g);box(.07,.92,.07,dk,cx+px,fh+.46,z+.1,g);box(.05,.05,1.45,dk,cx+px,fh+.9,z+.8,g);box(.04,.04,1.45,dk,cx+px,fh+.45,z+.8,g);});
+      [-1,1].forEach(function(sd){box(.57,.05,.05,dk,cx+sd*.885,fh+.9,z+1.5,g);});
+      for(var k2=0;k2<3;k2++){var ty=fh*(3-k2)/4;box(1.1,ty,.28,dk,cx,ty/2,z+1.64+k2*.28,g);}
+      h.doorX=cx;h.deckZ=z+2.34;}
     else if(k==="entry"){box(1.3,2.6,.08,M.door,cx,1.3,z+.04,g);[-1.05,1.05].forEach(function(px){var c=new T.Mesh(G.cyl,trim);c.scale.set(.16,2.9,.16);c.position.set(cx+px,1.45,z+.4);c.castShadow=true;g.add(c);});
       box(2.7,.32,.7,trim,cx,3.04,z+.3,g);box(2.9,.12,1.1,M.concrete,cx,.06,z+.55,g);h.doorX=cx;}
     else if(k==="gar2"||k==="gar1"){var gw=k==="gar2"?4.6:2.6;box(gw,2.3,.1,mats.garage,cx,1.15,z+.05,g);box(gw+.2,.12,.12,trim,cx,2.36,z+.06,g);
@@ -424,7 +453,7 @@ function makeHouse(cfg,main){
   box(W+3.2,.01,D+3.2,M.shadow,0,.012,0,g,true).receiveShadow=false;
   var mtn=cfg.hood===4,drvM=mtn?M.dirt:M.concrete;
   (h.garages||[]).forEach(function(gg){box(gg[1]+.4,.03,8.2,drvM,gg[0],.015,fz+4.1,g,true);});
-  if(h.doorX!==undefined){box(1.2,.03,S.id==="classic"||S.cabin?6:3.2,mtn?M.dirt:M.concrete,h.doorX,.016,fz+(S.id==="classic"||S.cabin?5.2:1.6),g,true);}
+  if(h.doorX!==undefined){var wl=S.id==="classic"||S.cabin?6:3.2,w0=h.deckZ||(S.id==="classic"||S.cabin?fz+2.2:fz);box(1.2,.03,wl,mtn||S.skirt?M.dirt:M.concrete,h.doorX,.016,w0+wl/2,g,true);}
   var ystep=main?1:0;
   for(i=0;i<5+ystep*3;i++){var side=i%2?1:-1,sx2=side*(W/2-1.2-r()*2.5),sz=fz+.9+r()*1.1;if(h.garages&&h.garages.some(function(gg){return Math.abs(sx2-gg[0])<gg[1]/2+.8;}))continue;
     var sc=.3+r()*.35,nb=2+Math.floor(r()*2),desert=cfg.hood===0||cfg.hood===2;for(var bi=0;bi<nb;bi++){var bs=sc*(.9+r()*.5),an=r()*6.28,rd=bi?sc*.6:0;
@@ -917,7 +946,9 @@ var DM=ES?{win:["El polvo y las manchas de los aspersores se hornean con el sol 
   scr:["Tears let bugs and dust in, and they only get bigger in the wind.","Sun makes builder mesh brittle, so it sags and pulls loose from the frame."],
   sol:["A film of dust blocks sunlight from the cells, and we get little rain to wash it off.","Your solar app shows it: output drifts down between washes."],
   pig:["Droppings stain the tile and the panels, and they pile up fast where the birds perch.","Nests under the panels hold dry twigs and debris right against the wiring.","The smell. Droppings and old nests give off a sharp ammonia smell that gets worse in the summer heat. We clean it all out and sanitize, so the smell leaves with them.","Pigeons come back to the same roof, and one pair turns into a flock."]};
-function dmgList(k){if(k==="win"){var a=DM.win.slice();if(st.hw)a.push(DM.hw);return a;}return DM[k]||[];}
+function dmgList(k){if(k==="win"){var a=DM.win.slice();if(st.hw)a.push(DM.hw);return a;}return (DM[k]||[]).map(roofWord);}
+/* the notes say tile; on a shingle roof they say shingles */
+function roofWord(s){return h3.roof===2?s.replace("the tile","the shingles").replace("la teja","las tejas"):s;}
 function dmgPos(k,i){var w=demoWin,sw=scrWin,q;
   if(k==="win")return [toWorld(w.g,-w.gw/4,.15,.16),toWorld(w.g,w.gw/4,-.1,.2),toWorld(w.g,-w.gw/4,-w.gh/2+.2,.16)][i];
   if(k==="scr")return [toWorld(sw.g,sw.gw/4,.1,.22),toWorld(sw.g,sw.gw/2-.06,-sw.gh/2+.12,.22)][i];
@@ -2070,7 +2101,7 @@ function screensDemo(){
     :[[0,"<b>Old builder mesh</b> after a few High Desert summers: faded, brittle, torn."],[M4[1],"<b>I strip it and re-mesh it right here.</b> Old spline and mesh out, new mesh rolled out over the frame."],[M4[2],"<b>New spline rolled into the channel</b>, then the extra mesh trimmed off. About 15 to 20 minutes a screen, same visit, nothing goes to a shop."],[M4[3],fact]]),done?"ok":"");
 }
 function pigAuto(){
-  if(h3.focus){focusShot=pigShot(h3.focus);say(FOCUS_T[h3.focus],"ok");return;}
+  if(h3.focus){focusShot=pigShot(h3.focus);say(roofWord(FOCUS_T[h3.focus]),"ok");return;}
   if(auto){var s=tl<2.2?0:tl<5.6?1:tl<9?2:tl<12.4?3:4;if(s!==h3.stage){h3.stage=s;birdTargets(false);syncControls();}
     /* the camera goes in close for the mesh, the clips and the first spinner, then pulls back to the whole roof */
     if(!user){var f=h3.stage===1?(tl<3.7?"mesh":tl<5.0?"clips":null):h3.stage===2&&tl<7.4?"spin":null;focusShot=f?pigShot(f):null;}}
@@ -2108,7 +2139,10 @@ var stkMat=STK.map(function(s){return new T.MeshBasicMaterial({map:tx(cv(128,128
 M.stripe=new T.MeshBasicMaterial({color:0xf2f2ee});M.metal=Std({color:0xcfd3d8,metalness:.6,roughness:.4});M.dark=Std({color:0x2c2f33,roughness:.7});M.stone=Std({map:TX.cmu,color:0x9a8f80,roughness:.95});
 /* pane sizes you can pick for a storefront: small, standard, tall */
 var PSZ=[[1.0,1.4],[1.55,2.3],[2.3,2.7]];
-var CSTY=[{n:"YOUR SHOP",H:5.4,top:3.55},{n:"YOUR CAFE",H:5.4,top:3.55},{n:"YOUR STORE",H:7.4,top:5.3},{n:"YOUR OFFICE",H:5.2,top:3.35}];
+var CSTY=[{n:"YOUR SHOP",H:5.4,top:3.55},{n:"YOUR CAFE",H:5.4,top:3.55},{n:"YOUR STORE",H:7.4,top:5.3},{n:"YOUR OFFICE",H:5.2,top:3.35},{n:"AUTO SERVICE",H:6.2,top:3.55,bays:3}];
+/* roll-up bay doors, ribbed steel */
+TX.rollup=tx(cv(64,128,function(g,w,h){g.fillStyle="#fff";g.fillRect(0,0,w,h);for(var y=0;y<h;y+=8){g.fillStyle="rgba(0,0,0,.2)";g.fillRect(0,y+6,w,2);g.fillStyle="rgba(255,255,255,.6)";g.fillRect(0,y,w,1);}}),true);TX.rollup.repeat.set(1,4);
+M.rollup=Std({map:TX.rollup,color:0xd9dcdf,metalness:.35,roughness:.5});M.bay=Std({color:0x1d1f22,roughness:.9});M.bollard=Std({color:0xe8b020,roughness:.6});
 var CWALL=[2,0,5,7],CACC=["#103050","#1b7a4c","#9a2a22","#2b4f8c"],CACC3=[0x103050,0x1b7a4c,0x9a2a22,0x2b4f8c];
 function autoShop(){var n=st.cpanes,nd=st.cdoors,two=n>8,n1=two?Math.ceil(n/2):n,n2=n-n1,pw=1.55,dw=1.05,gap=.12,y0=.35,gh=two?2.3:2.7,items=[];
   var W=Math.max(9,n1*(pw+gap)+nd*(dw+gap)+1.4),x=-(n1*(pw+gap)+nd*(dw+gap))/2,doorAt=Math.floor(n1/2);
@@ -2149,20 +2183,36 @@ function buildCom(force){
         cylBetween(V(tx0,.8,4.2),V(tx0,2.5,4.2),.03,M.metal,pat);var um=new T.Mesh(G.cone,accM);um.scale.set(1.3,.45,1.3);um.position.set(tx0,2.55,4.2);um.castShadow=true;pat.add(um);}
       [-W/2+.6,W/2-.6].forEach(function(px){bx(.8,.6,.8,WALLS[5],px,.3,3,g);shrubs(g,px-.3,px+.3,3,3,r,false);});}
     else if(h3.cst===2){bx(3.4,.1,1.6,M.dark,0,2.75,.8,g);[-1.6,1.6].forEach(function(px){cylBetween(V(px,2.75,.1),V(px,3.6,-.02),.03,M.metal,g);});bx(W+.1,.08,.12,M.dark,0,sty.top+.05,.08,g);}
+    else if(sty.bays){/* an auto service shop: the waiting room glass, then the service wing with roll-up bays. One bay open, a car inside. */
+      var nb=sty.bays,bw=3.4,bh=3.7,bgap=.8,WB=nb*(bw+bgap)+bgap,b0=W/2,bd=6;c.bays=[];
+      /* the bays are real openings: the wing's back part, then posts and a header 6 m deep */
+      bx(WB,H,D-bd,wall,b0+WB/2,H/2,-bd-(D-bd)/2,g);bx(WB,H-bh,bd,wall,b0+WB/2,bh+(H-bh)/2,-bd/2,g);
+      for(var pk=0;pk<=nb;pk++)bx(bgap,bh,bd,wall,b0+bgap/2+pk*(bw+bgap),bh/2,-bd/2,g);
+      bx(WB+.1,.5,.4,WALLS[5],b0+WB/2,H+.1,-.1,g);bx(.3,H,.3,WALLS[5],b0,H/2,.02,g);
+      for(var bi=0;bi<nb;bi++){var bcx=b0+bgap+bw/2+bi*(bw+bgap),open=bi===1;
+        bx(bw+.24,.14,.16,M.dark,bcx,bh+.07,.06,g);bx(.12,bh,.16,M.dark,bcx-bw/2-.06,bh/2,.06,g);bx(.12,bh,.16,M.dark,bcx+bw/2+.06,bh/2,.06,g);
+        if(open){bx(bw,bh,.04,M.bay,bcx,bh/2,-bd+.03,g);bx(bw,.02,bd,M.concrete,bcx,.012,-bd/2,g);var dr=new T.Mesh(G.cyl,M.rollup);dr.scale.set(.26,bw,.26);dr.rotation.z=Math.PI/2;dr.position.set(bcx,bh-.22,-.35);dr.castShadow=true;g.add(dr);car(g,bcx,-3.1,0,4,r);}
+        else bx(bw,bh,.06,M.rollup,bcx,bh/2,-.12,g);
+        [-1,1].forEach(function(sd){var bo=new T.Mesh(G.cyl,M.bollard);bo.scale.set(.09,1,.09);bo.position.set(bcx+sd*(bw/2+.38),.5,.35);bo.castShadow=true;g.add(bo);});
+        c.bays.push(bcx);}
+      /* the apron in front of the bays is flat, so cars drive in */
+      bx(WB,.02,6,M.concrete,b0+WB/2,.012,3,g);
+      c.cx=WB/2;c.Wf=W+WB;}
     else{/* standalone: a monument sign by the drive, planting beds */
       bx(3.4,1.2,.5,M.stone,-W/2-3,.6,6,g);var ms=new T.Mesh(G.plane,sm);ms.scale.set(3,.6,1);ms.position.set(-W/2-3,.75,6.26);g.add(ms);
       for(var tt=0;tt<4;tt++)tree(g,-W/2-4+tt*(W+8)/3,-D-3,1.2);shrubs(g,-W/2+.5,W/2-.5,.9,8,r,false);}
-    bx(W+60,.15,3.2,M.concrete,0,.075,1.6,g);bx(W+60,.16,.25,M.curb,0,.08,3.25,g);
+    var wR=sty.bays?W/2:W/2+30;bx(wR+W/2+30,.15,3.2,M.concrete,(wR-W/2-30)/2,.075,1.6,g);bx(wR+W/2+30,.16,.25,M.curb,(wR-W/2-30)/2,.08,3.25,g);
     /* the neighbors: both sides in a strip center, one side for the cafe, none for a standalone building */
-    if(h3.cst!==3)[["COFFEE","#6b4f2a"],["NAILS","#9a2a5a"],["TAX OFFICE","#27364f"],["DONUTS","#c8462b"]].forEach(function(nb,k){var side=k%2?1:-1;if(h3.cst===1&&side>0)return;var off=side*(W/2+4.6+Math.floor(k/2)*9.2),nh=h3.cst===2?5.4:H;
+    if(h3.cst!==3&&!sty.bays)[["COFFEE","#6b4f2a"],["NAILS","#9a2a5a"],["TAX OFFICE","#27364f"],["DONUTS","#c8462b"]].forEach(function(nb,k){var side=k%2?1:-1;if(h3.cst===1&&side>0)return;var off=side*(W/2+4.6+Math.floor(k/2)*9.2),nh=h3.cst===2?5.4:H;
       bx(9.2,nh,D,WALLS[(k+3)%WALLS.length],off,nh/2,-D/2,g);var ns=new T.Mesh(G.plane,new T.MeshBasicMaterial({map:signTex(nb[0],nb[1],"#fff")}));ns.material.userData.own=true;ns.scale.set(6,1,1);ns.position.set(off,4.35,.07);g.add(ns);
       for(var q=0;q<4;q++){bx(1.8,2.6,.05,M.glass,off-3.3+q*2.2,1.65,.02,g);bx(.07,2.6,.1,M.alum,off-3.3+q*2.2-.93,1.65,.03,g);}bx(9.2+.1,.5,.4,WALLS[5],off,nh+.1,-.1,g);bx(9.2,.18,2.4,WALLS[0],off,3.9,1.2,g);});
     /* the lot: asphalt, stripes, a few cars, light poles */
-    bx(W+60,.03,26,M.asphalt,0,.015,16.2,g);for(var sx=-W/2-26;sx<W/2+26;sx+=2.8){bx(.12,.012,5,M.stripe,sx,.035,6.4,g);bx(.12,.012,5,M.stripe,sx,.035,22,g);}
+    bx(W+60,.03,26,M.asphalt,0,.015,16.2,g);for(var sx=-W/2-26;sx<W/2+26;sx+=2.8){if(!sty.bays||sx<W/2-1)bx(.12,.012,5,M.stripe,sx,.035,6.4,g);bx(.12,.012,5,M.stripe,sx,.035,22,g);}
     var lotG=new T.Group();lotG.userData.dyn=true;g.add(lotG);c.patio2=lotG;
-    for(var cp=0;cp<9;cp++){var ccx=-W/2-24+r()*(W+48);if(Math.abs(ccx)<2.2)continue;car(lotG,Math.round(ccx/2.8)*2.8+1.4,r()<.5?6.4:22,r()<.5?0:Math.PI,(r()*7)|0,r);}
+    for(var cp=0;cp<9;cp++){var ccx=-W/2-24+r()*(W+48),crow=r()<.5?6.4:22;if(Math.abs(ccx)<2.2||(sty.bays&&crow<7&&ccx>W/2-2))continue;car(lotG,Math.round(ccx/2.8)*2.8+1.4,crow,r()<.5?0:Math.PI,(r()*7)|0,r);}
+    if(c.bays)car(lotG,c.bays[0],4.6,0,2,r);
     [-12,12].forEach(function(lx){bx(.2,8,.2,M.lamp,lx,4,14.2,g);bx(1.6,.18,.5,M.lamp,lx,8,14.2,g);});
-    if(h3.cst!==3){palm(g,-W/2-2,3.8,8,r);palm(g,W/2+2.3,3.8,7.5,r);}
+    if(h3.cst!==3){palm(g,-W/2-2,3.8,8,r);palm(g,W/2+(c.Wf?c.Wf-W:0)+2.3,3.8,7.5,r);}
     /* the town behind the center: a service road, a block wall, rooftops and trees, and the boulevard out front */
     castOn=false;bx(W+90,.04,7,M.asphalt,0,.02,-D-5,g);bx(W+90,1.8,.2,M.cmu,0,.9,-D-9.5,g);
     [[-D-12,-1,.35],[-D-38,1,.5],[-D-50,-1,.5],[-D-76,1,.6]].forEach(function(rw){for(var bxr=-W/2-70;bxr<W/2+70;bxr+=15+r()*5){var bw=11+r()*4;
@@ -2198,7 +2248,7 @@ function buildCom(force){
   com=c;
   comShadow();
 }
-function comShadow(){if(!com)return;var sc=sun.shadow.camera,S2=Math.max(com.W,com.D)/2+26;sc.left=-S2;sc.right=S2;sc.top=S2;sc.bottom=-S2;sc.near=1;sc.far=160;sc.updateProjectionMatrix();sun.target.position.set(0,0,0);}
+function comShadow(){if(!com)return;var sc=sun.shadow.camera,S2=Math.max(com.Wf||com.W,com.D)/2+26;sc.left=-S2;sc.right=S2;sc.top=S2;sc.bottom=-S2;sc.near=1;sc.far=160;sc.updateProjectionMatrix();sun.target.position.set(0,0,0);}
 function comStops(){var s=[{k:"cover"},{k:"cglass",ph:0},{k:"cglass",ph:1}];if(st.ctype===0&&st.cstk)s.push({k:"cstk",ph:0},{k:"cstk",ph:1});s.push({k:"cend"});return s;}
 function comFixed(k){if(!overlay||mode!=="com")return true;var S=comStops(),i=Math.min(stepAt(steps()),S.length-1);for(var j=0;j<S.length;j++)if(S[j].k===k&&S[j].ph===1)return i>=j;return true;}
 var comK={g:1,s:1};
@@ -2214,7 +2264,7 @@ function comFrame(dt){if(!com)return;var fg=comFixed("cglass")?1:0,fs=comFixed("
 function comShot(k){var c=com,W=c.W,H=c.H,front=st.ctype===0?0:c.D/2;
   if(k==="cstk"&&com.stickers[0]){var p=com.stickers[0].m.getWorldPosition(new T.Vector3());return {tx:p.x,ty:1.5,tz:p.z,yaw:.25,tilt:.08,dist:fitWH(2.2,1.5)};}
   if(k==="cglass")return {tx:0,ty:st.ctype===0?1.9:3,tz:front,yaw:.3,tilt:.08,dist:fitWH(Math.min(W*.4,7),2.6)};
-  return {tx:0,ty:c.cy,tz:front-(st.ctype===0?2:c.D*.2),yaw:.42,tilt:st.ctype===0?.2:.28,dist:fitWH(W*.62+3,H*.8+1)};}
+  return {tx:c.cx||0,ty:c.cy,tz:front-(st.ctype===0?2:c.D*.2),yaw:.42,tilt:st.ctype===0?.2:.28,dist:fitWH((c.Wf||W)*.62+3,H*.8+1)};}
 function comSay(){if(edNote&&performance.now()-edNote.t<4500){say(edNote.txt,"ok");return;}var S=comStops(),i=Math.min(stepAt(steps()),S.length-1),cs=S[i],t=C.totals(),shop=st.ctype===0,gl=st.cpanes+st.cdoors,txt,cls="";
   if(cs.k==="cover")txt=ES?(shop?"<b>Tu local hoy.</b> "+st.cpanes+" vidrio"+(st.cpanes>1?"s":"")+" y "+st.cdoors+" puerta"+(st.cdoors===1?"":"s")+" de vidrio juntando polvo, huellas y manchas de aspersores. Toca Siguiente para verlo terminado.":"<b>Tu edificio hoy.</b> "+st.bst+" piso"+(st.bst>1?"s":"")+" y "+st.bwin+" vidrios bajo una capa de polvo del desierto, con manchas de agua dura donde llegan los aspersores. Toca Siguiente para verlo terminado."):shop?"<b>Your storefront today.</b> "+st.cpanes+" pane"+(st.cpanes>1?"s":"")+" and "+st.cdoors+" glass door"+(st.cdoors===1?"":"s")+" collecting dust, fingerprints and sprinkler spots. Tap Next to see it done.":"<b>Your building today.</b> "+st.bst+" stor"+(st.bst>1?"ies":"y")+" and "+st.bwin+" panes under a film of desert dust, with hard water spots where the sprinklers reach. Tap Next to see it done.";
   else if(cs.k==="cglass"&&!cs.ph){cls="warn";txt=ES?(shop?"<b>La primera impresión.</b> Los clientes ven el vidrio antes que los estantes. Aquí bastan un par de semanas de viento para que se vea descuidado.":"<b>Vidrio con polvo.</b> Los inquilinos y las visitas lo notan desde el estacionamiento, y el viento sigue trayendo más."):shop?"<b>First impressions.</b> Customers see the glass before they see the shelves. Out here it only takes a couple of windy weeks to look neglected.":"<b>Dusty glass.</b> Tenants and visitors notice it from the parking lot, and the wind keeps bringing more.";}
@@ -2334,17 +2384,17 @@ function tourSay(){if(edNote&&performance.now()-edNote.t<4500){say(edNote.txt,"o
   if(k==="over")txt=P2.length?L("<b>Hi, I'm Tony.</b> Here's your home today: ","<b>Hola, soy Tony.</b> Así está tu casa hoy: ")+listText(P2.map(function(q){return probName(q).toLowerCase();}))+L(". Tap Next and I'll walk you through each one, then show you how I fix it.",". Toca Siguiente y te llevo por cada uno, y luego te enseño cómo lo arreglo."):L("<b>Hi, I'm Tony.</b> This is your home. Tap Next for a quick walk around, or drag to look on your own.","<b>Hola, soy Tony.</b> Esta es tu casa. Toca Siguiente para una vuelta rápida, o arrastra para mirar por tu cuenta.");
   else if(k==="end"){txt=L("<b>That's how I leave it.</b> Your quote right now: ","<b>Así la dejo.</b> Tu cotización ahora mismo: ")+(t.from?L("from ","desde "):"")+money(t.total)+L(". Tap See my price below and pick a day, or tap a service above and watch me do the job. Questions? Ask me.",". Toca Ver mi precio abajo y elige un día, o un servicio arriba y mírame hacer el trabajo. ¿Dudas? Pregúntame.");cls="ok";}
   else if(ph===0&&dmgSel){txt="<b>"+probName(k)+", "+dmgSel+L(" of "," de ")+dl.length+".</b> "+dl[dmgSel-1];cls="warn";}
-  else if(ph===0){cls="warn";var windy=WX.wind>=15?L(" Wind like today's keeps blowing more on."," Con viento como el de hoy sigue llegando más."):"";txt=ES?{win:"<b>"+probName("win")+".</b> Polvo, manchas de aspersores y mosquiteros grises. Aquí se acumula rápido, lo veo en cada casa."+windy+tapHint,scr:"<b>Mosquiteros rotos.</b> Unos veranos de sol y viento, y la malla del constructor se rasga, se cuelga y se suelta."+tapHint,sol:"<b>Paneles con polvo.</b> Tus "+n+" paneles bajo una capa de polvo del desierto."+windy+tapHint,pig:"<b>Palomas.</b> "+nb+" en tu techo, nidos debajo de los paneles y excremento en la teja. No se van solas."+tapHint}[k]:{win:"<b>"+probName("win")+".</b> Dust, sprinkler spots and gray screens. Out here it builds up fast, I see it on every house."+windy+tapHint,
+  else if(ph===0){cls="warn";var windy=WX.wind>=15?L(" Wind like today's keeps blowing more on."," Con viento como el de hoy sigue llegando más."):"";txt=ES?{win:"<b>"+probName("win")+".</b> Polvo, manchas de aspersores y mosquiteros grises. Aquí se acumula rápido, lo veo en cada casa."+windy+tapHint,scr:"<b>Mosquiteros rotos.</b> Unos veranos de sol y viento, y la malla del constructor se rasga, se cuelga y se suelta."+tapHint,sol:"<b>Paneles con polvo.</b> Tus "+n+" paneles bajo una capa de polvo del desierto."+windy+tapHint,pig:"<b>Palomas.</b> "+nb+" en tu techo, nidos debajo de los paneles y excremento en "+(h3.roof===2?"las tejas":"la teja")+". No se van solas."+tapHint}[k]:{win:"<b>"+probName("win")+".</b> Dust, sprinkler spots and gray screens. Out here it builds up fast, I see it on every house."+windy+tapHint,
       scr:"<b>Torn screens.</b> A few summers of sun and wind, and builder mesh rips, sags and hangs loose."+tapHint,
       sol:"<b>Dusty panels.</b> Your "+n+" panels under a film of desert dust."+windy+tapHint,
-      pig:"<b>Pigeons.</b> "+nb+" on your roof, nests under the panels, and droppings on the tile. They don't leave on their own."+tapHint}[k];}
+      pig:"<b>Pigeons.</b> "+nb+" on your roof, nests under the panels, and droppings on the "+(h3.roof===2?"shingles":"tile")+". They don't leave on their own."+tapHint}[k];}
   else{cls="ok";txt=ES?{win:"<b>Limpias.</b> Agua purificada y jalador, mosquiteros lavados, rieles y repisas limpios, seca sin manchas. "+(st.stories===1?"$149 un piso.":"$249 dos pisos.")+(st.hw?" Las manchas de agua dura las trato vidrio por vidrio.":""),scr:"<b>Mosquiteros nuevos.</b> "+st.screens+" con malla nueva en el momento, "+["fibra de vidrio gris","todo clima"][st.pet]+", en la mitad de cada ventana que abre.",sol:"<b>Lavados.</b> Agua purificada y cepillo suave, secan sin manchas. "+money(n*P.panel)+" a $7 por panel.",pig:ph===1?"<b>Limpio y cerrado.</b> Saco nidos y excremento, desinfecto el área para que el olor también se vaya, lavo los paneles gratis y sujeto malla rígida de acero al marco del panel. Sin tornillos ni perforaciones, tu garantía queda intacta.":"<b>Espantapájaros reflectantes.</b> Sus espejos destellan sobre el techo para que las aves no se vuelvan a acomodar. "+C.free()+" vienen gratis. La parvada se va."}[k]:{win:"<b>Clean.</b> Purified water and a squeegee, screens washed, tracks and sills wiped, dried spot free. "+(st.stories===1?"$149 single story.":"$249 two story.")+(st.hw?" I treat the hard water spots pane by pane.":""),
       scr:"<b>New screens.</b> "+st.screens+" re-meshed on site with "+P.meshName[st.pet]+" mesh, on the half of each window that opens.",
       sol:"<b>Washed.</b> Purified water and a soft brush, dried spot free. "+money(n*P.panel)+" at $7 a panel.",
       pig:ph===1?"<b>Cleaned out and closed off.</b> I haul the nests and droppings away, sanitize the area so the smell goes too, wash the panels free, and clip rigid steel mesh to the panel frame. No screws, no drilling, so your warranty stays intact."
         :"<b>Reflective spinners.</b> Mirrored cups flash across the roof so the birds don't settle again. "+C.free()+" come free. The flock moves on."}[k];}
   say(txt,cls);}
-function homeDesc(){return STYLE_N[h3.style].toLowerCase()+" home, "+HOOD_N[h3.hood];}
+function homeDesc(){return STYLE_D[h3.style]+", "+HOOD_N[h3.hood];}
 
 /* ---------- summary under the controls ---------- */
 function summary(){
@@ -2658,7 +2708,7 @@ function chips(o,list,cur){return '<div class="obd-row" data-o="'+o+'">'+list.ma
 function obdRender(){
   var P1='<div class="obd-in" data-p="1"><b class="obd-h">'+L("Let\'s get your place right","Vamos a armar tu lugar")+'</b><p>'+L("Three taps and the model looks like your place.","Tres toques y el modelo se parece a tu lugar.")+'</p>'+
     '<div class="obd-row kind"><button type="button" data-obd="home" aria-pressed="true"><b>'+L("My home","Mi casa")+'</b><span>'+L("Windows, solar, screens, pigeons","Ventanas, solar, mosquiteros, palomas")+'</span></button><button type="button" data-obd="biz" aria-pressed="false"><b>'+L("My business","Mi negocio")+'</b><span>'+L("Storefront or office building","Local u edificio de oficinas")+'</span></button></div>'+
-    '<div class="obd-l">'+L("Which looks most like your home?","¿Cuál se parece más a tu casa?")+'</div>'+pics("style",ES?[["Nueva","Estuco, teja, cochera al frente"],["Rancho","Un piso, larga y baja"],["Clásica","Tablilla, porche, ventanas con cuadrícula"],["Casa de lago","Dos pisos grandes, ventanas en arco"],["Cabaña de montaña","Techo inclinado, madera, pinos"]]:[["New build","Stucco, tile roof, garage up front"],["Ranch","Single story, long and low"],["Classic","Siding, porch, window grids"],["Lake estate","Big two story, arched windows"],["Mountain cabin","Steep roof, wood siding, pines"]],h3.style)+
+    '<div class="obd-l">'+L("Which looks most like your home?","¿Cuál se parece más a tu casa?")+'</div>'+pics("style",ES?[["Nueva","Estuco, teja, cochera al frente",0],["Rancho","Un piso, larga y baja",1],["Casa más antigua","Techo bajo, ventanas de aluminio",5],["Clásica","Tablilla, porche, ventanas con cuadrícula",2],["Grande de dos pisos","Ventanas en arco, cochera para tres",3],["Casa prefabricada","Larga, de un piso, con escalones a la puerta",6],["Cabaña de montaña","Techo inclinado, madera, pinos",4]]:[["New build","Stucco, tile roof, garage up front",0],["Ranch","Single story, long and low",1],["Older desert home","Low roof, aluminum sliders",5],["Classic","Siding, porch, window grids",2],["Large two story","Arched windows, three car garage",3],["Manufactured home","Long single story, steps up to the door",6],["Mountain cabin","Steep roof, wood siding, pines",4]],h3.style)+
     '<div class="obd-l">'+L("Stories","Pisos")+'</div>'+chips("stories",ES?["1 piso","2 pisos"]:["1 story","2 story"],st.stories)+
     '<div class="obd-l">'+L("And your street?","¿Y tu calle?")+'</div>'+pics("hood",ES?[["Patios de desierto","Piedra y bardas de bloque. Como las colonias nuevas de Victorville",0],["Pasto y árboles","Patios verdes, árboles de sombra. Como Jess Ranch",1],["En el lago","Patio trasero al agua. Como Spring Valley Lake",3],["Terreno grande","Lotes amplios, espacio de sobra. Como Oak Hills",2],["Montaña","Pinos, piedra, un camino de dos carriles. Como Crestline o Wrightwood",4]]:[["Desert yards","Rock yards, block walls. Like newer Victorville tracts",0],["Lawns and trees","Green yards, shade trees. Like Jess Ranch",1],["On the lake","Backyard on the water. Like Spring Valley Lake",3],["Acreage","Big lots, room to spread out. Like Oak Hills",2],["Mountain","Pines, granite, a two lane road. Like Crestline or Wrightwood",4]],h3.hood)+
     '<div class="obd-act"><button type="button" data-obd="skip">'+L("Skip","Saltar")+'</button><button type="button" class="go" data-obd="next">'+L("Next","Siguiente")+'</button></div></div>';
@@ -2686,7 +2736,7 @@ obd.addEventListener("click",function(e){var t=e.target;if(!t.closest)return;
   var ka=t.closest(".obd-row.kind [data-obd]");if(ka&&ka.getAttribute("data-obd")==="biz"){C.pickCom(0);obdDone=true;track("onboard_business");fade(function(){obdShow(false);setMode("com");});return;}
   if(ka)return;
   var b=t.closest(".obd-row button");if(b){var o=b.parentNode.getAttribute("data-o"),v=+b.getAttribute("data-v");if(o==="stories")v=+b.getAttribute("data-v");
-    if(o==="stories")st.stories=v;else if(o==="style"){h3.style=v;if(v===3){st.stories=2;st.large=true;h3.estateLarge=true;}else if(h3.estateLarge){st.large=false;h3.estateLarge=false;}if(v===1)st.stories=1;h3.grids=v===2;}else h3[o]=v;
+    if(o==="stories")st.stories=v;else if(o==="style")pickStyle(v,true);else h3[o]=v;
     $$("button",b.parentNode).forEach(function(x){x.setAttribute("aria-pressed",String(x===b));});    $$('[data-o="stories"] button',obd).forEach(function(x){x.setAttribute("aria-pressed",String(+x.getAttribute("data-v")===st.stories));});C.render();return;}
   var a=t.closest("[data-obd]");if(!a)return;var act=a.getAttribute("data-obd"),pages=$$(".obd-in",obd);
   if(act==="next"){pages[0].hidden=true;pages[1].hidden=false;}
@@ -2748,8 +2798,7 @@ ov.addEventListener("click",function(e){
   if(hb){var k=hb.parentNode.getAttribute("data-hseg"),v=+hb.getAttribute("data-v");
     if(k==="stage"){tl=[0,2.2,5.6,9,12.4][v];auto=true;user=false;focusShot=null;h3.focus=null;askSel=null;h3.stage=v;birdTargets(false);track("pigeon_stage",{stage:v});}
     else if(k==="view"){if(h3.view!==v){h3.view=v;if(v===1&&!room)buildRoom();fade(function(){tl=0;user=false;resetHaze();goal=preset();cur=null;});track("window_view",{inside:v});}}
-    else if(k==="style"){h3.style=v;if(v===3){if(st.stories!==2)st.stories=2;if(!st.large){st.large=true;h3.estateLarge=true;}}else{if(h3.estateLarge){st.large=false;h3.estateLarge=false;}if(v===1&&st.stories!==1)st.stories=1;h3.grids=v===2?true:h3.grids;}
-      track("home_style",{style:STY[v].id});C.render();return;}
+    else if(k==="style"){pickStyle(v);track("home_style",{style:STY[v].id});C.render();return;}
     else{h3[k]=v;C.render();return;}
     syncControls();summary();return;}
   var hs=t.closest("[data-hsw]");if(hs){var k2=hs.getAttribute("data-hsw");h3[k2]=!h3[k2];if(k2==="grids"){C.render();return;}syncControls();return;}
@@ -2805,7 +2854,7 @@ return {
     R.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix();frame(0);frame(0);var p=tourShot(forceProb,0);if(k==="hw"){p.dist*=.62;p.yaw-=.12;}
     placeCam(p);R.render(scene,cam);var url=R.domElement.toDataURL("image/png");forceProb=null;st.hw=hw0;frame(0);cur=null;goal=null;size();return url;},
   /* picture cards for the welcome: set the look, then snap it */
-  look:function(o){if(o.style!=null)h3.style=o.style;if(o.hood!=null)h3.hood=o.hood;if(o.stories)st.stories=o.stories;if(o.grids!=null)h3.grids=o.grids;sync();},
+  look:function(o){if(o.style!=null)h3.style=o.style;if(o.hood!=null)h3.hood=o.hood;if(o.stories)st.stories=o.stories;if(o.grids!=null)h3.grids=o.grids;if(o.roof!=null)h3.roof=o.roof;if(o.rc!=null)h3.rc=o.rc;sync();},
   settle:function(){var p=preset();flight=null;goal=p;cur={};for(var k in p)cur[k]=p[k];placeCam(cur);},
   quality:function(){return {level:quality,shadows:sun.castShadow,pr:R.getPixelRatio(),calls:R.info.render.calls,tris:R.info.render.triangles,geos:R.info.memory.geometries,tex:R.info.memory.textures};},
   /* for tests: where the tech stands, and a camera shot to look at him */

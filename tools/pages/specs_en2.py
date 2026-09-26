@@ -182,7 +182,7 @@ PAGES.append({
           ('assets/photos/spring-valley-lake-window-01.jpg', 'Clean picture window on a Spring Valley Lake home'),
           ('assets/photos/spring-valley-lake-window-03.jpg', 'Spring Valley Lake home with the windows cleaned'),
           ('assets/photos/spring-valley-lake-screen-01.jpg', 'Re-meshed screen on a Spring Valley Lake window')]),
-        ('cta', 'Lake view, <span class="grad">clear glass</span>', 'Set your home above. Pick Lake estate in the 3D to see one like yours.', 'Get my price'),
+        ('cta', 'Lake view, <span class="grad">clear glass</span>', 'Set your home above. Pick Large two story and the lake street in the 3D to see one like yours.', 'Get my price'),
     ],
     'faq_title': 'Spring Valley Lake window questions',
     'faq': [
