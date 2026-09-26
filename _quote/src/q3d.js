@@ -1308,7 +1308,7 @@ function restPt(side){var w=worker,r=w.userData.rig;if(!r)return w.localToWorld(
   return w.localToWorld(V(sl.x+(side==="L"?-.07:.07),sl.y-(d.a+d.f)*.96+GRIP.gy,sl.z+.08));}
 function shoulderAt(side){var r=worker.userData.rig;return r?rigArm(side).A.getWorldPosition(new T.Vector3()):worker.localToWorld(SHL[side].clone());}
 /* how far a hand ended up from where the job needed it, kept for the tests */
-function missed(key,side,want,got){var dm=got.distanceTo(want);if(dm>WSTAT.miss){WSTAT.miss=dm;WSTAT.info={key:key,sh:+shoulderAt(side).distanceTo(want).toFixed(3)};}}
+function missed(key,side,want,got){var dm=got.distanceTo(want);if(dm>WSTAT.miss){WSTAT.miss=dm;WSTAT.info={key:key,side:side,sh:+shoulderAt(side).distanceTo(want).toFixed(3)};}}
 /* place a tool from its grip: X along the handle toward the working edge, Y along the edge */
 function placeTool(o,G,A,b){var X=A.clone().normalize(),Y=b.clone().addScaledVector(X,-b.dot(X));if(Y.lengthSq()<1e-6)Y=V(0,1,0).addScaledVector(X,-X.y);Y.normalize();var Z=new T.Vector3().crossVectors(X,Y);
   o.position.copy(G);o.quaternion.setFromRotationMatrix(new T.Matrix4().makeBasis(X,Y,Z));o.visible=true;}
@@ -1370,7 +1370,7 @@ function placeTowel(P,N,F){var tw=tools.towel,Z=N.clone().normalize(),X=F.clone(
   tw.position.copy(P).addScaledVector(Z,.011);tw.quaternion.setFromRotationMatrix(new T.Matrix4().makeBasis(X,Z,Y));tw.visible=true;}
 function handDo(sd,h){if(!h||h.rest){rest(sd);if(h&&h.towel){var rp=restPt(sd);placeTowel(rp,V(0,0,1).transformDirection(worker.matrixWorld),V(0,-1,0));}return;}
   if(h.tool){holdTool(sd,h.tool,h.P,h.b,h.H,h.w,h.free);return;}
-  if(h.grip){var G=h.grip,full=h.w===undefined||h.w>=1;if(!full)G=restPt(sd).lerp(G,smooth(h.w));var ga=grip(sd,G,h.A,h.open);if(full)missed("grip",sd,G,ga);return;}
+  if(h.grip){var G=h.grip,full=h.w===undefined||h.w>=1;if(!full)G=restPt(sd).lerp(G,smooth(h.w));var ga=grip(sd,G,h.A,h.open);if(full&&!h.done)missed("grip",sd,G,ga);if(h.done)h.done(ga);return;}
   if(h.palm){var P=h.palm,pf=h.w===undefined||h.w>=1;if(!pf)P=restPt(sd).lerp(P,smooth(h.w));var pa=palmOn(sd,P,h.N,h.F,h.tip);if(pf)missed("palm",sd,P.clone().addScaledVector(h.N,.035),pa);
     /* the towel goes where the hand really is, under the palm or the fingertips */
     if(h.towel){var Pt=pa.clone().addScaledVector(h.N,-.035);if(h.tip)Pt.addScaledVector(h.F,-.03);placeTowel(Pt,h.N,h.F);}}}
@@ -1379,7 +1379,7 @@ function runPlan(pl,t){var c=clipAt(pl,t),k=kOf(c,t);if(pl.pre)pl.pre(t);if(c.ob
   var S=overlay&&steps(),hold;if(S){var i=stepAt(S);hold=i+1<S.length?S[i+1]-.002:undefined;}
   var b=bodyAt(pl,t,hold);worker.visible=true;placeWorker(b.pos,b.face);if(b.dip>.005||b.bend>.005)crouch(b.dip,b.bend);
   var lk=c.look?c.look(k,t):null;leanTo(lk);
-  var hs=c.hands?c.hands(k,t):{};handDo("L",hs.L);handDo("R",hs.R);
+  var hs=c.hands?c.hands(k,t):{};handDo("L",hs.L);handDo("R",typeof hs.R==="function"?hs.R():hs.R);
   if(pl.props)pl.props(t);if(lk)lookAtW(lk);planPaint(pl,t);}
 /* a tool run: the tool's edge follows waypoints [u, v, tilt] across a surface, and cleans, wets or waters what it sweeps */
 function toolRun(S,t0,t1,key,side,pts,op,half,o){o=typeof o==="number"?{d:o}:(o||{});var cum=pathLen(pts),off=o.off===undefined?.004:o.off;
@@ -1895,8 +1895,15 @@ function solPlan(){
   var total=G.reduce(function(s,q){return s+q.cum[q.cum.length-1];},0),spd=Math.max(1.8,total/14),last={butt:null,P:null,wash:false,par:G[0].par};
   /* a clip with the pole in hand: brush(k,tt) says where the brush is; the pole and both hands follow from it */
   function pc(o){var c=Clip(0,0,{body:o.body,look:o.look,paint:o.paint});c.q=o.q;c.wash=!!o.wash;
-    c.hands=function(k,tt){var P=o.brush(k,tt),par=(o.q||G[0]).par,Q=placeBrush(P,par),ph=poleHands(Q),butt=ph.A.clone().addScaledVector(ph.d,.6);
-      tools.pole.visible=true;setBone(tools.pole,butt,Q);tools.pole.scale.x=tools.pole.scale.z=.022;last.butt=butt;last.P=P;last.wash=c.wash;last.par=par;return {L:ph.L,R:ph.R};};
+    c.hands=function(k,tt){var P=o.brush(k,tt),par=(o.q||G[0]).par,Q=placeBrush(P,par),ph=poleHands(Q),gotL=null;
+      tools.pole.visible=true;last.P=P;last.wash=c.wash;last.par=par;
+      function lay(A0){var d=A0.clone().sub(Q).normalize(),butt=A0.clone().addScaledVector(d,.6);setBone(tools.pole,butt,Q);tools.pole.scale.x=tools.pole.scale.z=.022;last.butt=butt;return d;}
+      lay(ph.A);
+      /* the rear hand closes on the pole as near the hip as it can; the pole then runs through that hand to the brush, and the front
+         hand takes it where it crosses in front of his chest, so neither hand is ever off the pole */
+      return {L:{grip:ph.A,A:ph.L.A,done:function(g){gotL=g;}},
+        R:function(){if(!gotL)return ph.R;var d=lay(gotL),C=worker.localToWorld(LHD.clone()),s=Math.max(.25,Math.min(.6,C.sub(gotL).dot(d.clone().negate())));
+          return {grip:gotL.clone().addScaledVector(d,-s),A:d.clone().negate()};}};};
     return c;}
   var runs=[],tBack=null,tDone,hoseVia=null;
   /* 0. up on the roof, pole in hand, brush on the lowest panel */
@@ -2097,7 +2104,9 @@ function scrRestore(){var p=SCP;if(!p)return;var sc=p.sc;[sc.mesh,sc.dmg].forEac
 function screensDemo(){
   var pl=scrJob(),sc=pl.sc,w=pl.w,M4=pl.steps,others=screens.filter(function(s){return s!==sc;}).slice(0,Math.max(0,st.screens-1)),done=tl>=M4[3];
   screens.forEach(function(s){s.g.visible=false;});
-  others.forEach(function(s){s.g.visible=true;screenLook(s,!done);s.g.position.set(s.x0,0,.14);s.g.rotation.set(0,0,0);});
+  /* at the last step the rest of the screens get their new mesh the same way, top down, one after another, instead of all at once */
+  var P5=clamp01((tl-M4[3])/(1.2+.5*others.length));
+  others.forEach(function(s,i){s.g.visible=true;var q=stag(P5,i,others.length);if(s.cl&&s.mesh.material===s.cl.o)s.old=null;screenLook(s,q<1);screenSweep(s,q);s.g.position.set(s.x0,0,.14);s.g.rotation.set(0,0,0);});
   screenLook(sc,true);pl.SLy.m.visible=true;pl.SN.m.visible=true;runPlan(pl,tl);
   var fact=ES?(st.pet?"<b>Todo clima, $64.99.</b> Poliéster recubierto de vinil, 5 veces más fuerte y mucho más resistente al sol. Aguanta sol, viento y mascotas.":"<b>Fibra de vidrio gris, $53.99.</b> La vista más clara y buen paso de aire. Bien para ventanas con sombra."):(st.pet?"<b>All weather, $64.99.</b> Heavy vinyl coated polyester, 5x stronger and far more UV stable. Takes sun, wind and pets.":"<b>Charcoal fiberglass, $53.99.</b> Clearest view and good airflow. Fine for shaded windows.");
   if(st.frames)fact+=L(" New frames and clips on all "+st.screens+", $10 more a screen."," Marcos y clips nuevos en los "+st.screens+", $10 más por mosquitero.");
@@ -2259,7 +2268,8 @@ var comK={g:1,s:1};
 /* the storefront's fixes play out like the work: the glass squeegeed pane by pane, each old sticker peeled off and its new one laid on straight */
 function comFrame(dt){if(!com)return;var fg=comFixed("cglass")?1:0,fs=comFixed("cstk")?1:0;
   function step(v,t){return dt===0?t:t>v?Math.min(t,v+dt/2.6):Math.max(t,v-dt/1.3);}
-  comK.g=step(comK.g,fg);comK.s=step(comK.s,fs);var nG=com.grime.length,nS=com.stickers.length;
+  /* the work waits while the camera flies in, so the glass and the stickers change where you can see them */
+  var fly=!!flight&&overlay&&dt>0;if(!fly){comK.g=step(comK.g,fg);comK.s=step(comK.s,fs);}var nG=com.grime.length,nS=com.stickers.length;
   com.grime.forEach(function(o,i){var q=stag(comK.g,i,nG);o.visible=q<.999;if(o.visible)clipLine(o,V(0,.5,0),V(0,-.5,0),q,false);});
   com.stickers.forEach(function(s,i){var q=stag(comK.s,i,nS,1.4),m=s.m,y0=m.userData.y0===undefined?(m.userData.y0=m.position.y):m.userData.y0,f=q<.5?1-2*q:2*q-1,old=q<.5;
     /* peeled from the top down, then the new one smoothed on from the top */
