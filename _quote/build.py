@@ -348,8 +348,8 @@ def work_block(fn, conf, used):
     return ('<!-- REAL WORK: photos from real jobs, between the 3D and the quote -->\n'
             '<section class="tq-work" id="work" data-work-svc="%s" data-local="%d">\n  <div class="wrap">\n'
             '    <span class="where">%s</span>\n    <h2>%s</h2>\n    <p class="work-lead">%s</p>\n'
-            '    <ul class="work-strip">\n%s\n    </ul>\n    <p class="work-next">%s</p>\n  </div>\n</section>\n\n'
-            % (svc or 'mix', local, kick, h, lead, '\n'.join(items), nxt))
+            '    <ul class="work-strip" data-n="%d">\n%s\n    </ul>\n    <p class="work-next">%s</p>\n  </div>\n</section>\n\n'
+            % (svc or 'mix', local, kick, h, lead, len(items), '\n'.join(items), nxt))   # data-n: quote.css fills the desktop row with fewer photos
 
 
 # ---------- the main gallery: only the best photos, from the same data file ----------
@@ -358,6 +358,9 @@ def work_block(fn, conf, used):
 with open(os.path.join(SRC, 'photos.json'), encoding='utf-8') as _f:
     _ALL = json.load(_f)
 BY_F = {p['f']: p for p in _ALL['photos']}
+
+
+BEST_N = 6   # two full rows of three on desktop, three of two on a tablet: no half empty last row
 
 
 def best_block(svc, lang='en', used=()):
@@ -373,7 +376,7 @@ def best_block(svc, lang='en', used=()):
             seen |= {pa['f'], pz['f']}
     out += [card(p, town(p) + p['en']) for p in _ALL['photos'] if p['svc'] == svc and p['tier'] == 'best' and p['f'] not in seen
             and 'assets/photos/%s.jpg' % p['f'] not in used]   # a photo the page already shows in its own sections stays there
-    return '\n'.join(out)
+    return '\n'.join(out[:BEST_N])
 
 
 def css_block(conf_v, conf):

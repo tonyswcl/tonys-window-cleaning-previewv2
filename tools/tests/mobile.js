@@ -1,8 +1,10 @@
 /* phone and tablet layout, portrait and landscape: no sideways scroll, the 3D picture first with a sane height, the real work strip
    right after it and before the quote with no big gap, strip photos lazy (none loaded before they're near), the 3D panel fits on open.
+   No half empty rows: a strip that sits in one row fills it, and every photo grid's last row reaches the right edge.
+   The photo viewer opens in the middle of the screen and stays there as you step through.
    usage: node mobile.js   (writes shots to ./mobile/) */
 const {chromium}=require('playwright');const fs=require('fs');fs.mkdirSync('mobile',{recursive:true});
-const PAGES=['index.html','window-cleaning-victorville.html','solar-panel-cleaning.html','pigeon-proofing.html','screen-repair-hesperia.html','crestline.html','limpieza-de-ventanas.html','commercial-window-cleaning.html'];
+const PAGES=['index.html','window-cleaning-victorville.html','solar-panel-cleaning.html','pigeon-proofing.html','screen-repair-hesperia.html','crestline.html','limpieza-de-ventanas.html','commercial-window-cleaning.html','spring-valley-lake.html','window-cleaning.html'];
 const VIEWS=[[360,780],[390,844],[768,1024],[844,390],[1024,768]];
 (async()=>{const b=await chromium.launch({executablePath:(process.env.CHROME||'/opt/pw-browsers/chromium-1194/chrome-linux/chrome'),args:['--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
 const res=[];const ok=(n,c,d)=>res.push((c?'PASS ':'FAIL ')+n+(d!==undefined&&!c?'  ['+String(d).slice(0,260)+']':''));const errs=[];
@@ -23,6 +25,18 @@ for(const [W,H] of VIEWS){const mob=W<900;const ctx=await b.newContext({viewport
     if(m.work){ok(tag+' strip after the 3D, before the quote, no big gap',m.work.top>=m.wipeTop&&m.work.bottom<=m.quote&&m.quote-m.work.bottom<140,JSON.stringify(m));
       ok(tag+' strip photos lazy, thumbnails only, no full size photo loaded',m.lazy&&m.full===0,m.full+' full of '+m.n);}
     else if(!/commercial/.test(pg))ok(tag+' has a strip',false);
+    const rows=await p.evaluate(()=>{const bad=[];const fill=(g,name)=>{const k=[...g.children].filter(c=>c.offsetParent!==null);if(!k.length)return;const gr=g.getBoundingClientRect();
+        const last=k[k.length-1].getBoundingClientRect();if(Math.abs(last.right-gr.right)>2&&last.right<gr.right)bad.push(name+' '+k.length+' ends '+Math.round(gr.right-last.right)+'px short');};
+      document.querySelectorAll('.photo-grid').forEach(g=>fill(g,'grid'));const st=document.querySelector('#work .work-strip');
+      if(st&&getComputedStyle(st).overflowX==='visible')fill(st,'strip');return bad;});
+    ok(tag+' no half empty photo rows',rows.length===0,rows.join(', '));
+    if(pg==='window-cleaning-victorville.html'||pg==='screen-repair-hesperia.html'){
+      const mid=async()=>p.evaluate(()=>{const f=document.querySelector('.workbox figure'),i=document.querySelector('.workbox img');const r=f.getBoundingClientRect(),q=i.getBoundingClientRect();
+        return {dx:Math.round(r.left+r.width/2-innerWidth/2),dy:Math.round(r.top+r.height/2-innerHeight/2),inside:q.top>=0&&q.left>=0&&q.bottom<=innerHeight+1&&q.right<=innerWidth+1,h:Math.round(q.height),done:i.complete&&i.naturalWidth>0};});
+      await p.evaluate(()=>document.getElementById('work').scrollIntoView({block:'start',behavior:'instant'}));await p.click('#work a[data-work]');await p.waitForTimeout(700);
+      const v1=await mid();await p.click('.workbox .wb-n');await p.waitForTimeout(500);const v2=await mid();
+      ok(tag+' photo viewer centered, photo on screen, still centered after next',[v1,v2].every(v=>Math.abs(v.dx)<=2&&Math.abs(v.dy)<=2&&v.inside&&v.h>150&&v.done),JSON.stringify([v1,v2]));
+      await p.keyboard.press('Escape');}
     if(pg==='window-cleaning-victorville.html'){await p.evaluate(()=>document.getElementById('work').scrollIntoView({block:'start',behavior:'instant'}));await p.waitForTimeout(800);
       const loadedAfter=await p.evaluate(()=>[...document.querySelectorAll('#work img')].filter(i=>i.complete&&i.naturalWidth>0).length);ok(tag+' strip photos load once scrolled to',loadedAfter>=2,loadedAfter);
       await p.screenshot({path:`mobile/${W}x${H}-work.png`});}

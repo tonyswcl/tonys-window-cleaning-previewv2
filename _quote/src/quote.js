@@ -752,11 +752,13 @@ function workBox(){var s=$("work");if(!s)return;var links=$$("a[data-work]",s);i
     dlg.innerHTML='<figure><img alt=""><figcaption></figcaption></figure><button type="button" class="wb-x" aria-label="'+L("Close","Cerrar")+'">×</button>'+
       '<button type="button" class="wb-p" aria-label="'+L("Previous photo","Foto anterior")+'">‹</button><button type="button" class="wb-n" aria-label="'+L("Next photo","Foto siguiente")+'">›</button>';
     doc.body.appendChild(dlg);img=dlg.querySelector("img");cap=dlg.querySelector("figcaption");
-    dlg.addEventListener("click",function(e){var t=e.target;if(t===dlg||t.className==="wb-x")dlg.close();else if(t.className==="wb-p")show(i-1);else if(t.className==="wb-n")show(i+1);});
+    dlg.addEventListener("click",function(e){var t=e.target;if(t===dlg||t.tagName==="FIGURE"||t.className==="wb-x")dlg.close();else if(t.className==="wb-p")show(i-1);else if(t.className==="wb-n")show(i+1);});
     dlg.addEventListener("keydown",function(e){if(e.key==="ArrowLeft")show(i-1);else if(e.key==="ArrowRight")show(i+1);});
     img.addEventListener("touchstart",function(e){x0=e.touches[0].clientX;},{passive:true});
     img.addEventListener("touchend",function(e){if(x0===null)return;var d=e.changedTouches[0].clientX-x0;x0=null;if(Math.abs(d)>40)show(i+(d<0?1:-1));});}
-  function show(k){i=(k+links.length)%links.length;var a=links[i];img.src=a.getAttribute("href");img.alt=a.querySelector("img").alt;cap.textContent=a.parentNode.querySelector("span").textContent;}
+  /* the photos either side load while this one is on screen, so the arrows never wait on a blank */
+  function show(k){var n=links.length;i=(k+n)%n;var a=links[i];img.src=a.getAttribute("href");img.alt=a.querySelector("img").alt;cap.textContent=a.parentNode.querySelector("span").textContent;
+    [i+1,i-1].forEach(function(j){(new Image()).src=links[(j+n)%n].getAttribute("href");});}
   links.forEach(function(a,k){a.addEventListener("click",function(e){e.preventDefault();if(!dlg)make();show(k);dlg.showModal();track("work_photo",{n:k+1,svc:s.getAttribute("data-work-svc")});});});}
 
 /* phone and text links anywhere on the page (header, footer, buttons) tell Meta someone reached out: Contact. The quote's own

@@ -614,6 +614,17 @@ a.area-chip:focus-visible{
   padding:.75rem 1.1rem;font-size:.9rem;font-weight:600;color:var(--ink-soft);
   border-top:3px solid var(--gold-400);
 }
+/* rows always come out full: three photos sit 3 across, four sit 2 by 2 and then 4 across, five sit 2 over 3 */
+@media (min-width:600px){
+  .photo-grid:has(> :nth-child(3):last-child){grid-template-columns:repeat(3,minmax(0,1fr))}
+  .photo-grid:has(> :nth-child(4):last-child){grid-template-columns:repeat(2,minmax(0,1fr))}
+  .photo-grid:has(> :nth-child(5):last-child){grid-template-columns:repeat(6,minmax(0,1fr))}
+  .photo-grid:has(> :nth-child(5):last-child) > *{grid-column:span 2}
+  .photo-grid:has(> :nth-child(5):last-child) > :nth-child(-n+2){grid-column:span 3}
+}
+@media (min-width:1000px){
+  .photo-grid:has(> :nth-child(4):last-child){grid-template-columns:repeat(4,minmax(0,1fr))}
+}
 
 /* ===== CITY NEIGHBOURHOOD CARDS ===== */
 .hood-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(258px,1fr));gap:1.1rem;margin-top:1.9rem}

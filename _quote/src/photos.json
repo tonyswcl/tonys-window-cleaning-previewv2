@@ -1,5 +1,5 @@
 {
-"note": "Real job photos. svc: win, sol, pig, scr. city: the town it was taken in, null when not known. tier: best (the main gallery), job (local proof), before (pairs and ads only), skip (never shown). Captions are city + en or es.",
+"note": "Real job photos. svc: win, sol, pig, scr. city: the town it was taken in, null when not known. tier: best (the main gallery), job (local proof), before (pairs and ads only), skip (never shown, with the reason in why). Captions are city + en or es.",
 "pairs": [
 [
 "assets/photos/hub-solar-01.jpg",
@@ -352,6 +352,18 @@
 "alt_es": "Arreglo solar grande y limpio en una casa de dos pisos en Victorville"
 },
 {
+"f": "phelan-solar-02",
+"svc": "sol",
+"city": "phelan",
+"tier": "best",
+"w": 750,
+"h": 1000,
+"en": "Rows of clean panels",
+"es": "Filas de paneles limpios",
+"alt": "Rows of clean solar panels on a Phelan roof",
+"alt_es": "Filas de paneles solares limpios en un techo de Phelan"
+},
+{
 "f": "apple-valley-solar-03",
 "svc": "sol",
 "city": "apple-valley",
@@ -367,25 +379,14 @@
 "f": "oak-hills-solar-04",
 "svc": "sol",
 "city": "oak-hills",
-"tier": "best",
+"tier": "skip",
 "w": 750,
 "h": 1000,
 "en": "Panels reflecting the trees",
 "es": "Paneles que reflejan los árboles",
 "alt": "Clean solar panels in Oak Hills reflecting the trees and sky",
-"alt_es": "Paneles solares limpios en Oak Hills reflejando los árboles y el cielo"
-},
-{
-"f": "hesperia-solar-02",
-"svc": "sol",
-"city": "hesperia",
-"tier": "best",
-"w": 750,
-"h": 1000,
-"en": "Mid wash, brush on the pole",
-"es": "A media lavada, cepillo en la pértiga",
-"alt": "Soft brush on a water fed pole washing solar panels in Hesperia, clean next to dusty",
-"alt_es": "Cepillo suave en una pértiga de agua lavando paneles en Hesperia, limpio junto a polvoriento"
+"alt_es": "Paneles solares limpios en Oak Hills reflejando los árboles y el cielo",
+"why": "Old droppings show on the tiles under the panel edge, left from another company. Reads like we leave a mess."
 },
 {
 "f": "adelanto-solar-02",
@@ -400,16 +401,29 @@
 "alt_es": "Paneles solares en Adelanto enjuagados sin el polvo del lago seco"
 },
 {
+"f": "hesperia-solar-02",
+"svc": "sol",
+"city": "hesperia",
+"tier": "best",
+"w": 750,
+"h": 1000,
+"en": "Mid wash, brush on the pole",
+"es": "A media lavada, cepillo en la pértiga",
+"alt": "Soft brush on a water fed pole washing solar panels in Hesperia, clean next to dusty",
+"alt_es": "Cepillo suave en una pértiga de agua lavando paneles en Hesperia, limpio junto a polvoriento"
+},
+{
 "f": "hub-solar-03",
 "svc": "sol",
 "city": null,
-"tier": "best",
+"tier": "skip",
 "w": 750,
 "h": 1000,
 "en": "Array over the tile roof",
 "es": "Arreglo sobre techo de teja",
 "alt": "Clean residential solar array after a purified water wash, looking out over tile roofs",
-"alt_es": "Arreglo solar residencial limpio después de un lavado con agua purificada, sobre techos de teja"
+"alt_es": "Arreglo solar residencial limpio después de un lavado con agua purificada, sobre techos de teja",
+"why": "Stains along the bottom of the panel frames. Not a clean after."
 },
 {
 "f": "adelanto-solar-03",
@@ -494,18 +508,6 @@
 "es": "Enjuagado con agua purificada",
 "alt": "Clean solar array in Phelan with the rinse hose on the roof",
 "alt_es": "Arreglo solar limpio en Phelan con la manguera del enjuague en el techo"
-},
-{
-"f": "phelan-solar-02",
-"svc": "sol",
-"city": "phelan",
-"tier": "job",
-"w": 750,
-"h": 1000,
-"en": "Rows of clean panels",
-"es": "Filas de paneles limpios",
-"alt": "Rows of clean solar panels on a Phelan roof",
-"alt_es": "Filas de paneles solares limpios en un techo de Phelan"
 },
 {
 "f": "victorville-solar-02",

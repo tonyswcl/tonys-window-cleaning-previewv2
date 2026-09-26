@@ -93,6 +93,21 @@ ok('main gallery has the four best blocks', sorted(k for k, _ in best) == ['pig'
 pairs = {x.split('/')[-1][:-4] for pr in data['pairs'] for x in pr}
 low = [f for _, blk in best for f in re.findall(r'assets/photos/([\w-]+)\.jpg', blk) if BY[f]['tier'] != 'best' and f not in pairs]
 ok('main gallery grids use only best photos and the real pair', not low, low)
+big = ['%s %d' % (k, len(re.findall(r'<figure', blk))) for k, blk in best if len(re.findall(r'<figure', blk)) > 6]
+ok('main gallery grids hold at most 6, so rows of 3 or 2 come out full', not big, big)
+skip = {p['f'] for p in data['photos'] if p['tier'] == 'skip'}
+held = sorted({fn + ' ' + f for fn in os.listdir(ROOT) if fn.endswith('.html')
+               for f in re.findall(r'assets/photos/(?:t/)?([\w-]+)\.(?:jpg|webp)', open(os.path.join(ROOT, fn), encoding='utf-8').read()) if f in skip})
+ok('no photo marked skip on any page (hand sections included)', not held, held)
+stale = []
+for fn in sorted(os.listdir(ROOT)):
+    if not fn.endswith('.html'):
+        continue
+    s = open(os.path.join(ROOT, fn), encoding='utf-8').read()
+    shown = set(re.findall(r'assets/photos/([\w-]+)\.jpg', re.sub(r'<script\b.*?</script>', '', s, flags=re.S)))
+    ld = {f for m in re.findall(r'<script type="application/ld\+json">(.*?)</script>', s, re.S) for f in re.findall(r'assets/photos/([\w-]+)\.jpg', m)}
+    stale += [fn + ' ' + f for f in sorted(ld - shown)]
+ok('search data names only photos the page shows', not stale, stale)
 allg = re.findall(r'assets/(?:photos|gallery)/([\w-]+)\.jpg', re.sub(r'<script\b.*?</script>', '', re.sub(r'<!-- tq:(cta|media|tail|css) -->.*?<!-- /tq:\1 -->', '', g, flags=re.S), flags=re.S))
 dups = sorted({f for f in allg if allg.count(f) > 1})
 ok('no photo twice on the main gallery page', not dups, dups)
